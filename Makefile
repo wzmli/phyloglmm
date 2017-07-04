@@ -34,6 +34,8 @@ fit_pez.Rout: parameters.R simulate_tree.Rout fit_pez.R
 fit_lme4.Rout: parameters.R simulate_tree.Rout phyloglmm_setup.R phyloglmm.R
 	$(run-R)
 
+fit_MCMCglmm.Rout: parameters.R simulate_tree.Rout fit_MCMCglmm.R
+	$(run-R)
 
 
 

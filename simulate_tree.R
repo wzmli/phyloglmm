@@ -5,7 +5,7 @@ library(ape)
 phy <- rtree(n = nspp)
 
 ## Compute branch lengths using other methods (optional)
-# phy <- compute.brlen(phy, method = "Grafen", power = 0.5)
+phy <- compute.brlen(phy, method = "Grafen", power = 0.5)
 
 # standardize the phylogenetic covariance matrix to have determinant 1 (optional)
 Vphy <- vcv(phy)
