@@ -1,0 +1,10 @@
+.*.swp
+.*.Rout.pdf
+.*.wrapR.rout
+.*.RData
+.*.Rlog
+
+*.Rout
+*.wrapR.r
+
+target.mk
