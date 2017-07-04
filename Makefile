@@ -26,6 +26,8 @@ Sources += $(wildcard *.R)
 simulate_tree.Rout: parameters.R simulate_tree.R
 	$(run-R)
 
+### Fitting
+
 fit_pez.Rout: parameters.R simulate_tree.Rout fit_pez.R
 	$(run-R)
 
