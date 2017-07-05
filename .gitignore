@@ -6,5 +6,7 @@
 
 *.Rout
 *.wrapR.r
+*.Rlog
+*.wrapR.rout
 
 target.mk

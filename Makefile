@@ -37,6 +37,8 @@ fit_lme4.Rout: parameters.R simulate_tree.Rout phyloglmm_setup.R phyloglmm.R
 fit_MCMCglmm.Rout: parameters.R simulate_tree.Rout fit_MCMCglmm.R
 	$(run-R)
 
+fit_glmmPQL.Rout: parameters.R simulate_tree.Rout fit_glmmPQL.R
+	$(run-R)
 
 
 

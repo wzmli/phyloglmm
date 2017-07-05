@@ -9,7 +9,7 @@ phyZ <- phylo.to.Z(phy)
 dat$obs <- dat$sp
 
 lme4time <- system.time(
-	lme4fit <- phylo_lmm(Y ~ X + (1|obs) + (1|sp) + (0+X|obs) + (0+X|sp)
+	lme4fit <- phylo_lmm(Y ~ X  + (1|obs) + (1|sp) + (0 + X|obs) + (0+X|sp)
 	, data=dat
 	, phylonm = "sp"
 	, sp = dat$sp
