@@ -21,3 +21,9 @@ sd.B1 <- 8
 signal.B0 <- TRUE
 signal.B1 <- TRUE
 
+
+# MCMC iterations
+
+nitt <- 1e4 ## was 5e6
+
+

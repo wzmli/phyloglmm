@@ -4,19 +4,25 @@ library(dplyr)
 
 dat <- (dat
   %>% rowwise()
-  %>% mutate(phylo=paste("t",sp,sep=""))
+  %>% mutate(phylo=paste("t",sp,sep="")
+      , obs=phylo
+      )
 )
 
 dat <- data.frame(dat)
 
-nitt <- 5e3 ## was 5e6
-
 inv.phylo <- inverseA(phy,nodes="TIPS",scale=TRUE)
 
-prior <- list(G=list(G1=list(V=1,nu=0.02)),R=list(V=1,nu=0.02))
+prior <- list(G=list(G1=list(V=1,nu=0.02)
+#                      , G2=list(V=1,nu=0.02)
+#                      , G3=list(V=1,nu=0.02)
+                     , G4=list(V=1,nu=0.02)
+                     )
+              , R=list(V=1,nu=0.02)
+              )
 MCMC_time <- system.time(
 	MCMCglmm_fit <- MCMCglmm(Y~X
-		, random=~phylo
+		, random=~ phylo + us(X):phylo 
 		, family="gaussian"
 		, ginverse=list(phylo=inv.phylo$Ainv)
 		, prior=prior
