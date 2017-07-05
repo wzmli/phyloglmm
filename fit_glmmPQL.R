@@ -11,7 +11,7 @@ fit_glmmPQL <- glmmPQL(Y~X
 	, random= list(sp=~1,sp=~X-1) 
 	, data=dat
 	, family="gaussian"
-	# , correlation=corBrownian(phy=phy)
+	, correlation=corBrownian(phy=phy)
 	, verbose=FALSE
 	)
 
