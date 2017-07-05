@@ -40,6 +40,8 @@ fit_MCMCglmm.Rout: parameters.R simulate_tree.Rout fit_MCMCglmm.R
 fit_glmmPQL.Rout: parameters.R simulate_tree.Rout fit_glmmPQL.R
 	$(run-R)
 
+fit_gls.Rout: parameters.R simulate_tree.Rout fit_gls.R
+	$(run-R)
 
 
 
