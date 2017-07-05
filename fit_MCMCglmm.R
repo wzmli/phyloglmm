@@ -1,10 +1,13 @@
 library(MCMCglmm)
+library(Matrix)
 library(dplyr)
 
 dat <- (dat
   %>% rowwise()
   %>% mutate(phylo=paste("t",sp,sep=""))
 )
+
+dat <- data.frame(dat)
 
 nitt <- 5e3 ## was 5e6
 
@@ -15,7 +18,7 @@ MCMC_time <- system.time(
 	MCMCglmm_fit <- MCMCglmm(Y~X
 		, random=~phylo
 		, family="gaussian"
-		, ginverse=list(phylo=aaa)
+		, ginverse=list(phylo=inv.phylo$Ainv)
 		, prior=prior
 		, data=dat
 		, nitt=nitt
