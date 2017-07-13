@@ -29,7 +29,7 @@ split_blkMat <- function(M,ind){
 	return(res)
 }
 
-modify_phylo_retrms <- function(rt,phylo,phylonm,phyloZ=phylo.to.Z(phylo),sp){
+modify_phylo_retrms <- function(rt,phylo,phylonm,phyloZ,sp){
 	## FIXME: better way to specify phylonm
 	## need to replace Zt, Lind, Gp, flist, Ztlist
 	## we have the same number of parameters (theta, lower),
