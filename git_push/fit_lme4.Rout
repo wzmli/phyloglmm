@@ -1,0 +1,95 @@
+> 
+> # Generated using wrapR file fit_lme4.wrapR.r
+> source('parameters.R', echo=TRUE)
+
+> seed <- 2830
+
+> nspp <- 7000
+
+> nsite <- 50
+
+> sd.resid <- 5
+
+> beta0 <- 0
+
+> beta1 <- 0
+
+> sd.B0 <- 4
+
+> sd.B1 <- 8
+
+> signal.B0 <- TRUE
+
+> signal.B1 <- TRUE
+
+> nitt <- 1e+05
+> source('phyloglmm_setup.R', echo=TRUE)
+
+> phylo.to.Z <- function(r) {
++     ntip <- length(r$tip.label)
++     Zid <- Matrix(0, ncol = length(r$edge.length), nrow = ntip)
++     nodes <- (ntip .... [TRUNCATED] 
+
+> split_blkMat <- function(M, ind) {
++     res <- list()
++     if (length(ind) == 1) {
++         return(list(M))
++     }
++     for (i in 1:(length(ind .... [TRUNCATED] 
+
+> modify_phylo_retrms <- function(rt, phylo, phylonm, 
++     phyloZ, sp) {
++     n.edge <- nrow(phylo$edge)
++     phylo.pos <- which(names(rt$cnms) == .... [TRUNCATED] 
+
+> phylo_lmm <- function(formula, data, phylo, phylonm, 
++     phyloZ, control, sp) {
++     lmod <- lFormula(formula = formula, data = data, control =  .... [TRUNCATED] 
+> source('phyloglmm.R', echo=TRUE)
+
+> library(ape)
+
+> library(Matrix)
+
+> library(lme4)
+
+> phyZ <- phylo.to.Z(phy)
+
+> dat$obs <- dat$sp
+
+> lme4time <- system.time(lme4fit <- phylo_lmm(Y ~ X + 
++     (1 | obs) + (1 | sp) + (0 + X | obs) + (0 + X | sp), data = dat, 
++     phylonm = "sp",  .... [TRUNCATED] 
+
+> print(lme4time)
+   user  system elapsed 
+478.480  14.600 550.872 
+
+> print(summary(lme4fit))
+Linear mixed model fit by REML ['lmerMod']
+
+REML criterion at convergence: 2137820
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-4.7695 -0.6655 -0.0006  0.6666  4.3709 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ obs      (Intercept)  0.02546 0.1596  
+ sp       (Intercept) 15.31350 3.9132  
+ obs.1    X            0.00000 0.0000  
+ sp.1     X           61.52710 7.8439  
+ Residual             24.98853 4.9989  
+Number of obs: 350000, groups:  obs, 7000; sp, 13998
+
+Fixed effects:
+            Estimate Std. Error t value
+(Intercept)   -2.136      1.801  -1.186
+X              1.362      3.609   0.377
+
+Correlation of Fixed Effects:
+  (Intr)
+X 0.000 
+> # Wrapped output file fit_lme4.wrapR.rout
+> 
