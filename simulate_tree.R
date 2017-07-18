@@ -15,6 +15,11 @@ Vphy <- vcv(phy)
 X <- matrix(1:nsite, nrow = 1, ncol = nsite)
 X <- (X - mean(X))/sd(X)
 
+
+if(nsite == 1){
+	X <- rep(0,nspp)
+#	signal.B1 <- FALSE
+}
 # Perform a Cholesky decomposition of Vphy. This is used to
 # generate phylogenetic signal: a vector of independent normal random
 # variables, when multiplied by the transpose of the Cholesky
