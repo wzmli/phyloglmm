@@ -13,7 +13,7 @@ if(single.site==TRUE){
 		%>% mutate(obs = sp)
 )
 	lme4time <- system.time(
-	lme4fit <- phylo_lmm(Y ~ 1 + (1|obs) + (1|sp)
+	lme4fit <- phylo_lmm(Y ~ (1|sp) #+ (1|obs) # + (0 + X|obs) + (0+X|sp)
 	   , data=dat
 		, phylonm = "sp" 
 		, sp = dat$sp
