@@ -9,7 +9,6 @@ phyZ <- phylo.to.Z(phy)
 
 if(single.site==TRUE){
 	dat <- (dat
-		%>% filter(site==1)
 		%>% mutate(obs = sp)
 )
 	lme4time <- system.time(
