@@ -3,7 +3,7 @@
 seed <- 2830
 
 # Generate simulated data for nspp species and nsite sites
-nspp <- 1000
+nspp <- 500
 
 #nsite <- 50
 nsite <- 1

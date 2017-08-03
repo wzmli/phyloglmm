@@ -1,9 +1,10 @@
 Aug 3rd 2017
 
 Adding the "extra" noise term seems to stablize and make things run on all platforms.
+TMB seems to be working, but still need code to extract estimates.
 
 TODO:
-Try to implement brms and fix glmmtmb 
+Try to implement brms.
 
 
 ----------------------------------------------------------------------
