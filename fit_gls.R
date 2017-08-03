@@ -14,8 +14,10 @@ dat <- data.frame(dat)
 
 print(phy)
 
-fit_gls <- gls(Y~X
+fit_gls <- gls(Y~noise
 	, data=dat
-#	, correlation=corBrownian(phy=phy)
+	, correlation=corBrownian(phy=phy)
 	, verbose=FALSE
 )
+
+print(summary(fit_gls))

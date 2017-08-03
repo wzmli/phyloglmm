@@ -18,7 +18,7 @@ prior <- list(G=list(G1=list(V=1,nu=0.02)
               , R=list(V=1,nu=0.02)
               )
 MCMC_time <- system.time(
-	MCMCglmm_fit <- MCMCglmm(Y~1
+	MCMCglmm_fit <- MCMCglmm(Y~noise
 		, random=~ phylo
 		, family="gaussian"
 		, ginverse=list(phylo=inv.phylo$Ainv)

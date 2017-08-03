@@ -7,7 +7,7 @@ library(ape)
 
 dat$allGrp <- factor(1) ## dummy grouping var because glmmPQL needs a group ...
 
-fit_glmmPQL <- glmmPQL(Y~X
+fit_glmmPQL <- glmmPQL(Y~noise
 	, random = ~1|sp 
 	, data = dat
 	, family = "gaussian"

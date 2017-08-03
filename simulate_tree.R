@@ -71,7 +71,9 @@ site <- matrix(kronecker(1:nsite, matrix(1, nrow = nspp, ncol =
 sp <- matrix(kronecker(matrix(1, nrow = nsite, ncol = 1), 1:nspp),
              nrow = nspp * nsite, ncol = 1)
 
-dat <- data.frame(Y = YY, X = XX, site = as.factor(site), sp = as.factor(sp))
+noise <- rnorm(nspp*nsite,mean=0,sd=1)
+
+dat <- data.frame(Y = YY, X = XX, site = as.factor(site), sp = as.factor(sp), noise = noise)
 
 print(head(dat))
 
