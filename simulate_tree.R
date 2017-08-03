@@ -2,6 +2,8 @@
 
 library(ape)
 
+set.seed(seed)
+
 phy <- rtree(n = nspp)
 
 ## Compute branch lengths using other methods (optional)

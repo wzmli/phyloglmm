@@ -1,3 +1,14 @@
+Aug 3rd 2017
+
+Adding the "extra" noise term seems to stablize and make things run on all platforms.
+
+TODO:
+Try to implement brms and fix glmmtmb 
+
+
+----------------------------------------------------------------------
+
+
 Aug 2nd 2017
 
 Multiple site simulation test seems to work really well on lme4, now we have to make sure single site simulations work from 2 weeks ago.

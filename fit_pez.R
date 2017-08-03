@@ -22,7 +22,7 @@ re.site <- list(1, site = dat$site, covar = diag(nsite))
 
 
 peztime <- system.time(
-	pezfit <- communityPGLMM(Y ~ X
+	pezfit <- communityPGLMM(Y ~ X + noise
 		, data = dat
 		, family = "gaussian"
 		, sp = dat$sp
