@@ -13,12 +13,12 @@ dat <- data.frame(dat)
 
 inv.phylo <- inverseA(phy,nodes="TIPS",scale=TRUE)
 
-prior <- list(G=list(G1=list(V=1,nu=0.02)
+prior <- list(G=list(G1=list(V=2,nu=1)
                      )
-              , R=list(V=1,nu=0.02)
+              , R=list(V=1,nu=1)
               )
 MCMC_time <- system.time(
-	MCMCglmm_fit <- MCMCglmm(Y~noise
+	MCMCglmm_fit <- MCMCglmm(Y~1
 		, random=~ phylo
 		, family="gaussian"
 		, ginverse=list(phylo=inv.phylo$Ainv)

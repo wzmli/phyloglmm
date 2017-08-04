@@ -16,11 +16,11 @@ dat <- data.frame(dat)
 
 dat$allGrp <- factor(1) ## dummy grouping var because glmmPQL needs a group ...
 
-fit_glmmPQL <- glmmPQL(Y~noise
+fit_glmmPQL <- glmmPQL(Y~1
 	, random = ~ 1|phylo
 	, data = dat
 	, family = "gaussian"
-	, correlation = corBrownian(phy=phy)
+	, correlation = corBrownian(phy=phy,form)
 	, verbose = FALSE
 	)
 

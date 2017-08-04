@@ -5,7 +5,7 @@ TMB seems to be working, but still need code to extract estimates.
 
 TODO:
 Try to implement brms.
-
+MCMCglmm , change nu = 1
 
 ----------------------------------------------------------------------
 
