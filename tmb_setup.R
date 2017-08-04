@@ -5,7 +5,7 @@ modify_TMBstruc <- function(tmbstruc,phylo,phylonm,
   n.edge <- nrow(phylo$edge)
   ## stuff in tmbstruc (but not within data.tmb) is (maybe) necessary
   ##  for cosmetics, proper reporting
-  tmbstruc$condList$reTrms <- modify_phylo_retrms(tmbstruc$condList$reTrms,
+  tmbstruc$condList$reTrms <- modify_phylo_retrms(tmbstruc$modelInfo$reTrms$cond, #tmbstruc$condList$reTrms,
                                                   phylo,phylonm,phyloZ,sp)
   tmbstruc$condReStruc$`1 | phylo`$blockReps <- n.edge
   tmbstruc$condList$Z <- t(tmbstruc$condList$reTrms$Zt)

@@ -12,7 +12,7 @@ if(single.site==TRUE){
 		%>% mutate(obs = sp)
 )
 	lme4time <- system.time(
-	lme4fit <- phylo_lmm(Y ~ noise + (1|sp) #+ (1|obs) # + (0 + X|obs) + (0+X|sp)
+	lme4fit <- phylo_lmm(Y ~ noise + (1+noise|obs) #+ (1|obs) # + (0 + X|obs) + (0+X|sp)
 	   , data=dat
 		, phylonm = "sp" 
 		, sp = dat$sp
@@ -23,7 +23,7 @@ if(single.site==TRUE){
 if(single.site==FALSE){
 dat$obs <- dat$sp
 lme4time <- system.time(
-	lme4fit <- phylo_lmm(Y ~ X + noise + (1|obs) + (1|sp)  + (0 + X|obs) + (0+X|sp)
+	lme4fit <- phylo_lmm(Y ~ X + (1|obs) + (1|sp)  + (0 + X|obs) + (0+X|sp)
 	, data=dat
 	, phylonm = "sp"
 	, sp = dat$sp

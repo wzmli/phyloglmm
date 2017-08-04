@@ -15,9 +15,9 @@ dat <- (dat
 
 dat <- data.frame(dat)
 
-TMBstruc <- glmmTMB(Y ~ noise  + (1|phylo) + (1|obs)
-  , data=dat
-  , debug=TRUE) # doFit=FALSE) in BB's update
+TMBstruc <- glmmTMB(Y ~ 1  + (1|phylo) + (1|obs)
+  , data=dat)
+  # , debug=TRUE) # doFit=FALSE) in BB's update
 
 TMBstruc_new <- modify_TMBstruc(TMBstruc,phy,phylonm="phylo",phyloZ=phyZ,sp=dat$phylo)
 
