@@ -13,12 +13,12 @@ if(single.site==TRUE){
 )
 	lme4time <- system.time(
 	lme4fit <- phylo_lmm(Y ~ 1
-	                     + (1 | obs)
-	                     + (1 | sp)
-	                     # + (1+noise|sp)
-	                     # + (1+noise|obs)
-	                     + (0 + X|obs)
-	                     + (0+X|sp)
+	                     # + (1 | obs)
+	                     # + (1 | sp)
+	                     + (1+X|sp)
+	                     # + (1+X|obs)
+	                     # + (0 + X | obs)
+	                     # + (0 + X | sp)
 	   , data=dat
 		, phylonm = "sp" 
 		, sp = dat$sp
@@ -26,6 +26,7 @@ if(single.site==TRUE){
 		, phyloZ=phyZ
 		, control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")))
 }
+
 if(single.site==FALSE){
 dat$obs <- dat$sp
 lme4time <- system.time(

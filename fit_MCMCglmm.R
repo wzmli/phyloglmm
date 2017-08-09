@@ -28,6 +28,7 @@ MCMC_time <- system.time(
 		, burnin=1000
 		, thin=nitt/1000
 		, verbose=TRUE)
+		, 
 )
 
 print(summary(MCMCglmm_fit))
