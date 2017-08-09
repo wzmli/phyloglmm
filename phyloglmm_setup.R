@@ -73,12 +73,6 @@ modify_phylo_retrms <- function(rt,phylo,phylonm,phyloZ,sp){
 phylo_lmm <- function(formula,data,phylo,phylonm,phyloZ,control,sp){
 	lmod <- lFormula(formula=formula,data = data,control=control)
 	lmod$reTrms <- modify_phylo_retrms(lmod$reTrms,phylo,phylonm,phyloZ,sp)
-	nb <- nrow(lmod$reTrms$Lambdat)
-	temp_lambda <- diag(nb)
-	for(i in seq(2,nb,by=2)){
-	  temp_lambda[i-1,i] <- 0
-	}
-	lmod$reTrms$Lambdat <- as(temp_lambda,"dgCMatrix")
 	devfun <- do.call(mkLmerDevfun, lmod)
 	opt <- optimizeLmer(devfun)
 	mkMerMod(environment(devfun), opt, lmod$reTrms, fr = lmod$fr)
