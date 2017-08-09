@@ -78,4 +78,9 @@ phylo_lmm <- function(formula,data,phylo,phylonm,phyloZ,control,sp){
 	mkMerMod(environment(devfun), opt, lmod$reTrms, fr = lmod$fr)
 }
 
+# 
+# nb <- ncol(lmod$reTrms$Lambdat)
+# lmod$reTrms$Lind <- rep(1:3,nb)
+# temp_lambda <- sparseMatrix(i=c(1,1,2),j=c(1,2,2),x=c(1,0,1))
+# lmod$reTrms$Lambdat <- bdiag(replicate(nb,temp_lambda))
 
