@@ -23,12 +23,12 @@ sd.B1 <- 8
 # whether or not to include phylogenetic signal in B0 and B1
 signal.B0 <- TRUE
 
-#signal.B1 <- TRUE
-signal.B1 <- FALSE
+signal.B1 <- TRUE
+#signal.B1 <- FALSE
 
 # single site
-#single.site <- FALSE
-single.site <- TRUE
+single.site <- FALSE
+#single.site <- TRUE
 
 # MCMC iterations
 

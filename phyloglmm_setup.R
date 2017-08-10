@@ -45,7 +45,6 @@ modify_phylo_retrms <- function(rt,phylo,phylonm,phyloZ,sp){
 	## Lind: replace phylo block with the same element, just more values
 	Lind_num <- rt[["Lind"]][seq(rt[["theta"]])]
 	Lind_list <- split(rt[["Lind"]],rep(seq_along(Gpdiff),Gpdiff))
-	Lind_list <- split(rep(Lind_num,n.edge),rep(seq_along(Gpdiff),Gpdiff)) # mikes 
 	## Lambdat: replace block-diagonal element in Lambdat with a
 	## larger diagonal matrix
 	Lambdat_list <- split_blkMat(rt[["Lambdat"]],inds)
@@ -57,10 +56,12 @@ modify_phylo_retrms <- function(rt,phylo,phylonm,phyloZ,sp){
 			%*% rt[["Ztlist"]][[i]]
 			)
 		Gpdiff_new[i] <- n.edge  ## replace
-		Lind_list[[i]] <- rep(Lind_list[[i]][1],n.edge)
-		Lambdat_list[[i]] <- (KhatriRao(diag(n.edge)
-			, Matrix(1, ncol=n.edge, nrow=repterms))
-			)
+		Lind_list[[i]] <- rep(Lind_list[[i]][seq_along(1:length(rt[["theta"]]))],n.edge) # FIXME for slope cor
+		temp_lambda <- sparseMatrix(i=c(1,1,2),j=c(1,2,2),x=c(1,0,1))
+# 		Lambdat_list[[i]] <- (KhatriRao(diag(n.edge)
+# 			, Matrix(1, ncol=n.edge, nrow=repterms))
+# 			)
+		Lambdat_list[[i]] <- bdiag(replicate(n.edge,temp_lambda))
 	}
 	rt[["Zt"]] <- do.call(rbind,rt[["Ztlist"]])
 	rt[["Lind"]] <- unlist(Lind_list)
