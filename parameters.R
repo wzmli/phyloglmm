@@ -3,9 +3,9 @@
 seed <- 2830
 
 # Generate simulated data for nspp species and nsite sites
-nspp <- 500
+nspp <- 100
 
-nsite <- 40
+nsite <- 5
 #nsite <- 1
 
 # residual variance (set to zero for binary data)
@@ -27,7 +27,7 @@ signal.B1 <- TRUE
 
 # single site
 single.site <- FALSE
-#single.site <- TRUE
+single.site <- TRUE
 
 # MCMC iterations
 

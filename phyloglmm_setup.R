@@ -36,14 +36,19 @@ modify_phylo_retrms <- function(rt,phylo,phylonm,phyloZ,sp,correlated){
 	##  same number of obs
 	n.edge <- nrow(phylo$edge)
 	phylo.pos <- which(names(rt$cnms)==phylonm)
+	nsp <- length(unique(sp))
 	inds <- c(0,cumsum(sapply(rt$Ztlist,nrow)))
 	## Zt: substitute phylo Z for previous dummy (scalar-intercept) Z
 	## Gp: substitute new # random effects (n.edge) for old # (n.phylo)
 	Gpdiff <- diff(rt$Gp)  ## old numbers
 	Gpdiff_new <- Gpdiff
 	rt[["Gp"]] <- as.integer(c(0,cumsum(Gpdiff_new))) ## reconstitute
+	Lind_split_length <- sapply(rt[["cnms"]]
+    , function(i){
+      (length(i)*(length(i)+1))/2
+    })
 	## Lind: replace phylo block with the same element, just more values
-	Lind_list <- split(rt[["Lind"]],rep(seq_along(Gpdiff),Gpdiff))
+	Lind_list <- split(rt[["Lind"]],rep(seq_along(Lind_split_length),Lind_split_length*nsp))
 	## Lambdat: replace block-diagonal element in Lambdat with a
 	## larger diagonal matrix
 	Lambdat_list <- split_blkMat(rt[["Lambdat"]],inds)

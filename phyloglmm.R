@@ -18,18 +18,19 @@ if(single.site==TRUE){
 )
 	lme4time <- system.time(
 	lme4fit <- phylo_lmm(Y ~ X
-	                     + (1 | obs)
-	                     + (1 | sp)
-	                     # + (1+noise|sp)
-	                     # + (1+noise|obs)
-	                     + (0 + noise | obs)
-	                     + (0 + noise | sp)
+	                     # + (1 | obs)
+	                     # + (1 | sp)
+	                     + (1+noise|sp)
+	                     + (1+noise|obs)
+	                     # + (0 + noise | obs)
+	                     # + (0 + noise | sp)
 	   , data=dat
 		, phylonm = "sp" 
 		, sp = dat$sp
 		, phylo = phy
 		, phyloZ=phyZ
-		, control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore"))
+		, control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
+		, correlated=TRUE)
 	)
 }
 # 
