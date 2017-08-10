@@ -43,7 +43,9 @@ modify_phylo_retrms <- function(rt,phylo,phylonm,phyloZ,sp){
 	Gpdiff_new <- Gpdiff
 	rt[["Gp"]] <- as.integer(c(0,cumsum(Gpdiff_new))) ## reconstitute
 	## Lind: replace phylo block with the same element, just more values
+	Lind_num <- rt[["Lind"]][seq(rt[["theta"]])]
 	Lind_list <- split(rt[["Lind"]],rep(seq_along(Gpdiff),Gpdiff))
+	Lind_list <- split(rep(Lind_num,n.edge),rep(seq_along(Gpdiff),Gpdiff)) # mikes 
 	## Lambdat: replace block-diagonal element in Lambdat with a
 	## larger diagonal matrix
 	Lambdat_list <- split_blkMat(rt[["Lambdat"]],inds)

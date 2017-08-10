@@ -15,8 +15,8 @@ if(single.site==TRUE){
 	lme4fit <- phylo_lmm(Y ~ 1
 	                     # + (1 | obs)
 	                     # + (1 | sp)
-	                     # + (1+X|sp)
-	                     + (1+X|obs)
+	                     + (1+X|sp)
+	                     # + (1+X|obs)
 	                     # + (0 + X | obs)
 	                     # + (0 + X | sp)
 	   , data=dat
@@ -24,7 +24,8 @@ if(single.site==TRUE){
 		, sp = dat$sp
 		, phylo = phy
 		, phyloZ=phyZ
-		, control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")))
+		, control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore"))
+	)
 }
 
 if(single.site==FALSE){
