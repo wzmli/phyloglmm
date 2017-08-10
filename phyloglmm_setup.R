@@ -29,7 +29,7 @@ split_blkMat <- function(M,ind){
 	return(res)
 }
 
-modify_phylo_retrms <- function(rt,phylo,phylonm,phyloZ,sp){
+modify_phylo_retrms <- function(rt,phylo,phylonm,phyloZ,sp,correlated){
 	## FIXME: better way to specify phylonm
 	## need to replace Zt, Lind, Gp, flist, Ztlist
 	## we have the same number of parameters (theta, lower),
@@ -57,11 +57,13 @@ modify_phylo_retrms <- function(rt,phylo,phylonm,phyloZ,sp){
 			)
 		Gpdiff_new[i] <- n.edge  ## replace
 		Lind_list[[i]] <- rep(Lind_list[[i]][seq_along(1:length(rt[["theta"]]))],n.edge) # FIXME for slope cor
-		temp_lambda <- sparseMatrix(i=c(1,1,2),j=c(1,2,2),x=c(1,0,1))
-# 		Lambdat_list[[i]] <- (KhatriRao(diag(n.edge)
-# 			, Matrix(1, ncol=n.edge, nrow=repterms))
-# 			)
-		Lambdat_list[[i]] <- bdiag(replicate(n.edge,temp_lambda))
+		Lambdat_list[[i]] <- (KhatriRao(diag(n.edge)
+			, Matrix(1, ncol=n.edge, nrow=repterms))
+			)
+		if(correlated){
+		  temp_lambda <- sparseMatrix(i=c(1,1,2),j=c(1,2,2),x=c(1,0,1))
+		  Lambdat_list[[i]] <- bdiag(replicate(n.edge,temp_lambda))
+		}
 	}
 	rt[["Zt"]] <- do.call(rbind,rt[["Ztlist"]])
 	rt[["Lind"]] <- unlist(Lind_list)
@@ -73,9 +75,9 @@ modify_phylo_retrms <- function(rt,phylo,phylonm,phyloZ,sp){
 }
 
 
-phylo_lmm <- function(formula,data,phylo,phylonm,phyloZ,control,sp){
+phylo_lmm <- function(formula,data,phylo,phylonm,phyloZ,control,sp,correlated){
 	lmod <- lFormula(formula=formula,data = data,control=control)
-	lmod$reTrms <- modify_phylo_retrms(lmod$reTrms,phylo,phylonm,phyloZ,sp)
+	lmod$reTrms <- modify_phylo_retrms(lmod$reTrms,phylo,phylonm,phyloZ,sp,correlated)
 	devfun <- do.call(mkLmerDevfun, lmod)
 	opt <- optimizeLmer(devfun)
 	mkMerMod(environment(devfun), opt, lmod$reTrms, fr = lmod$fr)
