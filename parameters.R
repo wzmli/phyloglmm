@@ -3,9 +3,9 @@
 seed <- 2830
 
 # Generate simulated data for nspp species and nsite sites
-nspp <- 100
+nspp <- 500
 
-nsite <- 5
+nsite <- 40
 #nsite <- 1
 
 # residual variance (set to zero for binary data)

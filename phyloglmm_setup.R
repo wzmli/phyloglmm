@@ -43,7 +43,6 @@ modify_phylo_retrms <- function(rt,phylo,phylonm,phyloZ,sp,correlated){
 	Gpdiff_new <- Gpdiff
 	rt[["Gp"]] <- as.integer(c(0,cumsum(Gpdiff_new))) ## reconstitute
 	## Lind: replace phylo block with the same element, just more values
-	Lind_num <- rt[["Lind"]][seq(rt[["theta"]])]
 	Lind_list <- split(rt[["Lind"]],rep(seq_along(Gpdiff),Gpdiff))
 	## Lambdat: replace block-diagonal element in Lambdat with a
 	## larger diagonal matrix
@@ -56,7 +55,8 @@ modify_phylo_retrms <- function(rt,phylo,phylonm,phyloZ,sp,correlated){
 			%*% rt[["Ztlist"]][[i]]
 			)
 		Gpdiff_new[i] <- n.edge  ## replace
-		Lind_list[[i]] <- rep(Lind_list[[i]][seq_along(1:length(rt[["theta"]]))],n.edge) # FIXME for slope cor
+		Lind_num <- unique(Lind_list[[i]])
+		Lind_list[[i]] <- rep(Lind_list[[i]][seq_along(1:length(Lind_num))],n.edge) # FIXME for slope cor
 		Lambdat_list[[i]] <- (KhatriRao(diag(n.edge)
 			, Matrix(1, ncol=n.edge, nrow=repterms))
 			)
