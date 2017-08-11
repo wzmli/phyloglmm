@@ -15,22 +15,22 @@ phyZ <- phylo.to.Z(phy)
 if(single.site==TRUE){
 	dat <- (dat
 		%>% mutate(obs = sp)
-)
+		)	
 	lme4time <- system.time(
-	lme4fit <- phylo_lmm(Y ~ X
-	                     # + (1 | obs)
-	                     # + (1 | sp)
-	                     + (1+X|sp)
-	                     + (1+X|obs)
-	                     # + (0 + noise | obs)
-	                     # + (0 + noise | sp)
-	   , data=dat
-		, phylonm = "sp" 
-		, sp = dat$sp
-		, phylo = phy
-		, phyloZ=phyZ
-		, control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
-		, correlated=TRUE)
+		lme4fit <- phylo_lmm(Y ~ X
+			# + (1 | obs)
+			# + (1 | sp)
+			+ (1+X|sp)
+			+ (1+X|obs)
+			# + (0 + noise | obs)
+			# + (0 + noise | sp)
+			, data=dat
+			, phylonm = "sp" 
+			, sp = dat$sp
+			, phylo = phy
+			, phyloZ=phyZ
+			, control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
+			, correlated=TRUE)
 	)
 }
 # 

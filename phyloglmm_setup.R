@@ -17,6 +17,7 @@ phylo.to.Z <- function(r){
 	return(Z)                                  
 }
 
+## Can me make this simpler?
 split_blkMat <- function(M,ind){
 	res <- list()
 	if (length(ind)==1){
@@ -32,10 +33,12 @@ split_blkMat <- function(M,ind){
 modify_phylo_retrms <- function(rt,phylo,phylonm,phyloZ,sp,correlated){
 	## FIXME: better way to specify phylonm
 	## need to replace Zt, Lind, Gp, flist, Ztlist
-	## we have the same number of parameters (theta, lower),
-	##  same number of obs
 	n.edge <- nrow(phylo$edge)
-	phylo.pos <- which(names(rt$cnms)==phylonm)
+	
+	## Find the location of phylo random effect
+	phylo.pos <- which(names(rt$cnms)==phylonm) 
+	
+	## need to know number of number of speices to split index
 	nsp <- length(unique(sp))
 	inds <- c(0,cumsum(sapply(rt$Ztlist,nrow)))
 	## Zt: substitute phylo Z for previous dummy (scalar-intercept) Z
@@ -43,34 +46,48 @@ modify_phylo_retrms <- function(rt,phylo,phylonm,phyloZ,sp,correlated){
 	Gpdiff <- diff(rt$Gp)  ## old numbers
 	Gpdiff_new <- Gpdiff
 	rt[["Gp"]] <- as.integer(c(0,cumsum(Gpdiff_new))) ## reconstitute
+
+	## Split index length according to RE complexity w.r.t cov-triangle for each RE
 	Lind_split_length <- sapply(rt[["cnms"]]
     , function(i){
       (length(i)*(length(i)+1))/2
     })
-	## Lind_split _correctly_ splits the index according the the variance triangle
-	## Lind: replace phylo block with the same element, just more values
+
+	 ### lFormula is creating the all RE index w.r.t nsp lengths into a simple vector, we have to use the function above to split properly
 	Lind_list <- split(rt[["Lind"]],rep(seq_along(Lind_split_length),Lind_split_length*nsp))
+
 	## Lambdat: replace block-diagonal element in Lambdat with a
 	## larger diagonal matrix
 	Lambdat_list <- split_blkMat(rt[["Lambdat"]],inds)
+	
 	for(i in phylo.pos){
+		## each sp is being rep w.r.t the complexity of RE in their respective Zt
 		repterms <- nrow(rt[["Ztlist"]][[i]])/length(unique(sp))
 		## reconstitute Zt from new Ztlist
+		## We have to rep the same number of sp terms and edges in phyloZ to match Zt 
 		rt[["Ztlist"]][[i]] <- (t(kronecker(phyloZ,matrix(1,nrow=repterms,ncol=repterms)))
 			%*% rt[["Ztlist"]][[i]]
 			)
 		Gpdiff_new[i] <- n.edge  ## replace
+
+		## We have to create the Lind to match the theta field with larger reps w.r.t n.edges
 		Lind_num <- unique(Lind_list[[i]])
 		Lind_list[[i]] <- rep(Lind_list[[i]][seq_along(1:length(Lind_num))],n.edge)
-		Lambdat_list[[i]] <- (KhatriRao(diag(n.edge)
-			, Matrix(1, ncol=n.edge, nrow=repterms))
-			)
 		Lambdat_list[[i]] <- Diagonal(n.edge)
 		
-		if(correlated){
-		  temp_lambda <- sparseMatrix(i=c(1,1,2),j=c(1,2,2),x=c(1,0,1))
-		  Lambdat_list[[i]] <- bdiag(replicate(n.edge,temp_lambda))
+		#if(correlated){
+		#  temp_lambda <- sparseMatrix(i=c(1,1,2),j=c(1,2,2),x=c(1,0,1))
+		#  Lambdat_list[[i]] <- bdiag(replicate(n.edge,temp_lambda))
+		#}
+
+		left_RE_pipe <- length(rt[["cnms"]][[i]])
+		if(left_RE_pipe == 2){
+			temp_lambda <- sparseMatrix(i=c(1,1,2),j=c(1,2,2),x=c(1,0,1))
+			Lambdat_list[[i]] <- bdiag(replicate(n.edge,temp_lambda))
 		}
+		## Need a function to create the sparse Matrix template w.r.t number of terms in RE with matching index for theta and Lind fields  
+		### temp_lambda <- function(x){...} where x = length(rt[["cnms"]][[i]]
+
 	}
 	rt[["Zt"]] <- do.call(rbind,rt[["Ztlist"]])
 	rt[["Lind"]] <- unlist(Lind_list)
