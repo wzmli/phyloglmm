@@ -21,7 +21,7 @@ if(single.site==TRUE){
 	                     # + (1 | obs)
 	                     # + (1 | sp)
 	                     + (1+noise|sp)
-	                     + (1+noise|obs)
+	                     # + (1+noise|obs)
 	                     # + (0 + noise | obs)
 	                     # + (0 + noise | sp)
 	   , data=dat

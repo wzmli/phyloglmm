@@ -47,6 +47,7 @@ modify_phylo_retrms <- function(rt,phylo,phylonm,phyloZ,sp,correlated){
     , function(i){
       (length(i)*(length(i)+1))/2
     })
+	## Lind_split _correctly_ splits the index according the the variance triangle
 	## Lind: replace phylo block with the same element, just more values
 	Lind_list <- split(rt[["Lind"]],rep(seq_along(Lind_split_length),Lind_split_length*nsp))
 	## Lambdat: replace block-diagonal element in Lambdat with a
@@ -61,10 +62,12 @@ modify_phylo_retrms <- function(rt,phylo,phylonm,phyloZ,sp,correlated){
 			)
 		Gpdiff_new[i] <- n.edge  ## replace
 		Lind_num <- unique(Lind_list[[i]])
-		Lind_list[[i]] <- rep(Lind_list[[i]][seq_along(1:length(Lind_num))],n.edge) # FIXME for slope cor
+		Lind_list[[i]] <- rep(Lind_list[[i]][seq_along(1:length(Lind_num))],n.edge)
 		Lambdat_list[[i]] <- (KhatriRao(diag(n.edge)
 			, Matrix(1, ncol=n.edge, nrow=repterms))
 			)
+		Lambdat_list[[i]] <- Diagonal(n.edge)
+		
 		if(correlated){
 		  temp_lambda <- sparseMatrix(i=c(1,1,2),j=c(1,2,2),x=c(1,0,1))
 		  Lambdat_list[[i]] <- bdiag(replicate(n.edge,temp_lambda))
