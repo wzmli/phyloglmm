@@ -1,7 +1,7 @@
 ### simulate phylogenetic tree
 
 library(ape)
-
+## library(MASS)  ## for mvrnorm() ## don't load so we don't screw up dplyr::select()
 set.seed(seed)
 
 phy <- rtree(n = nspp)
@@ -29,20 +29,61 @@ if(nsite == 1){
 
 iD <- t(chol(Vphy))
 
+cormat <- matrix(c(1,rho.B01,rho.B01,1),2,2)
+
+## we could set up the entire random-effect var-cov matrix
+## if we segregate intercepts and slopes as separate blocks
+## i.e. in the combined vector of random effects, b0 comes
+## first, then b1, not intermingled
+if (rho.B01==0) {
+    b0mat <- if (signal.B0) Vphy else sd.B0^2*diag(nspp)
+    b1mat <- if (signal.B1) Vphy else sd.B1^2*diag(nspp)
+    Sigma <- Matrix::bdiag(b0mat,b1mat)
+} else {
+    Sigma <- kronecker(cormat,Vphy)
+}
+
+b.all <- MASS::mvrnorm(n=1,
+              mu=rep(c(beta0,beta1),each=nspp),
+              Sigma=Sigma)
+b0 <- b.all[1:nspp]
+b1 <- b.all[(nspp+1):(2*nspp)]
+
 # Set up species-specific regression coefficients as random effects 
 ## MLi: CHANGE, we want bivariate normal if we want intercept slope correlation
 ## It is better if we can just set correlation = 0 instead of simulating them independently
 
-if (signal.B0 == TRUE) {
-  b0 <- beta0 + iD %*% rnorm(nspp, sd = sd.B0)
-} else {
-  b0 <- beta0 + rnorm(nspp, sd = sd.B0)
+
+## if (signal.B0 == TRUE) {
+##     b0 <- beta0 + iD %*% rnorm(nspp, sd = sd.B0)
+## } else {
+##     b0 <- beta0 + rnorm(nspp, sd = sd.B0)
+## }
+## if (signal.B1 == TRUE) {
+##     b1 <- beta1 + iD %*% rnorm(nspp, sd = sd.B1)
+## } else {
+##     b1 <- beta1 + rnorm(nspp, sd = sd.B1)
+## }
+
+    
+## assume we have signal.B0 and signal.B1
+## rho.B01 is the correlation
+
+sdvec <- c(sd.B0,sd.B1)
+Sigma <- outer(sdvec,sdvec) * 
+B <- MASS::mvrnorm(nspp,c(0,0),Sigma)
+dfun <- function(x,signal) {
+    if (signal) (iD %*% x) else x
 }
-if (signal.B1 == TRUE) {
-  b1 <- beta1 + iD %*% rnorm(nspp, sd = sd.B1)
-} else {
-  b1 <- beta1 + rnorm(nspp, sd = sd.B1)
-}
+b0 <- beta0 + dfun(B[,1],signal.B0)
+b1 <- beta1 + dfun(B[,2],signal.B1)
+
+## test: if we simulate many sets of values and compute
+## the correlation for c(b0,b1), we should see diagonal blocks
+## (of size nspxnsp) that reflect the among-species correlations,
+## and off-diagonal blocks that are rho.B01*diag(nsp)
+
+## for example: simulating bivariate normal stuff
 
 # Simulate species abundances among sites to give matrix Y that
 # contains species in rows and sites in columns

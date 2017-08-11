@@ -7,9 +7,9 @@ library(dplyr)
 
 phyZ <- phylo.to.Z(phy)
 
-# debug(phylo_lmm)
-# debug(modify_phylo_retrms)
-# debug(mkLmerDevfun)
+debug(phylo_lmm)
+debug(modify_phylo_retrms)
+debug(mkLmerDevfun)
 
 
 if(single.site==TRUE){
