@@ -74,20 +74,20 @@ modify_phylo_retrms <- function(rt,phylo,phylonm,phyloZ,sp,correlated){
 		Lind_num <- unique(Lind_list[[i]])
 		Lind_list[[i]] <- rep(Lind_list[[i]][seq_along(1:length(Lind_num))],n.edge)
 		Lambdat_list[[i]] <- Diagonal(n.edge)
-		
-		#if(correlated){
-		#  temp_lambda <- sparseMatrix(i=c(1,1,2),j=c(1,2,2),x=c(1,0,1))
-		#  Lambdat_list[[i]] <- bdiag(replicate(n.edge,temp_lambda))
-		#}
 
 		left_RE_pipe <- length(rt[["cnms"]][[i]])
-		if(left_RE_pipe == 2){
-			temp_lambda <- sparseMatrix(i=c(1,1,2),j=c(1,2,2),x=c(1,0,1))
+		
+		## function to create sparse matrix templete w.r.t RE complexity
+		SM_template <- function(n){
+		  rr <- rep(1:n,n:1)
+		  cc <- unlist(lapply(seq(n),function(ll){seq(ll,n)}))
+		  xx <- as.numeric(rr==cc)
+		  return(sparseMatrix(i=rr,j=cc,x=xx))
+		}
+		if(left_RE_pipe>1){
+			temp_lambda <- SM_template(left_RE_pipe)
 			Lambdat_list[[i]] <- bdiag(replicate(n.edge,temp_lambda))
 		}
-		## Need a function to create the sparse Matrix template w.r.t number of terms in RE with matching index for theta and Lind fields  
-		### temp_lambda <- function(x){...} where x = length(rt[["cnms"]][[i]]
-
 	}
 	rt[["Zt"]] <- do.call(rbind,rt[["Ztlist"]])
 	rt[["Lind"]] <- unlist(Lind_list)
