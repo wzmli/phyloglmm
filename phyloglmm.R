@@ -20,8 +20,8 @@ if(single.site==TRUE){
 	lme4fit <- phylo_lmm(Y ~ X
 	                     # + (1 | obs)
 	                     # + (1 | sp)
-	                     + (1+noise|sp)
-	                     # + (1+noise|obs)
+	                     + (1+X|sp)
+	                     + (1+X|obs)
 	                     # + (0 + noise | obs)
 	                     # + (0 + noise | sp)
 	   , data=dat

@@ -56,8 +56,7 @@ modify_phylo_retrms <- function(rt,phylo,phylonm,phyloZ,sp,correlated){
 	for(i in phylo.pos){
 		repterms <- nrow(rt[["Ztlist"]][[i]])/length(unique(sp))
 		## reconstitute Zt from new Ztlist
-		rt[["Ztlist"]][[i]] <- (t(KhatriRao(phyloZ
-			, matrix(1,ncol=ncol(phyloZ),nrow=repterms))) 
+		rt[["Ztlist"]][[i]] <- (t(kronecker(phyloZ,matrix(1,nrow=repterms,ncol=repterms)))
 			%*% rt[["Ztlist"]][[i]]
 			)
 		Gpdiff_new[i] <- n.edge  ## replace
