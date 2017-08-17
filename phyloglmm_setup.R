@@ -30,7 +30,7 @@ split_blkMat <- function(M,ind){
 	return(res)
 }
 
-modify_phylo_retrms <- function(rt,phylo,phylonm,phyloZ,sp,correlated){
+modify_phylo_retrms <- function(rt,phylo,phylonm,phyloZ,sp){
 	## FIXME: better way to specify phylonm
 	## need to replace Zt, Lind, Gp, flist, Ztlist
 	n.edge <- nrow(phylo$edge)
@@ -84,10 +84,8 @@ modify_phylo_retrms <- function(rt,phylo,phylonm,phyloZ,sp,correlated){
 		  xx <- as.numeric(rr==cc)
 		  return(sparseMatrix(i=rr,j=cc,x=xx))
 		}
-		if(left_RE_pipe>1){
-			temp_lambda <- SM_template(left_RE_pipe)
-			Lambdat_list[[i]] <- bdiag(replicate(n.edge,temp_lambda))
-		}
+    temp_lambda <- SM_template(left_RE_pipe)
+		Lambdat_list[[i]] <- bdiag(replicate(n.edge,temp_lambda))
 	}
 	rt[["Zt"]] <- do.call(rbind,rt[["Ztlist"]])
 	rt[["Lind"]] <- unlist(Lind_list)
@@ -99,9 +97,9 @@ modify_phylo_retrms <- function(rt,phylo,phylonm,phyloZ,sp,correlated){
 }
 
 
-phylo_lmm <- function(formula,data,phylo,phylonm,phyloZ,control,sp,correlated){
+phylo_lmm <- function(formula,data,phylo,phylonm,phyloZ,control,sp){
 	lmod <- lFormula(formula=formula,data = data,control=control)
-	lmod$reTrms <- modify_phylo_retrms(lmod$reTrms,phylo,phylonm,phyloZ,sp,correlated)
+	lmod$reTrms <- modify_phylo_retrms(lmod$reTrms,phylo,phylonm,phyloZ,sp)
 	devfun <- do.call(mkLmerDevfun, lmod)
 	opt <- optimizeLmer(devfun)
 	mkMerMod(environment(devfun), opt, lmod$reTrms, fr = lmod$fr)

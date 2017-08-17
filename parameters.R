@@ -1,11 +1,13 @@
 ### parameters for phylogenetic tree simulations
 
 seed <- 2830
+#:w
+seed <- 5777
 
 # Generate simulated data for nspp species and nsite sites
-nspp <- 101
+nspp <- 1000
 
-nsite <- 40
+nsite <- 1000
 #nsite <- 1
 
 # residual variance (set to zero for binary data)
@@ -19,15 +21,13 @@ beta1 <- 0
 sd.B0 <- 4
 sd.B1 <- 8
 
+rho.B01 <- 0
+rho.B01 <- -0.8
+
 # whether or not to include phylogenetic signal in B0 and B1
 signal.B0 <- TRUE
 
 signal.B1 <- TRUE
-signal.B1 <- FALSE
-
-# single site
-single.site <- FALSE
-single.site <- TRUE
 
 # MCMC iterations
 

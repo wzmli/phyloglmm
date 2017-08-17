@@ -4,11 +4,13 @@
 
 > seed <- 2830
 
-> nspp <- 7000
+> seed <- 5777
 
-> nsite <- 50
+> nspp <- 1000
 
-> sd.resid <- 5
+> nsite <- 1000
+
+> sd.resid <- 10
 
 > beta0 <- 0
 
@@ -18,11 +20,15 @@
 
 > sd.B1 <- 8
 
+> rho.B01 <- 0
+
+> rho.B01 <- -0.8
+
 > signal.B0 <- TRUE
 
 > signal.B1 <- TRUE
 
-> nitt <- 1e+05
+> nitt <- 2e+06
 > source('phyloglmm_setup.R', echo=TRUE)
 
 > phylo.to.Z <- function(r) {
@@ -53,43 +59,72 @@
 
 > library(lme4)
 
+> library(dplyr)
+
 > phyZ <- phylo.to.Z(phy)
 
-> dat$obs <- dat$sp
+> dat <- (dat %>% mutate(obs = sp))
 
 > lme4time <- system.time(lme4fit <- phylo_lmm(Y ~ X + 
-+     (1 | obs) + (1 | sp) + (0 + X | obs) + (0 + X | sp), data = dat, 
-+     phylonm = "sp",  .... [TRUNCATED] 
-
-> print(lme4time)
-   user  system elapsed 
-478.480  14.600 550.872 
++     (1 | sp) + (0 + X | sp), data = dat, phylonm = "sp", sp = dat$sp, 
++     phylo = phy, ph .... [TRUNCATED] 
 
 > print(summary(lme4fit))
 Linear mixed model fit by REML ['lmerMod']
 
-REML criterion at convergence: 2137820
+REML criterion at convergence: 7448189
 
 Scaled residuals: 
     Min      1Q  Median      3Q     Max 
--4.7695 -0.6655 -0.0006  0.6666  4.3709 
+-4.6399 -0.6736  0.0012  0.6746  4.7292 
 
 Random effects:
  Groups   Name        Variance Std.Dev.
- obs      (Intercept)  0.02546 0.1596  
- sp       (Intercept) 15.31350 3.9132  
- obs.1    X            0.00000 0.0000  
- sp.1     X           61.52710 7.8439  
- Residual             24.98853 4.9989  
-Number of obs: 350000, groups:  obs, 7000; sp, 13998
+ sp       (Intercept) 17.41    4.173   
+ sp.1     X           67.28    8.202   
+ Residual             99.82    9.991   
+Number of obs: 1000000, groups:  sp, 1998
 
 Fixed effects:
             Estimate Std. Error t value
-(Intercept)   -2.136      1.801  -1.186
-X              1.362      3.609   0.377
+(Intercept)  -0.1296     1.6492  -0.079
+X             1.1723     3.2415   0.362
 
 Correlation of Fixed Effects:
   (Intr)
 X 0.000 
+
+> lme4timecor <- system.time(lme4fitcor <- phylo_lmm(Y ~ 
++     X + (1 + X | sp), data = dat, phylonm = "sp", sp = dat$sp, 
++     phylo = phy, phyloZ  .... [TRUNCATED] 
+
+> print(lme4timecor)
+   user  system elapsed 
+492.988  12.504 526.847 
+
+> print(summary(lme4fitcor))
+Linear mixed model fit by REML ['lmerMod']
+
+REML criterion at convergence: 7534014
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-4.8498 -0.6718  0.0039  0.6749  4.6395 
+
+Random effects:
+ Groups   Name        Variance Std.Dev. Corr 
+ sp       (Intercept)  15.58    3.947        
+          X            50.25    7.088   -0.51
+ Residual             109.07   10.444        
+Number of obs: 1000000, groups:  sp, 1998
+
+Fixed effects:
+            Estimate Std. Error t value
+(Intercept)  -0.2533     2.4109  -0.105
+X             1.2971     2.4109   0.538
+
+Correlation of Fixed Effects:
+  (Intr)
+X 1.000 
 > # Wrapped output file fit_lme4.wrapR.rout
 > 

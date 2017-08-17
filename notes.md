@@ -1,3 +1,14 @@
+Aug 17th 2017
+
+We figured out and implemented correlated random slope and intercept.
+We (MLi) are still having trouble simulating the right data to test fitting machinary. 
+
+TODO:
+
+- The obvious/simple todo is to fix/implement the GLMM version so we can use other distributions in the GLMM family.
+- Does the correlation even work? 
+----------------------------------------------------------------------
+
 Aug 4th 2017
 
 We need to figure out changes inside glmmTMB object.

@@ -70,13 +70,13 @@ b1 <- b.all[(nspp+1):(2*nspp)]
 ## rho.B01 is the correlation
 
 sdvec <- c(sd.B0,sd.B1)
-Sigma <- outer(sdvec,sdvec) * 
+Sigma <- outer(sdvec,sdvec)
 B <- MASS::mvrnorm(nspp,c(0,0),Sigma)
 dfun <- function(x,signal) {
     if (signal) (iD %*% x) else x
 }
-b0 <- beta0 + dfun(B[,1],signal.B0)
-b1 <- beta1 + dfun(B[,2],signal.B1)
+b0 <- b0 + dfun(B[,1],signal.B0)
+b1 <- b1 + dfun(B[,2],signal.B1)
 
 ## test: if we simulate many sets of values and compute
 ## the correlation for c(b0,b1), we should see diagonal blocks
