@@ -30,6 +30,10 @@ if(nsite == 1){
 iD <- t(chol(Vphy))
 
 cormat <- matrix(c(1,rho.B01,rho.B01,1),2,2)
+sdmat <- matrix(c(sd.B0,0,0,sd.B1),2,2)
+covmat <- matrix(c(4,rho.B01,rho.B01,8),2,2)
+
+print(covmat)
 
 ## we could set up the entire random-effect var-cov matrix
 ## if we segregate intercepts and slopes as separate blocks
@@ -40,8 +44,12 @@ if (rho.B01==0) {
     b1mat <- if (signal.B1) Vphy else sd.B1^2*diag(nspp)
     Sigma <- Matrix::bdiag(b0mat,b1mat)
 } else {
-    Sigma <- kronecker(cormat,Vphy)
+    Sigma <- kronecker(covmat,covmat)
 }
+
+
+
+
 
 b.all <- MASS::mvrnorm(n=1,
               mu=rep(c(beta0,beta1),each=nspp),
@@ -69,14 +77,14 @@ b1 <- b.all[(nspp+1):(2*nspp)]
 ## assume we have signal.B0 and signal.B1
 ## rho.B01 is the correlation
 
-sdvec <- c(sd.B0,sd.B1)
-Sigma <- outer(sdvec,sdvec)
-B <- MASS::mvrnorm(nspp,c(0,0),Sigma)
-dfun <- function(x,signal) {
-    if (signal) (iD %*% x) else x
-}
-b0 <- b0 + dfun(B[,1],signal.B0)
-b1 <- b1 + dfun(B[,2],signal.B1)
+#sdvec <- c(sd.B0,sd.B1)
+#Sigma <- outer(sdvec,sdvec)
+#B <- MASS::mvrnorm(nspp,c(0,0),Sigma)
+#dfun <- function(x,signal) {
+#    if (signal) (iD %*% x) else x
+#}
+#b0 <- b0 + dfun(B[,1],signal.B0)
+#b1 <- b1 + dfun(B[,2],signal.B1)
 
 ## test: if we simulate many sets of values and compute
 ## the correlation for c(b0,b1), we should see diagonal blocks

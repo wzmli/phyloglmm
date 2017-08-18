@@ -5,6 +5,8 @@ library(Matrix)
 library(lme4)
 library(dplyr)
 
+print(covmat)
+
 phyZ <- phylo.to.Z(phy)
 
 dat <- (dat
