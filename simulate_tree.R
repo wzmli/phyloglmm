@@ -30,10 +30,11 @@ if(nsite == 1){
 iD <- t(chol(Vphy))
 
 cormat <- matrix(c(1,rho.B01,rho.B01,1),2,2)
-sdmat <- matrix(c(sd.B0,0,0,sd.B1),2,2)
-covmat <- matrix(c(4,rho.B01,rho.B01,8),2,2)
+sdvec <- c(sd.B0,sd.B1)
+varmat <- sdvec %*% t(sdvec)
+covmat <- varmat * cormat
 
-print(covmat)
+#print(covmat)
 
 ## we could set up the entire random-effect var-cov matrix
 ## if we segregate intercepts and slopes as separate blocks
@@ -44,17 +45,17 @@ if (rho.B01==0) {
     b1mat <- if (signal.B1) Vphy else sd.B1^2*diag(nspp)
     Sigma <- Matrix::bdiag(b0mat,b1mat)
 } else {
-    Sigma <- kronecker(covmat,covmat)
+    Sigma <- kronecker(covmat,Vphy)
 }
 
 
-
+Sigma <- kronecker(covmat,diag(nspp))
 
 
 b.all <- MASS::mvrnorm(n=1,
               mu=rep(c(beta0,beta1),each=nspp),
               Sigma=Sigma)
-b0 <- b.all[1:nspp]
+b0 <- b.all[1:nspp] 
 b1 <- b.all[(nspp+1):(2*nspp)]
 
 # Set up species-specific regression coefficients as random effects 
@@ -95,8 +96,9 @@ b1 <- b.all[(nspp+1):(2*nspp)]
 
 # Simulate species abundances among sites to give matrix Y that
 # contains species in rows and sites in columns
-y <- rep(b0, each=nsite)
-y <- y + rep(b1, each=nsite) * rep(X, nspp)
+
+# y <- rep(b0, each=nsite)
+# y <- y + rep(b1, each=nsite) * rep(X, nspp)
 y <- matrix(outer(b0, array(1, dim = c(1, nsite))), nrow = nspp,
             ncol = nsite) + matrix(outer(b1, X), nrow = nspp, ncol = nsite)
 e <- rnorm(nspp * nsite, sd = sd.resid) # add residual variance 
@@ -126,7 +128,7 @@ noise <- rnorm(nspp*nsite,mean=0,sd=1)
 
 dat <- data.frame(Y = YY, X = XX, site = as.factor(site), sp = as.factor(sp), noise = noise)
 
-print(head(dat))
+#print(head(dat))
 
 
 
