@@ -4,11 +4,11 @@
 
 > seed <- 101
 
-> simnum <- 100
+> simnum <- 200
 
-> nspp <- 200
+> nspp <- 100
 
-> nsite <- 30
+> nsite <- 40
 
 > sd.resid <- 10
 
@@ -20,7 +20,7 @@
 
 > sd.B1 <- 8
 
-> rho.B01 <- 0.8
+> rho.B01 <- 0.3
 
 > signal.B0 <- TRUE
 
@@ -70,12 +70,12 @@
 > df <- data.frame(sd0vec, sd1vec, corvec, residvec)
 
 > print(summary(df))
-     sd0vec           sd1vec           corvec            residvec    
- Min.   : 7.613   Min.   : 8.464   Min.   :-0.11608   Min.   :10.40  
- 1st Qu.:10.508   1st Qu.:10.570   1st Qu.:-0.00566   1st Qu.:10.63  
- Median :10.749   Median :10.815   Median : 0.01274   Median :10.71  
- Mean   :11.146   Mean   :10.863   Mean   : 0.02244   Mean   :10.71  
- 3rd Qu.:12.649   3rd Qu.:11.142   3rd Qu.: 0.04457   3rd Qu.:10.78  
- Max.   :13.880   Max.   :13.917   Max.   : 0.24210   Max.   :10.94  
+     sd0vec          sd1vec          corvec           residvec     
+ Min.   :2.731   Min.   :5.869   Min.   :-0.1404   Min.   : 9.609  
+ 1st Qu.:3.666   1st Qu.:7.477   1st Qu.: 0.2183   1st Qu.: 9.935  
+ Median :3.966   Median :7.939   Median : 0.3081   Median : 9.995  
+ Mean   :3.978   Mean   :7.923   Mean   : 0.3055   Mean   :10.008  
+ 3rd Qu.:4.312   3rd Qu.:8.335   3rd Qu.: 0.4051   3rd Qu.:10.091  
+ Max.   :5.410   Max.   :9.915   Max.   : 0.6771   Max.   :10.351  
 > # Wrapped output file lme4_simtest.wrapR.rout
 > 

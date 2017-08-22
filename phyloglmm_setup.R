@@ -65,9 +65,7 @@ modify_phylo_retrms <- function(rt,phylo,phylonm,phyloZ,sp){
 		repterms <- nrow(rt[["Ztlist"]][[i]])/length(unique(sp))
 		## reconstitute Zt from new Ztlist
 		## We have to rep the same number of sp terms and edges in phyloZ to match Zt 
-		rt[["Ztlist"]][[i]] <- (t(kronecker(phyloZ,matrix(1,nrow=repterms,ncol=repterms)))
-			%*% rt[["Ztlist"]][[i]]
-			)
+		rt[["Ztlist"]][[i]] <- t(kronecker(phyloZ,diag(repterms)))%*% rt[["Ztlist"]][[i]]
 		Gpdiff_new[i] <- n.edge  ## replace
 
 		## We have to create the Lind to match the theta field with larger reps w.r.t n.edges

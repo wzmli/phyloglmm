@@ -2,12 +2,12 @@
 
 seed <- 101
 
-simnum <- 100
+simnum <- 200
 
 # Generate simulated data for nspp species and nsite sites
-nspp <- 500
+nspp <- 100
 
-nsite <- 70
+nsite <- 40
 #nsite <- 1
 
 # residual variance (set to zero for binary data)
@@ -19,9 +19,9 @@ beta1 <- 0
 
 # magnitude of random effects
 sd.B0 <- 4
-sd.B1 <- 20
+sd.B1 <- 8
 
-rho.B01 <- 0.6
+rho.B01 <- 0.3
 
 # whether or not to include phylogenetic signal in B0 and B1
 signal.B0 <- TRUE
