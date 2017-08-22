@@ -5,9 +5,9 @@ seed <- 101
 simnum <- 100
 
 # Generate simulated data for nspp species and nsite sites
-nspp <- 200
+nspp <- 500
 
-nsite <- 30
+nsite <- 70
 #nsite <- 1
 
 # residual variance (set to zero for binary data)
@@ -19,13 +19,12 @@ beta1 <- 0
 
 # magnitude of random effects
 sd.B0 <- 4
-sd.B1 <- 8
+sd.B1 <- 20
 
-rho.B01 <- 0.8
+rho.B01 <- 0.6
 
 # whether or not to include phylogenetic signal in B0 and B1
 signal.B0 <- TRUE
-
 signal.B1 <- TRUE
 
 # MCMC iterations

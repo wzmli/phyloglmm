@@ -6,20 +6,23 @@ library(Matrix)
 
 phyZ <- phylo.to.Z(phy)
 
+# dat <- (dat
+#         %>% rowwise()
+#         %>% mutate(phylo=paste("t",sp,sep="")
+#                    , obs=phylo
+#         )
+# )
 dat <- (dat
-        %>% rowwise()
-        %>% mutate(phylo=paste("t",sp,sep="")
-                   , obs=phylo
-        )
-)
+        %>% mutate(obs = sp)
+)	
 
 dat <- data.frame(dat)
 
-TMBstruc <- glmmTMB(Y ~ 1  + (1|phylo) + (1|obs)
-  , data=dat)
-  # , debug=TRUE) # doFit=FALSE) in BB's update
+TMBstruc <- glmmTMB(Y ~ X  + (1+X|sp)
+  , data=dat
+  , doFit=FALSE) # doFit=FALSE) in BB's update
 
-TMBstruc_new <- modify_TMBstruc(TMBstruc,phy,phylonm="phylo",phyloZ=phyZ,sp=dat$phylo)
+TMBstruc_new <- modify_TMBstruc(TMBstruc,phy,phylonm="sp",phyloZ=phyZ,sp=dat$sp)
 
 # glmmTMB_fit <- glmmTMB:::fitTMB(TMBstruc_new)
 # tt <- tidy(glmmTMB_fit,scales=c(ran_pars="vcov",fixed=NA))

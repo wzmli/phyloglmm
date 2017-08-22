@@ -5,12 +5,12 @@ modify_TMBstruc <- function(tmbstruc,phylo,phylonm,
   n.edge <- nrow(phylo$edge)
   ## stuff in tmbstruc (but not within data.tmb) is (maybe) necessary
   ##  for cosmetics, proper reporting
-  tmbstruc$condList$reTrms <- modify_phylo_retrms(tmbstruc$modelInfo$reTrms$cond, #tmbstruc$condList$reTrms,
+  tmbstruc$condList$reTrms <- modify_phylo_retrms(tmbstruc$condList$reTrms, #tmbstruc$condList$reTrms,
                                                   phylo,phylonm,phyloZ,sp)
-  tmbstruc$condReStruc$`1 | phylo`$blockReps <- n.edge
+  tmbstruc$condReStruc$`1 + X | sp`$blockReps <- n.edge
   tmbstruc$condList$Z <- t(tmbstruc$condList$reTrms$Zt)
   ## data *inside* data.tmb is actually the most critical to allow correct fit
-  tmbstruc$data.tmb$terms$`1 | phylo`$blockReps <- n.edge
+  tmbstruc$data.tmb$terms$`1 + X | sp`$blockReps <- n.edge
   tmbstruc$data.tmb$Z <- t(tmbstruc$condList$reTrms$Zt)
   tmbstruc$parameters$b <- rep(0,ncol(tmbstruc$data.tmb$Z))
   return(tmbstruc)
