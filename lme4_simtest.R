@@ -14,7 +14,6 @@ for(i in 1:simnum){
 	lme4fit <- phylo_lmm(Y ~ X + (1+X|sp)
 		, data=dat
 		, phylonm = "sp"
-		, sp = dat$sp
 		, phylo = phy
 		, phyloZ=phyZ
 		, control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
