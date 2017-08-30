@@ -30,7 +30,7 @@ split_blkMat <- function(M,ind){
 	return(res)
 }
 
-modify_phylo_retrms <- function(rt,phylo,phylonm,phyloZ,sp){
+modify_phylo_retrms <- function(rt,phylo,phylonm,phyloZ){
 	## FIXME: better way to specify phylonm
 	## need to replace Zt, Lind, Gp, flist, Ztlist
 	n.edge <- nrow(phylo$edge)
@@ -39,7 +39,7 @@ modify_phylo_retrms <- function(rt,phylo,phylonm,phyloZ,sp){
 	phylo.pos <- which(names(rt$cnms)==phylonm) 
 	
 	## need to know number of number of speices to split index
-	nsp <- length(unique(sp))
+	nsp <- nrow(rt[["Lambdat"]])/length(rt[["cnms"]][[phylonm]]) 
 	inds <- c(0,cumsum(sapply(rt$Ztlist,nrow)))
 	## Zt: substitute phylo Z for previous dummy (scalar-intercept) Z
 	## Gp: substitute new # random effects (n.edge) for old # (n.phylo)
@@ -62,7 +62,7 @@ modify_phylo_retrms <- function(rt,phylo,phylonm,phyloZ,sp){
 	
 	for(i in phylo.pos){
 		## each sp is being rep w.r.t the complexity of RE in their respective Zt
-		repterms <- nrow(rt[["Ztlist"]][[i]])/length(unique(sp))
+		repterms <- length(rt[["cnms"]][[i]])
 		## reconstitute Zt from new Ztlist
 		## We have to rep the same number of sp terms and edges in phyloZ to match Zt 
 		rt[["Ztlist"]][[i]] <- t(kronecker(phyloZ,diag(repterms)))%*% rt[["Ztlist"]][[i]]
@@ -95,17 +95,20 @@ modify_phylo_retrms <- function(rt,phylo,phylonm,phyloZ,sp){
 }
 
 
-phylo_lmm <- function(formula,data,phylo,phylonm,phyloZ,control,sp){
+phylo_lmm <- function(formula,data,phylo,phylonm,phyloZ,control){
 	lmod <- lFormula(formula=formula,data = data,control=control)
-	lmod$reTrms <- modify_phylo_retrms(lmod$reTrms,phylo,phylonm,phyloZ,sp)
+	lmod$reTrms <- modify_phylo_retrms(lmod$reTrms,phylo,phylonm,phyloZ)
 	devfun <- do.call(mkLmerDevfun, lmod)
 	opt <- optimizeLmer(devfun)
 	mkMerMod(environment(devfun), opt, lmod$reTrms, fr = lmod$fr)
 }
 
-# 
-# nb <- ncol(lmod$reTrms$Lambdat)
-# lmod$reTrms$Lind <- rep(1:3,nb)
-# temp_lambda <- sparseMatrix(i=c(1,1,2),j=c(1,2,2),x=c(1,0,1))
-# lmod$reTrms$Lambdat <- bdiag(replicate(nb,temp_lambda))
-
+phylo_glmm <- function(formula,data,phylo,phylonm,phyloZ,control,family){
+  glmod <- glFormula(formula=formula,data = data,control=control,family)
+  glmod$reTrms <- modify_phylo_retrms(glmod$reTrms,phylo,phylonm,phyloZ)
+  devfun <- do.call(mkGlmerDevfun, glmod)
+  opt <- optimizeGlmer(devfun)
+  devfun <- updateGlmerDevfun(devfun,glmod$reTrms)
+  opt <- optimizeGlmer(devfun,stage=2)
+  mkMerMod(environment(devfun), opt, glmod$reTrms, fr = glmod$fr)
+}

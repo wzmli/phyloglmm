@@ -26,6 +26,12 @@ Sources += $(wildcard *.R)
 simulate_tree.Rout: parameters.R simulate_tree.R
 	$(run-R)
 
+simulate_poistree.Rout: parameters.R simulate_poistree.R
+	$(run-R)
+
+fit_poisson.Rout: parameters.R simulate_poistree.Rout phyloglmm_setup.R phyloglmm_pois.R
+	$(run-R)
+
 ### Fitting
 
 fit_pez.Rout: parameters.R simulate_tree.Rout fit_pez.R

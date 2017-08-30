@@ -1,12 +1,12 @@
 ### TMB Helper functions
 
 modify_TMBstruc <- function(tmbstruc,phylo,phylonm,
-                            phyloZ,sp) {
+                            phyloZ) {
   n.edge <- nrow(phylo$edge)
   ## stuff in tmbstruc (but not within data.tmb) is (maybe) necessary
   ##  for cosmetics, proper reporting
   tmbstruc$condList$reTrms <- modify_phylo_retrms(tmbstruc$condList$reTrms, #tmbstruc$condList$reTrms,
-                                                  phylo,phylonm,phyloZ,sp)
+                                                  phylo,phylonm,phyloZ)
   tmbstruc$condReStruc$`1 + X | sp`$blockReps <- n.edge
   tmbstruc$condList$Z <- t(tmbstruc$condList$reTrms$Zt)
   ## data *inside* data.tmb is actually the most critical to allow correct fit
@@ -23,5 +23,6 @@ fit_TMBstruc <- function(TMBStruc,verbose=FALSE) {
                                                    gradient = gr)))
     fit$parfull <- obj$env$last.par.best
     sdr <- TMB:::sdreport(obj)
-    return(list(fit=fit,sdr=sdr))
+    report <- obj$report()
+    return(list(fit=fit,sdr=sdr,report=report))
   }

@@ -29,20 +29,21 @@ Sigma <- kronecker(covmat,Vphy)
 #}
 
 b.all <- MASS::mvrnorm(n=1
-	, mu=rep(c(beta0,beta1),each=nspp)
-	, Sigma=Sigma
+                       , mu=rep(c(beta0,beta1),each=nspp)
+                       , Sigma=Sigma
 )
 
 b0 <- b.all[1:nspp] 
 b1 <- b.all[(nspp+1):(2*nspp)]
 
-y <- matrix(outer(b0, array(1, dim = c(1, nsite))), nrow = nspp,
-            ncol = nsite) + matrix(outer(b1, X), nrow = nspp, ncol = nsite)
-e <- rnorm(nspp * nsite, sd = sd.resid) # add residual variance 
-y <- y + matrix(e, nrow = nspp, ncol = nsite)
-y <- matrix(y, nrow = nspp * nsite, ncol = 1)
+mu <- exp(matrix(outer(b0, array(1, dim = c(1, nsite))), nrow = nspp,
+            ncol = nsite) + matrix(outer(b1, X), nrow = nspp, ncol = nsite))
 
-Y <- y
+# e <- rnorm(nspp * nsite, sd = sd.resid) # add residual variance 
+# y <- y + matrix(e, nrow = nspp, ncol = nsite)
+mu <- matrix(mu, nrow = nspp * nsite, ncol = 1)
+Y <- rpois(length(mu),mu)
+
 Y <- matrix(Y, nrow = nspp, ncol = nsite)
 
 # name the simulated species 1:nspp and sites 1:nsites
