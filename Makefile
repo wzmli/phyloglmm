@@ -56,6 +56,17 @@ fit_tmb.Rout: parameters.R simulate_tree.Rout phyloglmm_setup.R tmb_setup.R fit_
 	$(run-R)
 
 
+#### Li et al 2017 examples
+
+read_data.Rout: hacked_code/data_clean/dune_traits_Z.txt hacked_code/0_pkg_func.R hacked_code/1-data.R
+	$(run-R)
+
+phylosig.Rout: read_data.Rout hacked_code/3-phylosig.R
+	$(run-R)
+
+forward_selection.Rout: phylosig.Rout hacked_code/2-forward_selection_fixed_first.R
+	$(run-R)
+
 ### Makestuff
 
 
