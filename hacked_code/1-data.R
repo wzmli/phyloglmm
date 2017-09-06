@@ -111,7 +111,7 @@ edgelabels(text = round(dune.phylo2$edge.length,2), frame = "n")
 dune.veg2.wide = dcast(dune.veg2, site~sp, value.var = "freq")
 row.names(dune.veg2.wide) = dune.veg2.wide$site; dune.veg2.wide$site = NULL
 
-pdf(file = "dune_phylo.pdf", width = 10, height = 12)
+#pdf(file = "dune_phylo.pdf", width = 10, height = 12)
 par(mar = c(0.1,0.1,1.1,0.0))
 plot(dune.phylo2,
      show.tip.label=T, cex=1, x.lim=1200,

@@ -18,6 +18,10 @@ counter <- 1
 
 dat <- filter(dune.veg2, sp%in% dune.traits2$sp)
 
+## hack: join traits to dat 
+
+dat <- left_join(dat,dune.traits2,by="sp")
+
 #   if (full.data == 1) {
 #     data.sp <- aggregate(presence ~ sp, data = dat, sum)
 #     #hist(data.sp$presence, breaks=30)

@@ -68,7 +68,7 @@ phylo_pattern = function(veg.long, phylo, binary = FALSE, trans = NULL){
       Y ~ 1, data = veg.long, family = "gaussian", sp = veg.long$sp, site = veg.long$site,
       random.effects = list(re.sp, re.sp.phy, re.site, re.nested.phy), 
       REML = F, verbose = F, s2.init = c(0.98, 0.001, 0.001, 0.0065), 
-      reltol = reltol, maxit = maxit)
+      reltol = 10^-5, maxit = 40)
     cat("sigma_c2_attraction = ", z$s2n, "\n")
     cat("attraction converge code = ", z$convcode, "\n")
     saveRDS(z, file = "rds/Q1_pattern_log_attraction.rds")
@@ -78,7 +78,7 @@ phylo_pattern = function(veg.long, phylo, binary = FALSE, trans = NULL){
       Y ~ 1, data = veg.long, family = "gaussian", sp = veg.long$sp, site = veg.long$site,
       random.effects = list(re.sp, re.site, re.sp.phy), 
       REML = F, verbose = F, s2.init = c(0.98, 0.001, 0.001), 
-      reltol = reltol, maxit = maxit)
+      reltol = 10^-5, maxit = 40)
     saveRDS(z0, file = "rds/Q1_pattern_log_null.rds")
     cat("model without nested term converge code = ", z0$convcode, "\n")
     cat("p attraction = ", pchisq(2 * (z$logLik - z0$logLik), df = 1, lower.tail = F) / 2, "\n")
@@ -88,7 +88,7 @@ phylo_pattern = function(veg.long, phylo, binary = FALSE, trans = NULL){
       Y ~ 1, data = veg.long, family = "gaussian", sp = veg.long$sp, site = veg.long$site, 
       random.effects = list(re.sp, re.sp.phy, re.site, re.nested.rep),
       REML = F, verbose = F, s2.init = c(0.98, 0.001, 0.028, 0.001), 
-      reltol = reltol, maxit = maxit)
+      reltol = 10^-5, maxit = 40)
     saveRDS(z.rep, file = "rds/Q1_pattern_log_repulsion.rds")
     cat("sigma_c2_repulsion = ", z.rep$s2n, "\n")
     cat("repulsion model converge code = ", z.rep$convcode, "\n")
@@ -115,7 +115,7 @@ phylo_pattern = function(veg.long, phylo, binary = FALSE, trans = NULL){
       sp = veg.long$sp, site = veg.long$site,
       random.effects = list(re.sp, re.sp.phy, re.site, re.nested.phy),
       REML = F, verbose = F, s2.init = c(2.8, 0.001, 0.01, 0.045),
-      reltol = reltol, tol.pql = 10^-4)
+      reltol = 10^-5, tol.pql = 10^-4)
     saveRDS(z, file = "rds/Q1_pattern_binary_attraction.rds")
     cat("sigma_c2_attract = ", z$s2n, "\n")
     cat("attraction converge code = ", z$convcode, "\n")
@@ -128,7 +128,7 @@ phylo_pattern = function(veg.long, phylo, binary = FALSE, trans = NULL){
       sp = veg.long$sp, site = veg.long$site,
       random.effects = list(re.sp, re.sp.phy, re.site, re.nested.rep),
       REML = F, verbose = F, s2.init = c(3, 0.001, 0.19, 0.001),
-      reltol = reltol, tol.pql = 10^-4)
+      reltol = 10^-5, tol.pql = 10^-4)
     saveRDS(z.rep, file = "rds/Q1_pattern_binary_repulsion.rds")
     cat("sigma_c2_repulsion = ", z.rep$s2n, "\n")
     cat("repulsion converge code = ", z.rep$convcode, "\n")
@@ -141,7 +141,7 @@ phylo_pattern = function(veg.long, phylo, binary = FALSE, trans = NULL){
       sp = veg.long$sp, site = veg.long$site, 
       random.effects = list(re.sp, re.sp.phy, re.site),
       REML = F, verbose = F, s2.init = c(3, 0.001, 0.19),
-      reltol = reltol, tol.pql = 10^-4)
+      reltol = 10^-5, tol.pql = 10^-4)
     saveRDS(z0, file = "rds/Q1_pattern_binary_null.rds")
     
     sigma_output = data.frame(models = c("attraction", "repulsion", "no_nested"),
@@ -312,7 +312,7 @@ phylo_explained_by_multi_traits_re_sel = function(veg.long, phylo = pb.phylo, tr
     z <- communityPGLMM(as.formula("Y ~ 1 + .") , data = dat2,
                         family = "gaussian", sp = dat$sp, site = dat$site, 
                         random.effects = re.all, REML = F, verbose = F,
-                        reltol = reltol, maxit = maxit,
+                        reltol = 10^-5, maxit = 40,
                         s2.init = c(1.5, rep(0.01, (length(re.all)-1))))
     saveRDS(z, "rds/trait_multi_reg_log_full.rds")
     cat("s2_attract_with_traits = ", z$s2n[1], "\n")
@@ -323,7 +323,7 @@ phylo_explained_by_multi_traits_re_sel = function(veg.long, phylo = pb.phylo, tr
                          family = "gaussian", sp = dat$sp, site = dat$site, 
                          random.effects = list(re.sp, re.sp.phy, re.site, re.nested.phy), 
                          REML = F, verbose = F, 
-                         reltol = reltol, maxit = maxit,
+                         reltol = 10^-5, maxit = 40,
                          s2.init = c(1.5, .01, .01, .01)) # remove re.traits
     saveRDS(z0, "rds/trait_multi_reg_log_no_traits.rds")
     cat("s2_attract_without_traits = ", z0$s2n[1], "\n")
@@ -333,7 +333,7 @@ phylo_explained_by_multi_traits_re_sel = function(veg.long, phylo = pb.phylo, tr
     z1 <- communityPGLMM(as.formula("Y ~ 1 + .") , data = dat2,
                          family = "gaussian", sp = dat$sp, site = dat$site, 
                          random.effects = re.all[-length(re.all)], REML = F, verbose = F, 
-                         reltol = reltol, maxit = maxit,
+                         reltol = 10^-5, maxit = 40,
                          s2.init = c(1.5, rep(0.01, (length(re.all)-2)))) # remove re.nested.phy
     saveRDS(z1, "rds/trait_multi_reg_log_no_nested_phy.rds")
     cat("no_nested_phy convcode = ", z1$convcode, "\n")
@@ -343,7 +343,7 @@ phylo_explained_by_multi_traits_re_sel = function(veg.long, phylo = pb.phylo, tr
                           family = "gaussian", sp = dat$sp, site = dat$site, 
                           random.effects = list(re.sp, re.sp.phy, re.site), 
                           REML = F, verbose = F, 
-                          reltol = reltol, maxit = maxit,
+                          reltol = 10^-5, maxit = 40,
                           s2.init = c(1.5, .01, .01)) # remove re.traits and re.nested.phy
     saveRDS(z00, "rds/trait_multi_reg_log_no_traits_no_nested.rds")
     
@@ -556,7 +556,7 @@ selection = function(veg, trait, phylo, binary = FALSE,
                           random.effects = re.all, 
                           REML = F, verbose = F, 
                           s2.init = c(1.5, rep(0.01, (length(re.all)-1))), 
-                          reltol = reltol, maxit = maxit)
+                          reltol = 10^-5, maxit = 40)
       saveRDS(z, file = paste0("select/", output_1$traits[i]), "_z.rds")
       # print(z$convcode)
       
@@ -565,7 +565,7 @@ selection = function(veg, trait, phylo, binary = FALSE,
                            sp = dat$sp, site = dat$site, 
                            random.effects = re.all[c(1,2, length(re.all)-1, length(re.all))], 
                            REML = F, verbose = F, s2.init = c(1.5, .01, .1, .0064),
-                           reltol = reltol, maxit = maxit)
+                           reltol = 10^-5, maxit = 40)
       saveRDS(z0, file = paste0("select/", output_1$traits[i]), "_z0.rds")
       # print(z0$convcode)
     }
@@ -593,7 +593,7 @@ selection = function(veg, trait, phylo, binary = FALSE,
                           random.effects = re.all, 
                           REML = F, verbose = F, 
                           s2.init = c(1.5, rep(0.01, (length(re.all)-1))), 
-                          reltol = reltol, maxit = maxit)
+                          reltol = 10^-5, maxit = 40)
       saveRDS(z, file = paste0("select/", output_1$traits[i]), "_z_binary.rds")
       
       # no trait
@@ -601,7 +601,7 @@ selection = function(veg, trait, phylo, binary = FALSE,
                            sp = dat$sp, site = dat$site, 
                            random.effects = re.all[c(1,2, length(re.all)-1, length(re.all))], 
                            REML = F, verbose = F, s2.init = c(1.5, .01, .1, .0064),
-                           reltol = reltol, maxit = maxit)
+                           reltol = 10^-5, maxit = 40)
       saveRDS(z0, file = paste0("select/", output_1$traits[i]), "_z0_binary.rds")
     }
     

@@ -13,7 +13,8 @@ i = 0
 modellist = list()
 (Aic1 =  AIC(start.model))
 Aic0 = Aic1 + 1
-block = as.vector(dune.traits) ## hack?
+block <- as.vector(dune.traits2) ## hack?
+block <- names(dune.traits2)[-1]
 fix.termsF = NULL
 AicF = AIC(start.model)
 while (Aic1 < Aic0){
@@ -47,7 +48,8 @@ i = 0
 modellist = list()
 (Aic1 =  AIC(start.model))
 Aic0 = Aic1 + 1
-block = as.vector(traits)
+block <- as.vector(dune.traits2) ## hack?
+block <- names(dune.traits2)[-1]
 random.terms = NULL
 AicR = AIC(start.model)
 
@@ -71,11 +73,11 @@ while (Aic1 < Aic0){
 # with log.sla as random effect
 # with log.sla and annual as fixed terms
 
-lmer(y ~ 1 + log.sla + annual + (1|sp) + (1|site) + (0+log.sla|site), data = dat, REML = F)
+lmer(Y ~ 1 + log.sla + annual + (1|sp) + (1|site) + (0+log.sla|site), data = dat, REML = F)
 
 
 re.sla = list(unname(unlist(dat["log.sla"])), site = dat$site, covar = diag(nsite))
-z_traitsRE = communityPGLMM(formula = "y ~ 1 + log.sla + annual", 
+z_traitsRE = communityPGLMM(formula = "Y ~ 1 + log.sla + annual", 
                             data = dat, family = "gaussian", 
                             sp = dat$sp, site = dat$site, 
                             random.effects = list(re.sp, re.sp.phy, re.site, 
