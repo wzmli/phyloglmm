@@ -64,7 +64,7 @@ read_data.Rout: hacked_code/data_clean/dune_traits_Z.txt hacked_code/0_pkg_func.
 phylosig.Rout: read_data.Rout hacked_code/3-phylosig.R
 	$(run-R)
 
-forward_selection.Rout: phylosig.Rout hacked_code/2-forward_selection_fixed_first.R
+forward_selection.Rout: phylosig.Rout hacked_code/0_pkg_func.R hacked_code/2-forward_selection_fixed_first.R
 	$(run-R)
 
 ### Makestuff

@@ -13,7 +13,7 @@ i = 0
 modellist = list()
 (Aic1 =  AIC(start.model))
 Aic0 = Aic1 + 1
-block = as.vector(traits)
+block = as.vector(dune.traits) ## hack?
 fix.termsF = NULL
 AicF = AIC(start.model)
 while (Aic1 < Aic0){
