@@ -557,7 +557,7 @@ selection = function(veg, trait, phylo, binary = FALSE,
                           REML = F, verbose = F, 
                           s2.init = c(1.5, rep(0.01, (length(re.all)-1))), 
                           reltol = 10^-5, maxit = 40)
-      saveRDS(z, file = paste0("select/", output_1$traits[i]), "_z.rds")
+      # saveRDS(z, file = paste0("select/", output_1$traits[i]), "_z.rds")
       # print(z$convcode)
       
       # no trait
@@ -566,7 +566,7 @@ selection = function(veg, trait, phylo, binary = FALSE,
                            random.effects = re.all[c(1,2, length(re.all)-1, length(re.all))], 
                            REML = F, verbose = F, s2.init = c(1.5, .01, .1, .0064),
                            reltol = 10^-5, maxit = 40)
-      saveRDS(z0, file = paste0("select/", output_1$traits[i]), "_z0.rds")
+      # saveRDS(z0, file = paste0("select/", output_1$traits[i]), "_z0.rds")
       # print(z0$convcode)
     }
     
@@ -594,7 +594,7 @@ selection = function(veg, trait, phylo, binary = FALSE,
                           REML = F, verbose = F, 
                           s2.init = c(1.5, rep(0.01, (length(re.all)-1))), 
                           reltol = 10^-5, maxit = 40)
-      saveRDS(z, file = paste0("select/", output_1$traits[i]), "_z_binary.rds")
+      # saveRDS(z, file = paste0("select/", output_1$traits[i]), "_z_binary.rds")
       
       # no trait
       z0 <- communityPGLMM(as.formula(fm), data = dat, family = "binomial", 
@@ -602,18 +602,19 @@ selection = function(veg, trait, phylo, binary = FALSE,
                            random.effects = re.all[c(1,2, length(re.all)-1, length(re.all))], 
                            REML = F, verbose = F, s2.init = c(1.5, .01, .1, .0064),
                            reltol = 10^-5, maxit = 40)
-      saveRDS(z0, file = paste0("select/", output_1$traits[i]), "_z0_binary.rds")
+      # saveRDS(z0, file = paste0("select/", output_1$traits[i]), "_z0_binary.rds")
     }
     
     output_1[i-1, 2] = z$s2n[1]
     output_1[i-1, 3] = z0$s2n[1]
     # output_1[i-1, 4] = z$AIC
     # output_1[i-1, 5] = z0$AIC
-    write.csv(output_1, file = "output_1_forward_selection.csv")
+    # write.csv(output_1, file = "output_1_forward_selection.csv")
   }
   output_1 = mutate(output_1, prop = (s2_nested_wo_t - s2_nested_w_t)/s2_nested_wo_t) %>% 
     arrange(desc(prop)) # get the trait that decreases nested c^2 the most
   output_1
+  return(output_1)
 }
 
 # this functional can be used to search environmental variables that closely related

@@ -1,3 +1,18 @@
+Sept 6th 2017
+
+Li, Ives and Waller 2017
+
+Step 1: fit without phylo.signal and use forward selection on functional traits to get the _best model_
+
+Step 2: forward selection of random effects by site with the functional traits selected from step 1
+
+Step 3: add phylo.signal
+
+
+----------------------------------------------------------------------
+
+
+
 Aug 17th 2017
 
 We figured out and implemented correlated random slope and intercept.

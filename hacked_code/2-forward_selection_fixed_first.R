@@ -2,6 +2,8 @@ library(lme4)
 library(pez)
 
 str(dat)
+reltol <- 10e-4
+maxit <- 40
 
 ## abundance data ----
 start.model = lmer(Y ~ 1 + (1|sp) + (1|site), data = dat, REML = FALSE)
@@ -49,7 +51,7 @@ modellist = list()
 (Aic1 =  AIC(start.model))
 Aic0 = Aic1 + 1
 block <- as.vector(dune.traits2) ## hack?
-block <- names(dune.traits2)[-1]
+block <- names(dune.traits2)[c(2,6)]
 random.terms = NULL
 AicR = AIC(start.model)
 
@@ -77,6 +79,24 @@ lmer(Y ~ 1 + log.sla + annual + (1|sp) + (1|site) + (0+log.sla|site), data = dat
 
 
 re.sla = list(unname(unlist(dat["log.sla"])), site = dat$site, covar = diag(nsite))
+
+REs <- get_RE(veg.long = dune.veg2
+  , trait = dune.traits2[c(1, 2)]
+  , trait.re = c("log.sla")
+  , phylo = dune.phylo2
+  , trans = "log")
+
+## get_RE returns a list of random effects in this order:
+## re.site
+## re.sp
+## re.phy
+## re.nested.phy
+
+re.site <- REs[[1]]
+re.sp <- REs[[2]]
+re.sp.phy <- REs[[3]]
+re.nested.phy <- REs[[4]]
+
 z_traitsRE = communityPGLMM(formula = "Y ~ 1 + log.sla + annual", 
                             data = dat, family = "gaussian", 
                             sp = dat$sp, site = dat$site, 
@@ -94,7 +114,7 @@ z_traitsRE$B.pvalue
 
 
 ## table 2A, without traits as Random effects
-z_no_traitsRE = communityPGLMM(formula = final.modelR$formula, 
+z_no_traitsRE = communityPGLMM(formula = "Y ~ 1 + log.sla + annual",
                                data = dat, family = "gaussian", 
                                sp = dat$sp, site = dat$site, 
                                random.effects = list(re.sp, re.sp.phy, re.site, 
@@ -279,12 +299,12 @@ dune_multi_traits_binary2 = phylo_explained_by_multi_traits(veg.long = dune.veg2
 
 ## extract details to fill Table S2 ----
 # rds files are removed as they are large.
-z.binary = readRDS("rds/binary_trait_multi_reg_full.rds")
+# z.binary = readRDS("rds/binary_trait_multi_reg_full.rds")
 z.binary$s2n
 round(z.binary$s2r, 6)
 z.binary
 
-z0.binary = readRDS("rds/binary_trait_multi_reg_no_traits.rds")
+# z0.binary = readRDS("rds/binary_trait_multi_reg_no_traits.rds")
 z0.binary$s2n
 z0.binary$s2r %>% round(6)
 z0.binary
