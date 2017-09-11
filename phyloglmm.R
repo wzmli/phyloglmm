@@ -15,11 +15,16 @@ dat <- (dat
 )	
 
 lme4timecor <- system.time(
-	lme4fitcor <- phylo_lmm(Y ~ X + (1+X|sp)
+	lme4fitcor <- phylo_lmm(Y ~ X 
+		+ (1|obs) 
+		+ (1|sp) 
+		+ (0+X|obs) 
+		+ (0+X|sp)
 		, data=dat
 		, phylonm = "sp"
 		, phylo = phy
 		, phyloZ=phyZ
+		, nsp = nspp
 		, control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
 	)
 )

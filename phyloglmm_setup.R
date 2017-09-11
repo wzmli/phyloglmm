@@ -30,7 +30,7 @@ split_blkMat <- function(M,ind){
 	return(res)
 }
 
-modify_phylo_retrms <- function(rt,phylo,phylonm,phyloZ){
+modify_phylo_retrms <- function(rt,phylo,phylonm,phyloZ,nsp){
 	## FIXME: better way to specify phylonm
 	## need to replace Zt, Lind, Gp, flist, Ztlist
 	n.edge <- nrow(phylo$edge)
@@ -39,7 +39,9 @@ modify_phylo_retrms <- function(rt,phylo,phylonm,phyloZ){
 	phylo.pos <- which(names(rt$cnms)==phylonm) 
 	
 	## need to know number of number of speices to split index
+	if(is.null(nsp)){
 	nsp <- nrow(rt[["Lambdat"]])/length(rt[["cnms"]][[phylonm]]) 
+	}
 	inds <- c(0,cumsum(sapply(rt$Ztlist,nrow)))
 	## Zt: substitute phylo Z for previous dummy (scalar-intercept) Z
 	## Gp: substitute new # random effects (n.edge) for old # (n.phylo)
@@ -95,9 +97,9 @@ modify_phylo_retrms <- function(rt,phylo,phylonm,phyloZ){
 }
 
 
-phylo_lmm <- function(formula,data,phylo,phylonm,phyloZ,control){
+phylo_lmm <- function(formula,data,phylo,phylonm,phyloZ,nsp=NULL,control){
 	lmod <- lFormula(formula=formula,data = data,control=control)
-	lmod$reTrms <- modify_phylo_retrms(lmod$reTrms,phylo,phylonm,phyloZ)
+	lmod$reTrms <- modify_phylo_retrms(lmod$reTrms,phylo,phylonm,phyloZ,nsp)
 	devfun <- do.call(mkLmerDevfun, lmod)
 	opt <- optimizeLmer(devfun)
 	mkMerMod(environment(devfun), opt, lmod$reTrms, fr = lmod$fr)

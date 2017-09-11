@@ -22,6 +22,8 @@ sdvec <- c(sd.B0,sd.B1)
 varmat <- sdvec %*% t(sdvec)
 covmat <- varmat * cormat
 
+print(covmat)
+
 Sigma <- kronecker(covmat,Vphy)
 
 #if((signal.B0==signal.B1) & (signal.B0 == FALSE)){

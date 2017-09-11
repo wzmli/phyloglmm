@@ -22,12 +22,15 @@ re.site <- list(1, site = dat$site, covar = diag(nsite))
 
 
 peztime <- system.time(
-	pezfit <- communityPGLMM(Y ~ X + noise
+	pezfit <- communityPGLMM(Y ~ X
 		, data = dat
 		, family = "gaussian"
 		, sp = dat$sp
 		, site = dat$site
-		, random.effects = list(re.1, re.2, re.3, re.4)
+		, random.effects = list(re.1
+			, re.2
+			, re.3
+			, re.4)
 		, REML = FALSE
 		, verbose = FALSE
 		)
