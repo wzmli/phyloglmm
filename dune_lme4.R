@@ -29,11 +29,12 @@ dat <- (dat
 
 lme4time_1 <- system.time(
   lme4fit_1 <- phylo_lmm(Y ~ 1 + log.sla + annual 
-		+ (1|obs) 
-		+ (1|sp)
-		+ (0 + standard_site|sp)
-		+ (0 + log.sla | site)
-		+ (1|site) 
+# 		+ (1|obs) 
+# 		+ (1|sp)
+      + (1 + standard_site | sp)
+		# + (0 + site|sp)
+		# + (0 + log.sla | site)
+		# + (1|site) 
 		, data=dat
 		, phylonm = "sp"
 		, nsp = 28
@@ -48,7 +49,7 @@ lme4time_2 <- system.time(
   lme4fit_2 <- phylo_lmm(Y ~ 1 + log.sla + annual
 		+ (1|obs)
 		+ (1|sp)
-		+ (0 + standard_site|sp)
+		+ (0 + site|sp)
 		+ (1|site)
 		, data=dat
 		, phylonm = "sp"
