@@ -17,6 +17,8 @@ Vphy <- vcv(phy)
 X <- matrix(1:nsite, nrow = 1, ncol = nsite)
 X <- (X - mean(X))/sd(X)
 
+site_name <- sapply(1:nsite, function(x){paste("site","_",x,sep="")})
+
 cormat <- matrix(c(1,rho.B01,rho.B01,1),2,2)
 sdvec <- c(sd.B0,sd.B1)
 varmat <- sdvec %*% t(sdvec)
@@ -63,8 +65,8 @@ site <- matrix(kronecker(1:nsite, matrix(1, nrow = nspp, ncol =
 sp <- matrix(kronecker(matrix(1, nrow = nsite, ncol = 1), 1:nspp),
              nrow = nspp * nsite, ncol = 1)
 
-dat <- data.frame(Y = YY, X = XX, site = as.factor(site), sp = as.factor(sp))
+dat <- data.frame(Y = YY, X = XX, site = as.factor(site), sp = as.factor(sp),site_name = rep(site_name,each=nspp))
 
 
-
+print(head(dat))
 

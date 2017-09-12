@@ -15,11 +15,11 @@ dat <- (dat
 )	
 
 lme4timecor <- system.time(
-	lme4fitcor <- phylo_lmm(Y ~ X 
+	lme4fitcor <- phylo_lmm(Y ~ site_name 
 		+ (1|obs) 
 		+ (1|sp) 
-		+ (0+X|obs) 
-		+ (0+X|sp)
+		+ (0+site_name|obs) 
+		+ (0+site_name|sp)
 		, data=dat
 		, phylonm = "sp"
 		, phylo = phy

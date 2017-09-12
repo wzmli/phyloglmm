@@ -1,0 +1,307 @@
+> 
+> # Generated using wrapR file dune_lme4.wrapR.r
+> source('get_RE.R', echo=TRUE)
+
+> get_RE <- function(veg.long, phylo = pb.phylo, trait = pb.trait, 
++     trait.re = NULL, binary = FALSE, trans = NULL) {
++     veg.long$presence <-  .... [TRUNCATED] 
+
+> get_phylo <- function(veg.long, phylo = pb.phylo, 
++     trait = pb.trait, trait.re = NULL, binary = FALSE, trans = NULL) {
++     veg.long$presence  .... [TRUNCATED] 
+> source('hacked_code/0_pkg_func.R', echo=TRUE)
+
+> options(stringsAsFactors = F)
+
+> library(vegan)
+
+> library(stringr)
+
+> library(dplyr)
+
+> library(brranching)
+
+> library(tidyr)
+
+> library(reshape2)
+
+> library(ape)
+
+> library(pez)
+
+> library(lme4)
+
+> library(phylolm)
+
+> library(picante)
+
+> phylo_pattern = function(veg.long, phylo, binary = FALSE, 
++     trans = NULL) {
++     if (!is.null(trans)) {
++         if (trans == "log") {
++      .... [TRUNCATED] 
+
+> SigAIC <- function(mod, Penalty = qchisq(0.95, 1)) {
++     LL <- logLik(mod)
++     ll <- as.numeric(LL)
++     df <- attr(LL, "df")
++     as.numeric( .... [TRUNCATED] 
+
+> Model_select_tier1R <- function(start.model, block, 
++     sig.aic = FALSE) {
++     Sigaic <- NA
++     M <- vector("list", length = length(block))
++ .... [TRUNCATED] 
+
+> Model_select_tier2F <- function(start.model, block, 
++     sig.aic = FALSE) {
++     M = list()
++     for (j in 1:length(block)) {
++         M[[j]] < .... [TRUNCATED] 
+
+> phylo_explained_by_multi_traits_re_sel = function(veg.long, 
++     phylo = pb.phylo, trait = pb.trait, trait.re = NULL, binary = FALSE, 
++     trans .... [TRUNCATED] 
+
+> selection = function(veg, trait, phylo, binary = FALSE, 
++     added.traits = NULL, fixed.terms = NULL) {
++     if (!is.null(added.traits)) {
++      .... [TRUNCATED] 
+
+> phylo_signal_slopes_envi = function(dat = NULL, veg.long = NULL, 
++     phylo, envi = NULL, binary = FALSE) {
++     if (is.null(dat)) {
++         ve .... [TRUNCATED] 
+
+> trait_selection = function(veg.long, trait = pb.trait, 
++     binary = FALSE, trans = NULL) {
++     veg.long$presence <- as.numeric(veg.long$freq >  .... [TRUNCATED] 
+> source('phyloglmm_setup.R', echo=TRUE)
+
+> phylo.to.Z <- function(r) {
++     ntip <- length(r$tip.label)
++     Zid <- Matrix(0, ncol = length(r$edge.length), nrow = ntip)
++     nodes <- (ntip .... [TRUNCATED] 
+
+> split_blkMat <- function(M, ind) {
++     res <- list()
++     if (length(ind) == 1) {
++         return(list(M))
++     }
++     for (i in 1:(length(ind .... [TRUNCATED] 
+
+> modify_phylo_retrms <- function(rt, phylo, phylonm, 
++     phyloZ, nsp) {
++     n.edge <- nrow(phylo$edge)
++     phylo.pos <- which(names(rt$cnms) = .... [TRUNCATED] 
+
+> phylo_lmm <- function(formula, data, phylo, phylonm, 
++     phyloZ, nsp = NULL, control) {
++     lmod <- lFormula(formula = formula, data = data, co .... [TRUNCATED] 
+
+> phylo_glmm <- function(formula, data, phylo, phylonm, 
++     phyloZ, control, family) {
++     glmod <- glFormula(formula = formula, data = data, con .... [TRUNCATED] 
+> source('dune_lme4.R', echo=TRUE)
+
+> library(ape)
+
+> library(Matrix)
+
+> library(lme4)
+
+> library(dplyr)
+
+> dd <- data.frame(dat)
+
+> print(dd %>% count(site))
+# A tibble: 20 x 2
+     site     n
+   <fctr> <int>
+ 1      1    28
+ 2      2    28
+ 3      3    28
+ 4      4    28
+ 5      5    28
+ 6      6    28
+ 7      7    28
+ 8      8    28
+ 9      9    28
+10     10    28
+11     11    28
+12     12    28
+13     13    28
+14     14    28
+15     15    28
+16     16    28
+17     17    28
+18     18    28
+19     19    28
+20     20    28
+
+> phy <- get_phylo(veg.long = dune.veg2, trait = dune.traits2[c(1, 
++     2)], trait.re = c("log.sla"), phylo = dune.phylo2, trans = "log")
+
+> phyZ <- phylo.to.Z(phy)
+
+> dat <- (dat %>% rowwise() %>% mutate(obs = sp, standard_site = (as.numeric(site) - 
++     mean(1:20))/sd(1:20)))
+
+> lme4time_1 <- system.time(lme4fit_1 <- phylo_lmm(Y ~ 
++     1 + log.sla + annual + (1 | obs) + (1 | sp) + (0 + standard_site | 
++         sp) + (0 + .... [TRUNCATED] 
+
+> lme4time_2 <- system.time(lme4fit_2 <- phylo_lmm(Y ~ 
++     1 + log.sla + annual + (1 | obs) + (1 | sp) + (0 + standard_site | 
++         sp) + (1 | .... [TRUNCATED] 
+
+> REs <- get_RE(veg.long = dune.veg2, trait = dune.traits2[c(1, 
++     2)], trait.re = c("log.sla"), phylo = dune.phylo2, trans = "log")
+[1] 28 28
+
+> re.site <- REs[[1]]
+
+> re.sp <- REs[[2]]
+
+> re.sp.phy <- REs[[3]]
+
+> re.nested.phy <- REs[[4]]
+
+> re.sla = list(unname(unlist(dat["log.sla"])), site = dat$site, 
++     covar = diag(nsite))
+
+> peztime_1 <- system.time(pezfit_1 <- communityPGLMM(formula = "Y ~ 1 + log.sla + annual", 
++     data = dat, family = "gaussian", sp = dat$sp, site  .... [TRUNCATED] 
+
+> peztime_2 <- system.time(pezfit_2 <- communityPGLMM(formula = "Y ~ 1 + log.sla + annual", 
++     data = dat, family = "gaussian", sp = dat$sp, site  .... [TRUNCATED] 
+
+> print(peztime_1)
+   user  system elapsed 
+358.656   3.716 370.106 
+
+> print(summary(pezfit_1))
+Linear mixed model fit by restricted maximum likelihood
+
+Call:[1] "Y ~ 1 + log.sla + annual"
+
+logLik    AIC    BIC 
+-540.8 1099.5 1128.2 
+
+Random effects:
+             Variance Std.Dev
+non-nested 1 0.038949 0.19736
+non-nested 2 0.000985 0.03138
+non-nested 3 0.015114 0.12294
+non-nested 4 0.003293 0.05739
+nested 1     0.006490 0.08056
+residual     0.346933 0.58901
+
+Fixed effects:
+                Value Std.Error  Zscore   Pvalue    
+(Intercept)  0.507965  0.069237  7.3366 2.19e-13 ***
+log.sla      0.170249  0.057501  2.9608 0.003068 ** 
+annual      -0.388517  0.138812 -2.7989 0.005128 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+NULL
+
+> print(lme4time_1)
+   user  system elapsed 
+  1.212   0.000   1.247 
+
+> print(summary(lme4fit_1))
+Linear mixed model fit by REML ['lmerMod']
+
+REML criterion at convergence: 1058.6
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-2.0135 -0.6634 -0.2509  0.5397  2.8269 
+
+Random effects:
+ Groups   Name          Variance  Std.Dev.
+ obs      (Intercept)   0.0439923 0.20974 
+ sp       (Intercept)   0.0001162 0.01078 
+ sp.1     standard_site 0.0008242 0.02871 
+ site     log.sla       0.0036677 0.06056 
+ site.1   (Intercept)   0.0004143 0.02035 
+ Residual               0.3287614 0.57338 
+Number of obs: 560, groups:  obs, 28; sp, 54; site, 20
+
+Fixed effects:
+            Estimate Std. Error t value
+(Intercept)  0.52443    0.09387   5.586
+log.sla      0.19068    0.05363   3.555
+annual      -0.30155    0.14106  -2.138
+
+Correlation of Fixed Effects:
+        (Intr) log.sl
+log.sla  0.016       
+annual  -0.219  0.070
+
+> print(peztime_2)
+   user  system elapsed 
+233.744   2.012 240.416 
+
+> print(summary(pezfit_2))
+Linear mixed model fit by restricted maximum likelihood
+
+Call:[1] "Y ~ 1 + log.sla + annual"
+
+logLik    AIC    BIC 
+-543.5 1103.0 1128.5 
+
+Random effects:
+             Variance Std.Dev
+non-nested 1 0.036549 0.19118
+non-nested 2 0.001046 0.03233
+non-nested 3 0.002843 0.05332
+nested 1     0.008170 0.09039
+residual     0.355467 0.59621
+
+Fixed effects:
+                Value Std.Error  Zscore    Pvalue    
+(Intercept)  0.507301  0.070289  7.2173 5.302e-13 ***
+log.sla      0.168101  0.050500  3.3288 0.0008723 ***
+annual      -0.388523  0.138533 -2.8045 0.0050387 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+NULL
+
+> print(lme4time_2)
+   user  system elapsed 
+   0.60    0.00    0.63 
+
+> print(summary(lme4fit_2))
+Linear mixed model fit by REML ['lmerMod']
+
+REML criterion at convergence: 1059.1
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-2.0572 -0.6493 -0.2377  0.5441  2.8598 
+
+Random effects:
+ Groups   Name          Variance  Std.Dev.
+ obs      (Intercept)   0.0438404 0.20938 
+ sp       (Intercept)   0.0001162 0.01078 
+ sp.1     standard_site 0.0008647 0.02941 
+ site     (Intercept)   0.0003060 0.01749 
+ Residual               0.3317973 0.57602 
+Number of obs: 560, groups:  obs, 28; sp, 54; site, 20
+
+Fixed effects:
+            Estimate Std. Error t value
+(Intercept)  0.52443    0.09385   5.588
+log.sla      0.19068    0.05189   3.674
+annual      -0.30155    0.14106  -2.138
+
+Correlation of Fixed Effects:
+        (Intr) log.sl
+log.sla  0.017       
+annual  -0.219  0.072
+> # Wrapped output file dune_lme4.wrapR.rout
+> 
