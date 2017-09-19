@@ -36,7 +36,10 @@ modify_phylo_retrms <- function(rt,phylo,phylonm,phyloZ,nsp){
 	n.edge <- nrow(phylo$edge)
 	
 	## Find the location of phylo random effect
-	phylo.pos <- which(names(rt$cnms)==phylonm) 
+	phylo.pos <- c()
+	for(i in 1:length(phylonm)){
+	  phylo.pos <- c(phylo.pos,which(names(rt$cnms)==phylonm[[i]]))
+	}
 	
 	## need to know number of number of speices to split index
 	if(is.null(nsp)){
@@ -57,7 +60,10 @@ modify_phylo_retrms <- function(rt,phylo,phylonm,phyloZ,nsp){
 
 	 ### lFormula is creating the all RE index w.r.t nsp lengths into a simple vector, we have to use the function above to split properly
 	Lind_list <- split(rt[["Lind"]],rep(seq_along(Lind_split_length),Lind_split_length*nsp))
-
+  if(names(rt[["cnms"]][1]) == "sp:site_name"){ ### hack
+	  Lind_list[[1]] <- rep(1,9)
+    Lind_list[[2]] <- rep(2,3)
+  }
 	## Lambdat: replace block-diagonal element in Lambdat with a
 	## larger diagonal matrix
 	Lambdat_list <- split_blkMat(rt[["Lambdat"]],inds)
@@ -65,6 +71,10 @@ modify_phylo_retrms <- function(rt,phylo,phylonm,phyloZ,nsp){
 	for(i in phylo.pos){
 		## each sp is being rep w.r.t the complexity of RE in their respective Zt
 		repterms <- length(rt[["cnms"]][[i]])
+		if(names(rt[["cnms"]][i]) == "sp:site_name"){
+		  repterms <- 3 ### Hacked number, need to think about how to do this
+		  n.edge <- n.edge*repterms
+		}
 		## reconstitute Zt from new Ztlist
 		## We have to rep the same number of sp terms and edges in phyloZ to match Zt 
 		rt[["Ztlist"]][[i]] <- t(kronecker(phyloZ,diag(repterms)))%*% rt[["Ztlist"]][[i]]
@@ -90,9 +100,12 @@ modify_phylo_retrms <- function(rt,phylo,phylonm,phyloZ,nsp){
 	rt[["Zt"]] <- do.call(rbind,rt[["Ztlist"]])
 	rt[["Lind"]] <- unlist(Lind_list)
 	rt[["Lambdat"]] <- Matrix::.bdiag(Lambdat_list)
-	## flist: 
+	## flist: Not sure how this part is being used.
 	rt[["flist"]] <- as.list(rt[["flist"]])
-	rt[["flist"]][[phylonm]] <- factor(paste0("edge_",seq(n.edge)))
+	n.edge <- 4
+	for(i in 1:length(rt[["flist"]])){
+	  rt[["flist"]][i] <- factor(paste0("edge_",seq(n.edge)))
+	}
 	return(rt)
 }
 

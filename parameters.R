@@ -1,13 +1,13 @@
 ### parameters for phylogenetic tree simulations
 
-seed <- 0911
+seed <- 0919
 
 simnum <- 200
 
 # Generate simulated data for nspp species and nsite sites
-nspp <- 100
+nspp <- 3
 
-nsite <- 50
+nsite <- 3
 #nsite <- 1
 
 # residual variance (set to zero for binary data)
