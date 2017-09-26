@@ -5,8 +5,8 @@ library(Matrix)
 library(lme4)
 library(dplyr)
 
-debug(phylo_lmm)
-debug(modify_phylo_retrms)
+# debug(phylo_lmm)
+# debug(modify_phylo_retrms)
 
 dd <- data.frame(dat)
 print(dd %>% count(site))
@@ -24,7 +24,7 @@ phyZ <- phylo.to.Z(phy)
 dat <- (dat
   %>% rowwise()
   %>% mutate(obs = sp
-    , standard_site = (as.numeric(site) - mean(1:20))/sd(1:20)
+    # , standard_site = (as.numeric(site) - mean(1:20))/sd(1:20)
   )
 )	
 
@@ -34,12 +34,12 @@ lme4time_1 <- system.time(
   lme4fit_1 <- phylo_lmm(Y ~ 1 + log.sla + annual 
 		+ (1|obs) 
 		+ (1|sp)
-    + (1 | site:sp)
+    + (1 | sp:site)
 		# + (0 + site|sp)
 		+ (0 + log.sla | site)
 		+ (1|site) 
 		, data=dat
-		, phylonm = c("sp","site:sp")
+		, phylonm = c("sp","sp:site")
 		, nsp = 28
 		, phylo = phy
 		, phyloZ=phyZ
@@ -47,15 +47,18 @@ lme4time_1 <- system.time(
   )
 )
 
+print(summary(lme4fit_1))
+
 
 lme4time_2 <- system.time(
   lme4fit_2 <- phylo_lmm(Y ~ 1 + log.sla + annual
-		# + (1|obs)
-		# + (1|sp)
-		+ (0 + site|sp)
-		# + (1|site)
+		+ (1|obs)
+		+ (1|sp)
+		+ (1 | sp:site)
+		# + (0 + site|sp)
+		+ (1|site)
 		, data=dat
-		, phylonm = "sp"
+		, phylonm = c("sp","sp:site")
 		, nsp = 28
 		, phylo = phy
 		, phyloZ=phyZ
@@ -135,3 +138,20 @@ print(peztime_2)
 print(summary(pezfit_2))
 print(lme4time_2)
 print(summary(lme4fit_2))
+
+
+lme4fit_3 <- phylo_lmm(Y ~ 1
+                       + (1|obs) 
+                       + (1|sp)
+                       + (1 | sp:site)
+                       # + (0 + site|sp)
+                       + (1|site) 
+                       , data=dat
+                       , phylonm = c("sp","sp:site")
+                       , nsp = 28
+                       , phylo = phy
+                       , phyloZ=phyZ
+                       , control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
+)
+
+summary(lme4fit_3)

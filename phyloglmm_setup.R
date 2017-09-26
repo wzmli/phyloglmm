@@ -57,13 +57,15 @@ modify_phylo_retrms <- function(rt,phylo,phylonm,phyloZ,nsp){
     , function(i){
       (length(i)*(length(i)+1))/2
     })
-
+  Lind_list <- list()
 	 ### lFormula is creating the all RE index w.r.t nsp lengths into a simple vector, we have to use the function above to split properly
-	Lind_list <- split(rt[["Lind"]],rep(seq_along(Lind_split_length),Lind_split_length*nsp))
-  if(names(rt[["cnms"]][1]) == "sp:site_name"){ ### hack
-	  Lind_list[[1]] <- rep(1,9)
-    Lind_list[[2]] <- rep(2,3)
-  }
+	# Lind_list <- split(rt[["Lind"]],rep(seq_along(Lind_split_length),Lind_split_length*nsp))
+  # if(names(rt[["cnms"]][1]) == "sp:site_name"){ ### hack
+  
+  for(i in 1:length(rt$cnms)){
+	  Lind_list[[i]] <- rep(i,sum(rt$Lind==i))
+   }
+  # }
 	## Lambdat: replace block-diagonal element in Lambdat with a
 	## larger diagonal matrix
 	Lambdat_list <- split_blkMat(rt[["Lambdat"]],inds)
@@ -71,13 +73,14 @@ modify_phylo_retrms <- function(rt,phylo,phylonm,phyloZ,nsp){
 	for(i in phylo.pos){
 		## each sp is being rep w.r.t the complexity of RE in their respective Zt
 		repterms <- length(rt[["cnms"]][[i]])
-		if(names(rt[["cnms"]][i]) == "sp:site_name"){
-		  repterms <- 3 ### Hacked number, need to think about how to do this
+		if(names(rt[["cnms"]][i]) == "sp:site"){
+		  repterms <- 20 ### Hacked number, need to think about how to do this
 		  n.edge <- n.edge*repterms
 		}
 		## reconstitute Zt from new Ztlist
 		## We have to rep the same number of sp terms and edges in phyloZ to match Zt 
 		rt[["Ztlist"]][[i]] <- t(kronecker(phyloZ,diag(repterms)))%*% rt[["Ztlist"]][[i]]
+		## switch places inside kronecker
 		Gpdiff_new[i] <- n.edge  ## replace
 
 		## We have to create the Lind to match the theta field with larger reps w.r.t n.edges
@@ -114,7 +117,7 @@ phylo_lmm <- function(formula,data,phylo,phylonm,phyloZ,nsp=NULL,control){
 	lmod <- lFormula(formula=formula,data = data,control=control)
 	lmod$reTrms <- modify_phylo_retrms(lmod$reTrms,phylo,phylonm,phyloZ,nsp)
 	devfun <- do.call(mkLmerDevfun, lmod)
-	opt <- optimizeLmer(devfun)
+	opt <- optimizeLmer(devfun,control=control$optCtrl)
 	mkMerMod(environment(devfun), opt, lmod$reTrms, fr = lmod$fr)
 }
 

@@ -1,0 +1,102 @@
+\documentclass[12pt]{article}
+\usepackage[]{graphicx}
+\usepackage[]{color}
+%% use \xspace to allow for space after a macro as necessary
+\usepackage{xspace}
+\usepackage[top=1in, bottom=1in, left=1.25in, right=1.25in]{geometry}
+\usepackage{pdfpages}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{commentcol}{rgb}{0.345, 0.345, 0.945}
+\newcommand{\comment}[1]{\textcolor{commentcol}{[[#1]]}}%
+
+% general-purpose mathrm macros
+\newcommand{\symsub}[2]{\ensuremath{#1_{\tiny \mathrm{#2}}}\xspace}
+\newcommand{\mrm}[1]{\ensuremath{\mathrm{#1}}
+\xspace}
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{randomcolor}{rgb}{.97, .27, .67}
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+\usepackage[sort]{natbib}
+\usepackage{amsmath}
+\usepackage{alltt}
+\usepackage{hyperref}
+\usepackage[utf8]{inputenc} % for accented characters
+%% stuff for editing
+%\usepackage[markup=nocolor,addedmarkup=bf,deletedmarkup=sout]{changes}
+%% to suppress notes & comments: \usepackage[final]{changes}
+\usepackage[backgroundcolor=lightgray]{todonotes}
+\usepackage{setspace}
+\bibliographystyle{chicago}
+\title{Fitting phylogenetic generalized linear mixed-effect models using lme4 }
+\author{Michael Li and Ben Bolker}
+\date{\today}
+
+\providecommand{\keywords}[1]{\textbf{\textit{Keywords:}} #1}
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\begin{document}
+\newcommand{\dbic}{\ensuremath \Delta \textrm{BIC}}
+
+%% don't typeset BMB comments
+\newcommand{\bmbhide}[1]{}
+\newcommand{\bmb}[1]{{\color{blue} BB: #1}}
+
+\newcommand{\fref}[1]{Figure~\ref{fig:#1}}
+
+\newcommand{\ml}[1]{{\color{red} ML: #1}}
+
+\newcommand{\add}[1]{{\color{blue} ADD: #1}}
+
+%\SweaveOpts{concordance=TRUE}
+%\SweaveOpts{concordance=TRUE}
+\maketitle
+
+\doublespacing
+
+\keywords{phyloglmm ... }
+
+\section{Introduction}
+
+Something about phylogenetic applications. This growing field has produced a number of statistical tools and software corde to implement them ... but this code is disparate and handles data differently, making routine data analyese challenging. ...
+
+Here we present 
+\section{Methods}
+
+
+\end{document}
+
