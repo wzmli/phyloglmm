@@ -19,13 +19,13 @@ dat <- (dat
 
 
 lme4timecor <- system.time(
-	lme4_interactionRE <- phylo_lmm(Y ~ site_name 
+	lme4_interactionRE <- phylo_lmm(Y ~ site 
 		# + (1|obs) 
 		+ (1|sp) 
 		# + (0+site_name|sp) 
-		+ (1|sp:site_name)
+		+ (1|sp:site)
 		, data=dat
-		, phylonm = c("sp","sp:site_name")
+		, phylonm = c("sp","sp:site")
 		, phylo = phy
 		, phyloZ=phyZ
 		, nsp = nspp
@@ -35,20 +35,3 @@ lme4timecor <- system.time(
 
 print(summary(lme4_interactionRE))
 
-lme4_fullRE <- phylo_lmm(Y ~ site_name 
-                                  # + (1|obs) 
-                                  # + (1|sp) 
-                                  + (0+site_name|sp) 
-                                  # + (1|site_name:sp)
-                                  , data=dat
-                                  , phylonm = c("sp","site_name:sp")
-                                  , phylo = phy
-                                  , phyloZ=phyZ
-                                  , nsp = nspp
-                                  , control=lmerControl(check.nobs.vs.nlev="ignore"
-                                                        , check.nobs.vs.nRE="ignore"
-                                                        , optCtrl=list(maxfun=1e5))
-                                
-)
-
-print(summary(lme4_fullRE))

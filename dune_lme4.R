@@ -5,8 +5,8 @@ library(Matrix)
 library(lme4)
 library(dplyr)
 
-# debug(phylo_lmm)
-# debug(modify_phylo_retrms)
+debug(phylo_lmm)
+debug(modify_phylo_retrms)
 
 dd <- data.frame(dat)
 print(dd %>% count(site))
@@ -33,9 +33,8 @@ dat <- (dat
 lme4time_1 <- system.time(
   lme4fit_1 <- phylo_lmm(Y ~ 1 + log.sla + annual 
 		+ (1|obs) 
-		+ (1|sp)
-    + (1 | sp:site)
-		# + (0 + site|sp)
+		# + (1|sp)
+    # + (1 | sp:site)
 		+ (0 + log.sla | site)
 		+ (1|site) 
 		, data=dat
@@ -55,7 +54,6 @@ lme4time_2 <- system.time(
 		+ (1|obs)
 		+ (1|sp)
 		+ (1 | sp:site)
-		# + (0 + site|sp)
 		+ (1|site)
 		, data=dat
 		, phylonm = c("sp","sp:site")
@@ -96,16 +94,16 @@ peztime_1 <- system.time(
 	, sp = dat$sp
 	, site = dat$site
 	, random.effects = list(re.sp
-		, re.sp.phy
-		, re.nested.phy
+		# , re.sp.phy
+		# , re.nested.phy
 		, re.sla
 		, re.site
 	)
 	, REML = T
 	, verbose = F
 	, s2.init = c(1.5, rep(0.01, 3))
-	, reltol = 10e-20
-	, maxit = 10000
+	, reltol = 10e-10
+	, maxit = 1000
 	)
 )
 
@@ -123,8 +121,8 @@ peztime_2 <- system.time(
 	, REML = T
 	, verbose = F
 	, s2.init = c(1.5, rep(0.01, 3))
-	, reltol = 10e-20
-	, maxit = 10000
+	, reltol = 10e-10
+	, maxit = 1000
 	)
 )
 
@@ -139,19 +137,3 @@ print(summary(pezfit_2))
 print(lme4time_2)
 print(summary(lme4fit_2))
 
-
-lme4fit_3 <- phylo_lmm(Y ~ 1
-                       + (1|obs) 
-                       + (1|sp)
-                       + (1 | sp:site)
-                       # + (0 + site|sp)
-                       + (1|site) 
-                       , data=dat
-                       , phylonm = c("sp","sp:site")
-                       , nsp = 28
-                       , phylo = phy
-                       , phyloZ=phyZ
-                       , control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
-)
-
-summary(lme4fit_3)

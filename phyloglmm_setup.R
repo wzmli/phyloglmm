@@ -42,6 +42,7 @@ modify_phylo_retrms <- function(rt,phylo,phylonm,phyloZ,nsp){
 	}
 	
 	## need to know number of number of speices to split index
+	## Fixme, the current index spliting is broken
 	if(is.null(nsp)){
 	nsp <- nrow(rt[["Lambdat"]])/length(rt[["cnms"]][[phylonm]]) 
 	}
@@ -58,6 +59,9 @@ modify_phylo_retrms <- function(rt,phylo,phylonm,phyloZ,nsp){
       (length(i)*(length(i)+1))/2
     })
   Lind_list <- list()
+  ##Fixme, manually hacked Lind_list with a for loop. This will break if we have 
+  ## terms on the left side of the bar/pipe
+  
 	 ### lFormula is creating the all RE index w.r.t nsp lengths into a simple vector, we have to use the function above to split properly
 	# Lind_list <- split(rt[["Lind"]],rep(seq_along(Lind_split_length),Lind_split_length*nsp))
   # if(names(rt[["cnms"]][1]) == "sp:site_name"){ ### hack
@@ -74,8 +78,8 @@ modify_phylo_retrms <- function(rt,phylo,phylonm,phyloZ,nsp){
 		## each sp is being rep w.r.t the complexity of RE in their respective Zt
 		repterms <- length(rt[["cnms"]][[i]])
 		if(names(rt[["cnms"]][i]) == "sp:site"){
-		  repterms <- 20 ### Hacked number, need to think about how to do this
-		  n.edge <- n.edge*repterms
+		  repterms <- 20 ### Hacked number sites, need to think about how to do this
+		  n.edge <- n.edge*repterms ## This is simply a term to create correct dim for Lind and Lambdat
 		}
 		## reconstitute Zt from new Ztlist
 		## We have to rep the same number of sp terms and edges in phyloZ to match Zt 
@@ -105,10 +109,10 @@ modify_phylo_retrms <- function(rt,phylo,phylonm,phyloZ,nsp){
 	rt[["Lambdat"]] <- Matrix::.bdiag(Lambdat_list)
 	## flist: Not sure how this part is being used.
 	rt[["flist"]] <- as.list(rt[["flist"]])
-	n.edge <- 4
-	for(i in 1:length(rt[["flist"]])){
-	  rt[["flist"]][i] <- factor(paste0("edge_",seq(n.edge)))
-	}
+	## Todo: fix flist
+# 	for(i in 1:length(rt[["flist"]])){
+# 	  rt[["flist"]][i] <- factor(paste0("edge_",seq(n.edge)))
+# 	}
 	return(rt)
 }
 

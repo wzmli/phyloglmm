@@ -14,7 +14,7 @@ include sub.mk
 # include $(ms)/perl.def
 
 # notes.md
-
+# todo.md
 Makefile:
 
 ##################################################################
@@ -30,6 +30,15 @@ simulate_tree.Rout: parameters.R simulate_tree.R
 
 simulate_poistree.Rout: parameters.R simulate_poistree.R
 	$(run-R)
+
+### simulate via lme4 simulate
+
+simulate_lme4.Rout: parameters.R simulate_lme4.R
+	$(run-R)
+
+#####################################################################
+
+### fitting
 
 fit_poisson.Rout: parameters.R simulate_poistree.Rout phyloglmm_setup.R phyloglmm_pois.R
 	$(run-R)
