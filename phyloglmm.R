@@ -14,19 +14,15 @@ dat <- (dat
 	%>% mutate(obs = sp)
 )	
 
-single_site_dat <- (dat 
-	%>% filter(site == 1)
-)
+print(head(dat))
 
 #debug(phylo_lmm)
 #debug(modify_phylo_retrms)
 
 
 lme4time <- system.time(
-	lme4_single_site <- phylo_lmm(Y ~ 1
-		# + (1|obs) 
-		+ (1|sp) 
-		# + (1|sp:site)
+	lme4fit <- phylo_lmm(Y ~ X
+		+ (1 + X|sp)
 		, data=dat
 		, phylonm = c("sp","sp:site")
 		, phylo = phy
@@ -36,5 +32,7 @@ lme4time <- system.time(
 	)
 )
 
-print(summary(lme4_single_site))
+print(lme4time)
+
+print(summary(lme4fit))
 

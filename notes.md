@@ -6,6 +6,9 @@ Currently simulating multiple sites but filtering to single site to test if phyl
 
 - Single site does not appear to look good but multiple site estimation looks okay. Running on yushan now.
 
+-- Results for 1000sp vs 100sites are done and they are great. 
+
+- Create a smaller example to compare with pez. 
 
 
 

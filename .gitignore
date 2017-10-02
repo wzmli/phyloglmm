@@ -9,4 +9,5 @@
 *.Rlog
 *.wrapR.rout
 
+*.Rds
 target.mk

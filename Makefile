@@ -39,10 +39,28 @@ simulate_tree.Rout: parameters.Rout simulate_tree.R
 simulate_poistree.Rout: parameters.Rout simulate_poistree.R
 	$(run-R)
 
-### simulate via lme4 simulate
+### simulate via lme4 simulate (broken)
 
 simulate_lme4.Rout: simulate_tree.Rout phyloglmm_setup.Rout simulate_lme4.R
 	$(run-R)
+
+
+######################################################################
+
+## simulation test 
+
+simtree.%.Rout: parameters.Rout names.R simulate_tree.R
+	$(run-R)
+
+simtree.lme4.1.Rout:
+
+fit.%.Rout: simtree.%.Rout phyloglmm_setup.Rout fit_phyloglmm.R
+	$(run-R)
+
+fit.pez.1.Rout:
+fit.lme4.1.Rout:
+
+
 
 #####################################################################
 
@@ -94,7 +112,8 @@ dune_lme4.Rout: phylosig.Rout get_RE.R hacked_code/0_pkg_func.R phyloglmm_setup.
 
 ### Makestuff
 
-
+clean:
+	rm .*.RData *.Rout
 
 ## Change this name to download a new version of the makestuff directory
 # Makefile: start.makestuff
