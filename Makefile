@@ -17,6 +17,9 @@ include sub.mk
 # todo.md
 Makefile:
 
+#2, parameters.R
+#3, phyloglmm_setup.R
+
 ##################################################################
 
 Sources += $(wildcard *.R)
@@ -25,15 +28,20 @@ Sources += $(wildcard *.R)
 
 ### simulate phylogenetic tree
 
-simulate_tree.Rout: parameters.R simulate_tree.R
+
+parameters.Rout:
+
+phyloglmm_setup.Rout:
+
+simulate_tree.Rout: parameters.Rout simulate_tree.R
 	$(run-R)
 
-simulate_poistree.Rout: parameters.R simulate_poistree.R
+simulate_poistree.Rout: parameters.Rout simulate_poistree.R
 	$(run-R)
 
 ### simulate via lme4 simulate
 
-simulate_lme4.Rout: parameters.R simulate_lme4.R
+simulate_lme4.Rout: simulate_tree.Rout phyloglmm_setup.Rout simulate_lme4.R
 	$(run-R)
 
 #####################################################################

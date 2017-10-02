@@ -14,16 +14,19 @@ dat <- (dat
 	%>% mutate(obs = sp)
 )	
 
-# debug(phylo_lmm)
-# debug(modify_phylo_retrms)
+single_site_dat <- (dat 
+	%>% filter(site == 1)
+)
+
+#debug(phylo_lmm)
+#debug(modify_phylo_retrms)
 
 
-lme4timecor <- system.time(
-	lme4_interactionRE <- phylo_lmm(Y ~ site 
+lme4time <- system.time(
+	lme4_single_site <- phylo_lmm(Y ~ 1
 		# + (1|obs) 
 		+ (1|sp) 
-		# + (0+site_name|sp) 
-		+ (1|sp:site)
+		# + (1|sp:site)
 		, data=dat
 		, phylonm = c("sp","sp:site")
 		, phylo = phy
@@ -33,5 +36,5 @@ lme4timecor <- system.time(
 	)
 )
 
-print(summary(lme4_interactionRE))
+print(summary(lme4_single_site))
 

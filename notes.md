@@ -1,3 +1,17 @@
+Oct 1st 2017
+
+Hacked lme4 object does not play nicely with "simulate" so we are reverting back to using pez-ish simulation method.
+
+Currently simulating multiple sites but filtering to single site to test if phyloglmm works for single site. It appears to fail if we have larger residual sd than phylogenetic sd. 
+
+- Single site does not appear to look good but multiple site estimation looks okay. Running on yushan now.
+
+
+
+
+----------------------------------------------------------------------
+
+
 Sept 6th 2017
 
 Li, Ives and Waller 2017

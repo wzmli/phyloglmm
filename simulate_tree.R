@@ -24,7 +24,7 @@ sdvec <- c(sd.B0,sd.B1)
 varmat <- sdvec %*% t(sdvec)
 covmat <- varmat * cormat
 
-print(covmat)
+#print(covmat)
 
 Sigma <- kronecker(covmat,Vphy)
 
@@ -68,5 +68,5 @@ sp <- matrix(kronecker(matrix(1, nrow = nsite, ncol = 1), 1:nspp),
 dat <- data.frame(Y = YY, X = XX, site = as.factor(site), sp = as.factor(sp),site_name = rep(site_name,each=nspp))
 
 
-print(head(dat))
+#print(head(dat))
 
