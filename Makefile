@@ -60,7 +60,7 @@ fit.%.Rout: simtree.%.Rout phyloglmm_setup.Rout fit_phyloglmm.R
 fit.pez.1.Rout:
 fit.lme4.1.Rout:
 
-
+collect.Rout: collect.R
 
 #####################################################################
 
