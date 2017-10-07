@@ -14,9 +14,14 @@ Vphy <- vcv(phy)
 # Vphy <- Vphy/(det(Vphy)^(1/nspp))
 
 # Generate environmental site variable and standardize it
+
+if(nsite == 1){
+	X <- rep(0,nspp)
+}
+if(nsite > 1){
 X <- matrix(1:nsite, nrow = 1, ncol = nsite)
 X <- (X - mean(X))/sd(X)
-
+}
 site_name <- sapply(1:nsite, function(x){paste("site","_",x,sep="")})
 
 cormat <- matrix(c(1,rho.B01,rho.B01,1),2,2)

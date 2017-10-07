@@ -74,10 +74,10 @@ fit_poisson.Rout: parameters.R simulate_poistree.Rout phyloglmm_setup.R phyloglm
 fit_pez.Rout: parameters.R simulate_tree.Rout fit_pez.R
 	$(run-R)
 
-fit_lme4.Rout: parameters.R simulate_tree.Rout phyloglmm_setup.R phyloglmm.R
+fit_lme4.Rout: parameters.R simulate_tree.Rout phyloglmm_setup.Rout phyloglmm.R
 	$(run-R)
 
-lme4_simtest.Rout: parameters.R phyloglmm_setup.R lme4_simtest.R
+lme4_simtest.Rout: parameters.Rout phyloglmm_setup.Rout lme4_simtest.R
 	$(run-R)
 
 fit_MCMCglmm.Rout: parameters.R simulate_tree.Rout fit_MCMCglmm.R

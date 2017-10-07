@@ -10,9 +10,8 @@ for(i in 1:simnum){
 	seed <- i
 	source("simulate_tree.R",echo=FALSE)
 	phyZ <- phylo.to.Z(phy)
-	dat_single_site <- dat %>%  filter(site == 1) %>% mutate(obs = sp)
-	lme4fit_single_site <- phylo_lmm(Y ~ 1 + (1|sp)
-		, data = dat_single_site
+	lme4fit_single_site <- phylo_lmm(Y ~ X + (1|sp)
+		, data = dat
 		, phylonm = "sp"
 		, phylo = phy
 		, phyloZ=phyZ
@@ -30,7 +29,7 @@ for(i in 1:simnum){
 	sdcor_ss <- cov_ssdf$sdcor
 	sdcor_ms <- cov_msdf$sdcor
 	sd0vec_ss[i] <- sdcor_ss[1]
-	residvec_ss[i] <- sdcor_ss[2]
+	residvec_ss[i] <- sdcor_ss[4]
 	sd0vec_ms[i] <- sdcor_ms[1]
 	sd1vec_ms[i] <- sdcor_ms[2]
 	corvec_ms[i] <- sdcor_ms[3]
@@ -39,3 +38,6 @@ for(i in 1:simnum){
 
 df <- data.frame(sd0vec_ss,residvec_ss,sd0vec_ms,sd1vec_ms,corvec_ms,residvec_ms)
 print(summary(df))
+
+# print(summary(sd0vec_ss))
+# print(summary(residvec_ss))

@@ -31,11 +31,22 @@ print(summary(single_site_phylo))
 
 
 
-new_response <- simulate(single_site_phylo,newparams=list(theta=c(1),beta=c(0)))
-new_y <- new_response + rnorm(0,10)
+new_response <- simulate(single_site_phylo,newparams=list(theta=c(2/sigma(single_site_phylo)),beta=c(0)))
+new_y <- new_response[[1]]
 
-dat$y <- new_y
+dat$new_y <- new_y
 
-fitmod <- update(single_site_phylo)
 
-print(fitmod)
+head(dat)
+
+fitmod <- phylo_lmm(new_y ~ 1
+                               + (1|sp) 
+                               , data=dat
+                               , phylonm = c("sp","sp:site")
+                               , phylo = phy
+                               , phyloZ=phyZ
+                               , nsp = nspp
+                               , control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
+)
+
+print(summary(fitmod))
