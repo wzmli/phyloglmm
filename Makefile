@@ -57,6 +57,14 @@ simtree.lme4.1.Rout:
 fit.%.Rout: simtree.%.Rout phyloglmm_setup.Rout fit_phyloglmm.R
 	$(run-R)
 
+lme4_ss_simtest.%.Rout: parameters.Rout phyloglmm_setup.Rout lme4_ss_simtest.R
+	$(run-R)
+
+lme4_ss_simtest.small.Rout:
+lme4_ss_simtest.med.Rout:
+lme4_ss_simtest.large.Rout:
+
+
 fit.pez.1.Rout:
 fit.lme4.1.Rout:
 
@@ -68,6 +76,7 @@ collect.Rout: collect.R
 
 fit_poisson.Rout: parameters.R simulate_poistree.Rout phyloglmm_setup.R phyloglmm_pois.R
 	$(run-R)
+
 
 ### Fitting
 
