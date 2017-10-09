@@ -5,7 +5,7 @@ simnum <- 100
 # Generate simulated data for nspp species and nsite sites
 nspp <- 1000
 
-nsite <- 1
+nsite <- 20
 
 # residual variance (set to zero for binary data)
 sd.resid <- 10

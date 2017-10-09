@@ -49,19 +49,8 @@ simulate_lme4.Rout: simulate_tree.Rout phyloglmm_setup.Rout simulate_lme4.R
 
 ## simulation test 
 
-simtree.%.Rout: parameters.Rout names.R simulate_tree.R
-	$(run-R)
-
-simtree.lme4.1.Rout:
-
-fit.%.Rout: simtree.%.Rout phyloglmm_setup.Rout fit_phyloglmm.R
-	$(run-R)
-
 
 ### Single site 
-
-fit_ss.Rout: parameters.Rout phyloglmm_setup.Rout simulate_tree.Rout fit_ss.R
-	$(run-R)
 
 
 lme4_ss_simtest.%.Rout: parameters.Rout phyloglmm_setup.Rout lme4_ss_simtest.R
@@ -72,8 +61,18 @@ lme4_ss_simtest.med.Rout:
 lme4_ss_simtest.large.Rout:
 
 
-fit.pez.1.Rout:
-fit.lme4.1.Rout:
+## Multiple sites
+
+simtree.%.Rout: parameters.Rout names.R simulate_tree.R
+	$(run-R)
+
+simtree.lme4.small.1.Rout:
+
+fit.%.Rout: simtree.%.Rout phyloglmm_setup.Rout fit_phyloglmm.R
+	$(run-R)
+
+fit.pez.small.1.Rout:
+fit.lme4.small.1.Rout:
 
 collect.Rout: collect.R
 

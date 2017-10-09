@@ -39,9 +39,7 @@ if(platform == "pez"){
 			, family = "gaussian"
 			, sp = dat$sp
 			, site = dat$site
-			, random.effects = list(re.1
-				, re.2
-				, re.3
+			, random.effects = list(re.2
 				, re.4)
 			, REML = FALSE
 			, verbose = FALSE
