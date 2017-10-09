@@ -1,0 +1,148 @@
+> 
+> # Generated using wrapR file lme4_ss_simtest.small.wrapR.r
+> source('lme4_ss_simtest.R', echo=TRUE)
+
+> library(ape)
+
+> library(Matrix)
+
+> library(lme4)
+
+> library(dplyr)
+
+> targetname <- unlist(strsplit(rtargetname, "[.]"))
+
+> size <- targetname[2]
+
+> if (size == "small") {
++     nspp <- 20
++ }
+
+> if (size == "med") {
++     nspp <- 100
++ }
+
+> if (size == "large") {
++     nspp <- 500
++ }
+
+> sd0vec_ss <- sd1vec_ss <- corvec_ss <- residvec_ss <- numeric(simnum)
+
+> for (i in 1:simnum) {
++     seed <- i
++     source("simulate_tree.R", echo = FALSE)
++     phyZ <- phylo.to.Z(phy)
++     tempfit <- phylo_lmm(Y ~ 1 + .... [TRUNCATED] 
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+using old REs
+
+> df <- data.frame(sd0vec_ss, residvec_ss)
+
+> print(summary(df))
+   sd0vec_ss       residvec_ss       
+ Min.   : 0.000   Min.   : 0.000971  
+ 1st Qu.: 0.000   1st Qu.: 6.525961  
+ Median : 0.000   Median : 8.151327  
+ Mean   : 2.929   Mean   : 8.218836  
+ 3rd Qu.: 5.941   3rd Qu.:10.285863  
+ Max.   :16.657   Max.   :16.836080  
+> # Wrapped output file lme4_ss_simtest.small.wrapR.rout
+> 

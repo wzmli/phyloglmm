@@ -57,6 +57,13 @@ simtree.lme4.1.Rout:
 fit.%.Rout: simtree.%.Rout phyloglmm_setup.Rout fit_phyloglmm.R
 	$(run-R)
 
+
+### Single site 
+
+fit_ss.Rout: parameters.Rout phyloglmm_setup.Rout simulate_tree.Rout fit_ss.R
+	$(run-R)
+
+
 lme4_ss_simtest.%.Rout: parameters.Rout phyloglmm_setup.Rout lme4_ss_simtest.R
 	$(run-R)
 
