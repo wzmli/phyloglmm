@@ -81,6 +81,8 @@ fit_cs.%.Rout: simtree.%.Rout phyloglmm_setup.Rout fit_cs.R
 
 fit_cs.lme4.large.1.Rout:
 fit_cs.lme4.med.99.Rout:
+
+fit_cs.pez.med.99.Rout:
 collect.Rout: collect.R
 
 #####################################################################
