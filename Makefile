@@ -74,6 +74,13 @@ fit.%.Rout: simtree.%.Rout phyloglmm_setup.Rout fit_phyloglmm.R
 fit.pez.small.1.Rout:
 fit.lme4.small.1.Rout:
 
+## compound symmetric simulation test
+
+fit_cs.%.Rout: simtree.%.Rout phyloglmm_setup.Rout fit_cs.R
+	$(run-R)
+
+fit_cs.lme4.large.1.Rout:
+fit_cs.lme4.med.99.Rout:
 collect.Rout: collect.R
 
 #####################################################################
@@ -95,10 +102,10 @@ fit_lme4.Rout: parameters.R simulate_tree.Rout phyloglmm_setup.Rout phyloglmm.R
 lme4_simtest.Rout: parameters.Rout phyloglmm_setup.Rout lme4_simtest.R
 	$(run-R)
 
-fit_MCMCglmm.Rout: parameters.R simulate_tree.Rout fit_MCMCglmm.R
+fit_MCMCglmm.Rout: parameters.Rout simulate_tree.Rout fit_MCMCglmm.R
 	$(run-R)
 
-fit_glmmPQL.Rout: parameters.R simulate_tree.Rout fit_glmmPQL.R
+fit_glmmPQL.Rout: parameters.Rout simulate_tree.Rout fit_glmmPQL.R
 	$(run-R)
 
 fit_gls.Rout: parameters.R simulate_tree.Rout fit_gls.R

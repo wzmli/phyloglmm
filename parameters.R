@@ -3,7 +3,7 @@
 seed <- 100
 simnum <- 100
 # Generate simulated data for nspp species and nsite sites
-nspp <- 1000
+nspp <- 500
 
 nsite <- 20
 
@@ -26,5 +26,5 @@ signal.B1 <- TRUE
 
 # MCMC iterations
 
-nitt <- 2e6 ## was 5e6
+nitt <- 8e4 ## was 5e6
 
