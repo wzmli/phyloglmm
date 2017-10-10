@@ -51,12 +51,12 @@ lme4_res_small <- lapply(small_lme4,get_lme4pars,path=small_path)
 lme4_res_medium <- lapply(medium_lme4,get_lme4pars,path=medium_path)
 lme4_res_large <- lapply(large_lme4,get_lme4pars,path=large_path)
 
-ps <- rbind_list(pez_res_small)
-pm <- rbind_list(pez_res_medium)
+ps <- bind_rows(pez_res_small)
+pm <- bind_rows(pez_res_medium)
 
-lsmall <- rbind_list(lme4_res_small)
-lmed <- rbind_list(lme4_res_medium)
-llarge <- rbind_list(lme4_res_large)
+lsmall <- bind_rows(lme4_res_small)
+lmed <- bind_rows(lme4_res_medium)
+llarge <- bind_rows(lme4_res_large)
 
 print(summary(ps))
 print(summary(pm))
@@ -64,3 +64,6 @@ print(summary(lsmall))
 print(summary(lmed))
 print(summary(llarge))
 
+
+df_list <- list(ps,pm,lsmall,lmed,llarge)
+saveRDS(df_list,"./results/ms_simtest.RDS")
