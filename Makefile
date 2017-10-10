@@ -92,6 +92,14 @@ collect.Rout: collect.R
 collect_csfit.Rout: collect_cs.R
 	$(run-R)
 
+
+### Plotting simulation results
+
+plot_simtest.Rout: plot_simtest.R
+	$(run-R)
+
+
+
 #####################################################################
 
 ### fitting
