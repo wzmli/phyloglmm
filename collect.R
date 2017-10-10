@@ -4,7 +4,8 @@ library(pez)
 library(dplyr)
 
 small_path <- "./datadir/small/"
-medium_path <- "./datadir/medium/"
+medium_path <- "./datadir/med/"
+large_path <- "./datadir/large/"
 
 small_lme4 <- list.files(path = small_path , pattern = "lme4")
 medium_lme4 <- list.files(path = medium_path , pattern = "lme4")
@@ -34,10 +35,8 @@ get_pezpars <- function(n,path){
 	peztime <- pezobj[[1]][[1]]
 	pezfit <- pezobj[[2]]
 	tempdat <- data.frame(time = peztime
-		, obs = sqrt(pezfit$s2r[1])
-		, sp = sqrt(pezfit$s2r[2])
-		, Xsp = sqrt(pezfit$s2r[3])
-		, Xobs = sqrt(pezfit$s2r[4])
+		, sp = sqrt(pezfit$s2r[1])
+		, Xsp = sqrt(pezfit$s2r[2])
 		, Residual = sqrt(pezfit$s2resid)
 		, dataSize = path
 )
@@ -65,4 +64,3 @@ print(summary(lsmall))
 print(summary(lmed))
 print(summary(llarge))
 
-print(aa)

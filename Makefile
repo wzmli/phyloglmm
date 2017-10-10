@@ -128,7 +128,7 @@ dune_lme4.Rout: phylosig.Rout get_RE.R hacked_code/0_pkg_func.R phyloglmm_setup.
 ### Makestuff
 
 clean:
-	rm .*.RData *.Rout
+	rm .*.RData *.Rout *.wrapR.r *.Rlog *.wrapR.rout
 
 ## Change this name to download a new version of the makestuff directory
 # Makefile: start.makestuff
