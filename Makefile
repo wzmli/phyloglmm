@@ -83,7 +83,14 @@ fit_cs.lme4.large.1.Rout:
 fit_cs.lme4.med.99.Rout:
 
 fit_cs.pez.med.99.Rout:
+
+
+## Collect results from datadir
+
 collect.Rout: collect.R
+
+collect_csfit.Rout: collect_cs.R
+	$(run-R)
 
 #####################################################################
 
