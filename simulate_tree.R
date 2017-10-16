@@ -16,7 +16,7 @@ Vphy <- vcv(phy)
 # Generate environmental site variable and standardize it
 
 if(nsite == 1){
-	X <- rep(0,nspp)
+	X <- rnorm(n=nspp,sd=1)
 }
 if(nsite > 1){
 X <- matrix(1:nsite, nrow = 1, ncol = nsite)
@@ -62,15 +62,15 @@ colnames(Y) <- 1:nsite
 # Transform data matrices into "long" form, and generate a data frame
 YY <- matrix(Y, nrow = nspp * nsite, ncol = 1)
 
-XX <- matrix(kronecker(X, matrix(1, nrow = nspp, ncol = 1)), nrow =
-               nspp * nsite, ncol = 1)
+#XX <- matrix(kronecker(X, matrix(1, nrow = nspp, ncol = 1)), nrow =
+#               nspp * nsite, ncol = 1)
 
 site <- matrix(kronecker(1:nsite, matrix(1, nrow = nspp, ncol =
                                            1)), nrow = nspp * nsite, ncol = 1)
 sp <- matrix(kronecker(matrix(1, nrow = nsite, ncol = 1), 1:nspp),
              nrow = nspp * nsite, ncol = 1)
 
-dat <- data.frame(Y = YY, X = XX, site = as.factor(site), sp = as.factor(sp),site_name = rep(site_name,each=nspp))
+dat <- data.frame(Y = YY, X, site = as.factor(site), sp = as.factor(sp),site_name = rep(site_name,each=nspp))
 
 
 print(head(dat))
