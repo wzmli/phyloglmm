@@ -13,6 +13,7 @@ Sources = Makefile .gitignore README.md sub.mk LICENSE.md
 include sub.mk
 # include $(ms)/perl.def
 
+# ms.tex
 # notes.md
 # todo.md
 Makefile:
@@ -118,6 +119,10 @@ fit_lme4.Rout: parameters.R simulate_tree.Rout phyloglmm_setup.Rout phyloglmm.R
 
 lme4_simtest.Rout: parameters.Rout phyloglmm_setup.Rout lme4_simtest.R
 	$(run-R)
+
+lme4_sstest.Rout: parameters.Rout phyloglmm_setup.Rout lme4_fitss.R
+	$(run-R)
+
 
 fit_MCMCglmm.Rout: parameters.Rout simulate_tree.Rout fit_MCMCglmm.R
 	$(run-R)

@@ -29,7 +29,7 @@ for(i in 1:simnum){
 	sdcor_ss <- cov_ssdf$sdcor
 	sdcor_ms <- cov_msdf$sdcor
 	sd0vec_ss[i] <- sdcor_ss[1]
-	residvec_ss[i] <- sdcor_ss[4]
+	residvec_ss[i] <- sdcor_ss[2]
 	sd0vec_ms[i] <- sdcor_ms[1]
 	sd1vec_ms[i] <- sdcor_ms[2]
 	corvec_ms[i] <- sdcor_ms[3]

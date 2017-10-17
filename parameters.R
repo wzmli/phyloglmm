@@ -1,8 +1,7 @@
 ### parameters for phylogenetic tree simulations
-seed <- 1000
-simnum <- 100
+simnum <- 300
 # Generate simulated data for nspp species and nsite sites
-nspp <- 200
+nspp <- 300
 
 nsite <- 1
 

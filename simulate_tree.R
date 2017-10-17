@@ -47,6 +47,11 @@ b1 <- b.all[(nspp+1):(2*nspp)]
 
 y <- matrix(outer(b0, array(1, dim = c(1, nsite))), nrow = nspp,
             ncol = nsite) + matrix(outer(b1, X), nrow = nspp, ncol = nsite)
+
+if(nsite == 1){
+y <- matrix(outer(b0, array(1, dim = c(1, nsite))), nrow = nspp,
+	ncol = nsite) + matrix(b1*X, nrow = nspp, ncol = nsite)
+}
 e <- rnorm(nspp * nsite, sd = sd.resid) # add residual variance 
 y <- y + matrix(e, nrow = nspp, ncol = nsite)
 y <- matrix(y, nrow = nspp * nsite, ncol = 1)
@@ -62,8 +67,12 @@ colnames(Y) <- 1:nsite
 # Transform data matrices into "long" form, and generate a data frame
 YY <- matrix(Y, nrow = nspp * nsite, ncol = 1)
 
-#XX <- matrix(kronecker(X, matrix(1, nrow = nspp, ncol = 1)), nrow =
-#               nspp * nsite, ncol = 1)
+XX <- matrix(kronecker(X, matrix(1, nrow = nspp, ncol = 1)), nrow =
+               nspp * nsite, ncol = 1)
+
+if(nsite == 1){
+	XX <- matrix(X,nrow=nspp,ncol=1)
+}
 
 site <- matrix(kronecker(1:nsite, matrix(1, nrow = nspp, ncol =
                                            1)), nrow = nspp * nsite, ncol = 1)
@@ -73,5 +82,4 @@ sp <- matrix(kronecker(matrix(1, nrow = nsite, ncol = 1), 1:nspp),
 dat <- data.frame(Y = YY, X, site = as.factor(site), sp = as.factor(sp),site_name = rep(site_name,each=nspp))
 
 
-print(head(dat))
 
