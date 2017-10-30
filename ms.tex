@@ -91,20 +91,48 @@
 \keywords{phyloglmm ... }
 
 \section{Introduction}
+\ml{I will fill in appropriate citation later}
 
-Given a phylogenetic tree, phylogenetic models aim to find parsimonious methods that can be used to link ecological phenomena with the evolutionary processes that generate species and their traits. 
-Ecologist have long considered the effects of functional traits and environmental conditions on pheotypic traits. 
-For example, regression analyses of body temperature as a function of body size for animal within a clade, species compositions in different sites, etc. 
 
+Given a phylogenetic tree, phylogenetic models aim to find parsimonious methods that can be used to link ecological phenomena with evolutionary processes that generate species and exhibit in their traits.
+Ecologist have long considered the effects of species functional traits and environmental conditions on their phenotypic traits and also incorportating historical relationships of species.
+Decades of work have created various different methods that enables researchers to analyze species relativeness problems/systems for different types of data and questions.
+%For example, regression analyses of body temperature as a function of body size for animal within a clade, species compositions in different sites, etc. 
+\ml{more examples...and reference}
+
+The most widely used statistical method to model/fit related species data that accounts for phylogenetic structure is the phylogenetic regression (Felsenstein 1985). 
+More recently, people use linear mixed model and generalized linear mixed model framework to model complex systems with phylogenetic structures. 
+
+
+Despite the choice of modeling strageties, there isn't a convient platform to do all and limited in model complexities additional complexities in the systems. 
+
+In this paper, we model it using lme4 and test it with simulated cases across platforms and fit it to dun (maybe more examples if we can find it) example.  
+
+We also compare different platforms. 
 
 \section{Methods}
 
+We generate test data using a simple glmm framework that varies in complexity in random effect. 
 
+\section{Phylogenetic Tree Transformation}
 The standard problem of phylogenetic comparative methods is to analyze relationships among data where the observations are gathered from nodes (usually tips) of a phylogenetic tree. 
 
-An alternative approach is to model the phylogenetic correlation as a gaussian process. In particular, suppose that the evolutionary process is a Brownian motion. In that case, the phylogenetic variability of a particular observation can be written as the sum of the evolutionary changes that occurred on all of the branches in the phylogeny in its past. If we set up the Z matrix appropriately, we can model everythign with a sequence of independent errors, rather than having to do a fancy things to impose a correlation structure on the random effects. 
+An alternative approach is to model the phylogenetic correlation as a gaussian process. 
+In particular, suppose that the evolutionary process is a Brownian motion. 
+In that case, the phylogenetic variability of a particular observation can be written as the sum of the evolutionary changes that occurred on all of the branches in the phylogeny in its past. 
+If we set up the Z matrix appropriately, we can model everythign with a sequence of independent errors, rather than having to do a fancy things to impose a correlation structure on the random effects. 
 
 
+\subsection{Platforms}
+
+...
+
+
+\section{Results}
+
+\section{Discussion}
+
+\section{Conclusion}
 
 \end{document}
 
