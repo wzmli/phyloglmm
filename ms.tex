@@ -97,24 +97,50 @@
 Given a phylogenetic tree, phylogenetic models aim to find parsimonious methods that can be used to link ecological phenomena with evolutionary processes that generate species and exhibit in their traits.
 Ecologist have long considered the effects of species functional traits and environmental conditions on their phenotypic traits and also incorportating historical relationships of species.
 Decades of work have created various different methods that enables researchers to analyze species relativeness problems/systems for different types of data and questions.
+But many challenges remain.
+In particular, incorportating phylogenetic signals in complex/large/multi dimensional systems is always challenging, especially with large phylogenies where computation powers are limited.
+In such case, researchers often use simpler models with minimal phylogenetic signals limiting at the species/individuals level and neglect additional phylogenetic signals present in the system/model.
+
 %For example, regression analyses of body temperature as a function of body size for animal within a clade, species compositions in different sites, etc. 
-\ml{more examples...and reference}
-
 The most widely used statistical method to model/fit related species data that accounts for phylogenetic structure is the phylogenetic regression (Felsenstein 1985). 
-More recently, people use linear mixed model and generalized linear mixed model framework to model complex systems with phylogenetic structures. 
-
-
+More recently, researchers use (turn to?) linear mixed model and generalized linear mixed model framework to model complex systems with phylogenetic structures. 
+\ml{Why? Data type, interactions, random effects, etc... Need to really explain random effects here.}
 Despite the choice of modeling strageties, there isn't a convient platform to do all and limited in model complexities additional complexities in the systems. 
 
-In this paper, we model it using lme4 and test it with simulated cases across platforms and fit it to dun (maybe more examples if we can find it) example.  
-
+In this paper, we model it using lme4 and test it with simulated cases and fit it to dun (maybe more examples if we can find it) example. 
 We also compare different platforms. 
 
-\section{Methods}
+\section{Materials and Methods}
 
-We generate test data using a simple glmm framework that varies in complexity in random effect. 
+We generate test data using a simple glmm framework that varies in complexity in random effect. All simulations and fits were performed with R. 
 
-\section{Phylogenetic Tree Transformation}
+\subsection{Simulations}
+
+
+We simulated two phenotypic traits. Trait $Y$ of species $i$ ($i$ = 1,...,$n$) that depends on a trait X using the model:
+
+\ml{Y~X + (1+X|phylo) and the 3 forms in ols/gls} 
+\begin{align}
+Y & = \alpha_{0} + \alpha_{1}X + \beta (1+X) + \epsilon 
+\\
+\beta & \sim \mathrm{MVN}(0,\Sigma)
+\\
+\epsilon & \sim \mathrm{N}(0, \sigma^2_{n})
+\end{align}
+
+where
+
+\begin{align}
+\Sigma & = \begin{pmatrix} \sigma^2_{sp} & \rho \sigma_{sp} \sigma_{X} \\ \rho \sigma_{sp} \sigma_{X} & \sigma^2_{X} \end{pmatrix}
+\end{align}
+We assumed both phenotypic trait are measured. X (e.g. ...) affects 
+
+
+\ml{metabolism example?} 
+
+
+\ml{ditto above with multiple sites}
+\subsection{Phylogenetic Tree Transformation}
 The standard problem of phylogenetic comparative methods is to analyze relationships among data where the observations are gathered from nodes (usually tips) of a phylogenetic tree. 
 
 An alternative approach is to model the phylogenetic correlation as a gaussian process. 
@@ -122,8 +148,8 @@ In particular, suppose that the evolutionary process is a Brownian motion.
 In that case, the phylogenetic variability of a particular observation can be written as the sum of the evolutionary changes that occurred on all of the branches in the phylogeny in its past. 
 If we set up the Z matrix appropriately, we can model everythign with a sequence of independent errors, rather than having to do a fancy things to impose a correlation structure on the random effects. 
 
-
-\subsection{Platforms}
+\subsection{Model Fitting}
+\ml{platform/model equivalence}
 
 ...
 
