@@ -63,7 +63,7 @@
 \usepackage[backgroundcolor=lightgray]{todonotes}
 \usepackage{setspace}
 \bibliographystyle{chicago}
-\title{Fitting phylogenetic generalized linear mixed-effect models using lme4 }
+\title{Fitting phylogenetic generalized linear mixed models}
 \author{Michael Li and Ben Bolker}
 \date{\today}
 
@@ -116,30 +116,29 @@ We generate test data using a simple glmm framework that varies in complexity in
 
 \subsection{Simulations}
 
-
-We simulated two phenotypic traits. Trait $Y$ of species $i$ ($i$ = 1,...,$n$) that depends on a trait X using the model:
-
-\ml{Y~X + (1+X|phylo) and the 3 forms in ols/gls} 
-\begin{align}
-Y & = \alpha_{0} + \alpha_{1}X + \beta (1+X) + \epsilon 
-\\
-\beta & \sim \mathrm{MVN}(0,\Sigma)
-\\
-\epsilon & \sim \mathrm{N}(0, \sigma^2_{n})
-\end{align}
-
-where
+%We simulated two phenotypic traits (X andY). 
+The typical phylogenetic linear mixed model analysis is of the form:
 
 \begin{align}
-\Sigma & = \begin{pmatrix} \sigma^2_{sp} & \rho \sigma_{sp} \sigma_{X} \\ \rho \sigma_{sp} \sigma_{X} & \sigma^2_{X} \end{pmatrix}
+(Y \mid B=b) & \sim N(X\beta + Zb, \sigma^{2}),
 \end{align}
-We assumed both phenotypic trait are measured. X (e.g. ...) affects 
+where the conditional distribution of Y given $ B = b$ is a $n \times 1$ vector random response variable, whose observed value is y of some measureable phenotypic trait; 
+X is an $n \times (m + 1)$ model matrix containing 1's in the first column and the $m$ independent variables (traits);
+Z is an $n \times (m + 1)$ model matrix for the $m + 1$ -- dimensional vector-valued random effects variable; 
+$\beta$ is a $ m + 1 $ coefficient vector.
+The parameters of the model are the coefficients $\beta$ and the scale parameter $\sigma$.
+The unconditional distribution of B is multivariate normal with mean zero and a parameterized $(m + 1) \times (m + 1)$ variance-covariance matrix
+\begin{align}
+B & \sim \mathrm{MVN}(0,\Sigma),
+\end{align}
+and
+\begin{align}
+\Sigma & = \begin{pmatrix} \sigma^2_{sp} & \rho \sigma_{sp} \sigma_{X} \\ \rho \sigma_{sp} \sigma_{X} & \sigma^2_{X} \end{pmatrix},
+\end{align}
+where $\sigma^{2}_{sp}$ and $\sigma^{2}_{X}$ is the phylogenetic variance of species and phenotype X; 
+and $\rho$ is the correlation of \ml{...?}.
 
 
-\ml{metabolism example?} 
-
-
-\ml{ditto above with multiple sites}
 \subsection{Phylogenetic Tree Transformation}
 The standard problem of phylogenetic comparative methods is to analyze relationships among data where the observations are gathered from nodes (usually tips) of a phylogenetic tree. 
 
