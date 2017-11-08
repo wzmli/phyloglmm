@@ -1,7 +1,8 @@
 ### parameters for phylogenetic tree simulations
+seed = 1
 simnum <- 500
 # Generate simulated data for nspp species and nsite sites
-nspp <- 300
+nspp <- 500
 
 nsite <- 1
 
@@ -14,7 +15,7 @@ beta1 <- 0
 
 # magnitude of random effects
 sd.B0 <- 2
-sd.B1 <- 6
+sd.B1 <- 1
 
 rho.B01 <- 0.0
 
