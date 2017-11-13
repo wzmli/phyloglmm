@@ -63,7 +63,7 @@
 \usepackage[backgroundcolor=lightgray]{todonotes}
 \usepackage{setspace}
 \bibliographystyle{chicago}
-\title{Fitting phylogenetic generalized linear mixed models}
+\title{Need a good title.}
 \author{Michael Li and Ben Bolker}
 \date{\today}
 
@@ -102,13 +102,27 @@ In particular, incorportating phylogenetic signals in complex/large/multi dimens
 In such case, researchers often use simpler models with minimal phylogenetic signals limiting at the species/individuals level and neglect additional phylogenetic signals present in the system/model.
 
 %For example, regression analyses of body temperature as a function of body size for animal within a clade, species compositions in different sites, etc. 
-The most widely used statistical method to model/fit related species data that accounts for phylogenetic structure is the phylogenetic regression (Felsenstein 1985). 
-More recently, researchers use (turn to?) linear mixed model and generalized linear mixed model framework to model complex systems with phylogenetic structures. 
-\ml{Why? Data type, interactions, random effects, etc... Need to really explain random effects here.}
-Despite the choice of modeling strageties, there isn't a convient platform to do all and limited in model complexities additional complexities in the systems. 
+The most widely used statistical method to model/fit related species data that accounts for phylogenetic structure is the phylogenetic regression (Felsenstein 1985).
+The typical phylogenetic regression is of the form:
+\begin{align}
+y & = XB + \epsilon \\
+\epsilon & \sim MVN(0,\sigma^{2}C),
+\end{align}
+where $y$ is an $n \times 1$ vector of measureable response phenotypic trait; $X$ is an $n \times (m + 1)$ model matrix containing 1's in the first column and the $m$ independment variable (traits); $B$ is an $m \times 1$ coefficient vector; $\espilon$ is the residual error and assumed to be multivariate normally distributed with a variance-covariance matrix given by $\sigma^{2}_{ \epsilon} C$ in which $C$ is the phylogenetic correlation (PC).
+\ml{Need to say something like $\epsilon$ explains all the phylogenetic corelation and error or zero residual}
 
-In this paper, we model it using lme4 and test it with simulated cases and fit it to dun (maybe more examples if we can find it) example. 
-We also compare different platforms. 
+More recently, researchers use linear mixed model and generalized linear mixed model framework to model complex systems with phylogenetic structures.
+\ml{Why? Data type, interactions, random effects, etc... Need to really explain random effects here. Alternatively, we can drop this line and write this...}
+An alternative modelling approach is to use linear mixed effects modelling framework.
+The typical phylogenetic linear mixed model has the form:
+\begin{align}
+Y & \sim N(XB + Zb, \sigma^{2}),
+\end{align}
+Despite the choice of modeling strageties, there isn't a convient platform to do all and limited in model complexities additional complexities in the systems and . 
+\ml{This sounds cheesy}
+
+In this paper, we took a simple, yet effective alternative approach model to model phylogenetic correlation where we ... . We used lme4 and test it with simulated cases and fit it to dun (maybe more examples if we can find it) example. 
+We will compare our simulations and example fits to different platforms. 
 
 \section{Materials and Methods}
 
