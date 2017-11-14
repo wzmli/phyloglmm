@@ -107,19 +107,24 @@ The typical phylogenetic regression is of the form:
 \begin{align}
 y & = XB + \epsilon \\
 \epsilon & \sim MVN(0,\sigma^{2}C),
+\label{eq:gls}
 \end{align}
-where $y$ is an $n \times 1$ vector of measureable response phenotypic trait; $X$ is an $n \times (m + 1)$ model matrix containing 1's in the first column and the $m$ independment variable (traits); $B$ is an $m \times 1$ coefficient vector; $\espilon$ is the residual error and assumed to be multivariate normally distributed with a variance-covariance matrix given by $\sigma^{2}_{ \epsilon} C$ in which $C$ is the phylogenetic correlation (PC).
+where $y$ is an $n \times 1$ vector of measureable response phenotypic trait; $X$ is an $n \times (m + 1)$ model matrix containing 1's in the first column and the $m$ independment variable (traits); $B$ is an $m + 1$ coefficient vector; $\espilon$ is the residual error and assumed to be multivariate normally distributed with a variance-covariance matrix given by $\sigma^{2}_{ \epsilon} C$ in which $C$ is the phylogenetic correlation (PC).
 \ml{Need to say something like $\epsilon$ explains all the phylogenetic corelation and error or zero residual}
 
-More recently, researchers use linear mixed model and generalized linear mixed model framework to model complex systems with phylogenetic structures.
-\ml{Why? Data type, interactions, random effects, etc... Need to really explain random effects here. Alternatively, we can drop this line and write this...}
+% More recently, researchers use linear mixed model and generalized linear mixed model framework to model complex systems with phylogenetic structures.
+%\ml{Why? Data type, interactions, random effects, etc... Need to really explain random effects here. Alternatively, we can drop this line and write this...}
 An alternative modelling approach is to use linear mixed effects modelling framework.
-The typical phylogenetic linear mixed model has the form:
+The typical linear mixed model has the form:
 \begin{align}
-Y & \sim N(XB + Zb, \sigma^{2}),
+Y & = XB + Zb + \epsilon_{mm}
 \end{align}
-Despite the choice of modeling strageties, there isn't a convient platform to do all and limited in model complexities additional complexities in the systems and . 
-\ml{This sounds cheesy}
+where $Z$ is an $n \times (m+1)$ model matrix for the $(m+1)$ -- dimensional vector-valued $m$ independment variables; $\epsilon_{mm}$ is the residual error and assumed to be multivariate normally distributed with a variance-covariance matrix given by $\sigma_{2}I$.
+Analogously, the phylogenetic regression given by \ref{eq:ls} can be represented in the mixed model framework by constraining $\epsilon_{mm} = 0$ and $Z=Z^{c}$ where the PC is incorportated in the random effect matrix.
+
+Recent years, researchers have begun to adpot these phylogenetic-based methods in various applications. 
+Despite the choice of modeling strageties, there are many limitations in the current state of art of statistical phylogenetic analysis \ml{add examples .. model selection and etc}.
+There are a handful of studies discussing the importance of incorportating phylogenetic signals but relatively few systematic studies of the comparative performance of comparative phylogenetic methods. 
 
 In this paper, we took a simple, yet effective alternative approach model to model phylogenetic correlation where we ... . We used lme4 and test it with simulated cases and fit it to dun (maybe more examples if we can find it) example. 
 We will compare our simulations and example fits to different platforms. 
