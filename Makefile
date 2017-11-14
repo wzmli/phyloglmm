@@ -16,6 +16,11 @@ include sub.mk
 # ms.tex
 # notes.md
 # todo.md
+
+ms.pdf: ms.tex
+	pdflatex ms
+
+
 Makefile:
 
 #2, parameters.R
