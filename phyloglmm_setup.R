@@ -14,7 +14,7 @@ phylo.to.Z <- function(r){
 		}
 	}                                      
 	Z <- t(sqrt(r$edge.length) * t(Zid))
-	rowname(Z) <- r$tip.label
+	rownames(Z) <- r$tip.label
 	colnames(Z) <- 1:length(r$edge.length)
 	return(Z)                                  
 }
