@@ -5,9 +5,10 @@
 #### 2) Lists in lme4 fit       ####
 ####################################
 
-library(lme4);
+library(lme4)
+library(ape)
 
-phylo_examp <- readRDS("worked_example_phylolmm.rds")
+phylo_examp <- readRDS(input_files[[1]])
 try_phy <- phylo_examp[[1]]
 titercurves_reduced <- phylo_examp[[2]]
 
@@ -30,7 +31,7 @@ lme4time <- system.time(
 		, phylonm = c("Scientific_Name")
 		, phylo = try_phy
 		, phyloZ = phyZ
-		, nsp = length(needed_species)
+		, nsp = 45
 		, control = lmerControl(check.nobs.vs.nlev = "ignore", check.nobs.vs.nRE = "ignore")
 	)
 )

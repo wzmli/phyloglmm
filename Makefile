@@ -23,6 +23,10 @@ ms.pdf: ms.tex
 
 Makefile:
 
+debug.Rout: phyloglmm_setup.Rout ./debug_examp/worked_example_phylolmm.rds ./debug_examp/worked_example_phylolmm.R
+	$(run-R)
+
+
 #2, parameters.R
 #3, phyloglmm_setup.R
 
