@@ -101,8 +101,20 @@ But many challenges remain.
 In particular, incorportating phylogenetic signals in high dimensional systems is always challenging, especially with large phylogenies where computation powers are limited.
 In such case, researchers often use simpler models with minimal phylogenetic signals limiting at the individuals level and neglect additional phylogenetic signals present in the system.
 
-%For example, regression analyses of body temperature as a function of body size for animal within a clade, species compositions in different sites, etc. 
-The most widely used statistical method to model related species data that accounts for phylogenetic structure is the phylogenetic regression (Felsenstein 1985).
+Recent years, researchers have begun to incorportate phylogenetic-based methods in various modelling applications \ml{cite}.
+The most widely used statistical method to model related species data that accounts for the phylogenetic structure is the \textit{phylogenetic regression} via independent constrast \ml{cite Felsenstein 1985} and further generalizations to generalized least square regression (PGLS) and generalized linear mixed models (PGLMM) to allow for different models of trait evolution \ml{or types of response?}. 
+Despite the choice of modelling strageties, there are many limitations in the current state of art of statistical phylogenetic analysis.
+There are a handful of studies discussing the importance of incorportating phylogenetic signals but relatively few systematically look at comparative performance of comparative phylogenetic methods. 
+
+In this paper, we propose an alternative, yet straightforward but little-used method of constructing phylogenetic correlations directly from phylogenetic tree by summing the evolutionary changes that occurred on all of the branches in the phylogeny in its past.
+We apply relatively simple phylogenetic comparative approaches to data from simulated phylogenies that incorportate various complexity of phylogenetic signals in the model. 
+We compare model approaches and explore various complex modelling strategies in the mixed model framework and a flexible platform for researches to explore biologically interesting questions.
+
+We also compare three different R packages: nlme, pez, and lme4. 
+\ml{Not sure if we should include the line "we are not using Bayesian approaches" here but defintely in the discussions.}
+
+\section{Materials and Methods}
+
 The typical phylogenetic regression is of the form:
 \begin{align}
 y & = XB + \epsilon \\
@@ -122,56 +134,20 @@ g(\mu) & = XB + Zb + \epsilon_{mm} \\
 \end{align}
 where $Z$ is an $n \times (m+1)$ model matrix for the $(m+1)$ -- dimensional vector-valued $m$ independment variables; $\epsilon_{mm}$ is the residual error and assumed to be multivariate normally distributed with a variance-covariance matrix given by $\sigma_{2}I$.
 Analogously, the phylogenetic regression given by (1) can be represented in the mixed model framework by constraining $\epsilon_{mm} = 0$ and $Z=Z^{c}$ where the PC is incorportated in the random effect matrix. 
-\ml{where can I add a line about independent contrast? maybe in the discussion?}
 
+\subsection{Phylogenetic Tree Transformation}
+The standard problem of phylogenetic comparative methods is to analyze relationships among data where the observations are gathered from nodes (usually tips) of a phylogenetic tree.
+Phylogenetic independent constrasts is a generalization of the paired comparisons method where contrasts are taken for each bifurcation (nodes) in a phylogenetic tree. 
+Assuming that traits evolve independently in each lineage following speciation, then the trait divergences that occur at one node are independent of divergence at other nodes.  
 
-Recent years, researchers have begun to adpot these phylogenetic-based methods in various applications. 
-Despite the choice of modeling strageties, there are many limitations in the current state of art of statistical phylogenetic analysis (i.e model selection and etc). 
-There are a handful of studies discussing the importance of incorportating phylogenetic signals but relatively few systematically look at comparative performance of comparative phylogenetic methods. 
-
-In this paper, we propose an alternative, yet straightforward but little-used method of constructing $Z^C$ directly from phylogenetic tree by summing the evolutionary changes that occurred on all of the branches in the phylogeny in its past.
-We apply relatively simple phylogenetic comparative approaches to data from simulated phylogenies that incorportate various complexity of phylogenetic signals in the model. 
-We compare model approaches and explore various complex modelling strategies in the mixed model framework and a flexible platform for researches to explore biologically interesting questions.
-
-We also compare three different R packages: nlme, pez, and lme4. 
-\ml{Not sure if we should include the line "we are not using Bayesian approaches" here but defintely in the discussions.}
-
-\section{Materials and Methods}
-
-We generate test data using a simple glmm framework that varies in complexity in random effect. All simulations and fits were performed with R. 
+An alternative approach is to model the phylogenetic correlation as a \textit{gaussian process}. 
+In particular, suppose that the evolutionary process is a Brownian motion, which means the evolution of a continuous trait is a random walk and daughter species after speciation are all independent.  
+In that case, the phylogenetic variability of a particular observation can be written as the sum of the evolutionary changes that occurred on all of the branches in the phylogeny in its past. 
+Thus, the evolutionary history for each species can be model with a sequence of independent errors, rather than having to impose a correlation structure on the random effects. 
 
 \subsection{Simulations}
 
-%We simulated two phenotypic traits (X andY). 
-The typical phylogenetic linear mixed model analysis is of the form:
-
-\begin{align}
-(Y \mid B=b) & \sim N(X\beta + Zb, \sigma^{2}),
-\end{align}
-where the conditional distribution of Y given $ B = b$ is a $n \times 1$ vector random response variable, whose observed value is y of some measureable phenotypic trait; 
-X is an $n \times (m + 1)$ model matrix containing 1's in the first column and the $m$ independent variables (traits);
-Z is an $n \times (m + 1)$ model matrix for the $m + 1$ -- dimensional vector-valued random effects variable; 
-$\beta$ is a $ m + 1 $ coefficient vector.
-The parameters of the model are the coefficients $\beta$ and the scale parameter $\sigma$.
-The unconditional distribution of B is multivariate normal with mean zero and a parameterized $(m + 1) \times (m + 1)$ variance-covariance matrix
-\begin{align}
-B & \sim \mathrm{MVN}(0,\Sigma),
-\end{align}
-and
-\begin{align}
-\Sigma & = \begin{pmatrix} \sigma^2_{sp} & \rho \sigma_{sp} \sigma_{X} \\ \rho \sigma_{sp} \sigma_{X} & \sigma^2_{X} \end{pmatrix},
-\end{align}
-where $\sigma^{2}_{sp}$ and $\sigma^{2}_{X}$ is the phylogenetic variance of species and phenotype X; 
-and $\rho$ is the correlation of \ml{...?}.
-
-
-\subsection{Phylogenetic Tree Transformation}
-The standard problem of phylogenetic comparative methods is to analyze relationships among data where the observations are gathered from nodes (usually tips) of a phylogenetic tree. 
-
-An alternative approach is to model the phylogenetic correlation as a gaussian process. 
-In particular, suppose that the evolutionary process is a Brownian motion. 
-In that case, the phylogenetic variability of a particular observation can be written as the sum of the evolutionary changes that occurred on all of the branches in the phylogeny in its past. 
-If we set up the Z matrix appropriately, we can model everythign with a sequence of independent errors, rather than having to do a fancy things to impose a correlation structure on the random effects. 
+We generate test data using a simple glmm framework that varies in complexity in random effect. All simulations and fits were performed with R. 
 
 \subsection{Model Fitting}
 \ml{platform/model equivalence}
