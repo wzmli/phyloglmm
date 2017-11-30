@@ -121,7 +121,7 @@ y & = XB + \epsilon \\
 \epsilon & \sim MVN(0,\sigma^{2}C),
 \label{eq:gls}
 \end{align}
-where $y$ is an $n \times 1$ vector of measureable response phenotypic trait; $X$ is an $n \times (m + 1)$ model matrix containing 1's in the first column and the $m$ independment variable (traits); $B$ is an $m + 1$ coefficient vector; $\espilon$ is the residual error and assumed to be multivariate normally distributed with a variance-covariance matrix given by $\sigma^{2}_{ \epsilon} C$ in which $C$ is the phylogenetic correlation (PC).
+where $y$ is an $n \times 1$ vector of measureable response phenotypic trait; $X$ is an $n \times (m + 1)$ model matrix containing 1's in the first column and the $m$ independment variable (traits); $B$ is an $m + 1$ coefficient vector; $\espilon$ is the residual error and assumed to be multivariate normally distributed with a variance-covariance matrix given by $\sigma^{2}_{ \epsilon} C$ in which $C$ is an $n \times n$ matrix of the phylogenetic correlation (PC).
 
 % More recently, researchers use linear mixed model and generalized linear mixed model framework to model complex systems with phylogenetic structures.
 %\ml{Why? Data type, interactions, random effects, etc... Need to really explain random effects here. Alternatively, we can drop this line and write this...}
