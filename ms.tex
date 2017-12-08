@@ -150,17 +150,35 @@ Thus, the evolutionary history for each species can be model with a sequence of 
 The random-effect model matrix $Z$ can be decomposed into term-wise model matrix $Z_{i}$ as described in \ml{in text citation lme4}.
 Thus, the phylogenetic correlated random-effect matrix $Z^{C}_{i}$ is
 
-\begin{align}
-Z^{C} & = BS Z ,
-\end{align}
+\begin{equation}
+Z^{C}_{i} = (BS \bigotimes I_{q_i \times s})^T Z_{i} ,
+\end{equation}
 
-where $BS$ is an $b \times s$ matrix of branch--species relation. 
+where $BS$ is an $b \times s$ matrix of branch--species relations; $I$ is an identity matrix size $q_i \times s$; $q_i$ is the number of columns contributed by $Z_i$; s is the number of sites; and  $\bigotimes$ is the Kronecker product \ml{cite kronecker}.  
 
-\ml{for correlated intercept and slope it is $Z^{C} = Kron(BS,diag(repterm))^T * Z$}
+
 
 \subsection{Simulations}
 
-We generate test data using a simple glmm framework that varies in complexity in random effect. All simulations and fits were performed with R. 
+\begin{tabular}{|c|c|c|}
+\hline
+Type of RE	& Formula	& Platform	\\
+\hline
+Single site intercept										&	1 \mid sp						& gls, lme4 \\
+Single site intercept and uncorrelated slopes		&  1 \mid sp + X \mid sp		& lme4 \\
+Single site intercept and correlated slopes 			& 1 + X \mid sp					& lme4 \\
+\hline
+Multiple site intercept 									&  1 \mid sp 						& pez, lme4 \\
+Multiple site intercept and uncorrelated slopes 	&  1 \mid sp + X \mid sp 		& pez, lme4 \\
+Multiple site intercept and uncorrelated slopes 	& 	1 + X \mid sp					& lme4 \\
+ditto with site interaction								& ditto above \mid sp:site		& ditto above \\
+\hline
+
+\end{tabular}
+\\
+
+
+We generate test data using a simple glmm framework that varies in complexity in random effect described in Table 1 \ml{macro this}. All simulations and fits were performed with R. 
 
 \subsection{Model Fitting}
 \ml{platform/model equivalence}
