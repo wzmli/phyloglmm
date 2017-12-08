@@ -50,7 +50,7 @@ if(platform == "pez"){
 if(platform == "lme4"){
 	fittime <- system.time(
 		fitmod <- phylo_lmm(Y ~ X
-		  + (1 |obs)
+		  + (1 |sp)
 			+ (1 + X|sp)
 			, data=dat
 			, phylonm = c("sp","sp:site")

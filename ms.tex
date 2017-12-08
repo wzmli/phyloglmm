@@ -145,16 +145,17 @@ In particular, suppose that the evolutionary process is a Brownian motion, which
 In that case, the phylogenetic variability of a particular observation can be written as the sum of the evolutionary changes that occurred on all of the branches in the phylogeny in its past. 
 Thus, the evolutionary history for each species can be model with a sequence of independent errors, rather than having to impose a correlation structure on the random effects. 
 
-\ml{$Z^{C}$ = $phyZ^{T}$ * Z}
 
 The random-effect model matrix $Z$ can be decomposed into term-wise model matrix $Z_{i}$ as described in \ml{in text citation lme4}.
 Thus, the phylogenetic correlated random-effect matrix $Z^{C}_{i}$ is
 
 \begin{equation}
-Z^{C}_{i} = (BS \bigotimes I_{q_i \times s})^T Z_{i} ,
+Z^{C}_{i} = Z_{i}(SB \bigotimes I_{p_i \times s}) ,
 \end{equation}
 
-where $BS$ is an $b \times s$ matrix of branch--species relations; $I$ is an identity matrix size $q_i \times s$; $q_i$ is the number of columns contributed by $Z_i$; s is the number of sites; and  $\bigotimes$ is the Kronecker product \ml{cite kronecker}.  
+\ml{double check if $l and p$ are the same with lme4}
+
+where $SB$ is an $l \times b$ matrix of species--branch relations; $I$ is an identity matrix size $p_i \times s$; $p_i$ is the number of columns contributed by $Z_i$; s is the number of sites; and  $\bigotimes$ is the Kronecker product \ml{cite kronecker}.  
 
 
 
