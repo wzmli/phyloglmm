@@ -78,8 +78,8 @@ simtree.%.Rout: parameters.Rout names.R simulate_tree.R
 
 simtree.lme4.small.1.Rout:
 
-fit.%.Rout: simtree.%.Rout phyloglmm_setup.Rout fit_phyloglmm.R
-	$(run-R)
+#fit.%.Rout: simtree.%.Rout phyloglmm_setup.Rout fit_phyloglmm.R
+#	$(run-R)
 
 fit.pez.small.1.Rout:
 fit.lme4.small.1.Rout:
@@ -147,6 +147,14 @@ fit_gls.Rout: parameters.R simulate_tree.Rout fit_gls.R
 
 fit.gls.%.Rout: names.R parameters.R simulate_tree.R fit_gls.R
 	$(run-R)
+
+
+fit.lme4.%.Rout: names.R parameters.R simulate_tree.R phyloglmm_setup.Rout phyloglmm.R
+	$(run-R)
+
+collect_gls.Rout: collect_gls.R
+	$(run-R)
+
 
 ####
 

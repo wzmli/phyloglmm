@@ -14,14 +14,17 @@ dat <- data.frame(dat)
 
 print(phy)
 
-fit_gls <- gls(Y~1
+tt <- system.time(fit_gls <- gls(Y~X
 	, data=dat
 	, correlation=corBrownian(phy=phy) 
 #	, correlation=corPagel(0.5,phy=phy)
 	, verbose=FALSE
 )
+)
 
 print(fit_gls)
 print(summary(fit_gls))
 
-saveRDS(fit_gls,file=paste("datadir/gls","small",seed,"rds",sep="."))
+
+gls_list <- list(fit_gls,tt)
+saveRDS(gls_list,file=paste("datadir/gls",size,seed,"rds",sep="."))

@@ -1,6 +1,6 @@
-#!/bin/bash
-for platform in gls; do
-    for size in small; do
+#/bin/bash
+for platform in lme4; do
+    for size in small med large; do
 	for seed in {1..200}; do
 		make fit.$platform.$size.$seed.Rout
 	    done

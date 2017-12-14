@@ -3,13 +3,25 @@
 ## Create simulates test cases for lme4 
 
 ### Single site
+nspp = small = 20
+med = 100
+large = 500
+
+sd.resid = very small or 10
+
+sd.B0 = 4
+sd.B1 = very small or 2
 
 - single site intercept zero residual (gls, lme4)
 -- single site intercept with residual (gls, lme4)
 
+done small and med 
+Need to run large
 
 ##### 
 
+lme4 resid = 10
+rho.B01 = 0.7
 - phylogenetic signals with uncorrelated slopes
 - phylogenetic signals with correlated slopes
 

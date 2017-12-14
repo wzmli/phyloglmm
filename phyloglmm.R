@@ -23,7 +23,7 @@ print(head(dat))
 lme4time <- system.time(
 	lme4fit <- phylo_lmm(Y ~ X
 		+ (1|sp)
-		+ (0 + X|sp)
+#		+ (0 + X|sp)
 #		+ (1+X|sp)
 		, data=dat
 		, phylonm = c("sp","sp:site")
@@ -38,3 +38,7 @@ print(lme4time)
 
 print(summary(lme4fit))
 
+
+lme4_list <- list(lme4fit, lme4time)
+
+saveRDS(lme4_list, file=paste("datadir/lme4",size,seed,"rds",sep="."))
