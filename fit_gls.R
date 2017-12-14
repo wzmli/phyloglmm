@@ -21,4 +21,7 @@ fit_gls <- gls(Y~1
 	, verbose=FALSE
 )
 
+print(fit_gls)
 print(summary(fit_gls))
+
+saveRDS(fit_gls,file=paste("datadir/gls","small",seed,"rds",sep="."))

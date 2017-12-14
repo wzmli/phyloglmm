@@ -3,7 +3,13 @@
 ## Create simulates test cases for lme4 
 
 ### Single site
-- with phylogenetic signals (hacked lme4 object cannot simulate)
+
+- single site intercept zero residual (gls, lme4)
+-- single site intercept with residual (gls, lme4)
+
+
+##### 
+
 - phylogenetic signals with uncorrelated slopes
 - phylogenetic signals with correlated slopes
 

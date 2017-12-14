@@ -39,11 +39,11 @@ Sources += $(wildcard *.R)
 ### simulate phylogenetic tree
 
 
-parameters.Rout:
+#parameters.Rout:
 
 phyloglmm_setup.Rout:
 
-simulate_tree.Rout: parameters.Rout simulate_tree.R
+simulate_tree.Rout: name.R parameters.R simulate_tree.R
 	$(run-R)
 
 simulate_poistree.Rout: parameters.Rout simulate_poistree.R
@@ -139,8 +139,16 @@ fit_MCMCglmm.Rout: parameters.Rout simulate_tree.Rout fit_MCMCglmm.R
 fit_glmmPQL.Rout: parameters.Rout simulate_tree.Rout fit_glmmPQL.R
 	$(run-R)
 
+### Working on this one now ###
+## need to fix the order of makefile 
+
 fit_gls.Rout: parameters.R simulate_tree.Rout fit_gls.R
 	$(run-R)
+
+fit.gls.%.Rout: names.R parameters.R simulate_tree.R fit_gls.R
+	$(run-R)
+
+####
 
 fit_tmb.Rout: parameters.R simulate_tree.Rout phyloglmm_setup.R tmb_setup.R fit_tmb.R
 	$(run-R)

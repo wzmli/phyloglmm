@@ -81,5 +81,6 @@ sp <- matrix(kronecker(matrix(1, nrow = nsite, ncol = 1), 1:nspp),
 
 dat <- data.frame(Y = YY, X, site = as.factor(site), sp = as.factor(sp),site_name = rep(site_name,each=nspp))
 
-
+print(dim(dat))
+print(head(dat))
 

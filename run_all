@@ -1,8 +1,8 @@
 #!/bin/bash
-for platform in pez lme4; do
+for platform in gls; do
     for size in small; do
-	for seed in {1..10}; do
-		make fit_cs.$platform.$size.$seed.Rout
+	for seed in {1..200}; do
+		make fit.$platform.$size.$seed.Rout
 	    done
         done
     done
