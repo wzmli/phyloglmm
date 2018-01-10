@@ -23,6 +23,8 @@ ms.pdf: ms.tex
 
 Makefile:
 
+### debug Morgan's example
+
 debug.Rout: phyloglmm_setup.Rout ./debug_examp/worked_example_phylolmm.rds ./debug_examp/worked_example_phylolmm.R
 	$(run-R)
 
@@ -49,75 +51,23 @@ simulate_tree.Rout: name.R parameters.R simulate_tree.R
 simulate_poistree.Rout: parameters.Rout simulate_poistree.R
 	$(run-R)
 
-### simulate via lme4 simulate (broken)
-
-simulate_lme4.Rout: simulate_tree.Rout phyloglmm_setup.Rout simulate_lme4.R
-	$(run-R)
-
-
 ######################################################################
-
-## simulation test 
 
 
 ### Single site 
 
-
-lme4_ss_simtest.%.Rout: parameters.Rout phyloglmm_setup.Rout lme4_ss_simtest.R
-	$(run-R)
-
-lme4_ss_simtest.small.Rout:
-lme4_ss_simtest.med.Rout:
-lme4_ss_simtest.large.Rout:
-
-
-## Multiple sites
-
-simtree.%.Rout: parameters.Rout names.R simulate_tree.R
-	$(run-R)
-
-simtree.lme4.small.1.Rout:
-
-#fit.%.Rout: simtree.%.Rout phyloglmm_setup.Rout fit_phyloglmm.R
-#	$(run-R)
-
-fit.pez.small.1.Rout:
-fit.lme4.small.1.Rout:
-
-#####################################################################
-
-### fitting
-
-fit_poisson.Rout: parameters.R simulate_poistree.Rout phyloglmm_setup.R phyloglmm_pois.R
-	$(run-R)
-
-
-### Fitting
-
-fit_pez.Rout: parameters.R simulate_tree.Rout fit_pez.R
-	$(run-R)
-
-fit_lme4.Rout: parameters.R simulate_tree.Rout phyloglmm_setup.Rout phyloglmm.R
-	$(run-R)
-
-fit_MCMCglmm.Rout: parameters.Rout simulate_tree.Rout fit_MCMCglmm.R
-	$(run-R)
-
-fit_glmmPQL.Rout: parameters.Rout simulate_tree.Rout fit_glmmPQL.R
-	$(run-R)
-
-### Working on this one now ###
-## need to fix the order of makefile 
-
-fit_gls.Rout: parameters.R simulate_tree.Rout fit_gls.R
-	$(run-R)
-
 fit.gls.%.Rout: names.R parameters.R simulate_tree.R fit_gls.R
 	$(run-R)
 
+### lme4 can fit single and multiple sites
 
-fit.lme4.%.Rout: names.R parameters.R simulate_tree.R phyloglmm_setup.Rout phyloglmm.R
+fit.lme4.%.Rout: names.R parameters.R simulate_tree.R phyloglmm_setup.R phyloglmm.R
 	$(run-R)
+
+fit.pez.%.Rout: names.R parameters.R simulate_tree.R fit_pez.R
+	$(run-R)
+
+### Multiple sites compound symmetric case
 
 fit_cs.lme4.%.Rout: names.R parameters.R simulate_tree.R phyloglmm_setup.Rout fit_cs_lme4.R
 	$(run-R)
@@ -125,14 +75,7 @@ fit_cs.lme4.%.Rout: names.R parameters.R simulate_tree.R phyloglmm_setup.Rout fi
 fit_cs.pez.%.Rout: names.R parameters.R simulate_tree.R phyloglmm_setup.Rout fit_cs_pez.R
 	$(run-R)
 
-fit.pez.%.Rout: names.R parameters.R simulate_tree.R fit_pez.R
-	$(run-R)
-
-collect_gls.Rout: collect_gls.R
-	$(run-R)
-
-
-#### collect results
+### Collect and plot results
 
 collect.Rout: collect.R
 	$(run-R)
@@ -140,8 +83,22 @@ collect.Rout: collect.R
 plot.Rout: collect.Rout plot.R
 	$(run-R)
 
+	
+### fitting poisson (NEED TO FIX)
 
-####
+fit_poisson.Rout: parameters.R simulate_poistree.Rout phyloglmm_setup.R phyloglmm_pois.R
+	$(run-R)
+
+
+### Fitting using other platforms (NEED TO FIX/CLEAN)
+
+fit_MCMCglmm.Rout: parameters.Rout simulate_tree.Rout fit_MCMCglmm.R
+	$(run-R)
+
+fit_glmmPQL.Rout: parameters.Rout simulate_tree.Rout fit_glmmPQL.R
+	$(run-R)
+
+
 fit_tmb.Rout: parameters.R simulate_tree.Rout phyloglmm_setup.R tmb_setup.R fit_tmb.R
 	$(run-R)
 
