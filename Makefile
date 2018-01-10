@@ -84,32 +84,6 @@ simtree.lme4.small.1.Rout:
 fit.pez.small.1.Rout:
 fit.lme4.small.1.Rout:
 
-## compound symmetric simulation test
-
-fit_cs.%.Rout: simtree.%.Rout phyloglmm_setup.Rout fit_cs.R
-	$(run-R)
-
-fit_cs.lme4.large.1.Rout:
-fit_cs.lme4.med.99.Rout:
-
-fit_cs.pez.med.99.Rout:
-
-
-## Collect results from datadir
-
-collect.Rout: collect.R
-
-collect_csfit.Rout: collect_cs.R
-	$(run-R)
-
-
-### Plotting simulation results
-
-plot_simtest.Rout: plot_simtest.R
-	$(run-R)
-
-
-
 #####################################################################
 
 ### fitting
@@ -125,13 +99,6 @@ fit_pez.Rout: parameters.R simulate_tree.Rout fit_pez.R
 
 fit_lme4.Rout: parameters.R simulate_tree.Rout phyloglmm_setup.Rout phyloglmm.R
 	$(run-R)
-
-lme4_simtest.Rout: parameters.Rout phyloglmm_setup.Rout lme4_simtest.R
-	$(run-R)
-
-lme4_sstest.Rout: parameters.Rout phyloglmm_setup.Rout lme4_fitss.R
-	$(run-R)
-
 
 fit_MCMCglmm.Rout: parameters.Rout simulate_tree.Rout fit_MCMCglmm.R
 	$(run-R)
@@ -152,12 +119,29 @@ fit.gls.%.Rout: names.R parameters.R simulate_tree.R fit_gls.R
 fit.lme4.%.Rout: names.R parameters.R simulate_tree.R phyloglmm_setup.Rout phyloglmm.R
 	$(run-R)
 
+fit_cs.lme4.%.Rout: names.R parameters.R simulate_tree.R phyloglmm_setup.Rout fit_cs_lme4.R
+	$(run-R)
+
+fit_cs.pez.%.Rout: names.R parameters.R simulate_tree.R phyloglmm_setup.Rout fit_cs_pez.R
+	$(run-R)
+
+fit.pez.%.Rout: names.R parameters.R simulate_tree.R fit_pez.R
+	$(run-R)
+
 collect_gls.Rout: collect_gls.R
 	$(run-R)
 
 
-####
+#### collect results
 
+collect.Rout: collect.R
+	$(run-R)
+
+plot.Rout: collect.Rout plot.R
+	$(run-R)
+
+
+####
 fit_tmb.Rout: parameters.R simulate_tree.Rout phyloglmm_setup.R tmb_setup.R fit_tmb.R
 	$(run-R)
 

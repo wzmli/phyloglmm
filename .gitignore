@@ -10,4 +10,5 @@
 *.wrapR.rout
 
 *.Rds
+*.rds
 target.mk

@@ -27,10 +27,9 @@ peztime <- system.time(
 		, family = "gaussian"
 		, sp = dat$sp
 		, site = dat$site
-		, random.effects = list(re.1
-			, re.2
-			, re.3
-			, re.4)
+		, random.effects = list(re.2
+			, re.4
+			)
 		, REML = FALSE
 		, verbose = FALSE
 		)
@@ -39,3 +38,9 @@ peztime <- system.time(
 print(peztime)
 
 print(summary(pezfit))
+
+
+pez_list <- list(pezfit, peztime)
+
+saveRDS(pez_list, file=paste("datadir/pez",size,seed,"rds",sep="."))
+

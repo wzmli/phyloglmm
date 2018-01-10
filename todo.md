@@ -15,8 +15,7 @@ sd.B1 = very small or 2
 - single site intercept zero residual (gls, lme4)
 -- single site intercept with residual (gls, lme4)
 
-done small and med 
-Need to run large
+DONE
 
 ##### 
 
@@ -25,16 +24,25 @@ rho.B01 = 0.7
 - phylogenetic signals with uncorrelated slopes
 - phylogenetic signals with correlated slopes
 
-## match test cases with pez
+## DONE
 
 ### Multiple sites
+nsite = 20
+
 - with phylogenetic signals
-- phylogenetic signals by sites (compound symmetric case)
 - phylogenetic signals by site with uncorrelated slopes
 - phylogenetic signals by site with correlated slopes 
 
+MISSING: resume pez med 134 
 
+Now working on cs case where we ditto above 
 
+finish phylogenetic signal with compound symmetric _sp:site_
+done cs uncorrelated slope
+
+There is a small problem with the algebra with cs simulate for thetas
+
+Working on intercept and uncorrelated slope pez
 
 Three sample sizes:
 Small: 20 sp by 20 sites

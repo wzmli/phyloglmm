@@ -67,10 +67,14 @@ modify_phylo_retrms <- function(rt,phylo,phylonm,phyloZ,nsp){
 	 ### lFormula is creating the all RE index w.r.t nsp lengths into a simple vector, we have to use the function above to split properly
 	Lind_list <- split(rt[["Lind"]],rep(seq_along(Lind_split_length),Lind_split_length*nsp))
   if(names(rt[["cnms"]][1]) == "sp:site"){ ### hack
-  for(i in 1:length(rt$cnms)){
-	  Lind_list[[i]] <- rep(i,sum(rt$Lind==i))
-   }
+    for(i in 1:length(rt$cnms)){
+	    Lind_list[[i]] <- rep(i,sum(rt$Lind==i))
+    }
+    if(length(rt[["cnms"]][2]$sp) == 2){
+      Lind_list[[2]] <- rep(c(2,3,4),sum(rt$Lind==2)) 
+    }
   }
+  
 	## Lambdat: replace block-diagonal element in Lambdat with a
 	## larger diagonal matrix
 	Lambdat_list <- split_blkMat(rt[["Lambdat"]],inds)
