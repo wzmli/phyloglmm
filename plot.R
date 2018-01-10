@@ -5,6 +5,21 @@ library(ggplot2)
 library(tidyr)
 theme_set(theme_bw())
 
+data_list <- readRDS("./datadir/result_list.RDS")
+
+gls_data <- data_list[[1]]
+lme4ss_data <- data_list[[2]]
+lme4ss_slope_data <- data_list[[3]]
+lme4ms_data <- data_list[[4]]
+pez_data <- data_list[[5]]
+lme4ms_slope_data <- data_list[[6]]
+pez_slope_data <- data_list[[7]]
+lme4cs_data <- data_list[[8]]
+pez_cs_data <- data_list[[9]]
+lme4cs_slope_data <- data_list[[10]]
+pez_cs_slope_data <- data_list[[11]]
+
+
 gls_data2 <- (gls_data
   %>% transmute(sd=resid
     , sdtype = "phylo"
