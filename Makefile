@@ -80,7 +80,7 @@ fit_cs.pez.%.Rout: names.R parameters.R simulate_tree.R phyloglmm_setup.Rout fit
 collect.Rout: collect.R
 	$(run-R)
 
-plot.Rout: collect.Rout plot.R
+plot.Rout: plot.R
 	$(run-R)
 
 	
