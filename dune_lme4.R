@@ -20,6 +20,7 @@ phy <- get_phylo(veg.long = dune.veg2
 )
 
 phyZ <- phylo.to.Z(phy)
+phyZ <- phyZ[order(rownames(phyZ)),]
 
 dat <- (dat
   %>% rowwise()
@@ -33,8 +34,8 @@ dat <- (dat
 lme4time_1 <- system.time(
   lme4fit_1 <- phylo_lmm(Y ~ 1 + log.sla + annual 
 		+ (1|obs) 
-		# + (1|sp)
-    # + (1 | sp:site)
+		+ (1|sp)
+    + (1 | sp:site)
 		+ (0 + log.sla | site)
 		+ (1|site) 
 		, data=dat
@@ -94,14 +95,14 @@ peztime_1 <- system.time(
 	, sp = dat$sp
 	, site = dat$site
 	, random.effects = list(re.sp
-		# , re.sp.phy
-		# , re.nested.phy
+		, re.sp.phy
+		, re.nested.phy
 		, re.sla
 		, re.site
 	)
 	, REML = T
 	, verbose = F
-	, s2.init = c(1.5, rep(0.01, 3))
+	, s2.init = c(1.5, rep(0.01, 4))
 	, reltol = 10e-10
 	, maxit = 1000
 	)
@@ -113,7 +114,8 @@ peztime_2 <- system.time(
 		, family = "gaussian"
 		, sp = dat$sp
 		, site = dat$site
-		, random.effects = list(re.sp
+		, random.effects = list(
+		    re.sp
 			, re.sp.phy
 			, re.nested.phy
 			, re.site

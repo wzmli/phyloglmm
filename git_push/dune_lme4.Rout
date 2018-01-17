@@ -93,7 +93,8 @@
 > modify_phylo_retrms <- function(rt, phylo, phylonm, 
 +     phyloZ, nsp) {
 +     n.edge <- nrow(phylo$edge)
-+     phylo.pos <- which(names(rt$cnms) = .... [TRUNCATED] 
++     phylo.pos <- c()
++     for (i in 1: .... [TRUNCATED] 
 
 > phylo_lmm <- function(formula, data, phylo, phylonm, 
 +     phyloZ, nsp = NULL, control) {
@@ -111,6 +112,10 @@
 > library(lme4)
 
 > library(dplyr)
+
+> debug(phylo_lmm)
+
+> debug(modify_phylo_retrms)
 
 > dd <- data.frame(dat)
 
@@ -144,164 +149,24 @@
 
 > phyZ <- phylo.to.Z(phy)
 
-> dat <- (dat %>% rowwise() %>% mutate(obs = sp, standard_site = (as.numeric(site) - 
-+     mean(1:20))/sd(1:20)))
+> phyZ <- phyZ[order(rownames(phyZ)), ]
+
+> dat <- (dat %>% rowwise() %>% mutate(obs = sp))
 
 > lme4time_1 <- system.time(lme4fit_1 <- phylo_lmm(Y ~ 
-+     1 + log.sla + annual + (1 | obs) + (1 | sp) + (0 + standard_site | 
-+         sp) + (0 + .... [TRUNCATED] 
-
-> lme4time_2 <- system.time(lme4fit_2 <- phylo_lmm(Y ~ 
-+     1 + log.sla + annual + (1 | obs) + (1 | sp) + (0 + standard_site | 
-+         sp) + (1 | .... [TRUNCATED] 
-
-> REs <- get_RE(veg.long = dune.veg2, trait = dune.traits2[c(1, 
-+     2)], trait.re = c("log.sla"), phylo = dune.phylo2, trans = "log")
-[1] 28 28
-
-> re.site <- REs[[1]]
-
-> re.sp <- REs[[2]]
-
-> re.sp.phy <- REs[[3]]
-
-> re.nested.phy <- REs[[4]]
-
-> re.sla = list(unname(unlist(dat["log.sla"])), site = dat$site, 
-+     covar = diag(nsite))
-
-> peztime_1 <- system.time(pezfit_1 <- communityPGLMM(formula = "Y ~ 1 + log.sla + annual", 
-+     data = dat, family = "gaussian", sp = dat$sp, site  .... [TRUNCATED] 
-
-> peztime_2 <- system.time(pezfit_2 <- communityPGLMM(formula = "Y ~ 1 + log.sla + annual", 
-+     data = dat, family = "gaussian", sp = dat$sp, site  .... [TRUNCATED] 
-
-> print(peztime_1)
-   user  system elapsed 
-358.656   3.716 370.106 
-
-> print(summary(pezfit_1))
-Linear mixed model fit by restricted maximum likelihood
-
-Call:[1] "Y ~ 1 + log.sla + annual"
-
-logLik    AIC    BIC 
--540.8 1099.5 1128.2 
-
-Random effects:
-             Variance Std.Dev
-non-nested 1 0.038949 0.19736
-non-nested 2 0.000985 0.03138
-non-nested 3 0.015114 0.12294
-non-nested 4 0.003293 0.05739
-nested 1     0.006490 0.08056
-residual     0.346933 0.58901
-
-Fixed effects:
-                Value Std.Error  Zscore   Pvalue    
-(Intercept)  0.507965  0.069237  7.3366 2.19e-13 ***
-log.sla      0.170249  0.057501  2.9608 0.003068 ** 
-annual      -0.388517  0.138812 -2.7989 0.005128 ** 
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-NULL
-
-> print(lme4time_1)
-   user  system elapsed 
-  1.212   0.000   1.247 
-
-> print(summary(lme4fit_1))
-Linear mixed model fit by REML ['lmerMod']
-
-REML criterion at convergence: 1058.6
-
-Scaled residuals: 
-    Min      1Q  Median      3Q     Max 
--2.0135 -0.6634 -0.2509  0.5397  2.8269 
-
-Random effects:
- Groups   Name          Variance  Std.Dev.
- obs      (Intercept)   0.0439923 0.20974 
- sp       (Intercept)   0.0001162 0.01078 
- sp.1     standard_site 0.0008242 0.02871 
- site     log.sla       0.0036677 0.06056 
- site.1   (Intercept)   0.0004143 0.02035 
- Residual               0.3287614 0.57338 
-Number of obs: 560, groups:  obs, 28; sp, 54; site, 20
-
-Fixed effects:
-            Estimate Std. Error t value
-(Intercept)  0.52443    0.09387   5.586
-log.sla      0.19068    0.05363   3.555
-annual      -0.30155    0.14106  -2.138
-
-Correlation of Fixed Effects:
-        (Intr) log.sl
-log.sla  0.016       
-annual  -0.219  0.070
-
-> print(peztime_2)
-   user  system elapsed 
-233.744   2.012 240.416 
-
-> print(summary(pezfit_2))
-Linear mixed model fit by restricted maximum likelihood
-
-Call:[1] "Y ~ 1 + log.sla + annual"
-
-logLik    AIC    BIC 
--543.5 1103.0 1128.5 
-
-Random effects:
-             Variance Std.Dev
-non-nested 1 0.036549 0.19118
-non-nested 2 0.001046 0.03233
-non-nested 3 0.002843 0.05332
-nested 1     0.008170 0.09039
-residual     0.355467 0.59621
-
-Fixed effects:
-                Value Std.Error  Zscore    Pvalue    
-(Intercept)  0.507301  0.070289  7.2173 5.302e-13 ***
-log.sla      0.168101  0.050500  3.3288 0.0008723 ***
-annual      -0.388523  0.138533 -2.8045 0.0050387 ** 
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-NULL
-
-> print(lme4time_2)
-   user  system elapsed 
-   0.60    0.00    0.63 
-
-> print(summary(lme4fit_2))
-Linear mixed model fit by REML ['lmerMod']
-
-REML criterion at convergence: 1059.1
-
-Scaled residuals: 
-    Min      1Q  Median      3Q     Max 
--2.0572 -0.6493 -0.2377  0.5441  2.8598 
-
-Random effects:
- Groups   Name          Variance  Std.Dev.
- obs      (Intercept)   0.0438404 0.20938 
- sp       (Intercept)   0.0001162 0.01078 
- sp.1     standard_site 0.0008647 0.02941 
- site     (Intercept)   0.0003060 0.01749 
- Residual               0.3317973 0.57602 
-Number of obs: 560, groups:  obs, 28; sp, 54; site, 20
-
-Fixed effects:
-            Estimate Std. Error t value
-(Intercept)  0.52443    0.09385   5.588
-log.sla      0.19068    0.05189   3.674
-annual      -0.30155    0.14106  -2.138
-
-Correlation of Fixed Effects:
-        (Intr) log.sl
-log.sla  0.017       
-annual  -0.219  0.072
-> # Wrapped output file dune_lme4.wrapR.rout
-> 
++     1 + log.sla + annual + (1 | obs) + (1 | sp) + (1 | sp:site) + 
++         (0 + log.sla |  .... [TRUNCATED] 
+debugging in: phylo_lmm(Y ~ 1 + log.sla + annual + (1 | obs) + (1 | sp) + (1 | 
+    sp:site) + (0 + log.sla | site) + (1 | site), data = dat, 
+    phylonm = c("sp", "sp:site"), nsp = 28, phylo = phy, phyloZ = phyZ, 
+    control = lmerControl(check.nobs.vs.nlev = "ignore", check.nobs.vs.nRE = "ignore"))
+debug: {
+    lmod <- lFormula(formula = formula, data = data, control = control)
+    lmod$reTrms <- modify_phylo_retrms(lmod$reTrms, phylo, phylonm, 
+        phyloZ, nsp)
+    devfun <- do.call(mkLmerDevfun, lmod)
+    opt <- optimizeLmer(devfun, control = control$optCtrl)
+    mkMerMod(environment(devfun), opt, lmod$reTrms, fr = lmod$fr)
+}
+Browse[2]> # Wrapped output file dune_lme4.wrapR.rout
+Browse[2]> 
