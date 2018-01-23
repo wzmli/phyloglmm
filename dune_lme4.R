@@ -88,7 +88,10 @@ re.sp.phy <- REs[[3]]
 re.nested.phy <- REs[[4]]
 re.sla = list(unname(unlist(dat["log.sla"])), site = dat$site, covar = diag(nsite))
 
-
+re.hacked <- re.sp.phy
+re.hacked$covar <- kronecker(diag(20),re.sp.phy$covar)
+dimnames(re.hacked$covar)[[1]] <- rep(dimnames(re.sp.phy$covar)[[1]],20)
+dimnames(re.hacked$covar)[[2]] <- rep(dimnames(re.sp.phy$covar)[[2]],20)
 
 
 peztime_1 <- system.time(
@@ -99,9 +102,10 @@ peztime_1 <- system.time(
 	, site = dat$site
 	, random.effects = list(#re.sp
 		 # re.sp.phy
-		 re.nested.phy
+		 re.hacked
+		 # re.nested.phy
 	#	, re.sla
-	#	, re.site
+		 # re.site
 	)
 	, REML = T
 	, verbose = F

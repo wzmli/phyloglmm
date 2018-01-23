@@ -2,18 +2,22 @@
 
 ## Jan 22nd 2018
 
+MLi's pez nested hack worked. 
+If we construct the _nested_ RE manually (i.e. applying the kronecker product ourselves instead of letting pez do it internally) and trick pez to think it is a non-nested term, it will do the cholesky decomposition step. 
+As expected, the result matches lme4's perfectly. 
+
+For the pez hack, we need to "debug(communityPGLMM.gaussian)" and replace the variables coded in pez_hack.R
+
+MLi is going to try to _hack_ pez and trick the nested case by applying the kronecker product and feed it in as non-nested term.
+MLi think this will trigger the cholesky decomposition step and hope it will give the same results as lme4.
+
+MLi tried to do a _step-wise_ additative RE comarison between lme4 and pez. 
+All _non-nested_ RE have a cholesky decomposition step in pez and the results are almost idenical as expected between the two platforms.
+The nested case however does not have a cholesky decomposition step.
+
 We want to figure out what is wrong with our _nested_ or _sp:site_ model and why lme4 is producing different results as pez.
 MLi (and maybe BB) thinks the phylogenetic repulsion case is hard and low in priority. 
 MLi have mixed feelings about phylogenetic repulsion because the examples in Li and Ives (2017) have _zero_ variance (BB thinks this is fine, but we need to dig deeper if we want to get into the details). 
-
-MLi tried to do a _step-wise_ additative comparison between lme4 and pez. 
-All _non-nested_ RE have a cholesky decomposition step in pez and the results are almost identical as expected between the two platforms.
-The nested case however does not have a cholesky decomposition step.
-
-### TODO:
-
-- Spend a few more minutes and try to understand the nested code 
-- Start filling in the MS given we are certain/confident we can match pez with a real example.
 
 
 ## Jan 17th 2018
