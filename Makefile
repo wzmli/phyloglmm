@@ -16,6 +16,7 @@ include sub.mk
 # ms.tex
 # notes.md
 # todo.md
+# journal.md
 
 ms.pdf: ms.tex
 	pdflatex ms
