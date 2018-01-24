@@ -1,5 +1,29 @@
 ## Journal
 
+## Jan 24th 2018
+
+dune_lme4.Rout is the initial comparison of lme4 and pez with the _dune_ dataset in Li and Ives (2017).
+The results are different between platforms and with the results presented in Li and Ives (MLi thinks it might be just package version or minor stuff).
+MLi diagnosed the problem and it is the nested case that is causing the difference between the two platforms.
+The main difference is pez is not doing the cholesky decomposition in the nested RE.
+
+compare.Rout separates nested and non-nested RE and compare the two platforms. 
+The non-nested case matches pretty well as expected. 
+For the nested case, we can see the results are different. 
+MLi wrote a hacked version that does the cholesky decomposition and it worked.
+
+
+MLi made a separate file ( hacked_nested.R ) for the pez nested hack.
+We are not rely/use this hack for the paper.
+Now we are going to clean up the codes and separate the appropriate parts. 
+
+## Jan 23rd 2018
+
+MLi is somewhat confident in moving forward. 
+We would like to understand what pez is doing for the nested case, but it shouldn't stop us from adding what we can do for the ms for now.
+Once we figure out what is going on with the nested pez case, we need to redo the simulation for that part.
+
+
 ## Jan 22nd 2018
 
 MLi's pez nested hack worked. 

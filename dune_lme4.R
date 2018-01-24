@@ -22,21 +22,16 @@ phy <- get_phylo(veg.long = dune.veg2
 phyZ <- phylo.to.Z(phy)
 phyZ <- phyZ[order(rownames(phyZ)),]
 
-print(phyZ)
-
 dat <- (dat
   %>% rowwise()
   %>% mutate(obs = sp
-    # , standard_site = (as.numeric(site) - mean(1:20))/sd(1:20)
   )
 )	
-
-# print(phyZ)
 
 lme4time_1 <- system.time(
   lme4fit_1 <- phylo_lmm(Y ~ 1 + log.sla + annual 
 		+ (1|obs) 
-		# + (1|sp)
+		+ (1|sp)
     + (1 | site:sp)
 		+ (0 + log.sla | site)
 		+ (1|site) 
@@ -49,13 +44,11 @@ lme4time_1 <- system.time(
   )
 )
 
-print(summary(lme4fit_1))
-
 
 lme4time_2 <- system.time(
   lme4fit_2 <- phylo_lmm(Y ~ 1 + log.sla + annual
-		# + (1|obs)
-		# + (1|sp)
+		+ (1|obs)
+		+ (1|sp)
 		+ (1 | site:sp)
 		# + (1|site)
 		, data=dat
@@ -66,8 +59,6 @@ lme4time_2 <- system.time(
 		, control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
 	)
 )
-
-print(summary(lme4fit_2))
 
 REs <- get_RE(veg.long = dune.veg2
 	, trait = dune.traits2[c(1, 2)]
@@ -88,61 +79,55 @@ re.sp.phy <- REs[[3]]
 re.nested.phy <- REs[[4]]
 re.sla = list(unname(unlist(dat["log.sla"])), site = dat$site, covar = diag(nsite))
 
-re.hacked <- re.sp.phy
-re.hacked$covar <- kronecker(diag(20),re.sp.phy$covar)
-dimnames(re.hacked$covar)[[1]] <- rep(dimnames(re.sp.phy$covar)[[1]],20)
-dimnames(re.hacked$covar)[[2]] <- rep(dimnames(re.sp.phy$covar)[[2]],20)
-
 
 peztime_1 <- system.time(
-	pezfit_1 <-  communityPGLMM(formula = "Y ~ 1 + log.sla + annual"
-	, data = dat
-	, family = "gaussian"
-	, sp = dat$sp
-	, site = dat$site
-	, random.effects = list(#re.sp
-		 # re.sp.phy
-		 re.hacked
-		 # re.nested.phy
-	#	, re.sla
-		 # re.site
-	)
+  pezfit_1 <-  communityPGLMM(formula = "Y ~ 1 + log.sla + annual"
+    , data = dat
+    , family = "gaussian"
+    , sp = dat$sp
+    , site = dat$site
+    , random.effects = list(re.sp
+      , re.sp.phy
+      , re.nested.phy
+      , re.sla
+      , re.site
+      )
+    , REML = T
+    , verbose = F
+    , s2.init = c(1.5, rep(0.01, 4))
+    , reltol = 10e-10
+    , maxit = 1000
+  )
+)
+
+peztime_2 <- system.time(
+	pezfit_2 <-  communityPGLMM(formula = "Y ~ 1 + log.sla + annual"
+		, data = dat
+		, family = "gaussian"
+		, sp = dat$sp
+		, site = dat$site
+		, random.effects = list(
+		    re.sp
+			, re.sp.phy
+			, re.nested.phy
+			, re.site
+		)
 	, REML = T
 	, verbose = F
-	# , s2.init = c(1.5, rep(0.01, 4))
+	, s2.init = c(1.5, rep(0.01, 3))
 	, reltol = 10e-10
 	, maxit = 1000
 	)
 )
 
-# peztime_2 <- system.time(
-# 	pezfit_2 <-  communityPGLMM(formula = "Y ~ 1 + log.sla + annual"
-# 		, data = dat
-# 		, family = "gaussian"
-# 		, sp = dat$sp
-# 		, site = dat$site
-# 		, random.effects = list(
-# 		    re.sp
-# 			, re.sp.phy
-# 			, re.nested.phy
-# 			, re.site
-# 		)
-# 	, REML = T
-# 	, verbose = F
-# 	# , s2.init = c(1.5, rep(0.01, 3))
-# 	, reltol = 10e-10
-# 	, maxit = 1000
-# 	)
-# )
 
+print(peztime_1)
+print(summary(pezfit_1))
+print(lme4time_1)
+print(summary(lme4fit_1))
 
-# print(peztime_1)
-# print(summary(pezfit_1))
-# print(lme4time_1)
-# print(summary(lme4fit_1))
-# 
-# print(peztime_2)
-# print(summary(pezfit_2))
-# print(lme4time_2)
-# print(summary(lme4fit_2))
+print(peztime_2)
+print(summary(pezfit_2))
+print(lme4time_2)
+print(summary(lme4fit_2))
 
