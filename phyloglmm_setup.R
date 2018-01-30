@@ -122,8 +122,8 @@ modify_phylo_retrms <- function(rt,phylo,phylonm,phyloZ,nsp){
 }
 
 
-phylo_lmm <- function(formula,data,phylo,phylonm,phyloZ,nsp=NULL,control){
-	lmod <- lFormula(formula=formula,data = data,control=control)
+phylo_lmm <- function(formula,data,phylo,phylonm,phyloZ,nsp=NULL,control,REML){
+	lmod <- lFormula(formula=formula,data = data,control=control, REML=REML)
 	lmod$reTrms <- modify_phylo_retrms(lmod$reTrms,phylo,phylonm,phyloZ,nsp)
 	devfun <- do.call(mkLmerDevfun, lmod)
 	opt <- optimizeLmer(devfun,control=control$optCtrl)

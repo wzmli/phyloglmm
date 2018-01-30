@@ -1,5 +1,23 @@
 ## Journal
 
+## Jan 30th 2018
+
+One last test, does standardizing cov(phylo) give a better fit?
+ANS: The result is the same, we can even apply an appropriate post-hoc transformation.
+
+The current phyloglmm is using REML, we have to change it appropriately to match pez.
+I don't know the phy.to.Z equivalent of standardizing cov(phylo).
+
+MLi has a hypothesis that pez's default nested code is fishy because it doesn't have a cholesky step and was not apart of Zt (i.e. it did not matrix multiple after applying the kronecker product step). 
+The first thing MLi tried was comment out the Zt step and it turned out exactly as MLi predicted (see compare_pez.Rout)
+
+MLi successfully replicated Li and Ives 2017 result.
+There were three problems:
+- max iteration and reltol was bad
+- they used maximum likelihood instead of REML
+- standardizing the variance-covariance matrix does matter
+Everything matched perfectly after fixing these minor issues. 
+
 ## Jan 24th 2018
 
 dune_lme4.Rout is the initial comparison of lme4 and pez with the _dune_ dataset in Li and Ives (2017).

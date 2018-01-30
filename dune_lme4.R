@@ -5,6 +5,9 @@ library(Matrix)
 library(lme4)
 library(dplyr)
 
+maxit <- 100000000
+reltol <- 0.000000001
+
 # debug(phylo_lmm)
 # debug(modify_phylo_retrms)
 
@@ -41,6 +44,7 @@ lme4time_1 <- system.time(
 		, phylo = phy
 		, phyloZ=phyZ
 		, control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
+		, REML = FALSE
   )
 )
 
@@ -57,6 +61,7 @@ lme4time_2 <- system.time(
 		, phylo = phy
 		, phyloZ=phyZ
 		, control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
+		, REML = FALSE
 	)
 )
 
@@ -92,42 +97,42 @@ peztime_1 <- system.time(
       , re.sla
       , re.site
       )
-    , REML = T
+    , REML = F
     , verbose = F
     , s2.init = c(1.5, rep(0.01, 4))
-    , reltol = 10e-10
-    , maxit = 1000
+    , reltol = reltol
+    , maxit = maxit
   )
 )
-
-peztime_2 <- system.time(
-	pezfit_2 <-  communityPGLMM(formula = "Y ~ 1 + log.sla + annual"
-		, data = dat
-		, family = "gaussian"
-		, sp = dat$sp
-		, site = dat$site
-		, random.effects = list(
-		    re.sp
-			, re.sp.phy
-			, re.nested.phy
-			, re.site
-		)
-	, REML = T
-	, verbose = F
-	, s2.init = c(1.5, rep(0.01, 3))
-	, reltol = 10e-10
-	, maxit = 1000
-	)
-)
-
-
-print(peztime_1)
+# 
+# peztime_2 <- system.time(
+# 	pezfit_2 <-  communityPGLMM(formula = "Y ~ 1 + log.sla + annual"
+# 		, data = dat
+# 		, family = "gaussian"
+# 		, sp = dat$sp
+# 		, site = dat$site
+# 		, random.effects = list(
+# 		    re.sp
+# 			, re.sp.phy
+# 			, re.nested.phy
+# 			, re.site
+# 		)
+# 	, REML = T
+# 	, verbose = F
+# 	, s2.init = c(1.5, rep(0.01, 3))
+# 	, reltol = 10e-10
+# 	, maxit = 1000
+# 	)
+# )
+# 
+# 
+# print(peztime_1)
 print(summary(pezfit_1))
-print(lme4time_1)
-print(summary(lme4fit_1))
-
-print(peztime_2)
-print(summary(pezfit_2))
-print(lme4time_2)
-print(summary(lme4fit_2))
+# print(lme4time_1)
+# print(summary(lme4fit_1))
+# 
+# print(peztime_2)
+# print(summary(pezfit_2))
+# print(lme4time_2)
+# print(summary(lme4fit_2))
 

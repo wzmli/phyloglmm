@@ -2,8 +2,8 @@ library(lme4)
 library(pez)
 
 str(dat)
-reltol <- 10e-4
-maxit <- 40
+reltol <- 0.000000001
+maxit <- 100000000
 
 ## abundance data ----
 start.model = lmer(Y ~ 1 + (1|sp) + (1|site), data = dat, REML = FALSE)
