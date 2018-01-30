@@ -1,5 +1,5 @@
 get_RE <- function(veg.long, phylo = pb.phylo, trait = pb.trait, 
-                   trait.re = NULL,
+                   trait.re = NULL, stand = TRUE,
                    binary = FALSE, trans = NULL){
   # transform frequency data
   veg.long$presence <- as.numeric(veg.long$freq > 0)
@@ -44,9 +44,11 @@ get_RE <- function(veg.long, phylo = pb.phylo, trait = pb.trait,
   phy <- drop.tip(phylo, tip = phylo$tip.label[!phylo$tip.label %in% unique(dat$sp)])
   Vphy <- vcv(phy)
   Vphy <- Vphy[order(phy$tip.label),order(phy$tip.label)]
- # Vphy <- Vphy/max(Vphy)                    ## Don't need?
- # Vphy <- Vphy/det(Vphy)^(1/nspp)           ## Don't need?
   
+  if(stand){
+ Vphy <- Vphy/max(Vphy)                    ## Don't need?
+ Vphy <- Vphy/det(Vphy)^(1/nspp)           ## Don't need?
+  }
   show(c(nspp, Ntip(phy)))
   if(nspp != Ntip(phy)){
     stop("The vegetation data and the phylogeny have different number of species")

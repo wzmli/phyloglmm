@@ -2,6 +2,8 @@
 
 ## Jan 30th 2018
 
+Added a standardizing switch.
+
 One last test, does standardizing cov(phylo) give a better fit?
 ANS: The result is the same, we can even apply an appropriate post-hoc transformation.
 
@@ -13,7 +15,7 @@ The first thing MLi tried was comment out the Zt step and it turned out exactly 
 
 MLi successfully replicated Li and Ives 2017 result.
 There were three problems:
-- max iteration and reltol was bad
+- max iteration and reltol were bad
 - they used maximum likelihood instead of REML
 - standardizing the variance-covariance matrix does matter
 Everything matched perfectly after fixing these minor issues. 

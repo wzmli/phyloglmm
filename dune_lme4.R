@@ -69,6 +69,7 @@ REs <- get_RE(veg.long = dune.veg2
 	, trait = dune.traits2[c(1, 2)]
 	, trait.re = c("log.sla")
 	, phylo = dune.phylo2
+	, stand = TRUE
 	, trans = "log"
 )
 
@@ -129,7 +130,7 @@ peztime_1 <- system.time(
 # print(peztime_1)
 print(summary(pezfit_1))
 # print(lme4time_1)
-# print(summary(lme4fit_1))
+#print(summary(lme4fit_1))
 # 
 # print(peztime_2)
 # print(summary(pezfit_2))

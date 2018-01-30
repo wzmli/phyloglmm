@@ -51,6 +51,7 @@ REs <- get_RE(veg.long = dune.veg2
   , trait.re = c("log.sla")
   , phylo = dune.phylo2
   , trans = "log"
+  , stand = FALSE
 )
 
 # get_RE returns a list of random effects in this order:
