@@ -2,6 +2,10 @@
 
 ## Jan 30th 2018
 
+MLi: I can appreciate why the pez developer for putting the nested RE as a seperate case.
+Whether we are right or not, we are confusing the heck of ourselves.
+I think I need to roll back and not fuss to get pez's answer and rethink about the math.
+
 We need to check carefully in our own phyloglmm code and see how we are building the interaction Zt.
 Right now it is a mess. 
 
