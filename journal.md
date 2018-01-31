@@ -2,6 +2,11 @@
 
 ## Jan 30th 2018
 
+We need to check carefully in our own phyloglmm code and see how we are building the interaction Zt.
+Right now it is a mess. 
+
+BMB suggest check for maxit and optim warnings.
+
 Added a standardizing switch.
 
 One last test, does standardizing cov(phylo) give a better fit?

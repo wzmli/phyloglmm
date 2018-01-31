@@ -71,7 +71,7 @@ pez_nested <-  communityPGLMM(formula = "Y ~ 1 + log.sla + annual"
 	, maxit = maxit
 )
 
-hacked_nested_bad <-  hacked_pez_bad(formula = "Y ~ 1 + log.sla + annual"
+hacked_nested<-  hacked_pez(formula = "Y ~ 1 + log.sla + annual"
   , data = dat
   , family = "gaussian"
   , sp = dat$sp
@@ -84,6 +84,21 @@ hacked_nested_bad <-  hacked_pez_bad(formula = "Y ~ 1 + log.sla + annual"
   , maxit = maxit
 )
 
+hacked_nested_bad<-  hacked_pez_bad(formula = "Y ~ 1 + log.sla + annual"
+	, data = dat
+	, family = "gaussian"
+	, sp = dat$sp
+	, site = dat$site
+	, random.effects = list(re.hacked)  
+	, REML = F 
+	, verbose = F
+# , s2.init = c(1.5, rep(0.01, 4))
+	, reltol = reltol
+	, maxit = maxit 
+)
+
+
 print(summary(pez_nested))
 print(summary(hacked_nested_bad))
+print(summary(hacked_nested))
 

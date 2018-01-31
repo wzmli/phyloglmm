@@ -36,9 +36,9 @@ dat <- (dat
 )	
 
 lme4_nested <- phylo_lmm(Y ~ 1 + log.sla + annual
-  + (1 | site:sp)
+  + (1 | sp:site)
   , data=dat
-  , phylonm = c("sp","site:sp")
+  , phylonm = c("sp","sp:site")
   , nsp = 28
   , phylo = phy
   , phyloZ=phyZ
