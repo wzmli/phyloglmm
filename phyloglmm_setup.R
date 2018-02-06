@@ -66,7 +66,7 @@ modify_phylo_retrms <- function(rt,phylo,phylonm,phyloZ,nsp){
   
 	 ### lFormula is creating the all RE index w.r.t nsp lengths into a simple vector, we have to use the function above to split properly
 	Lind_list <- split(rt[["Lind"]],rep(seq_along(Lind_split_length),Lind_split_length*nsp))
-  if(names(rt[["cnms"]][1]) == "sp:site"){ ### hack
+  if(names(rt[["cnms"]][1]) == "site:sp"){ ### hack
     for(i in 1:length(rt$cnms)){
 	    Lind_list[[i]] <- rep(i,sum(rt$Lind==i))
     }
@@ -82,8 +82,8 @@ modify_phylo_retrms <- function(rt,phylo,phylonm,phyloZ,nsp){
 	for(i in phylo.pos){
 		## each sp is being rep w.r.t the complexity of RE in their respective Zt
 		repterms <- length(rt[["cnms"]][[i]])
-		if(names(rt[["cnms"]][i]) == "sp:site"){
-		  repterms <- 20 ### Hacked number sites, need to think about how to do this
+		if(names(rt[["cnms"]][i]) == "site:sp"){
+		  repterms <- nsite ### If this is a special case, it will always be number of sites
 		  n.edge <- n.edge*repterms ## This is simply a term to create correct dim for Lind and Lambdat
 		}
 		## reconstitute Zt from new Ztlist

@@ -1,5 +1,12 @@
 ## Journal
 
+## Feb 5th 2018
+
+MLi is going to revert back to the previous version of phyloglmm and clean up the code a bit. 
+We should rerun the pez simulations and make sure the models match exactly (as in the setups).
+We should nail down the species level phylogenetic random effect and continue with the paper. 
+MLi will work on the algebra while the simulations are running again.
+
 ## Jan 30th 2018
 
 MLi: I can appreciate why the pez developer for putting the nested RE as a seperate case.
