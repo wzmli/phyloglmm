@@ -51,3 +51,8 @@ Large: 1000 sp by 20 sites
 
 Crazy case: 5000 by 20 sites
 (Cannot alocate memory 10k +)
+
+
+pez/lme4 small/med phylo correlated slope 
+
+

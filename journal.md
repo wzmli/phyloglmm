@@ -1,5 +1,10 @@
 ## Journal
 
+## Feb 7th 2018
+
+All the simulations (except for interaction REs) are complete. 
+MLi is going to pretty the plots up a little and start putting together the ms.
+
 ## Feb 5th 2018
 
 MLi is going to revert back to the previous version of phyloglmm and clean up the code a bit. 

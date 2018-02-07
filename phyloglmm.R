@@ -26,11 +26,13 @@ lme4time <- system.time(
 #		+ (0 + X|sp)
 		+ (1+X|sp)
 		, data=dat
-		, phylonm = c("sp","sp:site")
+		, phylonm = c("sp","site:sp")
 		, phylo = phy
 		, phyloZ=phyZ
 		, nsp = nspp
-		, control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
+		, control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore"
+		)
+		, REML = FALSE
 	)
 )
 
@@ -41,4 +43,4 @@ print(summary(lme4fit))
 
 lme4_list <- list(lme4fit, lme4time)
 
-saveRDS(lme4_list, file=paste("datadir/lme4",size,seed,"rds",sep="."))
+saveRDS(lme4_list, file=paste("datadir/lme4_mmslope_cor",size,seed,"rds",sep="."))

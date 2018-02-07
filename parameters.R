@@ -20,7 +20,7 @@ sd.B1 <- 2
 #sd.B1 <- 0.00000001
 
 rho.B01 <- 0.7
-rho.B01 <- 0
+#rho.B01 <- 0
 
 # whether or not to include phylogenetic signal in B0 and B1
 signal.B0 <- TRUE

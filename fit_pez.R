@@ -32,6 +32,8 @@ peztime <- system.time(
 			)
 		, REML = FALSE
 		, verbose = FALSE
+		# , reltol = 0.000000000001
+		# , maxit = 1000000000
 		)
 )
 
@@ -42,5 +44,5 @@ print(summary(pezfit))
 
 pez_list <- list(pezfit, peztime)
 
-saveRDS(pez_list, file=paste("datadir/pez",size,seed,"rds",sep="."))
+saveRDS(pez_list, file=paste("datadir/pez_mmslope_cor",size,seed,"rds",sep="."))
 
