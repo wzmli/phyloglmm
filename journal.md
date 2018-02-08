@@ -2,6 +2,13 @@
 
 ## Feb 7th 2018
 
+Need to rerun correlated slope multiple site lme4 models over night.
+The plots for lme4 correlated slope model looks bad (i.e. the estimates are off and unable to estimate the correlation correctly). 
+MLi went back and found the problem. 
+The problem is we cannot use the kronecker product the same way as pez. 
+The problem is fixed after we revert back to our original version but now it gives us a hint on the math behind it.
+
+
 All the simulations (except for interaction REs) are complete. 
 MLi is going to pretty the plots up a little and start putting together the ms.
 

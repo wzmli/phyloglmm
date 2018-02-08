@@ -51,13 +51,26 @@ gg_lme4ss <- (ggplot(data=lme4ss_data2,aes(x=size,y=sd))
 
 # print(gg_lme4ss)
 
-ss_data <- rbind(gls_data2,lme4ss_data2)
+ss_data <- (rbind(gls_data2,lme4ss_data2)
+  %>% mutate(sdtype = ifelse(sdtype=="phylo","Phylogenetic","Tip")
+    , type = ifelse(type=="noresid","Without Tip Var","With Tip Var")
+    , Platform = platform
+    , size = factor(size,levels=c("small","med","large"),labels=c("Small", "Medium", "Large"))
+  )
+)
 
-gg_ss <- (ggplot(data=ss_data,aes(x=size,y=sd,fill=platform))
+ss_dummy <- data.frame(sdtype = factor(c("Phylogenetic","Tip","Phylogenetic","Tip"))
+                       , type = factor(c("Without Tip Var","Without Tip Var","With Tip Var","With Tip Var"))
+                       , Y=c(4,NA,4,10))
+gg_ss <- (ggplot(data=ss_data,aes(x=size,y=sd,fill=Platform))
   + facet_grid(type~sdtype, scale="free_y")
-  + geom_violin(position=position_dodge(width=0),alpha=0.4)
-  + geom_hline(yintercept = c(4,10))
+  + geom_violin(position=position_dodge(width=0.2),alpha=0.4)
+  # + geom_hline(aes(yintercept = c(4)), linetype=c("solid"))
+  # + geom_hline(aes(yintercept = c(10)), linetype=c("dashed"))
+  + geom_hline(data=ss_dummy,aes(yintercept = Y))
+  + scale_y_log10(limits=c(0.5,50),breaks=c(1,4,10,50))
   + ggtitle("Single Site using GLS and lme4")
+  + ylab("Standard Deviation")
 )
 
 print(gg_ss)
@@ -69,12 +82,28 @@ ss_slope_data <- (lme4ss_slope_data
   %>% gather(key=sdtype, value=sd, -c(time,model))
   %>% separate(model,c("platform","size","type"),"_")
   %>% select(platform, type, size, sdtype, sd, time)
+  %>% mutate(sdtype = factor(sdtype,levels=c("phylo", "phyloX", "cor", "resid")
+                             , labels=c("Phylogenetic", "Phylogenetic Slope", "Correlation", "Tip"))
+             , type = ifelse(type=="cor","Correlated Slope","Uncorrelated Slope")
+             , Platform = platform
+             , size = factor(size,levels=c("small","med","large"),labels=c("Small", "Medium", "Large"))
+  )
 )
 
+ss_slope_dummy <- data.frame(
+  sdtype = factor(c("Phylogenetic", "Phylogenetic Slope", "Correlation", "Tip"
+                    , "Phylogenetic", "Phylogenetic Slope", "Correlation", "Tip"))
+  , type = factor(c("Correlated Slope", "Correlated Slope", "Correlated Slope", "Correlated Slope"
+                    ,"Uncorrelated Slope" , "Uncorrelated Slope","Uncorrelated Slope","Uncorrelated Slope"))
+  , Y=c(4,2,0.7,10,4,2,NA,10))
+
 gg_ss_slope <- (ggplot(data=ss_slope_data,aes(x=size,y=sd))
-  + facet_grid(sdtype~type, scale="free_y")
+  + facet_grid(type~sdtype, scale="free_y")
   + geom_violin()
-  + ggtitle("LME4 Single site slope (Need to include/checkout NA removed cases")
+  + geom_hline(data=ss_slope_dummy,aes(yintercept = Y))
+  + scale_y_log10(limits=c(0.5,20),breaks=c(0.1,1,2,4,10,15))
+  + ylab("Standard Deviation")
+  + ggtitle("LME4 Single site slope (Need to draw a separate correlation plot")
 )
 
 print(gg_ss_slope)
@@ -87,17 +116,28 @@ ms_data <- (pez_data
   %>% gather(key=sdtype, value=sd, -c(time,model))
   %>% separate(model,c("platform","size"),"_")
   %>% select(platform, size, sdtype, sd, time)
-)
+  %>% mutate(sdtype = ifelse(sdtype=="phylo","Phylogenetic","Tip")
+    , Platform = factor(platform)
+    , Platform = factor(Platform,levels=c("pez","lme4"))
+    , size = factor(size,levels=c("small","med","large"),labels=c("Small", "Medium", "Large"))
+  )
+)  
 
-gg_ms <- (ggplot(data=ms_data,aes(x=size,y=sd,fill=platform))
+ms_dummy <- data.frame(sdtype = factor(c("Phylogenetic","Tip"))
+                       , Y=c(4,10))
+
+gg_ms <- (ggplot(data=ms_data,aes(x=size,y=sd,fill=Platform))
   + facet_grid(.~sdtype, scale="free_y")
   + geom_violin(position=position_dodge(width=0.2),alpha=0.4)
+  + geom_hline(data=ms_dummy,aes(yintercept=Y))
+  + scale_y_continuous(limits=c(0,12),breaks=c(0,2,4,6,8,10,12))
   + ggtitle("Multiple Site using pez and lme4")
+  + ylab("Standard Deviation")
 )
 
 print(gg_ms)
 
-gg_mstime <- (ggplot(data=ms_data,aes(x=size,y=time,fill=platform))
+gg_mstime <- (ggplot(data=ms_data,aes(x=size,y=time,fill=Platform))
   + geom_violin(position=position_dodge(width=0),alpha=0.4)
   + scale_y_log10()
   + ggtitle("Multiple Site timing")

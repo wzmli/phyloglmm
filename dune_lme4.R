@@ -35,11 +35,11 @@ lme4time_1 <- system.time(
   lme4fit_1 <- phylo_lmm(Y ~ 1 + log.sla + annual 
 		+ (1|obs) 
 		+ (1|sp)
-    # + (1 | site:sp)
+    + (1 | sp:site)
 		+ (0 + log.sla | site)
 		+ (1|site) 
 		, data=dat
-		, phylonm = c("sp","site:sp")
+		, phylonm = c("sp","sp:site")
 		, nsp = 28
 		, phylo = phy
 		, phyloZ=phyZ
@@ -53,10 +53,10 @@ lme4time_2 <- system.time(
   lme4fit_2 <- phylo_lmm(Y ~ 1 + log.sla + annual
 		+ (1|obs)
 		+ (1|sp)
-		+ (1 | site:sp)
+		+ (1 | sp:site)
 		# + (1|site)
 		, data=dat
-		, phylonm = c("sp","site:sp")
+		, phylonm = c("sp","sp:site")
 		, nsp = 28
 		, phylo = phy
 		, phyloZ=phyZ
@@ -93,7 +93,7 @@ peztime_1 <- system.time(
     , site = dat$site
     , random.effects = list(re.sp
       , re.sp.phy
-      # , re.nested.phy
+      , re.nested.phy
       , re.sla
       , re.site
       )
