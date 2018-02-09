@@ -1,0 +1,27 @@
+
+p_i = number of fixed effects
+b = number of branches
+l  = number of species ('levels of grouped effect')
+n = number of observations
+q_i = l p_i
+
+p_i = 2; b = 4; l = 3
+(10,1,1 obs)
+B = 3x4
+Z = 12x6
+
+I_{p_i}
+
+B = (l x b)   -> Kron multiply by (pxp)   -> B' (lp x bp)
+
+transpose B' -> (bp x lp)
+
+transpose Z -> Z^T = (lp x n)
+
+multiply -> (bp x n)
+
+transpose -> n x bp
+
+(Kron(B,I)^T Z^T)^T  = (Z Kron(B,I))^T
+
+
