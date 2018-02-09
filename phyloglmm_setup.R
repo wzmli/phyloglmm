@@ -88,7 +88,7 @@ modify_phylo_retrms <- function(rt,phylo,phylonm,phyloZ,nsp){
 		}
 		## reconstitute Zt from new Ztlist
 		## We have to rep the same number of sp terms and edges in phyloZ to match Zt 
-		rt[["Ztlist"]][[i]] <- t(kronecker(phyloZ,diag(repterms)))%*% rt[["Ztlist"]][[i]]
+		rt[["Ztlist"]][[i]] <- t(kronecker(diag(repterms),phyloZ))%*% rt[["Ztlist"]][[i]]
 		## switch places inside kronecker
 		Gpdiff_new[i] <- n.edge  ## replace
 

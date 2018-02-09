@@ -70,6 +70,7 @@ REs <- get_RE(veg.long = dune.veg2
 	, trait.re = c("log.sla")
 	, phylo = dune.phylo2
 	, trans = "log"
+	, stand = FALSE
 )
 
 # get_RE returns a list of random effects in this order:
@@ -100,8 +101,6 @@ peztime_1 <- system.time(
     , REML = F
     , verbose = F
     , s2.init = c(1.5, rep(0.01, 4))
-#     , reltol = reltol
-#     , maxit = maxit
   )
 )
 # 

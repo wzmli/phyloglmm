@@ -1,5 +1,15 @@
 ## Journal
 
+## Feb 9th 2018
+
+That is false. We made a terrible mistake just like Ives (I think) and that is assuming we got the order correct. 
+This is evident in the correlated slope example. 
+We should not do the modification at the current location.
+We need to do it _way_ upstream at the place where they use species in the model matrix (I think).
+At the very least, we know what is wrong and know how to approach the _new_ (same old) problem.
+
+I don't know what happened, but everything works.
+
 ## Feb 7th 2018
 
 Need to rerun correlated slope multiple site lme4 models over night.
