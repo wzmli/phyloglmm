@@ -1,5 +1,15 @@
 ## Journal
 
+## Feb 12th 2018
+
+MLi hacked around lFormula and succeed in reproducing the same results. 
+At this point, it is way to hacky and it is still very "data frame" input dependent, but at the very least, the interaction problem is solved. 
+The left over todos are:
+- write the paper
+- scaling and standarding phyZ (species branch matrix)
+- can we do unbalance data now?
+
+
 ## Feb 9th 2018
 
 That is false. We made a terrible mistake just like Ives (I think) and that is assuming we got the order correct. 

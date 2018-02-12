@@ -178,13 +178,14 @@ mkBlist2 <- function (x, frloc, phylonm,phyloZ, drop.unused.levels = TRUE)
       if(strsplit(as.character(x[[3]]),":")[[2]] == "site"){
         rkr <- nrep
       }
+    sm <- t(sm)
     }
     bmat <- t(kronecker(kronecker(diag(lkr),phyloZ),diag(rkr)))
-    sm <- bmat %*% t(sm)
+    sm <- bmat %*% sm
     nl <- nrow(sm)
   }
   sm <- KhatriRao(sm, t(mm))
-  dimnames(sm) <- list(rep(1:nrow(sm), each = ncol(mm)), rownames(mm))
+  # dimnames(sm) <- list(rep(1:nrow(sm), each = ncol(mm)), rownames(mm))
   list(ff = ff, sm = sm, nl = nl, cnms = colnames(mm))
 }
 
