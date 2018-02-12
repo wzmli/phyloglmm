@@ -123,7 +123,7 @@ analyses.Rout: forward_selection.Rout hacked_code/4-analyses.R
 
 ### fitting dune's example using lme4
 
-dune_lme4.Rout: phylosig.Rout get_RE.R hacked_code/0_pkg_func.R phyloglmm_setup.R hacked_nested.R dune_lme4.R
+dune_lme4.Rout: phylosig.Rout get_RE.R hacked_code/0_pkg_func.R phyloglmm_setup.R new_phylo_setup.R hacked_nested.R dune_lme4.R
 	$(run-R)
 
 compare_pez.Rout: phylosig.Rout get_RE.R hacked_code/0_pkg_func.R phyloglmm_setup.R hacked_nested.R compare_pez.R

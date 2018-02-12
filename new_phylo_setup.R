@@ -1,0 +1,278 @@
+## new phyloglmm_setup
+
+phylo_lmm2 <- function(formula,data,phylo,phylonm=NULL,phyloZ=NULL,nsp=NULL,control,REML){
+  lmod <- lFormula2(formula=formula,data = data,control=control, REML=REML,phylonm=phylonm, phyloZ=phyloZ)
+  lmod$reTrms <- modify_phylo_retrms2(lmod$reTrms,phylo,phylonm,phyloZ,nsp)
+  devfun <- do.call(mkLmerDevfun, lmod)
+  opt <- optimizeLmer(devfun,control=control$optCtrl)
+  mkMerMod(environment(devfun), opt, lmod$reTrms, fr = lmod$fr)
+}
+
+lFormula2 <- function (formula, data = NULL, REML = TRUE, subset, weights, 
+          na.action, offset, contrasts = NULL, control = lmerControl(),phylonm,phyloZ,  
+          ...) 
+{
+  control <- control$checkControl
+  mf <- mc <- match.call()
+  ignoreArgs <- c("start", "verbose", "devFunOnly", "control")
+  l... <- list(...)
+  l... <- l...[!names(l...) %in% ignoreArgs]
+  do.call(lme4:::checkArgs, c(list("lmer"), l...))
+  if (!is.null(list(...)[["family"]])) {
+    mc[[1]] <- quote(lme4::glFormula)
+    if (missing(control)) 
+      mc[["control"]] <- glmerControl()
+    return(eval(mc, parent.frame()))
+  }
+  cstr <- "check.formula.LHS"
+  lme4:::checkCtrlLevels(cstr, control[[cstr]])
+  denv <- lme4:::checkFormulaData(formula, data, checkLHS = control$check.formula.LHS == 
+                             "stop")
+  formula <- as.formula(formula, env = denv)
+  lme4:::RHSForm(formula) <- expandDoubleVerts(lme4:::RHSForm(formula))
+  mc$formula <- formula
+  m <- match(c("data", "subset", "weights", "na.action", "offset"), 
+             names(mf), 0L)
+  mf <- mf[c(1L, m)]
+  mf$drop.unused.levels <- TRUE
+  mf[[1L]] <- quote(stats::model.frame)
+  fr.form <- subbars(formula)
+  environment(fr.form) <- environment(formula)
+  for (i in c("weights", "offset")) {
+    if (!eval(bquote(missing(x = .(i))))) 
+      assign(i, get(i, parent.frame()), environment(fr.form))
+  }
+  mf$formula <- fr.form
+  fr <- eval(mf, parent.frame())
+  fr <- factorize(fr.form, fr, char.only = TRUE)
+  attr(fr, "formula") <- formula
+  attr(fr, "offset") <- mf$offset
+  n <- nrow(fr)
+  reTrms <- mkReTrms2(findbars(lme4:::RHSForm(formula)), fr, phylonm, phyloZ)
+  wmsgNlev <- lme4:::checkNlevels(reTrms$flist, n = n, control)
+  wmsgZdims <- lme4:::checkZdims(reTrms$Ztlist, n = n, control, allow.n = FALSE)
+  if (anyNA(reTrms$Zt)) {
+    stop("NA in Z (random-effects model matrix): ", "please use ", 
+         shQuote("na.action='na.omit'"), " or ", shQuote("na.action='na.exclude'"))
+  }
+  wmsgZrank <- lme4:::checkZrank(reTrms$Zt, n = n, control, nonSmall = 1e+06)
+  fixedform <- formula
+  lme4:::RHSForm(fixedform) <- nobars(lme4:::RHSForm(fixedform))
+  mf$formula <- fixedform
+  fixedfr <- eval(mf, parent.frame())
+  attr(attr(fr, "terms"), "predvars.fixed") <- attr(attr(fixedfr, 
+                                                         "terms"), "predvars")
+  ranform <- formula
+  lme4:::RHSForm(ranform) <- subbars(lme4:::RHSForm(lme4:::reOnly(formula)))
+  mf$formula <- ranform
+  ranfr <- eval(mf, parent.frame())
+  attr(attr(fr, "terms"), "predvars.random") <- attr(terms(ranfr), 
+                                                     "predvars")
+  X <- model.matrix(fixedform, fr, contrasts)
+  if (is.null(rankX.chk <- control[["check.rankX"]])) 
+    rankX.chk <- eval(formals(lmerControl)[["check.rankX"]])[[1]]
+  X <- lme4:::chkRank.drop.cols(X, kind = rankX.chk, tol = 1e-07)
+  if (is.null(scaleX.chk <- control[["check.scaleX"]])) 
+    scaleX.chk <- eval(formals(lmerControl)[["check.scaleX"]])[[1]]
+  X <- lme4:::checkScaleX(X, kind = scaleX.chk)
+  list(fr = fr, X = X, reTrms = reTrms, REML = REML, formula = formula, 
+       wmsgs = c(Nlev = wmsgNlev, Zdims = wmsgZdims, Zrank = wmsgZrank))
+}
+
+
+mkReTrms2 <- function(bars, fr, phylonm,phyloZ,drop.unused.levels = TRUE){
+  if (!length(bars)) 
+    stop("No random effects terms specified in formula", 
+         call. = FALSE)
+  stopifnot(is.list(bars), vapply(bars, is.language, NA), inherits(fr, 
+                                                                   "data.frame"))
+  names(bars) <- lme4:::barnames(bars)
+  term.names <- vapply(bars, lme4:::safeDeparse, "")
+  blist <- lapply(bars, mkBlist2, fr, phylonm, phyloZ, drop.unused.levels)
+  nl <- vapply(blist, `[[`, 0L, "nl")
+  if (any(diff(nl) > 0)) {
+    ord <- rev(order(nl))
+    blist <- blist[ord]
+    nl <- nl[ord]
+    term.names <- term.names[ord]
+  }
+  Ztlist <- lapply(blist, `[[`, "sm")
+  Zt <- do.call(rBind, Ztlist)
+  names(Ztlist) <- term.names
+  q <- nrow(Zt)
+  cnms <- lapply(blist, `[[`, "cnms")
+  nc <- lengths(cnms)
+  nth <- as.integer((nc * (nc + 1))/2)
+  nb <- nc * nl
+#   if (sum(nb) != q) {
+#     stop(sprintf("total number of RE (%d) not equal to nrow(Zt) (%d)", 
+#                  sum(nb), q))
+#   }
+  boff <- cumsum(c(0L, nb))
+  thoff <- cumsum(c(0L, nth))
+  Lambdat <- t(do.call(sparseMatrix, do.call(rBind, lapply(seq_along(blist), 
+                                                           function(i) {
+                                                             mm <- matrix(seq_len(nb[i]), ncol = nc[i], byrow = TRUE)
+                                                             dd <- diag(nc[i])
+                                                             ltri <- lower.tri(dd, diag = TRUE)
+                                                             ii <- row(dd)[ltri]
+                                                             jj <- col(dd)[ltri]
+                                                             data.frame(i = as.vector(mm[, ii]) + boff[i], j = as.vector(mm[, 
+                                                                                                                            jj]) + boff[i], x = as.double(rep.int(seq_along(ii), 
+                                                                                                                                                                  rep.int(nl[i], length(ii))) + thoff[i]))
+                                                           }))))
+  thet <- numeric(sum(nth))
+  ll <- list(Zt = drop0(Zt), theta = thet, Lind = as.integer(Lambdat@x), 
+             Gp = unname(c(0L, cumsum(nb))))
+  ll$lower <- -Inf * (thet + 1)
+  ll$lower[unique(diag(Lambdat))] <- 0
+  ll$theta[] <- is.finite(ll$lower)
+  Lambdat@x[] <- ll$theta[ll$Lind]
+  ll$Lambdat <- Lambdat
+  fl <- lapply(blist, `[[`, "ff")
+  fnms <- names(fl)
+  if (length(fnms) > length(ufn <- unique(fnms))) {
+    fl <- fl[match(ufn, fnms)]
+    asgn <- match(fnms, ufn)
+  }
+  else asgn <- seq_along(fl)
+  names(fl) <- ufn
+  attr(fl, "assign") <- asgn
+  ll$flist <- fl
+  ll$cnms <- cnms
+  ll$Ztlist <- Ztlist
+  ll
+}
+
+mkBlist2 <- function (x, frloc, phylonm,phyloZ, drop.unused.levels = TRUE) 
+{
+  frloc <- factorize(x, frloc)
+  if (is.null(ff <- tryCatch(eval(substitute(lme4:::makeFac(fac), 
+                                             list(fac = x[[3]])), frloc), error = function(e) NULL))) 
+    stop("couldn't evaluate grouping factor ", deparse(x[[3]]), 
+         " within model frame:", " try adding grouping factor to data ", 
+         "frame explicitly if possible", call. = FALSE)
+  if (all(is.na(ff))) 
+    stop("Invalid grouping factor specification, ", deparse(x[[3]]), 
+         call. = FALSE)
+  if (drop.unused.levels) 
+    ff <- factor(ff, exclude = NA)
+  nl <- length(levels(ff))
+  mm <- model.matrix(eval(substitute(~foo, list(foo = x[[2]]))), 
+                     frloc)
+  sm <- fac2sparse(ff, to = "d", drop.unused.levels = drop.unused.levels)
+  if(grepl("sp",x[3])){
+    # nbranch <- ncol(phyloZ)
+    nrep <- nrow(sm)/nrow(phyloZ)
+#     bmat <- matrix(0,nrow=nbranch,ncol=length(levels(ff)))
+#     colnames(bmat) <- levels(ff)
+#     for(i in rownames(phyloZ)){
+#       bmat[,which(grepl(i,colnames(bmat)))] <- phyloZ[i,]
+#     }
+    lkr <- 1
+    rkr <- 1
+    if(nrep > 1){
+      if(strsplit(as.character(x[[3]]),":")[[2]] == "sp"){
+        lkr <- nrep
+      }
+      if(strsplit(as.character(x[[3]]),":")[[2]] == "site"){
+        rkr <- nrep
+      }
+    }
+    bmat <- t(kronecker(kronecker(diag(lkr),phyloZ),diag(rkr)))
+    sm <- bmat %*% t(sm)
+    nl <- nrow(sm)
+  }
+  sm <- KhatriRao(sm, t(mm))
+  dimnames(sm) <- list(rep(1:nrow(sm), each = ncol(mm)), rownames(mm))
+  list(ff = ff, sm = sm, nl = nl, cnms = colnames(mm))
+}
+
+modify_phylo_retrms2 <- function(rt,phylo,phylonm,phyloZ,nsp){
+  ## FIXME: better way to specify phylonm
+  ## need to replace Zt, Lind, Gp, flist, Ztlist
+  n.edge <- nrow(phylo$edge)
+  
+  ## Find the location of phylo random effect
+  phylo.pos <- c()
+  for(i in 1:length(phylonm)){
+    phylo.pos <- c(phylo.pos,which(names(rt$cnms)==phylonm[[i]]))
+  }
+  
+  ## need to know number of number of speices to split index
+  ## Fixme, the current index spliting is broken
+  if(is.null(nsp)){
+    nsp <- nrow(rt[["Lambdat"]])/length(rt[["cnms"]][[phylonm]]) 
+  }
+  inds <- c(0,cumsum(sapply(rt$Ztlist,nrow)))
+  ## Zt: substitute phylo Z for previous dummy (scalar-intercept) Z
+  ## Gp: substitute new # random effects (n.edge) for old # (n.phylo)
+  Gpdiff <- diff(rt$Gp)  ## old numbers
+  Gpdiff_new <- Gpdiff
+  rt[["Gp"]] <- as.integer(c(0,cumsum(Gpdiff_new))) ## reconstitute
+  
+  ## Split index length according to RE complexity w.r.t cov-triangle for each RE
+  Lind_split_length <- sapply(rt[["cnms"]]
+                              , function(i){
+                                (length(i)*(length(i)+1))/2
+                              })
+  Lind_list <- list()
+  ##Fixme, manually hacked Lind_list with a for loop. This will break if we have 
+  ## terms on the left side of the bar/pipe
+  
+  ### lFormula is creating the all RE index w.r.t nsp lengths into a simple vector, we have to use the function above to split properly
+  Lind_list <- split(rt[["Lind"]],rep(seq_along(Lind_split_length),Lind_split_length*nsp))
+  if(names(rt[["cnms"]][1]) %in% c("sp:site","site:sp")){ ### hack
+    for(i in 1:length(rt$cnms)){
+      Lind_list[[i]] <- rep(i,sum(rt$Lind==i))
+    }
+    if(length(rt[["cnms"]][2]$sp) == 2){
+      Lind_list[[2]] <- rep(c(2,3,4),sum(rt$Lind==2)) 
+    }
+  }
+  
+  ## Lambdat: replace block-diagonal element in Lambdat with a
+  ## larger diagonal matrix
+  Lambdat_list <- split_blkMat(rt[["Lambdat"]],inds)
+  
+  for(i in phylo.pos){
+    ## each sp is being rep w.r.t the complexity of RE in their respective Zt
+    repterms <- length(rt[["cnms"]][[i]])
+    if(names(rt[["cnms"]][i]) %in% c("sp:site","site:sp")){
+      repterms <- nsite ### If this is a special case, it will always be number of sites
+      n.edge <- n.edge*repterms ## This is simply a term to create correct dim for Lind and Lambdat
+    }
+    ## reconstitute Zt from new Ztlist
+    ## We have to rep the same number of sp terms and edges in phyloZ to match Zt 
+    rt[["Ztlist"]][[i]] <- rt[["Ztlist"]][[i]]
+    ## switch places inside kronecker
+    Gpdiff_new[i] <- n.edge  ## replace
+    
+    ## We have to create the Lind to match the theta field with larger reps w.r.t n.edges
+    Lind_num <- unique(Lind_list[[i]])
+    Lind_list[[i]] <- rep(Lind_list[[i]][seq_along(1:length(Lind_num))],n.edge)
+    Lambdat_list[[i]] <- Diagonal(n.edge)
+    
+    left_RE_pipe <- length(rt[["cnms"]][[i]])
+    
+    ## function to create sparse matrix templete w.r.t RE complexity
+    SM_template <- function(n){
+      rr <- rep(1:n,n:1)
+      cc <- unlist(lapply(seq(n),function(ll){seq(ll,n)}))
+      xx <- as.numeric(rr==cc)
+      return(sparseMatrix(i=rr,j=cc,x=xx))
+    }
+    temp_lambda <- SM_template(left_RE_pipe)
+    Lambdat_list[[i]] <- bdiag(replicate(n.edge,temp_lambda))
+  }
+  rt[["Zt"]] <- do.call(rbind,rt[["Ztlist"]])
+  rt[["Lind"]] <- unlist(Lind_list)
+  rt[["Lambdat"]] <- Matrix::.bdiag(Lambdat_list)
+  ## flist: Not sure how this part is being used.
+  rt[["flist"]] <- as.list(rt[["flist"]])
+  ## Todo: fix flist
+  # 	for(i in 1:length(rt[["flist"]])){
+  # 	  rt[["flist"]][i] <- factor(paste0("edge_",seq(n.edge)))
+  # 	}
+  return(rt)
+}
