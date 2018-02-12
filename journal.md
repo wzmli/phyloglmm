@@ -4,6 +4,8 @@
 
 MLi hacked around lFormula and succeed in reproducing the same results. 
 At this point, it is way to hacky and it is still very "data frame" input dependent, but at the very least, the interaction problem is solved. 
+The new version is much more robust when it comes to figuring out correlated slope case because all the hacks are before the KR product with the model frame.
+
 The left over todos are:
 - write the paper
 - scaling and standarding phyZ (species branch matrix)
