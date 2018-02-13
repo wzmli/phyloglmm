@@ -1,5 +1,12 @@
 ## Journal
 
+## Feb 13th 2018
+
+The scaling factor/standardizing factor is not trivial. 
+The "pez" way is also a non-trivial scaling, thus, it is hard to match.
+MLi is going to put together the paper and run some extra test to see what happens when we ignore phylogenetic correlations.
+
+
 ## Feb 12th 2018
 
 MLi hacked around lFormula and succeed in reproducing the same results. 
