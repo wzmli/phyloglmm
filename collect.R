@@ -9,7 +9,7 @@ library(tidyr)
 #### Collect gls results ----
 
 gls_path <- "./datadir/gls/"
-gls_res <- list.files(path = gls_path, pattern = "resid")
+gls_res <- list.files(path = gls_path)
 gls_results <- function(tt){
   gls_list <- list()
   gls_df <- data.frame(resid = numeric(200)
