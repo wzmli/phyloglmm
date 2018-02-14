@@ -121,7 +121,7 @@ y & = XB + \epsilon \\
 \epsilon & \sim MVN(0,\sigma^{2}C),
 \label{eq:gls}
 \end{align}
-where $y$ is an $n \times 1$ vector of measureable response phenotypic trait; $X$ is an $n \times (m + 1)$ model matrix containing 1's in the first column and the $m$ independment variable (traits); $B$ is an $m + 1$ coefficient vector; $\espilon$ is the residual error and assumed to be multivariate normally distributed with a variance-covariance matrix given by $\sigma^{2}_{ \epsilon} C$ in which $C$ is an $n \times n$ matrix of the phylogenetic correlation (PC).
+where $y$ is an $n \times 1$ vector of measureable response phenotypic trait; $X$ is an $n \times (m + 1)$ model matrix containing 1's in the first column and the $m$ independment variable (traits); $B$ is an $m + 1$ coefficient vector; $\epsilon$ is the residual error and assumed to be multivariate normally distributed with a variance-covariance matrix given by $\sigma^{2}_{\epsilon}C$ in which $C$ is an $n \times n$ matrix of the phylogenetic correlation (PC).
 
 % More recently, researchers use linear mixed model and generalized linear mixed model framework to model complex systems with phylogenetic structures.
 %\ml{Why? Data type, interactions, random effects, etc... Need to really explain random effects here. Alternatively, we can drop this line and write this...}
@@ -150,12 +150,14 @@ The random-effect model matrix $Z$ can be decomposed into term-wise model matrix
 Thus, the phylogenetic correlated random-effect matrix $Z^{C}_{i}$ is
 
 \begin{equation}
-Z^{C}_{i} = Z_{i}(SB \bigotimes I_{p_i \times s}) ,
+Z^{C}_{i} = (BS^{T}_{i}J^{T}_{i} \ast X^{T}_{i})^{T},
 \end{equation}
 
 \ml{double check if $l and p$ are the same with lme4}
 
-where $SB$ is an $l \times b$ matrix of species--branch relations; $I$ is an identity matrix size $p_i \times s$; $p_i$ is the number of columns contributed by $Z_i$; s is the number of sites; and  $\bigotimes$ is the Kronecker product \ml{cite kronecker}.  
+where $\ast$ is the Khatri-Rao product, $BS_{i}$ is an $l_{i} \times b_{i}$ matrix of species--branch relations; $J_{i}$ the indicator matrix of grouping factors indices matrix size $n \times l_{i}$; $X_{i}$ is the raw random effects model matrix size $n \times p_{i}$.
+
+\ml{double kronecker for interactions}
 
 
 
@@ -165,19 +167,18 @@ where $SB$ is an $l \times b$ matrix of species--branch relations; $I$ is an ide
 \hline
 Type of RE	& Formula	& Platform	\\
 \hline
-Single site intercept										&	1 \mid sp						& gls, lme4 \\
-Single site intercept and uncorrelated slopes		&  1 \mid sp + X \mid sp		& lme4 \\
-Single site intercept and correlated slopes 			& 1 + X \mid sp					& lme4 \\
-\hline
-Multiple site intercept 									&  1 \mid sp 						& pez, lme4 \\
-Multiple site intercept and uncorrelated slopes 	&  1 \mid sp + X \mid sp 		& pez, lme4 \\
-Multiple site intercept and uncorrelated slopes 	& 	1 + X \mid sp					& lme4 \\
-ditto with site interaction								& ditto above \mid sp:site		& ditto above \\
-\hline
 
+Single site intercept	  &	1 $\mid$ sp	& gls, lme4 \\
+Single site intercept and uncorrelated slopes		&  1 $\mid$ sp + X $\mid$ sp		& lme4 \\
+Single site intercept and correlated slopes 			& 1 + X $\mid$ sp					& lme4 \\
+\hline
+Multiple site intercept 									&  1 $\mid$ sp 						& pez, lme4 \\
+Multiple site intercept and uncorrelated slopes 	&  1 $\mid$ sp + X $\mid$ sp 		& pez, lme4 \\
+Multiple site intercept and uncorrelated slopes 	& 	1 + X $\mid$ sp					& lme4 \\
+ditto with site interaction								& ditto above $\mid$ sp:site		& ditto above \\
+\hline
+% \vspace{1in}
 \end{tabular}
-\\
-
 
 We generate test data using a simple glmm framework that varies in complexity in random effect described in Table 1 \ml{macro this}. All simulations and fits were performed with R. 
 

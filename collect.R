@@ -170,7 +170,7 @@ lme4cs_results <- function(pp,tt){
   return(lme4cs_list)
 }
 
-#lme4cs_data <- bind_rows(lme4cs_results(lme4cs_path,lme4cs_res))
+lme4cs_data <- bind_rows(lme4cs_results(lme4cs_path,lme4cs_res))
 
 #### Collect pez cs results ----
 
@@ -201,7 +201,7 @@ pez_cs_results <- function(pp,tt){
   return(pez_list)
 }
 
-#pez_cs_data <- bind_rows(pez_cs_results(pez_cs_path,pez_res))
+pez_cs_data <- bind_rows(pez_cs_results(pez_cs_path,pez_res))
 
 #### lme4 cs slopes NOT DONE, MISSING uncor ----
 
@@ -265,22 +265,21 @@ lme4cs_slopeuncor_results <- function(pp,tt){
   return(lme4cs_list)
 }
 
-#lme4cs_slopecor_data <- bind_rows(lme4cs_slopecor_results(lme4cs_slope_path,lme4cs_slopecor_res))
-#lme4cs_slopeuncor_data <- bind_rows(lme4cs_slopeuncor_results(lme4cs_slope_path,lme4cs_slopeuncor_res))
+lme4cs_slopecor_data <- bind_rows(lme4cs_slopecor_results(lme4cs_slope_path,lme4cs_slopecor_res))
+lme4cs_slopeuncor_data <- bind_rows(lme4cs_slopeuncor_results(lme4cs_slope_path,lme4cs_slopeuncor_res))
 
-#lme4cs_slope_data <- rbind(lme4cs_slopecor_data,lme4cs_slopeuncor_data)
+lme4cs_slope_data <- rbind(lme4cs_slopecor_data,lme4cs_slopeuncor_data)
 #### Collect pez cs slope ----
 ## phylo and phyloX out of order?
 pez_cs_slope_path <- "./datadir/pez/pez_cs/slope/"
 
 pez_cs_slope_res <- list.files(pez_cs_slope_path,pattern="uncor")
 
-#pez_cs_slope_data <- bind_rows(pez_cs_results(pez_cs_slope_path,pez_cs_slope_res))
+pez_cs_slope_data <- bind_rows(pez_cs_results(pez_cs_slope_path,pez_cs_slope_res))
 
 
 #### Save results ----
 
-data_list <- list(gls_data, lme4ss_data, lme4ss_slope_data, lme4ms_data, pez_data, lme4ms_slope_data , pez_slope_data) #, lme4cs_data, pez_cs_data, lme4cs_slope_data, pez_cs_slope_data)
+data_list <- list(gls_data, lme4ss_data, lme4ss_slope_data, lme4ms_data, pez_data, lme4ms_slope_data , pez_slope_data, lme4cs_data, pez_cs_data, lme4cs_slope_data, pez_cs_slope_data)
 saveRDS(data_list,file="./datadir/result_list.RDS")
-# rdsave(gls_data, lme4ss_data, lme4ss_slope_data, lme4ms_data, pez_data, lme4ms_slope_data , pez_slope_data)
-#,lme4cs_data, pez_cs_data, lme4cs_slope_data, pez_cs_slope_data)
+#rdsave(gls_data, lme4ss_data, lme4ss_slope_data, lme4ms_data, pez_data, lme4ms_slope_data , pez_slope_data,lme4cs_data, pez_cs_data, lme4cs_slope_data, pez_cs_slope_data)

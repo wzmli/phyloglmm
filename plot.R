@@ -3,7 +3,9 @@
 library(dplyr)
 library(ggplot2)
 library(tidyr)
+library(grid)
 theme_set(theme_bw())
+zmargin <- theme(panel.margin=grid::unit(0,"lines"))
 
 data_list <- readRDS("./datadir/result_list.RDS")
 
@@ -14,10 +16,10 @@ lme4ms_data <- data_list[[4]]
 pez_data <- data_list[[5]]
 lme4ms_slope_data <- data_list[[6]]
 pez_slope_data <- data_list[[7]]
-#lme4cs_data <- data_list[[8]]
-#pez_cs_data <- data_list[[9]]
-#lme4cs_slope_data <- data_list[[10]]
-#pez_cs_slope_data <- data_list[[11]]
+lme4cs_data <- data_list[[8]]
+pez_cs_data <- data_list[[9]]
+lme4cs_slope_data <- data_list[[10]]
+pez_cs_slope_data <- data_list[[11]]
 
 
 gls_data2 <- (gls_data
@@ -75,6 +77,7 @@ gg_ss <- (ggplot(data=ss_data,aes(x=size,y=sd,fill=Platform))
   + scale_y_log10(limits=c(0.5,50),breaks=c(1,4,10,50))
   + ggtitle("Single Site using GLS and lme4")
   + ylab("Standard Deviation")
+  + zmargin
 )
 
 print(gg_ss)
@@ -108,6 +111,7 @@ gg_ss_slope <- (ggplot(data=ss_slope_data,aes(x=size,y=sd))
   + scale_y_log10(limits=c(0.5,20),breaks=c(0.1,1,2,4,10,15))
   + ylab("Standard Deviation")
   + ggtitle("LME4 Single site slope (Need to draw a separate correlation plot")
+  + zmargin
 )
 
 print(gg_ss_slope)
@@ -137,6 +141,7 @@ gg_ms <- (ggplot(data=ms_data,aes(x=size,y=sd,fill=Platform))
   + scale_y_continuous(limits=c(0,12),breaks=c(0,2,4,6,8,10,12))
   + ggtitle("Multiple Site using pez and lme4")
   + ylab("Standard Deviation")
+  + zmargin
 )
 
 print(gg_ms)
@@ -177,6 +182,7 @@ gg_ms_slope <- (ggplot(data=ms_slope_data,aes(x=size,y=sd,fill=Platform))
   + geom_hline(data=ss_slope_dummy,aes(yintercept = Y))
   + ylab("Standard Deviation")
   + ggtitle("Multiple Site using pez and lme4")
+  + zmargin
 )
 
 print(gg_ms_slope)
@@ -191,70 +197,70 @@ gg_ms_slope_time <- (ggplot(data=ms_slope_data,aes(x=size,y=time,fill=platform))
 print(gg_ms_slope_time)
 
 
-## multiple sites cs
+# multiple sites cs
 
 
-#cs_data <- (pez_cs_data
-#  %>% select(-phyloX)
-#  %>% mutate(model=ifelse(model=="pez_small","pez_cs_small","pez_cs_med"))
-#  %>% rbind(.,lme4cs_data)
-#  %>% gather(key=sdtype, value=sd, -c(time,model))
-#  %>% separate(model,c("platform","type","size"),"_")
-#  %>% select(platform, size, sdtype, sd, time)
-#)
+cs_data <- (pez_cs_data
+ %>% select(-phyloX)
+ %>% mutate(model=ifelse(model=="pez_small","pez_cs_small","pez_cs_med"))
+ %>% rbind(.,lme4cs_data)
+ %>% gather(key=sdtype, value=sd, -c(time,model))
+ %>% separate(model,c("platform","type","size"),"_")
+ %>% select(platform, size, sdtype, sd, time)
+)
 
-#gg_cs <- (ggplot(data=cs_data,aes(x=size,y=sd,fill=platform))
-#  + facet_grid(.~sdtype, scale="free_y")
-#  + geom_violin(position=position_dodge(width=0.2),alpha=0.4)
-#  + ggtitle("Compound symmetric using pez and lme4")
-#)
+gg_cs <- (ggplot(data=cs_data,aes(x=size,y=sd,fill=platform))
+ + facet_grid(.~sdtype, scale="free_y")
+ + geom_violin(position=position_dodge(width=0.2),alpha=0.4)
+ + ggtitle("Compound symmetric using pez and lme4")
+)
 
-#print(gg_cs)
+print(gg_cs)
 
-#gg_cstime <- (ggplot(data=cs_data,aes(x=size,y=time,fill=platform))
-#  + geom_violin(position=position_dodge(width=0),alpha=0.4)
-#  + scale_y_log10()
-#  + ggtitle("CS timing")
-#)
+gg_cstime <- (ggplot(data=cs_data,aes(x=size,y=time,fill=platform))
+ + geom_violin(position=position_dodge(width=0),alpha=0.4)
+ + scale_y_log10()
+ + ggtitle("CS timing")
+)
 
-#print(gg_cstime)
+print(gg_cstime)
 
-## cs slope
+# cs slope
 
-#lme4cs_slope_data[,"sp_by_site"] <- lme4cs_slope_data[,"sp:site"]
-#lme4cs_slope_data <- (lme4cs_slope_data 
-#  %>% mutate(model = paste("lme4_",model,sep=""))
-#  %>% select(resid,phylo,phyloX,cor,sp_by_site,model,time)
-#)
-#cs_slope_data <- (pez_cs_slope_data
-#  %>% mutate(cor = NA
-#        , model=paste("pez_",model,sep="")
-#        , temp = phylo        ## hacking, I feel like pez gets the ordering confuse
-#        , phylo = phyloX
-#        , phyloX = temp
-#      )
-#  %>% select(-temp)
-#  %>% rbind(.,lme4cs_slope_data)
-#  %>% gather(key=sdtype, value=sd, -c(time,model))
-#  %>% separate(model,c("platform","size","type"),"_")
-#  %>% select(platform, size, sdtype, type, sd, time)
-#)
+lme4cs_slope_data[,"sp_by_site"] <- lme4cs_slope_data[,"sp:site"]
+lme4cs_slope_data <- (lme4cs_slope_data 
+ %>% mutate(model = paste("lme4_",model,sep=""))
+ %>% select(resid,phylo,phyloX,cor,sp_by_site,model,time)
+)
+cs_slope_data <- (pez_cs_slope_data
+ %>% mutate(cor = NA
+       , model=paste("pez_",model,sep="")
+       , temp = phylo        ## hacking, I feel like pez gets the ordering confuse
+       , phylo = phyloX
+       , phyloX = temp
+     )
+ %>% select(-temp)
+ %>% rbind(.,lme4cs_slope_data)
+ %>% gather(key=sdtype, value=sd, -c(time,model))
+ %>% separate(model,c("platform","size","type"),"_")
+ %>% select(platform, size, sdtype, type, sd, time)
+)
 
-#gg_cs_slope <- (ggplot(data=cs_slope_data,aes(x=size,y=sd,fill=platform))
-#                + facet_grid(type~sdtype, scale="free_y")
-#                + geom_violin(position=position_dodge(width=0.2),alpha=0.4)
-#                # + scale_y_log10()
-#                + ggtitle("CS slope using pez and lme4")
-#)
+gg_cs_slope <- (ggplot(data=cs_slope_data,aes(x=size,y=sd,fill=platform))
+               + facet_grid(type~sdtype, scale="free_y")
+               + geom_violin(position=position_dodge(width=0.2),alpha=0.4)
+               # + scale_y_log10()
+               + ggtitle("CS slope using pez and lme4")
+)
 
-#print(gg_cs_slope)
+print(gg_cs_slope)
 
-#gg_cs_slope_time <- (ggplot(data=cs_slope_data,aes(x=size,y=time,fill=platform))
-#                     + facet_grid(type~., scale="free_y")
-#                     + geom_violin(position=position_dodge(width=0),alpha=0.4)
-#                     + scale_y_log10()
-#                     + ggtitle("CS slope timing")
-#)
+gg_cs_slope_time <- (ggplot(data=cs_slope_data,aes(x=size,y=time,fill=platform))
+                    + facet_grid(type~., scale="free_y")
+                    + geom_violin(position=position_dodge(width=0),alpha=0.4)
+                    + scale_y_log10()
+                    + ggtitle("CS slope timing")
+)
 
-#print(gg_cs_slope_time)
+print(gg_cs_slope_time)
 
