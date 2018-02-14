@@ -192,6 +192,7 @@ gg_ms_slope_time <- (ggplot(data=ms_slope_data,aes(x=size,y=time,fill=platform))
               + geom_violin(position=position_dodge(width=0),alpha=0.4)
               + scale_y_log10()
               + ggtitle("Multiple Site slope timing")
+              + zmargin
 )
 
 print(gg_ms_slope_time)
@@ -213,6 +214,7 @@ gg_cs <- (ggplot(data=cs_data,aes(x=size,y=sd,fill=platform))
  + facet_grid(.~sdtype, scale="free_y")
  + geom_violin(position=position_dodge(width=0.2),alpha=0.4)
  + ggtitle("Compound symmetric using pez and lme4")
+ + zmargin
 )
 
 print(gg_cs)
@@ -221,6 +223,7 @@ gg_cstime <- (ggplot(data=cs_data,aes(x=size,y=time,fill=platform))
  + geom_violin(position=position_dodge(width=0),alpha=0.4)
  + scale_y_log10()
  + ggtitle("CS timing")
+ + zmargin
 )
 
 print(gg_cstime)
@@ -251,6 +254,7 @@ gg_cs_slope <- (ggplot(data=cs_slope_data,aes(x=size,y=sd,fill=platform))
                + geom_violin(position=position_dodge(width=0.2),alpha=0.4)
                # + scale_y_log10()
                + ggtitle("CS slope using pez and lme4")
+               + zmargin
 )
 
 print(gg_cs_slope)
@@ -260,6 +264,7 @@ gg_cs_slope_time <- (ggplot(data=cs_slope_data,aes(x=size,y=time,fill=platform))
                     + geom_violin(position=position_dodge(width=0),alpha=0.4)
                     + scale_y_log10()
                     + ggtitle("CS slope timing")
+                    + zmargin
 )
 
 print(gg_cs_slope_time)

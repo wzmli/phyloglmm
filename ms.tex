@@ -163,32 +163,41 @@ where $\ast$ is the Khatri-Rao product, $BS_{i}$ is an $l_{i} \times b_{i}$ matr
 
 \subsection{Simulations}
 
+% \begin{table}
+% \begin{center}
 \begin{tabular}{|c|c|c|}
 \hline
 Type of RE	& Formula	& Platform	\\
 \hline
 
 Single site intercept	  &	1 $\mid$ sp	& gls, lme4 \\
-Single site intercept and uncorrelated slopes		&  1 $\mid$ sp + X $\mid$ sp		& lme4 \\
-Single site intercept and correlated slopes 			& 1 + X $\mid$ sp					& lme4 \\
+Single site intercept and uncorrelated slopes		&  1 $\mid$ sp + trait $\mid$ sp		& lme4 \\
+Single site intercept and correlated slopes 			& 1 + trait $\mid$ sp					& lme4 \\
 \hline
 Multiple site intercept 									&  1 $\mid$ sp 						& pez, lme4 \\
-Multiple site intercept and uncorrelated slopes 	&  1 $\mid$ sp + X $\mid$ sp 		& pez, lme4 \\
-Multiple site intercept and uncorrelated slopes 	& 	1 + X $\mid$ sp					& lme4 \\
-ditto with site interaction								& ditto above $\mid$ sp:site		& ditto above \\
+Multiple site intercept and uncorrelated slopes 	&  1 $\mid$ sp + trait $\mid$ sp 		& pez, lme4 \\
+Multiple site intercept and correlated slopes 	& 	1 + trait $\mid$ sp					& lme4 \\
 \hline
-% \vspace{1in}
 \end{tabular}
+% \vspace{1in}
+% ditto with site interaction								& ditto above $\mid$ sp:site		& ditto above \\
+% \end{center}
+% \end{table}
 
-We generate test data using a simple glmm framework that varies in complexity in random effect described in Table 1 \ml{macro this}. All simulations and fits were performed with R. 
+The simulation models is based on glmm framework described in \ml{eq labels 3-5}.   
+To construct the simulation model, let $n$ be the number of species distributed among $m$ sites.
+Let $Y$ be the $mn \times 1$ vectors of response trait.  
+We generate test data using three different $n$ (20, 100, 500) and two different $m$ (1, 20) using a simple glmm framework that varies in complexity in random effect described in \ml{Table 1, macro this with labels}. 
+We also extend the multiple site models described in \ml{Table 1} with species by site interaction random effects. 
+All simulations and fits were performed with R. 
 
 \subsection{Model Fitting}
-\ml{platform/model equivalence}
 
-...
 
 
 \section{Results}
+
+
 
 \section{Discussion}
 
