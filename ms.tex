@@ -1,6 +1,7 @@
 \documentclass[12pt]{article}
 \usepackage[]{graphicx}
 \usepackage[]{color}
+\usepackage{tabularx}
 %% use \xspace to allow for space after a macro as necessary
 \usepackage{xspace}
 \usepackage[top=1in, bottom=1in, left=1.25in, right=1.25in]{geometry}
@@ -160,7 +161,6 @@ where $\ast$ is the Khatri-Rao product, $BS_{i}$ is an $l_{i} \times b_{i}$ matr
 \ml{double kronecker for interactions}
 
 
-
 \subsection{Simulations}
 
 % \begin{table}
@@ -203,5 +203,45 @@ All simulations and fits were performed with R.
 
 \section{Conclusion}
 
+
+\newpage
+\section{translation}
+
+$1 \mid Sp_{phylo}$, $0 + X_{E} \mid Sp_{phylo}$ and $X_{E} \mid Sp_{phylo}$ means phylogenetically related have similar response,   
+
+\begin{tabularx}{\textwidth}{|l|X|X|}
+\hline
+Formula & Statistics & Biology \\
+\hline
+$1 \mid Sp$ &
+random species intercept; variation within species in mean response across all factors &
+variation of how species respond \\
+\hline
+
+$0 + X_{E} \mid Sp$ &
+random slope of environment factor within species; variation in coefficient within species for the environmental factor &
+variation of how species respond to the same environmental factor \\
+\hline
+
+$1 + X_{E} \mid Sp$ &
+random slope of environmental factor within species with correlated intercept; variation in coefficient within species for the environmental factor with correlated mean response across all other factors &
+variation of how species respond in the same environmental factors and the correlation of the variation of how they respond in general \\
+\hline
+
+$1 \mid Site:Sp $ &
+random variation in intercept among species within sites &
+variation of how species respond within sites \\
+\hline
+
+$1 | Sp_{Phylo} $ &
+variation among species in mean response across all factors demonstrate phylogenetic signal &
+phylogenetically related species respond similarly \\
+\hline
+
+$0 + X_{E} \mid Sp_{Phylo}$ &
+variation among species for environmental factors demostrate phylogenetic signal &
+phylogenetically related species respond similar (share common response) to the same environmental factor \\
+\hline
+\end{tabularx}
 \end{document}
 

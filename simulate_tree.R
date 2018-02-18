@@ -13,14 +13,18 @@ phy <- compute.brlen(phy, method = "Grafen", power = 0.5)
 Vphy <- vcv(phy)
 # Vphy <- Vphy/(det(Vphy)^(1/nspp))
 
+iD <- t(chol(Vphy))
+Xsd <- 20
+
 # Generate environmental site variable and standardize it
 
 if(nsite == 1){
-	X <- rnorm(n=nspp,sd=1)
+	X <- rnorm(n=nspp,sd=Xsd)
+	X <- iD %*% rnorm(n=nspp,sd=Xsd)
 }
 if(nsite > 1){
 X <- matrix(1:nsite, nrow = 1, ncol = nsite)
-X <- (X - mean(X))/sd(X)
+# X <- (X - mean(X))/sd(X)
 }
 site_name <- sapply(1:nsite, function(x){paste("site","_",x,sep="")})
 
