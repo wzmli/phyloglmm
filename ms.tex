@@ -1,7 +1,6 @@
 \documentclass[12pt]{article}
 \usepackage[]{graphicx}
 \usepackage[]{color}
-\usepackage{tabularx}
 %% use \xspace to allow for space after a macro as necessary
 \usepackage{xspace}
 \usepackage[top=1in, bottom=1in, left=1.25in, right=1.25in]{geometry}
@@ -64,7 +63,7 @@
 \usepackage[backgroundcolor=lightgray]{todonotes}
 \usepackage{setspace}
 \bibliographystyle{chicago}
-\title{Need a good title.}
+\title{Need a good title. Submit to Methods of Ecology and Evolution or Evolutionary Biology}
 \author{Michael Li and Ben Bolker}
 \date{\today}
 
@@ -92,18 +91,22 @@
 \keywords{phyloglmm ... }
 
 \section{Introduction}
-\ml{I will fill in appropriate citation later}
 
-
-Given a phylogenetic tree, phylogenetic models aim to find parsimonious methods that can be used to link ecological phenomena with evolutionary processes that generate species and exhibit in their traits.
-Ecologist have long considered the effects of species functional traits and environmental conditions on their phenotypic traits and also incorportating historical relationships of species.
+Ecologists and evolutionary biologists have long used various comparative techniques to study general patterns exhibited by species in response to its own phenotypic traits or different environmental and evolutionary changes.
+Phylogenetic compariative methods aim to find parsimonious methods that can be used to link ecological phenomena with evolutionary processes by incorportating the histroical relationships shared across species via phylogenetic (evolutionary) trees. 
+\ml{parsimonious can be a confusing word here}
+%Given a phylogenetic tree, phylogenetic models aim to find parsimonious methods that can be used to link ecological phenomena with evolutionary processes that generate species and exhibit in their traits.
+%Ecologist have long considered the effects of species phenotypic traits and environmental conditions on their responses and also incorportating historical relationships of species.
 Decades of work have created various different methods that enables researchers to analyze species relativeness problems for different types of data and questions.
 But many challenges remain.
-In particular, incorportating phylogenetic signals in high dimensional systems is always challenging, especially with large phylogenies where computation powers are limited.
-In such case, researchers often use simpler models with minimal phylogenetic signals limiting at the individuals level and neglect additional phylogenetic signals present in the system.
+In particular, accounting for phylogenetic signals in high dimensional systems is always challenging, especially with large phylogenies where computation powers are limited.
+\ml{define phylogenetic signal?}
+In such case, researchers often use simpler models accounting for minimal phylogenetic signals by limiting at the individuals level and neglect additional phylogenetic signals present in the system.
 
-Recent years, researchers have begun to incorportate phylogenetic-based methods in various modelling applications \ml{cite}.
+Recent years, researchers have begun to incorportate phylogenetic-based methods in various modelling applications \ml{cite, look up phylogenetic meta-analysis as well}.
 The most widely used statistical method to model related species data that accounts for the phylogenetic structure is the \textit{phylogenetic regression} via independent constrast \ml{cite Felsenstein 1985} and further generalizations to generalized least square regression (PGLS) and generalized linear mixed models (PGLMM) to allow for different models of trait evolution \ml{or types of response?}. 
+
+
 Despite the choice of modelling strageties, there are many limitations in the current state of art of statistical phylogenetic analysis.
 There are a handful of studies discussing the importance of incorportating phylogenetic signals but relatively few systematically look at comparative performance of comparative phylogenetic methods. 
 
@@ -160,6 +163,38 @@ where $\ast$ is the Khatri-Rao product, $BS_{i}$ is an $l_{i} \times b_{i}$ matr
 
 \ml{double kronecker for interactions}
 
+\subsection{sups}
+
+\begin{tabular}{|c|c|c|}
+\hline
+Formula & Statistics & Biology \\
+\hline
+$1 \mid Sp$ &
+random species intercept; variation within species in average response across all factors &
+variation of how species respond \\
+
+$0 + X_{E} \mid Sp$ &
+random slope of environment factor within species; variation in coefficient within species for the environmental factor &
+variation of how species respond to the same environmental factor
+
+$1 + X_{E} \mid Sp$ &
+random slope of environmental factor within species with correlated intercept; variation in coefficient within species for the environmental with correlated average response across all other factors &
+variation of how species respond in the same environmental factors and the correlation of the variation of how they respond in general \\
+
+$1 \mid Site:Sp $ &
+random variation in intercept among species within sites &
+variation of how species respond within sites \\
+
+$1 | Sp_{Phylo} $ &
+variation among species in average response across all factors demonstrate phylogenetic signal &
+phylogenetically related species respond similarly \\
+
+$0 + X_{E} \mid Sp_{Phylo}$ &
+variation among species for environmental factors demostrate phylogenetic signal &
+phylogenetically related species respond similar (share common response) to the same environmental factor
+
+\end{tabular}
+
 
 \subsection{Simulations}
 
@@ -203,45 +238,5 @@ All simulations and fits were performed with R.
 
 \section{Conclusion}
 
-
-\newpage
-\section{translation}
-
-$1 \mid Sp_{phylo}$, $0 + X_{E} \mid Sp_{phylo}$ and $X_{E} \mid Sp_{phylo}$ means phylogenetically related have similar response,   
-
-\begin{tabularx}{\textwidth}{|l|X|X|}
-\hline
-Formula & Statistics & Biology \\
-\hline
-$1 \mid Sp$ &
-random species intercept; variation within species in mean response across all factors &
-variation of how species respond \\
-\hline
-
-$0 + X_{E} \mid Sp$ &
-random slope of environment factor within species; variation in coefficient within species for the environmental factor &
-variation of how species respond to the same environmental factor \\
-\hline
-
-$1 + X_{E} \mid Sp$ &
-random slope of environmental factor within species with correlated intercept; variation in coefficient within species for the environmental factor with correlated mean response across all other factors &
-variation of how species respond in the same environmental factors and the correlation of the variation of how they respond in general \\
-\hline
-
-$1 \mid Site:Sp $ &
-random variation in intercept among species within sites &
-variation of how species respond within sites \\
-\hline
-
-$1 | Sp_{Phylo} $ &
-variation among species in mean response across all factors demonstrate phylogenetic signal &
-phylogenetically related species respond similarly \\
-\hline
-
-$0 + X_{E} \mid Sp_{Phylo}$ &
-variation among species for environmental factors demostrate phylogenetic signal &
-phylogenetically related species respond similar (share common response) to the same environmental factor \\
-\hline
-\end{tabularx}
 \end{document}
 
