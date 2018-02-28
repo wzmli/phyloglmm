@@ -92,18 +92,25 @@
 
 \section{Introduction}
 
-Ecologists and evolutionary biologists have long used various comparative techniques to study general patterns exhibited by species in response to its own phenotypic traits or different environmental and evolutionary changes.
-Phylogenetic compariative methods aim to find parsimonious methods that can be used to link ecological phenomena with evolutionary processes by incorportating the histroical relationships shared across species via phylogenetic (evolutionary) trees. 
+Phylogenetic compariative methods have been widely used to study species relativeness problems.
+%Ecologists and evolutionary biologists have long used various comparative techniques to study general patterns exhibited by species in response to its own phenotypic traits or different environmental and evolutionary changes.
+Phylogenetic models aim to find parsimonious methods that can be used to link ecological phenomena with evolutionary processes by incorportating the histroical relationships shared across species via phylogenetic (evolutionary) trees. 
 \ml{parsimonious can be a confusing word here}
+Although such models attemp to account for species correlations, they often make strong and over-simplified assumptions of the evolutionary process. 
 %Given a phylogenetic tree, phylogenetic models aim to find parsimonious methods that can be used to link ecological phenomena with evolutionary processes that generate species and exhibit in their traits.
 %Ecologist have long considered the effects of species phenotypic traits and environmental conditions on their responses and also incorportating historical relationships of species.
-Decades of work have created various different methods that enables researchers to analyze species relativeness problems for different types of data and questions.
+Decades of work have created various different methods that enables researchers to incorportate phylogenetic effects in analyzing species relativeness applications.
 But many challenges remain.
-In particular, accounting for phylogenetic signals in high dimensional systems is always challenging, especially with large phylogenies where computation powers are limited.
-\ml{define phylogenetic signal?}
-In such case, researchers often use simpler models accounting for minimal phylogenetic signals by limiting at the individuals level and neglect additional phylogenetic signals present in the system.
+In particular, accounting for phylogenetic effects in high dimensional systems is always challenging, especially for models incorportating multiple forms of phylogenetic effects, and especially with large phylogenies where computation powers are limited.
+\ml{Define phylogenetic effects. PE can mean a lot of different things (see Pagel's tree transformation). What we mean here is strictly phylogenetic signal.}
+Ignoring phylogenetic effects/signals can be problematic both biologically and statistically \ml{Li and Ives 2017 and independence thing} --
+in such cases, researchers often use simpler models accounting for minimal phylogenetic signals by limiting at the individuals level and neglect additional phylogenetic signals present in the system.
 
-Recent years, researchers have begun to incorportate phylogenetic-based methods in various modelling applications \ml{cite, look up phylogenetic meta-analysis as well}.
+%In the past few decades, there have been an accelerating increase capabilities in discovering evolutionary history of species and methods to reconstruct phylogenetic tree are making species historical evolutionary data avalible at higher resolution. 
+A lot of multi species analysis, and meta analysis. Accounting for species level variation, study and time, very few accounts for phylogenetic signal variation. 
+
+
+researchers have begun to incorportate phylogenetic-based methods in various modelling applications \ml{cite, look up phylogenetic meta-analysis as well}.
 The most widely used statistical method to model related species data that accounts for the phylogenetic structure is the \textit{phylogenetic regression} via independent constrast \ml{cite Felsenstein 1985} and further generalizations to generalized least square regression (PGLS) and generalized linear mixed models (PGLMM) to allow for different models of trait evolution \ml{or types of response?}. 
 
 
@@ -237,6 +244,8 @@ All simulations and fits were performed with R.
 \section{Discussion}
 
 \section{Conclusion}
+
+
 
 \end{document}
 
