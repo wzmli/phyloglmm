@@ -1,32 +1,31 @@
 \section{Introduction}
 
 Phylogenetic compariative methods have been widely used to study species relativeness problems.
-%Ecologists and evolutionary biologists have long used various comparative techniques to study general patterns exhibited by species in response to its own phenotypic traits or different environmental and evolutionary changes.
 Phylogenetic models aim to find parsimonious methods that can be used to link ecological phenomena with evolutionary processes by incorportating the histroical relationships shared across species via phylogenetic (evolutionary) trees. 
 \ml{parsimonious can be a confusing word here}
 Although such models attemp to account for species correlations, they often make strong and over-simplified assumptions of the evolutionary process. 
-%Given a phylogenetic tree, phylogenetic models aim to find parsimonious methods that can be used to link ecological phenomena with evolutionary processes that generate species and exhibit in their traits.
-%Ecologist have long considered the effects of species phenotypic traits and environmental conditions on their responses and also incorportating historical relationships of species.
 Decades of work have created various different methods that enables researchers to incorportate phylogenetic effects in analyzing species relativeness applications.
 But many challenges remain.
 In particular, accounting for phylogenetic effects in high dimensional systems is always challenging, especially for models incorportating multiple forms of phylogenetic effects, and especially with large phylogenies where computation powers are limited.
 \ml{Define phylogenetic effects. PE can mean a lot of different things (see Pagel's tree transformation). What we mean here is strictly phylogenetic signal.}
 Ignoring phylogenetic effects/signals can be problematic both biologically and statistically \ml{Li and Ives 2017 and independence thing} -- in such cases, researchers often use simpler models accounting for minimal phylogenetic signals by limiting at the individuals level and neglect additional phylogenetic signals present in the system.
 
-State of the art of phylogenetic comparative analysis.
+Incorportating phylogenetic links between species and combine evolutionary changes with statistical processes advances the development of phylogenetic comparative methods.
+The most widely used statistical process in phylogenetic comparative analysis to model evolutionary process is the pure random drift process, Brownian motion. 
+Although the Brownian motion is an over-simplified model of evolution, many of the existing phylogenetic comparative methods are built upon.
+For example, phylogenetic regression via independent contrasts, phylogenetic generalized least squares, Pagel's $\lambda$, Blomberg's $K$ are methods developed in the last couple of decades and have provided important insights in this field. 
+Nevertheless, there are also a handful of selection beyond the pure random drift (BM) process where they probe specific aspects of the evolutionary process (i.e. Ornstein-Uhlenbeck (OU) process which accounts for both selection and drift processes, Pagel's $\delta$ and $\kappa$ transformations where it explores variation of evolutionary rates and speciational changes through time respectively).
+
 
 In the past few decades, there have been an accelerating increase in discovering evolutionary history of species making historical evolutionary data accessible and at higher resolutions.
 Furthermore, there have been a steadily advance of methodological research (e.g. reconstruct phylogenetic tree methods, and phylogenetic compariative methods) and observational (and meta-analysis) studies on collections of species. 
-Despite the widespread use of these methods and accounting for variability across species, groups, and different studies, there have been relatively few studies accounting for phylogenetic signals. 
+Despite the widespread use of these methods and ways to account for variability across species, groups, and different studies, there have been relatively few studies accounting for phylogenetic signals. 
 
-A lot of multi species analysis, and meta analysis. Accounting for species level variation, study and time, very few accounts for phylogenetic signal variation. 
-
-researchers have begun to incorportate phylogenetic-based methods in various modelling applications \ml{cite, look up phylogenetic meta-analysis as well}.
-The most widely used statistical method to model related species data that accounts for the phylogenetic structure is the \textit{phylogenetic regression} via independent constrast \ml{cite Felsenstein 1985} and further generalizations to generalized least square regression (PGLS) and generalized linear mixed models (PGLMM) to allow for different models of trait evolution \ml{or types of response?}. 
+%The most widely used statistical method to model related species data that accounts for the phylogenetic structure is the \textit{phylogenetic regression} via independent constrast \ml{cite Felsenstein 1985} and further generalizations to generalized least square regression (PGLS) and generalized linear mixed models (PGLMM) to allow for different models of trait evolution \ml{or types of response?}. 
 
 
-Despite the choice of modelling strageties, there are many limitations in the current state of art of statistical phylogenetic analysis.
-There are a handful of studies discussing the importance of incorportating phylogenetic signals but relatively few systematically look at comparative performance of comparative phylogenetic methods. 
+%Despite the choice of modelling strageties, there are many limitations in the current state of art of statistical phylogenetic analysis.
+%There are a handful of studies discussing the importance of incorportating phylogenetic signals but relatively few systematically look at comparative performance of comparative phylogenetic methods. 
 
 In this paper, we propose an alternative, yet straightforward but little-used method of constructing phylogenetic correlations directly from phylogenetic tree by summing the evolutionary changes that occurred on all of the branches in the phylogeny in its past.
 We apply relatively simple phylogenetic comparative approaches to data from simulated phylogenies that incorportate various complexity of phylogenetic signals in the model. 
