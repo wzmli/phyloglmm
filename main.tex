@@ -1,0 +1,165 @@
+\section{Introduction}
+
+Phylogenetic compariative methods have been widely used to study species relativeness problems.
+%Ecologists and evolutionary biologists have long used various comparative techniques to study general patterns exhibited by species in response to its own phenotypic traits or different environmental and evolutionary changes.
+Phylogenetic models aim to find parsimonious methods that can be used to link ecological phenomena with evolutionary processes by incorportating the histroical relationships shared across species via phylogenetic (evolutionary) trees. 
+\ml{parsimonious can be a confusing word here}
+Although such models attemp to account for species correlations, they often make strong and over-simplified assumptions of the evolutionary process. 
+%Given a phylogenetic tree, phylogenetic models aim to find parsimonious methods that can be used to link ecological phenomena with evolutionary processes that generate species and exhibit in their traits.
+%Ecologist have long considered the effects of species phenotypic traits and environmental conditions on their responses and also incorportating historical relationships of species.
+Decades of work have created various different methods that enables researchers to incorportate phylogenetic effects in analyzing species relativeness applications.
+But many challenges remain.
+In particular, accounting for phylogenetic effects in high dimensional systems is always challenging, especially for models incorportating multiple forms of phylogenetic effects, and especially with large phylogenies where computation powers are limited.
+\ml{Define phylogenetic effects. PE can mean a lot of different things (see Pagel's tree transformation). What we mean here is strictly phylogenetic signal.}
+Ignoring phylogenetic effects/signals can be problematic both biologically and statistically \ml{Li and Ives 2017 and independence thing} -- in such cases, researchers often use simpler models accounting for minimal phylogenetic signals by limiting at the individuals level and neglect additional phylogenetic signals present in the system.
+
+State of the art of phylogenetic comparative analysis.
+
+In the past few decades, there have been an accelerating increase in discovering evolutionary history of species making historical evolutionary data accessible and at higher resolutions.
+Furthermore, there have been a steadily advance of methodological research (e.g. reconstruct phylogenetic tree methods, and phylogenetic compariative methods) and observational (and meta-analysis) studies on collections of species. 
+Despite the widespread use of these methods and accounting for variability across species, groups, and different studies, there have been relatively few studies accounting for phylogenetic signals. 
+
+A lot of multi species analysis, and meta analysis. Accounting for species level variation, study and time, very few accounts for phylogenetic signal variation. 
+
+researchers have begun to incorportate phylogenetic-based methods in various modelling applications \ml{cite, look up phylogenetic meta-analysis as well}.
+The most widely used statistical method to model related species data that accounts for the phylogenetic structure is the \textit{phylogenetic regression} via independent constrast \ml{cite Felsenstein 1985} and further generalizations to generalized least square regression (PGLS) and generalized linear mixed models (PGLMM) to allow for different models of trait evolution \ml{or types of response?}. 
+
+
+Despite the choice of modelling strageties, there are many limitations in the current state of art of statistical phylogenetic analysis.
+There are a handful of studies discussing the importance of incorportating phylogenetic signals but relatively few systematically look at comparative performance of comparative phylogenetic methods. 
+
+In this paper, we propose an alternative, yet straightforward but little-used method of constructing phylogenetic correlations directly from phylogenetic tree by summing the evolutionary changes that occurred on all of the branches in the phylogeny in its past.
+We apply relatively simple phylogenetic comparative approaches to data from simulated phylogenies that incorportate various complexity of phylogenetic signals in the model. 
+We compare model approaches and explore various complex modelling strategies in the mixed model framework and a flexible platform for researches to explore biologically interesting questions.
+
+We also compare three different R packages: nlme, pez, phylolm, and lme4.
+\ml{Not sure if we should include the line "we are not using Bayesian approaches" here but defintely in the discussions.}
+
+\section{Materials and Methods}
+
+The typical phylogenetic regression is of the form:
+\begin{align}
+y & = XB + \epsilon \\
+\epsilon & \sim MVN(0,\sigma^{2}C),
+\label{eq:gls}
+\end{align}
+where $y$ is an $n \times 1$ vector of measurable response phenotypic trait; $X$ is an $n \times (m + 1)$ model matrix containing 1's in the first column and the $m$ independent variable (traits); $B$ is an $m + 1$ coefficient vector; $\epsilon$ is the residual error and assumed to be multivariate normally distributed with a variance-covariance matrix given by $\sigma^{2}_{\epsilon}C$ in which $C$ is an $n \times n$ matrix of the phylogenetic correlation (PC).
+
+% More recently, researchers use linear mixed model and generalized linear mixed model framework to model complex systems with phylogenetic structures.
+%\ml{Why? Data type, interactions, random effects, etc... Need to really explain random effects here. Alternatively, we can drop this line and write this...}
+An alternative modelling approach is to use linear mixed effects modelling framework.
+The typical linear mixed model has the form:
+\begin{align}
+Y & \sim F(\mu) \\
+g(\mu) & = XB + Zb + \epsilon_{mm} \\
+\epsilon_{mm} & \sim MVN(0,\sigma^2)
+\end{align}
+where $Z$ is an $n \times (m+1)$ model matrix for the $(m+1)$ -- dimensional vector-valued $m$ independent variables; $\epsilon_{mm}$ is the residual error and assumed to be multivariate normally distributed with a variance-covariance matrix given by $\sigma_{2}I$.
+Analogously, the phylogenetic regression given by (1) can be represented in the mixed model framework by constraining $\epsilon_{mm} = 0$ and $Z=Z^{c}$ where the PC is incorporated in the random effect matrix. 
+
+\subsection{Phylogenetic Tree Transformation}
+The standard problem of phylogenetic comparative methods is to analyze relationships among data where the observations are gathered from nodes (usually tips) of a phylogenetic tree.
+Phylogenetic independent contrasts is a generalization of the paired comparisons method where contrasts are taken for each bifurcation (nodes) in a phylogenetic tree. 
+Assuming that traits evolve independently in each lineage following speciation, then the trait divergences that occur at one node are independent of divergence at other nodes.  
+
+An alternative approach is to model the phylogenetic correlation as a \textit{gaussian process}. 
+In particular, suppose that the evolutionary process is a Brownian motion, which means the evolution of a continuous trait is a random walk and daughter species after speciation are all independent.  
+In that case, the phylogenetic variability of a particular observation can be written as the sum of the evolutionary changes that occurred on all of the branches in the phylogeny in its past. 
+Thus, the evolutionary history for each species can be model with a sequence of independent errors, rather than having to impose a correlation structure on the random effects. 
+
+
+The random-effect model matrix $Z$ can be decomposed into term-wise model matrix $Z_{i}$ as described in \ml{in text citation lme4}.
+Thus, the phylogenetic correlated random-effect matrix $Z^{C}_{i}$ is
+
+\begin{equation}
+Z^{C}_{i} = (BS^{T}_{i}J^{T}_{i} \ast X^{T}_{i})^{T},
+\end{equation}
+
+\ml{double check if $l and p$ are the same with lme4}
+
+where $\ast$ is the Khatri-Rao product, $BS_{i}$ is an $l_{i} \times b_{i}$ matrix of species--branch relations; $J_{i}$ the indicator matrix of grouping factors indices matrix size $n \times l_{i}$; $X_{i}$ is the raw random effects model matrix size $n \times p_{i}$.
+
+\ml{double kronecker for interactions}
+
+
+\subsection{Simulations}
+
+% \begin{table}
+% \begin{center}
+\begin{tabular}{|c|c|c|}
+\hline
+Type of RE	& Formula	& Platform	\\
+\hline
+
+Single site intercept	  &	1 $\mid$ sp	& gls, lme4 \\
+Single site intercept and uncorrelated slopes		&  1 $\mid$ sp + trait $\mid$ sp		& lme4 \\
+Single site intercept and correlated slopes 			& 1 + trait $\mid$ sp					& lme4 \\
+\hline
+Multiple site intercept 									&  1 $\mid$ sp 						& pez, lme4 \\
+Multiple site intercept and uncorrelated slopes 	&  1 $\mid$ sp + trait $\mid$ sp 		& pez, lme4 \\
+Multiple site intercept and correlated slopes 	& 	1 + trait $\mid$ sp					& lme4 \\
+\hline
+\end{tabular}
+% \vspace{1in}
+% ditto with site interaction								& ditto above $\mid$ sp:site		& ditto above \\
+% \end{center}
+% \end{table}
+
+The simulation models is based on glmm framework described in \ml{eq labels 3-5}.   
+To construct the simulation model, let $n$ be the number of species distributed among $m$ sites.
+Let $Y$ be the $mn \times 1$ vectors of response trait.  
+We generate test data using three different $n$ (20, 100, 500) and two different $m$ (1, 20) using a simple glmm framework that varies in complexity in random effect described in \ml{Table 1, macro this with labels}. 
+We also extend the multiple site models described in \ml{Table 1} with species by site interaction random effects. 
+All simulations and fits were performed with R. 
+
+\subsection{Model Fitting}
+
+
+
+\section{Results}
+
+
+
+\section{Discussion}
+\section{Conclusion}
+\newpage
+\section{translation}
+
+$1 \mid Sp_{phylo}$, $0 + X_{E} \mid Sp_{phylo}$ and $X_{E} \mid Sp_{phylo}$ means phylogenetically related have similar response,   
+
+\begin{tabularx}{\textwidth}{|l|X|X|}
+\hline
+Formula & Statistics & Biology \\
+\hline
+$1 \mid Sp$ &
+random species intercept; variation within species in mean response across all factors &
+variation of how species respond \\
+\hline
+
+$0 + X_{E} \mid Sp$ &
+random slope of environment factor within species; variation in coefficient within species for the environmental factor &
+variation of how species respond to the same environmental factor \\
+\hline
+
+$1 + X_{E} \mid Sp$ &
+random slope of environmental factor within species with correlated intercept; variation in coefficient within species for the environmental factor with correlated mean response across all other factors &
+variation of how species respond in the same environmental factors and the correlation of the variation of how they respond in general \\
+\hline
+
+$1 \mid Site:Sp $ &
+random variation in intercept among species within sites &
+variation of how species respond within sites \\
+\hline
+
+$1 | Sp_{Phylo} $ &
+variation among species in mean response across all factors demonstrate phylogenetic signal &
+phylogenetically related species respond similarly \\
+\hline
+
+$0 + X_{E} \mid Sp_{Phylo}$ &
+variation among species for environmental factors demostrate phylogenetic signal &
+phylogenetically related species respond similar (share common response) to the same environmental factor \\
+\hline
+\end{tabularx}
+            
+                                                                        
