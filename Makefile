@@ -14,6 +14,7 @@ include sub.mk
 # include $(ms)/perl.def
 
 # ms.tex
+# main.tex
 # notes.md
 # todo.md
 # journal.md
@@ -46,7 +47,7 @@ Sources += $(wildcard *.R)
 
 phyloglmm_setup.Rout:
 
-simulate_tree.Rout: name.R parameters.R simulate_tree.R
+simulate_tree.Rout: names.R parameters.R simulate_tree.R
 	$(run-R)
 
 simulate_poistree.Rout: parameters.Rout simulate_poistree.R
@@ -71,6 +72,8 @@ fit.lme4.large.1.Rout:
 
 fit.pez.%.Rout: names.R parameters.R simulate_tree.R fit_pez.R
 	$(run-R)
+
+fit.pez.large.1.Rout:
 
 ### Multiple sites compound symmetric case
 
