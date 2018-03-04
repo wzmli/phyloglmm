@@ -8,12 +8,12 @@ Decades of work have created various different methods that enables researchers 
 But many challenges remain.
 In particular, accounting for phylogenetic effects in high dimensional systems is always challenging, especially for models incorportating multiple forms of phylogenetic effects, and especially with large phylogenies where computation powers are limited.
 \ml{Define phylogenetic effects. PE can mean a lot of different things (see Pagel's tree transformation). What we mean here is strictly phylogenetic signal.}
-Ignoring phylogenetic effects/signals can be problematic both biologically and statistically \ml{Li and Ives 2017 and independence thing} -- in such cases, researchers often use simpler models accounting for minimal phylogenetic signals by limiting at the individuals level and neglect additional phylogenetic signals present in the system.
+Ignoring phylogenetic effects/signals can be problematic both biologically and statistically \cite{felsenstein1985phylogenies, li2017statistical} -- in such cases, researchers often use simpler models accounting for minimal phylogenetic signals by limiting at the individuals level and neglect additional phylogenetic signals present in the system.
 
 Incorportating phylogenetic links between species and combine evolutionary changes with statistical processes advances the development of phylogenetic comparative methods.
-The most widely used statistical process in phylogenetic comparative analysis to model evolutionary process is the pure random drift process, Brownian motion. 
+The most widely used statistical process in phylogenetic comparative analysis to model evolutionary process is the pure random drift process, Brownian motion \citep{felsenstein1973maximum}. 
 Although the Brownian motion is an over-simplified model of evolution, many of the existing phylogenetic comparative methods are built upon.
-For example, phylogenetic regression via independent contrasts, phylogenetic generalized least squares, Pagel's $\lambda$, Blomberg's $K$ are methods developed in the last couple of decades and have provided important insights in this field. 
+For example, phylogenetic regression via independent contrasts \citep{felsenstein1985phylogenies}, phylogenetic generalized least squares \citep{grafen1989phylogenetic}, Pagel's $\lambda$ \citep{pagel1999inferring}, Blomberg's $K$ \citep{blomgerg2003} are methods developed in the last couple of decades and have provided important insights in this field. 
 Nevertheless, there are also a handful of selection beyond the pure random drift (BM) process where they probe specific aspects of the evolutionary process (i.e. Ornstein-Uhlenbeck (OU) process which accounts for both selection and drift processes, Pagel's $\delta$ and $\kappa$ transformations where it explores variation of evolutionary rates and speciational changes through time respectively).
 
 
