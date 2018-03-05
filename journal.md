@@ -1,5 +1,11 @@
 ## Journal
 
+## Mar 5th 2018
+
+Still working on ms. 
+Multiple observation now works for non-interaction random effects.
+Need to figure out how to do interaction random effects.
+
 ## Feb 13th 2018
 
 The scaling factor/standardizing factor is not trivial. 
