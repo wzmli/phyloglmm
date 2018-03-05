@@ -7,7 +7,7 @@ Although such models attemp to account for species correlations, they often make
 Decades of work have created various different methods that enables researchers to incorportate phylogenetic effects in analyzing species relativeness applications.
 But many challenges remain.
 In particular, accounting for phylogenetic effects in high dimensional systems is always challenging, especially for models incorportating multiple forms of phylogenetic effects, and especially with large phylogenies where computation powers are limited.
-\ml{Define phylogenetic effects. PE can mean a lot of different things (see Pagel's tree transformation). What we mean here is strictly phylogenetic signal.}
+\ml{Define phylogenetic effects. PE can mean a lot of different things (see Pagel's tree transformation). What we mean here is strictly phylogenetic signal-- extent to which trait/response values are statistically related to phylogeny.}
 Ignoring phylogenetic effects/signals can be problematic both biologically and statistically \citep{felsenstein1985phylogenies, li2017statistical} -- in such cases, researchers often use simpler models accounting for minimal phylogenetic signals by limiting at the individuals level and neglect additional phylogenetic signals present in the system.
 
 Incorportating phylogenetic links between species and combine evolutionary changes with statistical processes advances the development of phylogenetic comparative methods.
@@ -28,10 +28,15 @@ Despite the widespread use of these methods and ways to account for variability 
 %There are a handful of studies discussing the importance of incorportating phylogenetic signals but relatively few systematically look at comparative performance of comparative phylogenetic methods. 
 
 In this paper, we propose an alternative, yet straightforward but little-used method of constructing phylogenetic correlations directly from phylogenetic tree by summing the evolutionary changes that occurred on all of the branches in the phylogeny in its past.
+
+\ml{flexabilitiy: multiple obs per species and multiple levels of phylogenetic signal}
 We apply relatively simple phylogenetic comparative approaches to data from simulated phylogenies that incorportate various complexity of phylogenetic signals in the model. 
 We compare model approaches and explore various complex modelling strategies in the mixed model framework and a flexible platform for researches to explore biologically interesting questions.
 
-We also compare three different R packages: nlme, pez, phylolm, and lme4.
+We also compare three different R packages: nlme:gls, pez, phylolm, and lme4.
+In principle, any given valid method should converge/get the same result/conclusion.
+However, even with the relatively simple models considered here, methods that are not flexible/parameter constrinted can experience problems.
+Furthermore, even when different methods converge to essentially the same result, they may show large differences in computational efficiency.
 \ml{Not sure if we should include the line "we are not using Bayesian approaches" here but defintely in the discussions.}
 
 \section{Materials and Methods}
@@ -77,17 +82,22 @@ Z^{C}_{i} = (S^{T}_{i}J^{T}_{i} \ast X^{T}_{i})^{T},
 
 where $\ast$ is the Khatri-Rao product, $S_{i}$ is an $l_{i} \times b_{i}$ matrix of species--branch relations; $J_{i}$ the indicator matrix of grouping factors indices matrix size $n \times l_{i}$; $X_{i}$ is the raw random effects model matrix size $n \times p_{i}$.
 
-\ml{note: $SS^T = C$ under BM assumption}
+\ml{note: $SS^T = Cov(phylo)$ under BM assumption}
 %\ml{double kronecker for interactions}
 
 
 \subsection{Simulation}
 
-We generated test data based on the simple mixed model formulation \ml{ref equation (3-5)} with a single response variable $Y$ and a single predictor continuous variable $X$ from $n$ species and $m$ sites. 
+We generated test data based on the simple mixed model formulation \ml{ref equation (3-5)} with a single response variable $Y$ and a single predictor continuous variable $X$ from $n$ (20, 100, and 500) species, and $m$ (1 and 20) sites. 
 To account for multiple levels of phylogenetic signal, we assume phylogenetic signal in the intercept $b_0$, and slope $b_1$.
 We further assume that random slope and intercept are correlated. 
+For models with multiple sites, we also assume for species and site interactions random effects, an equilvalent version of nested random effects or phylogenetic attraction described in \cite{helmus2007separating} with the main random effects.
 
-\ml{talk about platforms and single/multiple sites}
+Many platforms 
+- single observations per species (IC and pgls)
+- single observation per species per site (pez)
+- lme4 does everything
+
 
 % \begin{table}
 % \begin{center}

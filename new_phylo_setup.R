@@ -2,7 +2,7 @@
 
 phylo_lmm2 <- function(formula,data,phylo,phylonm=NULL,phyloZ=NULL,nsp=NULL,control,REML){
   lmod <- lFormula2(formula=formula,data = data,control=control, REML=REML,phylonm=phylonm, phyloZ=phyloZ)
-  lmod$reTrms <- modify_phylo_retrms2(lmod$reTrms,phylo,phylonm,phyloZ,nsp)
+  # lmod$reTrms <- modify_phylo_retrms2(lmod$reTrms,phylo,phylonm,phyloZ,nsp)
   devfun <- do.call(mkLmerDevfun, lmod)
   opt <- optimizeLmer(devfun,control=control$optCtrl)
   mkMerMod(environment(devfun), opt, lmod$reTrms, fr = lmod$fr)
@@ -222,7 +222,8 @@ modify_phylo_retrms2 <- function(rt,phylo,phylonm,phyloZ,nsp){
   ## terms on the left side of the bar/pipe
   
   ### lFormula is creating the all RE index w.r.t nsp lengths into a simple vector, we have to use the function above to split properly
-  Lind_list <- split(rt[["Lind"]],rep(seq_along(Lind_split_length),Lind_split_length*nsp))
+  # Lind_list <- split(rt[["Lind"]],rep(seq_along(Lind_split_length),Lind_split_length*nsp))
+  Lind_list <- split(rt[["Lind"]],rep(seq_along(Gpdiff),Gpdiff))
   if(names(rt[["cnms"]][1]) %in% c("sp:site","site:sp")){ ### hack
     for(i in 1:length(rt$cnms)){
       Lind_list[[i]] <- rep(i,sum(rt$Lind==i))
