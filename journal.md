@@ -2,6 +2,10 @@
 
 ## Mar 5th 2018
 
+sp:site works, but site:sp doesn't due to the _extra_ transpose problem. 
+Let's put it up on the issues and deal with it later after the ms.
+
+
 Still working on ms. 
 Multiple observation now works for non-interaction random effects.
 Need to figure out how to do interaction random effects.
