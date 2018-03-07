@@ -96,12 +96,12 @@ Table \ml{ref something} provides the statistially equilvalent fitting capabilit
 
 % \begin{table}
 % \begin{center}
-\begin{tabular}{|c|c|c|}
+\begin{tabularx}{\textwidth}{|X|X|X|}
 \hline
 Type of RE	& Formula	& Platform	\\
 \hline
 
-Single site intercept	  &	1 $\mid$ sp	& gls, lme4 \\
+Single site intercept	  &	1 $\mid$ sp	& gls (if residual = 0), phyloglm, lme4 \\
 Single site intercept and uncorrelated slopes		&  1 $\mid$ sp + trait $\mid$ sp		& lme4 \\
 Single site intercept and correlated slopes 			& 1 + trait $\mid$ sp					& lme4 \\
 \hline
@@ -109,7 +109,7 @@ Multiple site intercept 									&  1 $\mid$ sp 						& pez, lme4 \\
 Multiple site intercept and uncorrelated slopes 	&  1 $\mid$ sp + trait $\mid$ sp 		& pez, lme4 \\
 Multiple site intercept and correlated slopes 	& 	1 + trait $\mid$ sp					& lme4 \\
 \hline
-\end{tabular}
+\end{tabularx}
 % \vspace{1in}
 % ditto with site interaction								& ditto above $\mid$ sp:site		& ditto above \\
 % \end{center}
@@ -128,7 +128,13 @@ The full model (which matches the simulations model that incorportates phylogene
 
 In general, as the number of species (or phylogeny) increases, all phylogenetic signal estimates are more robust for all models (including models without random slope and correlation) except PGLS in the single site simulations. 
 It is unclear how different levels of phylogenetic signal is being confounded under the error free (without tip variation) assumption for the PGLS models.
-The estimated phylogenic signal estimates appear to be increasing as the number of species increase.
+Models with only two parameters/levels of variation captures the phylogenetic intercept and tip variation reasonably well to the simulated parameters from the full model dispite not including phylogenetic random slope and slope intercept correlation.
+
+Platforms using the mixed model framework for multiple site simulations follows similar behaviour as single site simulation (i.e. as the number of species increase, differnt levels of phylogenetic signals and variations are closer to the simulated parameters). 
+There are no clear difference with phylogenetic signamodels without random slope and intercept correlation 
+
+
+
 
 \begin{center}
 \begin{figure}[h]
@@ -152,11 +158,19 @@ The estimated phylogenic signal estimates appear to be increasing as the number 
 
 \section{Discussion}
 
+
+\subsection{over coming limitation}
 large datasets
 limitations (unbalance datasets)
 this trick works in bayesian/mcmc framework
 
+\subsection{conflation of phylogenetic process and observation process error}
 
+clarity
+
+\subsection{rethinking phylogenetic comparative methods and statistical test}
+
+\ml{cite Li et al and the other paper with model selection before adding RE}
 \newpage
 
 \section{Conclusion}
