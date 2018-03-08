@@ -63,6 +63,14 @@ fit.gls.%.Rout: names.R parameters.R simulate_tree.R fit_gls.R
 
 fit.gls.large.1.Rout:
 
+### phylolm
+
+fit.phylolm.%.Rout: names.R parameters.R simulate_tree.R fit_phylolm.R
+	$(run-R)
+
+fit.phylolm.large.1.Rout:
+
+
 ### lme4 can fit single and multiple sites
 
 fit.lme4.%.Rout: names.R parameters.R simulate_tree.R phyloglmm_setup.R phyloglmm.R
@@ -91,7 +99,15 @@ collect.Rout: collect.R
 plot.Rout: plot.R
 	$(run-R)
 
-	
+ssplot.Rout: ssplot.R
+	$(run-R)
+
+msplot.Rout: msplot.R
+	$(run-R)
+
+csplot.Rout: csplot.R
+	$(run-R)
+
 ### fitting poisson (NEED TO FIX)
 
 fit_poisson.Rout: parameters.R simulate_poistree.Rout phyloglmm_setup.R phyloglmm_pois.R

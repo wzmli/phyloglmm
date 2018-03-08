@@ -1,5 +1,21 @@
 ## Journal
 
+## Mar 7th 2018
+
+I managed to figure out how to matrix standardization works.
+The two step _division_ through me off because it was probably a stability thing.
+What it is doing is trying to computate a matrix scalar such that the determinate = 1. 
+Knowing this fact, we can compute the matrix scalar and post hoc transform our sd estimate.
+I have confirmed this works.
+
+## Mar 6th 2018
+
+For the single site simulations, I am going to simulate the full model and try to fit it using phylolm and gls and combine everything to the full model plot.
+The plotting code is very ugly, I will clean it when the first draft of the ms is complete.
+
+Most of the rough ideas are in the intro and methods.
+Time to separate the plots and import them in the ms.
+
 ## Mar 5th 2018
 
 sp:site works, but site:sp doesn't due to the _extra_ transpose problem. 

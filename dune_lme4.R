@@ -36,17 +36,17 @@ dat <- (dat
   )
 )
 
-dat2 <- rbind(dat,dat[560,])
-dat2[561,"Y"]
+# dat2 <- rbind(dat,dat[560,])
+# dat2[561,"Y"] <- 0.5
 
 lme4time_1 <- system.time(
   lme4fit_1 <- phylo_lmm2(Y ~ 1 + log.sla + annual 
 		 + (1|obs) 
 		+ (1|sp)
      # + (1 | sp:site)
-		  + (0 + log.sla | site)
-		 + (1|site) 
-		, data=dat2
+		  # + (0 + log.sla | site)
+		 # + (1|site) 
+		, data=dat
 		, phylonm = c("sp","sp:site","site:sp")
 		, nsp = 28
 		, phylo = phy
@@ -94,7 +94,7 @@ REs <- get_RE(veg.long = dune.veg2
 	, trait.re = c("log.sla")
 	, phylo = dune.phylo2
 	, trans = "log"
-	, stand = FALSE
+	, stand = TRUE
 )
 
 # get_RE returns a list of random effects in this order:
@@ -119,12 +119,12 @@ peztime_1 <- system.time(
    , random.effects = list(re.sp
    , re.sp.phy
      # , re.nested.phy
-     , re.sla
-     , re.site
+     # , re.sla
+     # , re.site
      )
    , REML = F
    , verbose = F
-   , s2.init = c(1.5, rep(0.01, 4))
+   # , s2.init = c(1.5, rep(0.01, 4))
  )
 )
 # 
