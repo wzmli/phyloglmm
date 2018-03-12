@@ -1,5 +1,9 @@
 ## Journal
 
+## Mar 8th 2018
+
+Now there is a switch in phylo.to.Z species branch function that does the equilvalent scaling.
+
 ## Mar 7th 2018
 
 I managed to figure out how to matrix standardization works.
