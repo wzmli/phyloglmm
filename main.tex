@@ -94,26 +94,27 @@ We further assume that random slope and intercept are correlated.
 For models with multiple sites, we also assume for species and site interactions random effects, an equilvalent version of nested random effects or phylogenetic attraction described in \cite{helmus2007separating} with the main random effects.
 Table \ml{ref something} provides the statistially equilvalent fitting capabilities of common/existing phylogenetic methods.
 
-% \begin{table}
-% \begin{center}
-\begin{tabularx}{\textwidth}{|X|X|X|}
-\hline
-Type of RE	& Formula	& Platform	\\
-\hline
-
-Single site intercept	  &	1 $\mid$ sp	& gls (if residual = 0), phyloglm, lme4 \\
-Single site intercept and uncorrelated slopes		&  1 $\mid$ sp + trait $\mid$ sp		& lme4 \\
-Single site intercept and correlated slopes 			& 1 + trait $\mid$ sp					& lme4 \\
-\hline
-Multiple site intercept 									&  1 $\mid$ sp 						& pez, lme4 \\
-Multiple site intercept and uncorrelated slopes 	&  1 $\mid$ sp + trait $\mid$ sp 		& pez, lme4 \\
-Multiple site intercept and correlated slopes 	& 	1 + trait $\mid$ sp					& lme4 \\
-\hline
-\end{tabularx}
-% \vspace{1in}
-% ditto with site interaction								& ditto above $\mid$ sp:site		& ditto above \\
-% \end{center}
-% \end{table}
+% % \begin{table}
+% % \begin{center}
+% 
+% \begin{tabularx}{\textwidth}{|X|X|X|}
+% \hline
+% Type of RE	& Formula	& Platform	\\
+% \hline
+% 
+% Single site intercept	  &	1 $\mid$ sp	& gls (if residual = 0), phyloglm, lme4 \\
+% Single site intercept and uncorrelated slopes		&  1 $\mid$ sp + trait $\mid$ sp		& lme4 \\
+% Single site intercept and correlated slopes 			& 1 + trait $\mid$ sp					& lme4 \\
+% \hline
+% Multiple site intercept 									&  1 $\mid$ sp 						& pez, lme4 \\
+% Multiple site intercept and uncorrelated slopes 	&  1 $\mid$ sp + trait $\mid$ sp 		& pez, lme4 \\
+% Multiple site intercept and correlated slopes 	& 	1 + trait $\mid$ sp					& lme4 \\
+% \hline
+% \end{tabularx}
+% % \vspace{1in}
+% % ditto with site interaction								& ditto above $\mid$ sp:site		& ditto above \\
+% % \end{center}
+% % \end{table}
 
 \section{Results}
 
@@ -131,10 +132,10 @@ It is unclear how different levels of phylogenetic signal is being confounded un
 Models with only two parameters/levels of variation captures the phylogenetic intercept and tip variation reasonably well to the simulated parameters from the full model dispite not including phylogenetic random slope and slope intercept correlation.
 
 Platforms using the mixed model framework for multiple site simulations follows similar behaviour as single site simulation (i.e. as the number of species increase, differnt levels of phylogenetic signals and variations are closer to the simulated parameters). 
-There are no clear difference with phylogenetic signamodels without random slope and intercept correlation 
-
-
-
+All parameter estimates are much more robust for the multiple site than the single site simulations especially slope-intercept correlations. 
+There are no clear difference with phylogenetic signal models without random slope and intercept correlation.
+However, dispite the similarities of robustness estimation, the efficiency (measured by computational speed) of sampling independent errors in lme4 is dramatically better (orders of magitude faster than pez.
+Furthermore, it was not practical for pez to fit large sample size simulation data as the computational speed did not scale linearly.
 
 \begin{center}
 \begin{figure}[h]
@@ -158,13 +159,23 @@ There are no clear difference with phylogenetic signamodels without random slope
 
 \section{Discussion}
 
+We have fitted models including maximum capabilities to model varying levels of variation/phylogenetic signal to simulated data with ....
+Using models that can include/account for multiple levels of variation is necessary for robust fits, but models that include phylogenetic signal in the intercept level can work as well as the full model.
+Under the Brownian motion evolution process assumption, modelling via independent errors is much more computational efficient than imposing equilvalent correlation structures.
 
-\subsection{over coming limitation}
+\subsection{Process and observation errors}
+
+Another way to think about various forms/sources of phylogenetic signals and uncertainties is characterizing into process and observation errors.
+
+
+
+\subsection{Model Flexibilities}
+
+
 large datasets
 limitations (unbalance datasets)
 this trick works in bayesian/mcmc framework
 
-\subsection{conflation of phylogenetic process and observation process error}
 
 clarity
 
