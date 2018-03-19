@@ -19,7 +19,7 @@ include sub.mk
 # todo.md
 # journal.md
 
-ms.pdf: ms.tex
+ms.pdf: main.tex ms.tex
 	pdflatex ms
 
 
