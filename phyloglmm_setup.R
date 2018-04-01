@@ -1,6 +1,6 @@
 #### Helper functions for phyloglmm
 
-phylo.to.Z <- function(r){
+phylo.to.Z <- function(r,stand=FALSE){
 	ntip <- length(r$tip.label)
 	Zid <- Matrix(0.0,ncol=length(r$edge.length),nrow=ntip)
 	nodes <- (ntip+1):max(r$edge)
@@ -12,8 +12,10 @@ phylo.to.Z <- function(r){
 			Zid[i,ce] <- 1   ## set Zid to 1
 			cn <- r$edge[ce,1]            ## find previous node
 		}
-	}                                      
+	}
+	sig <- det(vcv(r))^(1/ntip)
 	Z <- t(sqrt(r$edge.length) * t(Zid))
+	if(stand){Z <- t(sqrt(r$edge.length/sig) * t(Zid))}
 	rownames(Z) <- r$tip.label
 	colnames(Z) <- 1:length(r$edge.length)
 	return(Z)                                  

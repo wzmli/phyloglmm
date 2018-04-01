@@ -14,13 +14,13 @@ Vphy <- vcv(phy)
 # Vphy <- Vphy/(det(Vphy)^(1/nspp))
 
 iD <- t(chol(Vphy))
-Xsd <- 20
+Xsd <- 1
 
 # Generate environmental site variable and standardize it
 
 if(nsite == 1){
 	X <- rnorm(n=nspp,sd=Xsd)
-	X <- iD %*% rnorm(n=nspp,sd=Xsd)
+#	X <- iD %*% rnorm(n=nspp,sd=Xsd)
 }
 if(nsite > 1){
 X <- matrix(1:nsite, nrow = 1, ncol = nsite)
