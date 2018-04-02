@@ -279,3 +279,90 @@ modify_phylo_retrms2 <- function(rt,phylo,phylonm,phyloZ,nsp){
   # 	}
   return(rt)
 }
+
+
+phylo_glmm2 <- function(formula,data,phylo,phylonm=NULL,phyloZ=NULL,control,family){
+  glmod2 <- glFormula2(formula=formula,data = data,control=control,family,phylonm=phylonm, phyloZ=phyloZ)
+  # glmod$reTrms <- modify_phylo_retrms(glmod$reTrms,phylo,phylonm,phyloZ)
+  devfun <- do.call(mkGlmerDevfun, glmod2)
+  opt <- optimizeGlmer(devfun)
+  devfun <- updateGlmerDevfun(devfun,glmod2$reTrms)
+  opt <- optimizeGlmer(devfun,stage=2)
+  mkMerMod(environment(devfun), opt, glmod2$reTrms, fr = glmod2$fr)
+}
+
+glFormula2 <- function (formula, data = NULL, family = gaussian, subset, weights, 
+                        na.action, offset, contrasts = NULL, start, mustart, etastart, 
+                        control = glmerControl(),phylonm,phyloZ,...) 
+{
+  control <- control$checkControl
+  mf <- mc <- match.call()
+  if (is.character(family)) 
+    family <- get(family, mode = "function", envir = parent.frame(2))
+  if (is.function(family)) 
+    family <- family()
+  if (isTRUE(all.equal(family, gaussian()))) {
+    mc[[1]] <- quote(lme4::lFormula)
+    mc["family"] <- NULL
+    return(eval(mc, parent.frame()))
+  }
+  if (family$family %in% c("quasibinomial", "quasipoisson", 
+                           "quasi")) 
+    stop("\"quasi\" families cannot be used in glmer")
+  ignoreArgs <- c("start", "verbose", "devFunOnly", "optimizer", 
+                  "control", "nAGQ")
+  l... <- list(...)
+  l... <- l...[!names(l...) %in% ignoreArgs]
+  do.call(lme4:::checkArgs, c(list("glmer"), l...))
+  cstr <- "check.formula.LHS"
+  lme4:::checkCtrlLevels(cstr, control[[cstr]])
+  denv <- lme4:::checkFormulaData(formula, data, checkLHS = control$check.formula.LHS == 
+                             "stop")
+  mc$formula <- formula <- as.formula(formula, env = denv)
+  m <- match(c("data", "subset", "weights", "na.action", "offset", 
+               "mustart", "etastart"), names(mf), 0L)
+  mf <- mf[c(1L, m)]
+  mf$drop.unused.levels <- TRUE
+  mf[[1L]] <- quote(stats::model.frame)
+  fr.form <- subbars(formula)
+  environment(fr.form) <- environment(formula)
+  for (i in c("weights", "offset")) {
+    if (!eval(bquote(missing(x = .(i))))) 
+      assign(i, get(i, parent.frame()), environment(fr.form))
+  }
+  mf$formula <- fr.form
+  fr <- eval(mf, parent.frame())
+  fr <- factorize(fr.form, fr, char.only = TRUE)
+  attr(fr, "formula") <- formula
+  attr(fr, "offset") <- mf$offset
+  if (!missing(start) && is.list(start)) {
+    attr(fr, "start") <- start$fixef
+  }
+  n <- nrow(fr)
+  reTrms <- mkReTrms2(findbars(lme4:::RHSForm(formula)), fr,phylonm, phyloZ)
+  wmsgNlev <- lme4:::checkNlevels(reTrms$flist, n = n, control, allow.n = TRUE)
+  wmsgZdims <- lme4:::checkZdims(reTrms$Ztlist, n = n, control, allow.n = TRUE)
+  wmsgZrank <- lme4:::checkZrank(reTrms$Zt, n = n, control, nonSmall = 1e+06, 
+                          allow.n = TRUE)
+  fixedform <- formula
+  lme4:::RHSForm(fixedform) <- nobars(lme4:::RHSForm(fixedform))
+  mf$formula <- fixedform
+  fixedfr <- eval(mf, parent.frame())
+  attr(attr(fr, "terms"), "predvars.fixed") <- attr(attr(fixedfr, 
+                                                         "terms"), "predvars")
+  ranform <- formula
+  lme4:::RHSForm(ranform) <- subbars(lme4:::RHSForm(lme4:::reOnly(formula)))
+  mf$formula <- ranform
+  ranfr <- eval(mf, parent.frame())
+  attr(attr(fr, "terms"), "predvars.random") <- attr(terms(ranfr), 
+                                                     "predvars")
+  X <- model.matrix(fixedform, fr, contrasts)
+  if (is.null(rankX.chk <- control[["check.rankX"]])) 
+    rankX.chk <- eval(formals(lmerControl)[["check.rankX"]])[[1]]
+  X <- lme4:::chkRank.drop.cols(X, kind = rankX.chk, tol = 1e-07)
+  if (is.null(scaleX.chk <- control[["check.scaleX"]])) 
+    scaleX.chk <- eval(formals(lmerControl)[["check.scaleX"]])[[1]]
+  X <- lme4:::checkScaleX(X, kind = scaleX.chk)
+  list(fr = fr, X = X, reTrms = reTrms, family = family, formula = formula, 
+       wmsgs = c(Nlev = wmsgNlev, Zdims = wmsgZdims, Zrank = wmsgZrank))
+}

@@ -50,7 +50,10 @@ phyloglmm_setup.Rout:
 simulate_tree.Rout: names.R parameters.R simulate_tree.R
 	$(run-R)
 
-simulate_poistree.Rout: parameters.Rout simulate_poistree.R
+simulate_poistree.Rout: parameters.R simulate_poistree.R
+	$(run-R)
+
+fit.pois.Rout: simulate_poistree.Rout phyloglmm_setup.R new_phylo_setup.R phyloglmm_pois.R
 	$(run-R)
 
 ######################################################################

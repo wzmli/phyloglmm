@@ -1,6 +1,11 @@
 ## poisson fit
 #### Fitting phyloglmm via lme4
 
+load('.simulate_poistree.RData')
+source('phyloglmm_setup.R', echo=TRUE)
+source('new_phylo_setup.R', echo=TRUE)
+
+
 library(ape)
 library(Matrix)
 library(lme4)
@@ -15,8 +20,8 @@ dat <- (dat
   %>% mutate(obs = sp)
 )	
 
-lme4timecor <- system.time(
-  lme4fitcor <- phylo_glmm(Y ~ X + (1+X|sp)
+# lme4timecor <- system.time(
+  lme4fitcor <- phylo_glmm2(Y ~ X + (1|sp)
     , data=dat
     , phylonm = "sp"
     , family = poisson
@@ -24,8 +29,8 @@ lme4timecor <- system.time(
     , phyloZ=phyZ
     , control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
   )
-)
+# )
 
-print(lme4timecor)
-print(summary(lme4fitcor))
+# print(lme4timecor)
+# print(summary(lme4fitcor))
 
