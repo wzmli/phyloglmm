@@ -1,59 +1,20 @@
 \section{Introduction}
 
-Phylogenetic comparative methods (PCM) aim to find parsimonious models that link traits and ecological phenomena with evolutionary processes by incorporating the historical relationships shared among taxa as represented by phylogenetic (evolutionary) trees.
-The primary approach to incorporate this link is by transforming the phylogenetic relationship in the evolutionary tree into species phylogenetic correlation matrices.
-Phylogenetic generalized least square regression (PGLS) and phylogenetic generalized linear mixed models (PGLMM) are classic methods that uses this approach; they have been widely and effectively used.
-However, despite the widespread use of these classic PCMs, many analytic tools available are inflexible and computationally inefficient.
-As a result, researchers have often overlooked and avoided using PCMs. 
-In this paper, we proposed an more flexible and computationally efficient alternative method that incorporates phylogenetic correlations as a Gaussian process, modeling the evolutionary changes along each branch of a phylogenetic tree as independent (possibly multivariate) random Normal deviates.
+Ever-increasing capabilities of data collection techniques (i.e. genetic sequencing, geographic information systems monitoring, and etc) and sampling efforts from field biologist are making large volumes of ecological/biological data available over an ever-wider range of species and also higher resolution (i.e. measurable phenotypic traits to genetic sequence data). 
+As a result, researchers are interested in exploring more complicated systems and fitting more models to data or synthetic databases of species traits.
+One particular area of interest in ecological/evolutionary statistics is phylogenetic comparative analysis; that is, analyzing relationships among species when estimating the effects of species traits within a community. 
+Although there are statistical tools available and widely used for this type of problem, these tools are either inflexible, or computationally inefficient and unpractical, or both when fitting large volumes of data or complex models.
+In this paper, we propose an alternative method that can flexibly and computational efficiently model phylogenetic relationships via mixed effect models, highlighting various complexities of phylogenetic relations through random effects.  
 
-Ever-increasing capabilities of genetic sequencing techniques are making genomic data available over an ever-wider range of species and also higher resolutions in their evolutionary relationships.
-As a result, researchers are interested in exploring more complicated systems and fitting more complicated models to their data. 
-Given a phylogenetic tree, it is relatively simple to compute a corresponding correlation matrix, which can be incorporated in statistical methods.
-The most widely used statistical process in phylogenetic comparative analysis to model evolutionary process is the pure random drift process, Brownian motion \citep{felsenstein1973maximum}. 
-Although the Brownian motion is an over-simplified model of evolution, many of the existing phylogenetic comparative methods are built upon.
-For example, phylogenetically independent contrasts (PICs) \citep{felsenstein1985phylogenies}, phylogenetic generalized least squares (PGLS) \citep{grafen1989phylogenetic}, Pagel's $\lambda$ \citep{pagel1999inferring}, and Blomberg's $K$ \citep{blomberg2003testing} are methods developed in the last couple of decades and have provided important insights in this field. 
-But for technical reasons, all of these approaches are slow (computationally inefficient) or inflexible in terms of degrees of phylogenetic variabilitity. 
+In the last few decides, researcher have constantly develop new phylogenetic comparative methods and have shown importance of including phylogenetic relationships in these type of problems \cite{felsenstein1985phylogenies, li2017statistical}. 
+The core of the existing techniques are based on different modelling assumptions of the evolutionary process using various parametrizations of phylogenetic correlations (PC) of taxa; that is matrices inferred from the topology of evolutionary trees by capturing the evolutionary changes that occurred on all the branches, which can be incorporated in statistical methods. 
+For example, phylogenetically independent contrasts (PICs) \citep{felsenstein1985phylogenies}, phylogenetic generalized least squares (PGLS) \citep{grafen1989phylogenetic}, phylogenetic generalized linear mixed models (PGLMM) \citep{ives2011generalized}, Pagel's $\lambda$ \citep{pagel1999inferring}, and Blomberg's $K$ \citep{blomberg2003testing} are methods assuming Brownian motion (pure genetic draft) process. 
+Despite the wide usage of these methods, there are a handful of recognizable limitations with these approaches and noticeably many published examples in the literature are constrained to small balanced data sets and simple models; that is, phylogenetic variability/signal present in residual variance. \citep{li2017canfun}.\ml{add more, should be easy. I don't really like this line, skipping for now}
 
-
-______
-
-Phylogenetic comparative methods (PCM) aim to find parsimonious models that link traits and ecological phenomena with evolutionary processes by incorporating the historical relationships shared among taxa as represented by phylogenetic (evolutionary) trees. 
-Decades of work have created various different methods that enables researchers to incorporate phylogenetic effects in analyzing species relativeness applications, yet existing methods are still have strong contraints. 
-In particular, the current stat
-% But many challenges remain.
-In particular, accounting for phylogenetic effects in high dimensional systems is always challenging, especially for models incorporating multiple forms of phylogenetic effects, and especially with large phylogenies where computation powers are limited.
-% \ml{Define phylogenetic effects. PE can mean a lot of different things (see Pagel's tree transformation). What we mean here is strictly phylogenetic signal-- extent to which trait/response values are statistically related to phylogeny.}
-Ignoring phylogenetic effects/signals can be problematic both biologically and statistically \citep{felsenstein1985phylogenies, li2017statistical} -- in such cases, researchers often use simpler models accounting for minimal phylogenetic signals by limiting at the individuals level and neglect additional phylogenetic signals present in the system.
-
-Incorporating phylogenetic links between species and combine evolutionary changes with statistical processes advances the development of phylogenetic comparative methods.
-The most widely used statistical process in phylogenetic comparative analysis to model evolutionary process is the pure random drift process, Brownian motion \citep{felsenstein1973maximum}. 
-Although the Brownian motion is an over-simplified model of evolution, many of the existing phylogenetic comparative methods are built upon.
-For example, phylogenetically independent contrasts (PICs) \citep{felsenstein1985phylogenies}, phylogenetic generalized least squares (PGLS) \citep{grafen1989phylogenetic}, Pagel's $\lambda$ \citep{pagel1999inferring}, and Blomberg's $K$ \citep{blomberg2003testing} are methods developed in the last couple of decades and have provided important insights in this field. 
-Nevertheless, there are also a handful of selection beyond the pure random drift (BM) process where they probe specific aspects of the evolutionary process (i.e. Ornstein-Uhlenbeck (OU) process which accounts for both selection and drift processes, Pagel's $\delta$ and $\kappa$ transformations where it explores variation of evolutionary rates and speciational changes through time respectively).
-
-In the past few decades, there have been an accelerating increase in discovering evolutionary history of species making historical evolutionary data accessible and at higher resolutions.
-Furthermore, there have been a steadily advance of methodological research (e.g. reconstruct phylogenetic tree methods, and phylogenetic comparative methods) and observational (and meta-analysis) studies on collections of species. 
-Despite the widespread use of these methods and ways to account for variability across species, groups, and different studies, there have been relatively few studies accounting for phylogenetic signals. 
-
-\ml{write a paragraph on pglmm? Flexbility paragraph and say PIC/GLS assumes the topology and branch lengths are error free, Pagel's lambda and Blomberg's K accounts for additional tip variations of the phylogeny, to account for additional variation such as measurement error and such, people turn to Bayesian mixed models \cite{de2012bayesian, hadfield2010general}}
-
-%The most widely used statistical method to model related species data that accounts for the phylogenetic structure is the \textit{phylogenetic regression} via independent constrast \ml{cite Felsenstein 1985} and further generalizations to generalized least square regression (PGLS) and generalized linear mixed models (PGLMM) to allow for different models of trait evolution \ml{or types of response?}. 
-
-
-%Despite the choice of modelling strageties, there are many limitations in the current state of art of statistical phylogenetic analysis.
-%There are a handful of studies discussing the importance of incorportating phylogenetic signals but relatively few systematically look at comparative performance of comparative phylogenetic methods. 
-
-In this paper, we propose an alternative, yet straightforward but little-used method of constructing phylogenetic correlations directly from phylogenetic tree by summing the evolutionary changes that occurred on all of the branches in the phylogeny in its past.
-\ml{flexibility: multiple obs per species and multiple levels of phylogenetic signal}
-We apply relatively simple phylogenetic comparative approaches to data from simulated phylogenies that incorporate various complexity of phylogenetic signals in the model and measurement errors. 
-We compare model approaches and explore various complex modelling strategies in the mixed model framework and a flexible platform for researches to explore biologically interesting questions.
-
-We also compare three different R packages: nlme:gls, pez, phylolm, and lme4.
-In principle, any given valid method should converge/get the same result/conclusion.
-However, even with the relatively simple models considered here, methods that are not flexible/parameter constrained can experience problems.
-Furthermore, even when different methods converge to essentially the same result, they may show large differences in computational efficiency.
-\ml{Not sure if we should include the line "we are not using Bayesian approaches" here but definitely in the discussions.}
+In this paper, we will propose an alternative formulation of phylogenetic generalized linear mixed models that is mathematically equivalent to previous approaches. 
+More specifically, we will show our new formulation is more flexible and can be easily extended along with the features of mixed model such as phylogenetically correlated random slopes (i.e. the relationship among taxa on changes of predictors/covariates), random interactions \ml{why not? we are already using this for the alternative formulation of nested RE} and nested random effect models.
+We will compare our technique with existing methods to show robustness and efficiency via simulations.
+We will end off by discussing opportunities and practicalities of our method and reevaluate the state of art for this area of research. 
 
 \section{Materials and Methods}
 
@@ -63,7 +24,7 @@ y & = XB + \epsilon \\
 \epsilon & \sim \textrm{MVN}(0,\sigma^{2}C),
 \label{eq:gls}
 \end{align}
-where $y$ is an $n \times 1$ vector of measurable response; $X$ is an $n \times (m + 1)$ model matrix containing 1's in the first column and the $m$ independent variable (phenotypic traits or environmental variable); $B$ is an $m + 1$ coefficient vector; $\epsilon$ is the residual error and assumed to be multivariate normally distributed with a variance-covariance matrix given by $\sigma^{2}_{\epsilon}C$ in which $C$ is an $n \times n$ matrix of the phylogenetic correlation (PC).
+where $y$ is an $n \times 1$ vector of measurable response; $X$ is an $n \times (m)$ model matrix containing 1's in the first column and the $m$ predictor variables (phenotypic traits or environmental variables); $B$ is an $m$ vector of coefficients; $\epsilon$ is the residual error and assumed to be multivariate normally distributed with a variance-covariance matrix given by $\sigma^{2}_{\epsilon}C$ in which $C$ is an $n \times n$ matrix of the phylogenetic correlation (PC).
 
 % More recently, researchers use linear mixed model and generalized linear mixed model framework to model complex systems with phylogenetic structures.
 %\ml{Why? Data type, interactions, random effects, etc... Need to really explain random effects here. Alternatively, we can drop this line and write this...}
@@ -72,12 +33,14 @@ The typical linear mixed model has the form:
 \begin{align}
 Y & \sim F(\mu) \\
 g(\mu) & = XB + Zb + \epsilon_{mm} \\
-\epsilon_{mm} & \sim MVN(0,\sigma^2)
+\epsilon_{mm} & \sim \textrm{MVN}(0,\sigma^2)
 \end{align}
-where $Z$ is an $n \times (m+1)$ model matrix for the $(m+1)$ -- dimensional vector-valued $m$ independent variables; $\epsilon_{mm}$ is the residual error and assumed to be multivariate normally distributed with a variance-covariance matrix given by $\sigma_{2}I$.
+where $Z$ is an $n \times (m)$ model matrix for the $(m)$ -- dimensional vector-valued $m$ predictor variables; $\epsilon_{mm}$ is the residual error and assumed to be multivariate normally distributed with a variance-covariance matrix given by $\sigma_{2}I$.
 Analogously, the phylogenetic regression given by (1) can be represented in the mixed model framework by constraining $\epsilon_{mm} = 0$ and $Z=Z^{c}$ where the PC is incorporated in the random effect matrix. 
 
-\subsection{Phylogenetic Tree Transformation}
+\ml{need to becareful, we actually define Z^C later}
+
+\subsection{Reformulating phylogenetic correlation matrix}
 The standard problem of phylogenetic comparative methods is to analyze relationships among data where the observations are gathered from nodes (usually tips) of a phylogenetic tree.
 Phylogenetic independent contrasts is a generalization of the paired comparisons method where contrasts are taken for each bifurcation (nodes) in a phylogenetic tree. 
 Assuming that traits evolve independently in each lineage following speciation, then the trait divergences that occur at one node are independent of divergence at other nodes.  
@@ -194,6 +157,90 @@ Even within the scope there is additional room for exploration we neglected, suc
 More broadly, the simple independence error approach we developed here offers a more efficient equivalent way to do Brownian motion evolution phylogenetic comparative analysis. 
 This approach can in principle be combined flexibly with the state of the art phylogenetic mixed models using Bayesian frameworks such as MCMCglmm. 
 More importantly, this implementation in lme4 allows users to fit phylogenetic mixed models to the fullest that other frequentest platforms? cannot (i.e. large data, unbalance species observations, complex random effects) and explore new ideas.
+
+% 
+% Nevertheless, there are also a handful of selection beyond the pure random drift (BM) process where they probe specific aspects of the evolutionary process (i.e. Ornstein-Uhlenbeck (OU) process which accounts for both selection and drift processes, Pagel's $\delta$ and $\kappa$ transformations where it explores variation of evolutionary rates and speciational changes through time respectively).
+% 
+% 
+% 
+% Nevertheless, there are also a handful of selection beyond the pure random drift (BM) process where they probe specific aspects of the evolutionary process (i.e. Ornstein-Uhlenbeck (OU) process which accounts for both selection and drift processes, Pagel's $\delta$ and $\kappa$ transformations where it explores variation of evolutionary rates and speciational changes through time respectively).
+% 
+% 
+% 
+% 
+% In particular, when estimating the effects of species traits on their probability of occurrence in a particular site, it is important to account for correlation due to phylogenetic relationships.
+% While this is an interesting and important addition for researchers when fitting more complex models, they often neglect the addition of phylogenetic relationships. \ml{find examples}
+% 
+% In the last few decades, there have been extensive amount of ongoing work in this area of ecological/evolutionary statistics.
+% In and many new methods to incorporate phylogeny information into statistical frameworks. 
+% The classic approach to this problem is to create a matrix that captures all the evolutionary changes that occurred on all the branches inferred from the evolutionary tree.
+% This matrix is often called the "phylogenetic correlation" (PC), which can be incorportated in statistical methods.
+% For example, the classic most widely used statistical process in phylogenetic comparative analysis to model evolutionary process is the pure random drift process, Brownian motion \citep{felsenstein1973maximum}. 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% Phylogenetic comparative methods (PCM) aim to find parsimonious models that link traits and ecological phenomena with evolutionary processes by incorporating the historical relationships shared among taxa as represented by phylogenetic (evolutionary) trees.
+% The primary approach to incorporate this link is by transforming the phylogenetic relationship in the evolutionary tree into species phylogenetic correlation matrices.
+% 
+% Phylogenetic generalized least square regression (PGLS) and phylogenetic generalized linear mixed models (PGLMM) are classic methods that uses this approach; they have been widely and effectively used.
+% However, despite the widespread use of these classic PCMs, many analytic tools available are inflexible and computationally inefficient.
+% As a result, researchers have often overlooked and avoided using PCMs. 
+% 
+% 
+% 
+% In this paper, we proposed an more flexible and computationally efficient alternative method that incorporates phylogenetic correlations as a Gaussian process, modeling the evolutionary changes along each branch of a phylogenetic tree as independent (possibly multivariate) random Normal deviates.
+% 
+% Ever-increasing capabilities of genetic sequencing techniques are making genomic data available over an ever-wider range of species.
+% As a result, researchers are interested in exploring more complicated systems and fitting more models to their data. 
+% Given a phylogenetic tree, it is relatively simple to compute a corresponding correlation matrix, which can be incorporated in statistical methods.
+% The most widely used statistical process in phylogenetic comparative analysis to model evolutionary process is the pure random drift process, Brownian motion \citep{felsenstein1973maximum}. 
+% Although the Brownian motion is an over-simplified model of evolution, many of the existing phylogenetic comparative methods are built upon.
+% For example, phylogenetically independent contrasts (PICs) \citep{felsenstein1985phylogenies}, phylogenetic generalized least squares (PGLS) \citep{grafen1989phylogenetic}, Pagel's $\lambda$ \citep{pagel1999inferring}, and Blomberg's $K$ \citep{blomberg2003testing} are methods developed in the last couple of decades and have provided important insights in this field. 
+% But for technical reasons, all of these approaches are slow (computationally inefficient) or inflexible in terms of degrees of phylogenetic variabilitity. 
+% 
+% 
+% Phylogenetic comparative methods (PCM) aim to find parsimonious models that link traits and ecological phenomena with evolutionary processes by incorporating the historical relationships shared among taxa as represented by phylogenetic (evolutionary) trees. 
+% Decades of work have created various different methods that enables researchers to incorporate phylogenetic effects in analyzing species relativeness applications, yet existing methods are still have strong contraints. 
+% In particular, the current stat
+% % But many challenges remain.
+% In particular, accounting for phylogenetic effects in high dimensional systems is always challenging, especially for models incorporating multiple forms of phylogenetic effects, and especially with large phylogenies where computation powers are limited.
+% % \ml{Define phylogenetic effects. PE can mean a lot of different things (see Pagel's tree transformation). What we mean here is strictly phylogenetic signal-- extent to which trait/response values are statistically related to phylogeny.}
+% Ignoring phylogenetic effects/signals can be problematic both biologically and statistically \citep{felsenstein1985phylogenies, li2017statistical} -- in such cases, researchers often use simpler models accounting for minimal phylogenetic signals by limiting at the individuals level and neglect additional phylogenetic signals present in the system.
+% 
+% Incorporating phylogenetic links between species and combine evolutionary changes with statistical processes advances the development of phylogenetic comparative methods.
+% The most widely used statistical process in phylogenetic comparative analysis to model evolutionary process is the pure random drift process, Brownian motion \citep{felsenstein1973maximum}. 
+% Although the Brownian motion is an over-simplified model of evolution, many of the existing phylogenetic comparative methods are built upon.
+% For example, phylogenetically independent contrasts (PICs) \citep{felsenstein1985phylogenies}, phylogenetic generalized least squares (PGLS) \citep{grafen1989phylogenetic}, Pagel's $\lambda$ \citep{pagel1999inferring}, and Blomberg's $K$ \citep{blomberg2003testing} are methods developed in the last couple of decades and have provided important insights in this field. 
+% Nevertheless, there are also a handful of selection beyond the pure random drift (BM) process where they probe specific aspects of the evolutionary process (i.e. Ornstein-Uhlenbeck (OU) process which accounts for both selection and drift processes, Pagel's $\delta$ and $\kappa$ transformations where it explores variation of evolutionary rates and speciational changes through time respectively).
+% 
+% In the past few decades, there have been an accelerating increase in discovering evolutionary history of species making historical evolutionary data accessible and at higher resolutions.
+% Furthermore, there have been a steadily advance of methodological research (e.g. reconstruct phylogenetic tree methods, and phylogenetic comparative methods) and observational (and meta-analysis) studies on collections of species. 
+% Despite the widespread use of these methods and ways to account for variability across species, groups, and different studies, there have been relatively few studies accounting for phylogenetic signals. 
+% 
+% \ml{write a paragraph on pglmm? Flexbility paragraph and say PIC/GLS assumes the topology and branch lengths are error free, Pagel's lambda and Blomberg's K accounts for additional tip variations of the phylogeny, to account for additional variation such as measurement error and such, people turn to Bayesian mixed models \cite{de2012bayesian, hadfield2010general}}
+% 
+% %The most widely used statistical method to model related species data that accounts for the phylogenetic structure is the \textit{phylogenetic regression} via independent constrast \ml{cite Felsenstein 1985} and further generalizations to generalized least square regression (PGLS) and generalized linear mixed models (PGLMM) to allow for different models of trait evolution \ml{or types of response?}. 
+% 
+% 
+% %Despite the choice of modelling strageties, there are many limitations in the current state of art of statistical phylogenetic analysis.
+% %There are a handful of studies discussing the importance of incorportating phylogenetic signals but relatively few systematically look at comparative performance of comparative phylogenetic methods. 
+% 
+% In this paper, we propose an alternative, yet straightforward but little-used method of constructing phylogenetic correlations directly from phylogenetic tree by summing the evolutionary changes that occurred on all of the branches in the phylogeny in its past.
+% \ml{flexibility: multiple obs per species and multiple levels of phylogenetic signal}
+% We apply relatively simple phylogenetic comparative approaches to data from simulated phylogenies that incorporate various complexity of phylogenetic signals in the model and measurement errors. 
+% We compare model approaches and explore various complex modelling strategies in the mixed model framework and a flexible platform for researches to explore biologically interesting questions.
+% 
+% We also compare three different R packages: nlme:gls, pez, phylolm, and lme4.
+% In principle, any given valid method should converge/get the same result/conclusion.
+% However, even with the relatively simple models considered here, methods that are not flexible/parameter constrained can experience problems.
+% Furthermore, even when different methods converge to essentially the same result, they may show large differences in computational efficiency.
+% \ml{Not sure if we should include the line "we are not using Bayesian approaches" here but definitely in the discussions.}
+% 
 
 \section{Conclusion}
 
