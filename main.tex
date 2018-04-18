@@ -9,11 +9,11 @@ In this paper, we propose an alternative method that can flexibly and computatio
 In the last few decides, researcher have constantly develop new phylogenetic comparative methods and have shown importance of including phylogenetic relationships in these type of problems \cite{felsenstein1985phylogenies, li2017statistical}. 
 The core of the existing techniques are based on different modelling assumptions of the evolutionary process using various parametrizations of phylogenetic correlations (PC) of taxa; that is matrices inferred from the topology of evolutionary trees by capturing the evolutionary changes that occurred on all the branches, which can be incorporated in statistical methods. 
 For example, phylogenetically independent contrasts (PICs) \citep{felsenstein1985phylogenies}, phylogenetic generalized least squares (PGLS) \citep{grafen1989phylogenetic}, phylogenetic generalized linear mixed models (PGLMM) \citep{ives2011generalized}, Pagel's $\lambda$ \citep{pagel1999inferring}, and Blomberg's $K$ \citep{blomberg2003testing} are methods assuming Brownian motion (pure genetic draft) process. 
-Despite the wide usage of these methods, there are a handful of recognizable limitations with these approaches and noticeably many published examples in the literature are constrained to small balanced data sets and simple models; that is, phylogenetic variability/signal present in residual variance. \citep{li2017canfun}.\ml{add more, should be easy. I don't really like this line, skipping for now}
+Despite the wide usage of these methods, there are a handful of recognizable limitations with these approaches and noticeably many published examples in the literature are constrained to small balanced data sets and simple models; that is, simply looking at phylogenetic relationship among species via traits. \citep{li2017canfun}.\ml{add more, should be easy. I don't really like this line, skipping for now}
 
 In this paper, we will propose an alternative formulation of phylogenetic generalized linear mixed models that is mathematically equivalent to previous approaches. 
-More specifically, we will show our new formulation is more flexible and can be easily extended along with the features of mixed model such as phylogenetically correlated random slopes (i.e. the relationship among taxa on changes of predictors/covariates), random interactions \ml{why not? we are already using this for the alternative formulation of nested RE} and nested random effect models.
-We will compare our technique with existing methods to show robustness and efficiency via simulations.
+More specifically, we will show our new formulation is more flexible and can be easily extended along with the features of mixed model such as phylogenetically correlated random slopes (i.e. the relationship among taxa via changes of predictors/covariates on traits), random interactions \ml{why not? we are already using this for the alternative formulation of nested RE} and nested random effect models.
+We will compare our technique with existing methods to show robustness and efficiency via simulations and data.
 We will end off by discussing opportunities and practicalities of our method and reevaluate the state of art for this area of research. 
 
 \section{Materials and Methods}
@@ -24,7 +24,7 @@ y & = XB + \epsilon \\
 \epsilon & \sim \textrm{MVN}(0,\sigma^{2}C),
 \label{eq:gls}
 \end{align}
-where $y$ is an $n \times 1$ vector of measurable response; $X$ is an $n \times (m)$ model matrix containing 1's in the first column and the $m$ predictor variables (phenotypic traits or environmental variables); $B$ is an $m$ vector of coefficients; $\epsilon$ is the residual error and assumed to be multivariate normally distributed with a variance-covariance matrix given by $\sigma^{2}_{\epsilon}C$ in which $C$ is an $n \times n$ matrix of the phylogenetic correlation (PC).
+where $y$ is an $n \times 1$ vector of measurable response; $X$ is an $n \times m$ model matrix containing 1's in the first column and the $m$ predictor variables (phenotypic traits or environmental variables); $B$ is an $m$ vector of coefficients; $\epsilon$ is the residual error and assumed to be multivariate normally distributed with a variance-covariance matrix given by $\sigma^{2}_{\epsilon}C$ in which $C$ is an $n \times n$ matrix of the phylogenetic correlation (PC).
 
 % More recently, researchers use linear mixed model and generalized linear mixed model framework to model complex systems with phylogenetic structures.
 %\ml{Why? Data type, interactions, random effects, etc... Need to really explain random effects here. Alternatively, we can drop this line and write this...}
@@ -35,43 +35,48 @@ Y & \sim F(\mu) \\
 g(\mu) & = XB + Zb + \epsilon_{mm} \\
 \epsilon_{mm} & \sim \textrm{MVN}(0,\sigma^2)
 \end{align}
-where $Z$ is an $n \times (m)$ model matrix for the $(m)$ -- dimensional vector-valued $m$ predictor variables; $\epsilon_{mm}$ is the residual error and assumed to be multivariate normally distributed with a variance-covariance matrix given by $\sigma_{2}I$.
-Analogously, the phylogenetic regression given by (1) can be represented in the mixed model framework by constraining $\epsilon_{mm} = 0$ and $Z=Z^{c}$ where the PC is incorporated in the random effect matrix. 
+where $Z$ is an $n \times m$ model matrix for the $m$ -- dimensional vector-valued $m$ predictor variables; $\epsilon_{mm}$ is the residual error and assumed to be multivariate normally distributed with a variance-covariance matrix given by $\sigma_{2}I$.
+Analogously, the phylogenetic regression given by (1) can be represented in the mixed model framework by constraining $\epsilon_{mm} = 0$, $Z$ to an $n \times 1$ matrix such that: 
 
-\ml{need to becareful, we actually define Z^C later}
+\begin{align}
+Z & \sim \textrm{MVN}(0,\sigma^{2}C).
+\end{align}
 
 \subsection{Reformulating phylogenetic correlation matrix}
-The standard problem of phylogenetic comparative methods is to analyze relationships among data where the observations are gathered from nodes (usually tips) of a phylogenetic tree.
-Phylogenetic independent contrasts is a generalization of the paired comparisons method where contrasts are taken for each bifurcation (nodes) in a phylogenetic tree. 
-Assuming that traits evolve independently in each lineage following speciation, then the trait divergences that occur at one node are independent of divergence at other nodes.  
+% The standard problem of phylogenetic comparative methods is to analyze relationships among data where the observations are gathered from nodes (usually tips) of a phylogenetic tree.
+% Phylogenetic independent contrasts is a generalization of the paired comparisons method where contrasts are taken for each bifurcation (nodes) in a phylogenetic tree. 
+% Assuming that traits evolve independently in each lineage following speciation, then the trait divergences that occur at one node are independent of divergence at other nodes.  
 
 An alternative approach is to model the phylogenetic correlation as a \textit{Gaussian process}. 
 In particular, suppose that the evolutionary process is a Brownian motion, which means the evolution of a continuous trait is a random walk and daughter species after speciation are all independent.  
 In that case, the phylogenetic variability of a particular observation can be written as the sum of the evolutionary changes that occurred on all of the branches in the phylogeny in its past. 
-Thus, the evolutionary history for each species can be model with a sequence of independent errors, rather than having to impose a correlation structure on the random effects. 
+Thus, the evolutionary history for each species can be modelled with a sequence of independent errors with species--branch matrix $S$, rather than having to impose a correlation $C$. 
+This is mathematically equvilent under BM assumption where we can reconstruct C by matrix multiplying $S$ by itself.
 
-The random-effect model matrix $Z$ can be decomposed into term-wise model matrix $Z_{i}$ as described in \ml{in text citation lme4}.
+The random-effect model matrix $Z$ can be decomposed into term-wise model matrix $Z_{i}$ as described in \citet{bates2015fitting}.
 Thus, the phylogenetic correlated random-effect matrix $Z^{C}_{i}$ is
 
 \begin{equation}
 Z^{C}_{i} = (S^{T}_{i}J^{T}_{i} \ast X^{T}_{i})^{T},
 \end{equation}
 
-\ml{double check if $l and p$ are the same with lme4}
 
-where $\ast$ is the Khatri-Rao product, $S_{i}$ is an $l_{i} \times b_{i}$ matrix of species--branch relations; $J_{i}$ the indicator matrix of grouping factors indices matrix size $n \times l_{i}$; $X_{i}$ is the raw random effects model matrix size $n \times p_{i}$.
-
-\ml{note: $SS^T = Cov(phylo)$ under BM assumption}
-%\ml{double kronecker for interactions}
-
+where $\ast$ is the Khatri-Rao product, $S_{i}$ is an $l_{i} \times b_{i}$ matrix of species--branch relations; $J_{i}$ the indicator matrix of grouping factors indices matrix size $n \times l_{i}$; $X_{i}$ is the raw random effects model matrix size $n \times p_{i}$. 
 
 \subsection{Simulation}
 
-We generated test data based on the simple mixed model formulation \ml{ref equation (3-5)} with a single response variable $Y$ and a single predictor continuous variable $X$ from $n$ (20, 100, and 500) species, and $m$ (1 and 20) sites. 
-To account for multiple levels of phylogenetic signal, we assume phylogenetic signal in the intercept $b_0$, and slope $b_1$.
+We generated test data based on the simple mixed model formulation \ml{ref equation (3-5)} with a single response variable $Y$ and a single predictor continuous variable $X$ for $n$ (20, 100, and 500) species, and $m$ (1 and 20) sites. 
+To account for multiple levels of phylogenetic relations, we assume phylogenetic relations in the intercept $b_0$, and slope $b_1$.
 We further assume that random slope and intercept are correlated. 
 For models with multiple sites, we also assume for species and site interactions random effects, an equivalent version of nested random effects or phylogenetic attraction described in \cite{helmus2007separating} with the main random effects.
-Table \ml{ref something} provides the statistically equivalent fitting capabilities of common/existing phylogenetic methods.
+
+\subsection{Platforms}
+
+Our algorithmic approach is general and could be implemented in a wide range of computational platformsthat support independent latent variables, we implemented our approach using the lme4 R package \citep{bates2015fitting}.
+We have included three additional R packages that can fit phylogenetic compariative models, and they are nlme \citep{pinheiro2014r}, phylolm \citep{ho2014phylolm}, and pez \citep{pearse2015pez}.
+Phylogenetic generalized least squares (PGLS) in nlme, is one of the most widely used techniques in phylogenetic compariative analysis; it  
+
+% Table \ml{ref something} provides the statistically equivalent fitting capabilities of common/existing phylogenetic methods.
 
 % % \begin{table}
 % % \begin{center}
@@ -104,9 +109,9 @@ Table \ml{ref something} provides the statistically equivalent fitting capabilit
 \end{figure}
 \end{center}
 
-The full model (which matches the simulations model that incorporates phylogenetic signal on the intercept, slope and correlation) provides good estimates of the different levels of the phylogenetic variation signal (Figure 1 and 2).
+The full model (which matches the simulation model that incorporates phylogenetic signal on the intercept, slope and correlation) provides good estimates of the different levels of the phylogenetic variation signal (Figure 1 and 2).
 
-In general, as the number of species (or phylogeny) increases, all phylogenetic signal estimates are more robust for all models (including models without random slope and correlation) except PGLS in the single site simulations. 
+In general, as the number of species increases, all phylogenetic signal estimates are more robust for all models (including models without random slope and correlation) except PGLS in the single site simulations. 
 It is unclear how different levels of phylogenetic signal is being confounded under the error free (without tip variation) assumption for the PGLS models.
 Models with only two parameters/levels of variation captures the phylogenetic intercept and tip variation reasonably well to the simulated parameters from the full model despite not including phylogenetic random slope and slope intercept correlation.
 
