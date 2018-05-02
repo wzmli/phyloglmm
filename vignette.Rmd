@@ -1,0 +1,139 @@
+---
+title: "An introduction to pglmm in lme4"
+author: "Michael Li and Ben Bolker"
+date: "`r format(Sys.time(), '%H:%M %d %B %Y')`"
+output: pdf_document
+---
+
+# 1 Preamble 
+
+You can install lme4 by the developer version on github using devtools ``devtools:::install_github(...)'' 
+
+
+# Phylogenetic Generalised Linear Mixed Models
+
+What follows is a simple example of how to simulate, and then analyse, the most basic kind of PGLMM. 
+
+## Simulate data
+
+```{r}
+### simulate phylogenetic tree
+
+library(ape)
+## library(MASS)  ## for mvrnorm() ## don't load so we don't screw up dplyr::select()
+seed <- 101
+set.seed(seed)
+
+# Basic parameters
+nspp <- 3
+
+# # fixed effects
+beta0 <- 0
+beta1 <- 0
+
+# random effects and residual variance (set to zero for binary data)
+sd.B0 <- 1
+sd.B1 <- 2
+sd.resid <- 10
+rho.B01 <- 0
+
+# Simulate phylogeny
+phy <- rtree(n = nspp)
+phy <- compute.brlen(phy, method = "Grafen", power = 0.5)
+
+Vphy <- vcv(phy)
+
+iD <- t(chol(Vphy))
+Xsd <- 1
+
+# Generate environmental variable 
+x <- rnorm(n=nspp,sd=Xsd)
+	
+cormat <- matrix(c(1,rho.B01,rho.B01,1),2,2)
+sdvec <- c(sd.B0,sd.B1)
+varmat <- sdvec %*% t(sdvec)
+covmat <- varmat * cormat
+
+#print(covmat)
+
+Sigma <- kronecker(covmat,Vphy)
+
+#if((signal.B0==signal.B1) & (signal.B0 == FALSE)){
+#	Sigma <- kronecker(covmat,diag(nspp))
+#}
+
+b.all <- MASS::mvrnorm(n=1
+	, mu=rep(c(beta0,beta1),each=nspp)
+	, Sigma=Sigma
+)
+
+b0 <- b.all[1:nspp] 
+b1 <- b.all[(nspp+1):(2*nspp)]
+
+y <- matrix(outer(b0, array(1, dim = c(1, 1))), nrow = nspp,
+	ncol = 1) + matrix(b1*x, nrow = nspp, ncol = 1)
+
+e <- rnorm(nspp, sd = sd.resid) # add residual variance 
+
+Y <- y + matrix(e, nrow = nspp, ncol = 1)
+
+# name the simulated species 1:nspp and sites 1:nsites
+rownames(Y) <- 1:nspp
+
+X <- matrix(x,nrow=nspp,ncol=1)
+
+sp <- matrix(kronecker(matrix(1, nrow = 1, ncol = 1), 1:nspp),
+             nrow = nspp, ncol = 1)
+
+dat <- data.frame(Y = Y, X=X, sp = as.factor(sp))
+
+print(dim(dat))
+
+```
+
+## Species branch matrix 
+
+- call this SBmat
+
+```{r}
+
+library(Matrix)
+library(lme4)
+library(dplyr)
+
+source("phyloglmm_setup.R")
+
+phyZ <- phylo.to.Z(phy)
+
+print(phyZ)
+
+```
+
+## Fitting phyloglmm
+
+- I kind of want to keep the orginal name (lmer and glmer).
+
+```{r}
+
+source("new_phylo_setup.R")
+
+dat <- (dat %>% mutate(obs = sp))
+
+## everything can be reduce down to formula,data, and a phy object
+
+fitmod <- phylo_lmm2(Y ~ X + (1 |sp) + (1 + X|sp)
+			, data=dat 
+			, phylonm = "sp" # wishy-washy
+			, phyloZ = phyZ # Maybe we just want the phy object and compute this internally
+			, nsp = nspp # make default check
+			, control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")  ## make default
+			, REML = FALSE # make default 
+)
+
+summary(fitmod)
+
+```
+
+## Simulating using lme4's simulation function
+
+- first fit the object and hack the parameters

@@ -2,9 +2,16 @@
 
 Ever-increasing capabilities of data collection techniques (i.e. genetic sequencing, geographic information systems monitoring, and etc) and sampling efforts from field biologist are making large volumes of ecological/biological data available over an ever-wider range of species and also higher resolution (i.e. measurable phenotypic traits to genetic sequence data). 
 As a result, researchers are interested in exploring more complicated systems and fitting more models to data or synthetic databases of species traits.
-One particular area of interest in ecological/evolutionary statistics is phylogenetic comparative analysis; that is, analyzing relationships (signals) among species when estimating the effects of species traits within a community. 
-Although there are statistical tools available and widely used for this type of problem, these tools are either inflexible, or computationally inefficient and unpractical, or both when fitting large volumes of data or complex models.
+One particular area of interest in ecological/evolutionary statistics is phylogenetic comparative analysis using eco-evolutionary regression; that is, analyzing evolutionary relationships (signals) among species between species traits and environmental variables when estimating the effects of traits within a community. 
+Although there are sophisticated statistical tools specially designed for this type of problem, the current state of the art of these tools are either inflexible, or computationally inefficient and unpractical when fitting large volumes of data.
+In particular, modelling and understanding different levels of variation/errors is always challenging both biologically and computationally, especially for models with many predictor variables, and especially accounting for phylogenetically relationships with multiple predictor variables. 
+In such case, researchers often try to find ways to simplify or revert to simpler models for practical uses which can lead to both statiscially and biological issues.  
 In this paper, we propose an alternative method that can flexibly and computational efficiently model phylogenetic signal via mixed effect models, highlighting various complexities of phylogenetic signals through random effects.  
+
+\ml{add a paragraph on different levels of variations with random slope examples listed below}
+- random slope but not random intercept\cite{nowakowski2018phylogenetic}
+- can put phylo but did not\cite{bunnefeld2012island}
+- taxa grouping \cite{ord2010adaptation}
 
 In the last few decides, researcher have constantly develop new phylogenetic comparative methods and have shown importance of including phylogenetic signal in these type of problems \cite{felsenstein1985phylogenies, li2017statistical}. 
 The core of the existing techniques are based on different modelling assumptions of the evolutionary process using various parametrizations of phylogenetic correlations (PC) of taxa; that is matrices inferred from the topology of evolutionary trees by capturing the evolutionary changes that occurred on all the branches, which can be incorporated in statistical methods. 

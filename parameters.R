@@ -12,7 +12,7 @@ nsite <- 20
 #nsite <- 1
 
 # residual variance (set to zero for binary data)
- sd.resid <- 10
+sd.resid <- 10
 # sd.resid <- 0.000000001
 # # fixed effects
 beta0 <- 0
