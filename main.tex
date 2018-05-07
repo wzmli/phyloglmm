@@ -1,12 +1,28 @@
 \section{Introduction}
 
 Ever-increasing capabilities of data collection techniques (i.e. genetic sequencing, geographic information systems monitoring, and etc) and sampling efforts from field biologist are making large volumes of ecological/biological data available over an ever-wider range of species and also higher resolution (i.e. measurable phenotypic traits to genetic sequence data). 
-As a result, researchers are interested in exploring more complicated systems and fitting more models to data or synthetic databases of species traits.
-One particular area of interest in ecological/evolutionary statistics is phylogenetic comparative analysis using eco-evolutionary regression; that is, analyzing evolutionary relationships (signals) among species between species traits and environmental variables when estimating the effects of traits within a community. 
+As a result, researchers are interested in exploring ways to study more complicated systems and fitting more models to data or synthetic databases of species traits.
+One particular area of interest in ecological/evolutionary statistics is phylogenetic comparative analysis using phylogenetic (eco-evolutionary) regression; that is, analyzing evolutionary relationships (signals) among species between species traits and environmental variables when estimating the effects of traits within a community.
 Although there are sophisticated statistical tools specially designed for this type of problem, the current state of the art of these tools are either inflexible, or computationally inefficient and unpractical when fitting large volumes of data.
-In particular, modelling and understanding different levels of variation/errors is always challenging both biologically and computationally, especially for models with many predictor variables, and especially accounting for phylogenetically relationships with multiple predictor variables. 
-In such case, researchers often try to find ways to simplify or revert to simpler models for practical uses which can lead to both statiscially and biological issues.  
-In this paper, we propose an alternative method that can flexibly and computational efficiently model phylogenetic signal via mixed effect models, highlighting various complexities of phylogenetic signals through random effects.  
+In particular, modelling and understanding relationships between response and multiple predictor variables, and accounting for different levels of variation (errors) to complicated systems with large data is always challenging both biologically and statistically, and adding phylogenetic relationships will further increases the difficulties. 
+In such case, researchers often try to find ways to simplify or revert to simpler models (i.e. model reduction or ignore phylogenetic relationships, or both) for practical uses which can lead to both statistical and biological issues \cite{felsenstein1985phylogenies, li2017statistical}. 
+\ml{In this paper, we propose an alternative method that can flexibly and computational efficiently model phylogenetic relationships via mixed effect models, highlighting various complexities of phylogenetic relationships through random effects.
+We will use this modelling framework to present and discuss importance of different levels of variations and their considerations and interpretations in phylogenetic comparative analysis.}
+\ml{move this to the last paragraph in the intro?}
+
+Residual variation (or variation in residuals) is a serious concern for most comparative studies (e.g., \cite{pagel1988recent, kelly2004comparative,ives2007within} and it has different, yet correct interpretations in various phylogenetic comparative literature. 
+For example, the standard/classic phylogenetic regression is a correlated-residual model using phylogenetically independent contrasts (PICs), where the residuals evolve as a Brownian motion process \citep{felsenstein1985phylogenies}; in other words, the variation of residuals are phylogenetically correlated.
+Many of the more recent approaches -- including phylogenetic generalized linear mixed models (PGLMM) \citep{ives2011generalized}, Pagel's $\lambda$ \citep{pagel1999inferring}, and Blomberg's $K$ \citep{blomberg2003testing} -- are built upon Felsentein's PICs model by making additional sophisticated assumptions to correct for possible bias where separates/partition phylogenetically correlated residual variations into phylogenetically uncorrelated residual variation (observation error or tip variation) and phylogenetic signal (biological/evolutionary process error) \cite{hansen2012interpreting}.
+Lastly, the standard statistical residual variation of repeated measures or multiple observations of the same taxon, where phylogenetic signal and tip variation are now both part of the evolutionary process error. 
+The last case is straightforward statistically, but rarely seen in the literature and existing platforms are unable to fit multiple observations, or unbalanced design data, or both.
+
+
+
+
+
+
+--- stop here for now.
+
 
 \ml{add a paragraph on different levels of variations with random slope examples listed below}
 - random slope but not random intercept\cite{nowakowski2018phylogenetic}
