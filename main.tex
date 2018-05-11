@@ -12,11 +12,11 @@ We will use this modelling framework to present and discuss importance of differ
 There are two general challenges in linking the evolutionary process to a phylogenetic comparative statistical framework.
 First, a method for linking phylogenetic relationships among species when estimating the effects of traits. 
 The standard/classic phylogenetic regression is a correlated-residual model using phylogenetically independent contrasts (PICs), where the residuals evolve as a Brownian motion process \citep{felsenstein1985phylogenies}; in other words, the variation of residuals are phylogenetically correlated.
-Many of the more recent approaches -- including phylogenetic generalized linear mixed models (PGLMM) \citep{ives2011generalized}, Pagel's $\lambda$ \citep{pagel1999inferring}, and Blomberg's $K$ \citep{blomberg2003testing} -- are built upon Felsentein's PICs model by making additional sophisticated assumptions allowing extra parameters to correct for possible bias where separates/partitions the phylogenetically correlated residual variation into phylogenetically uncorrelated residual variation (observation error or tip variation) and phylogenetic signal (biological/evolutionary process error) \cite{hansen2012interpreting}.
+Many of the more recent approaches -- including phylogenetic generalized linear mixed models (PGLMM) \citep{ives2011generalized}, Pagel's $\lambda$ \citep{pagel1999inferring}, and Blomberg's $K$ \citep{blomberg2003testing} -- are built upon Felsentein's PICs model by making additional sophisticated assumptions allowing extra parameters to correct for possible bias where they separate/partition the phylogenetically correlated residual variation into phylogenetically uncorrelated residual variation (observation error or tip variation) and phylogenetic signal (biological/evolutionary process error) \cite{hansen2012interpreting}.
 However, when multiple observations (or repeated measures) of the same species (taxon) are being observed, this introduces another level of variation; in this case, phylogenetic signal and tip variation are now both part of the evolutionary process error and residual variation is associated with observation level variation (the standard statistical definition). 
 Despite the addition of multiple observations being straightforward statistically, it is rarely seen in the literature as existing platforms are unable to fit multiple observations, or unbalanced design data, or both.
 
-The second challenge is flexibly-incorportating modelling phylogenetic relationships to other common statistical features with many predictor variables in phylogenetic regression (i.e. phylogenetically correlated slopes, interactions, nested designs and etc.)
+The second challenge is flexibly-incorporating modelling phylogenetic relationships to other common statistical features with many predictor variables in phylogenetic regression (i.e. phylogenetically correlated slopes, interactions, nested designs and etc.)
 For example, \cite{nowakowski2018phylogenetic} considered phylogenetically correlated slopes in response to habitat conversion when studying the abundance of amphibian species, \cite{li2017canfun} considered phylogenetically correlated species nested within sites for plant abundance. 
 The tools available for extending phylogenetic relationships to common statistical regression features are very limited, inflexible and computationally inefficient; thus, sophisticated biologist would turn to more flexible settings (e.g. Bayesian models).
 
@@ -33,6 +33,7 @@ y & = XB + \epsilon \label{eq:gls1} \\
 \epsilon & \sim \textrm{MVN}(0,\sigma^{2}C), \label{eq:gls2}
 \end{align}
 where $y$ is an $n \times 1$ vector of measurable response; $X$ is an $n \times m$ model matrix containing 1's in the first column and the $m$ predictor variables (phenotypic traits or environmental variables); $B$ is an $m$ vector of coefficients; $\epsilon$ is the residual error and assumed to be multivariate normally distributed with a variance-covariance matrix given by $\sigma^{2}_{\epsilon}C$ in which $C$ is an $n \times n$ matrix of the phylogenetic correlation (PC).
+The PC matrix is inferred from the topology of the evolutionary tree by capturing the evolutionary changes that occurred on all the branches, which can be incorporated in statistical methods.
 
 % More recently, researchers use linear mixed model and generalized linear mixed model framework to model complex systems with phylogenetic structures.
 %\ml{Why? Data type, interactions, random effects, etc... Need to really explain random effects here. Alternatively, we can drop this line and write this...}
@@ -151,6 +152,7 @@ Furthermore, it was not practical for pez to fit large sample size simulation da
 % \end{figure}
 % \end{center}
 
+\ml{add a paragraph about dune fits on real data}
 
 \newpage
 
@@ -160,21 +162,31 @@ We have fitted models including maximum capabilities to model varying levels of 
 Using models that can include/account for multiple levels of variation is necessary for robust fits, but models that include phylogenetic signal in the intercept level can work as well as the full model.
 Under the Brownian motion evolution process assumption, modelling via independent errors is much more computationally efficient than imposing equivalent correlation structures.
 
-\subsection{Process and observation errors}
+\subsection{Process and residual (observation) variabilities and confoundings}
 
-Another way to think about various forms/sources of phylogenetic signals and uncertainties is characterizing into process and observation errors.
-Process error or in this context, variation contributed from the evolutionary matches nicely with the variation of phylogenetic signal. 
-Observation/measurement error on the other hand is harder to match in this context and data dependent.
-In the classic examples, observation error is (assume to be?) zero for PIC and PGLS; single-site observation model using phylolm (or any method with two variables describing the variance (Pagel's $\lambda$, Blomberg's K)) often match the observation/measurement error with the tip variation of the phylogeny.
-For multiple observations per species, the tip variation becomes one of the process errors with phylogenetic signal and the observation error is the variation among species and additional other non-process errors.
+Process and observation errors are highly confounded in phylogenetic regression.
+The effects of models that include both process and residual variations (i.e. pglmm, pglm) instead of the less realistic model that assumes variation due to evolution and zero observation (gls) was large. 
+In particular, models that did not include residual variation tended to over-estimate the amount of variabilities in the evolution process. 
+Thus, any model that can account for at least two sources of variation (one for the residual variance, and at least one for the process variation) will be sufficient to a first approximation (i.e. Pagel's lambda, Blomberg's K). 
+
+\subsection{Random Slopes}
+
+In classic GLMM (without phylogenetic relationships), random slopes models are not always appropriate, but they are relevant over a wider range of scenarios than people are currently thinking about \cite{schielzeth2013nested, cleasby2015quantifying}.
+When analyzing evolutionary process among species between species traits and environmental variables, it is entirely plausible that the relationship across different traits and predictor variables are varying in a phylogenetically correlated way.
+Although the effects of including phylogenetically correlated random slopes are relatively low compared to process and residual variation in the intercept, it is still useful and informative than ignoring it from the model.
+It may be easier to simplify the phylogenetic relationships (at the random slopes level) and think about the random-slopes model in a strictly hierarchical setting (i.e., estimating different slopes for each family, or taxon \cite{ord2010adaptation}) - the PGLMM collapses to a standard random-slopes model. \ml{which would only be identifiable if ...}
+However, in the PGLMM context, as long as there's variation in the predictor among tips, there will be variation among taxa at some level, so random-slopes models will (almost always) be *theoretically* identifiable.
 
 \subsection{Extension and alternatives}
 
 Our analysis covers the classical phylogenetic comparative methods (i.e. phylogenetic least squares, linear and mixed models).
 Even within the scope there is additional room for exploration we neglected, such as exploring phylogenetic multivariate response models, non-BM evolution processes (such as Ornstein-Uhlenbeck (OU) process which accounts for both selection and drift processes \cite{butler2004phylogenetic}), Bayesian approaches \cite{hadfield2010general}.
 More broadly, the simple independence error approach we developed here offers a more efficient and mathematical equivalent way to do Brownian motion evolution process phylogenetic comparative analysis. 
-This approach can in principle be combined flexibly with the state of the art phylogenetic mixed models using platforms that supports independent latent variables such as MCMCglmm \cite{hadfield2010mcmc}; a widely used Bayesian approach to PGLMM. 
-More importantly, this implementation in lme4 allows users to fit phylogenetic mixed models to the fullest that other frequentest platforms lack of (i.e. large data, unbalance species observations, complex random effects) and explore new ideas.
+This approach can in principle be combined flexibly with the state of the art phylogenetic mixed models using platforms that supports independent latent variables such as MCMCglmm \cite{hadfield2010mcmc}; a widely used Bayesian approach to PGLMM.
+However, in principle just like GLMM and most statistically models, users should be aware the amount of data they have and the complexity of the model they want to fit.
+\ml{This note should go somewhere here: how much data do we need in order to practically estimate the random slopes? Are we making a mistake (cf Schielzeth) by ignoring random slopes? What should we do when we don't have enough data? (cf. Barr et al 2013 "keep it maximal"; Bates, Vashisth, etc etc who don't like that, possibility of Bayesian approaches, etc etc etc)}
+More importantly, this implementation in lme4 allows users to fit phylogenetic mixed models to the fullest ( that other frequentest platforms lack of (i.e. large data, unbalance species observations, complex random effects) and explore new ideas.
+
 
 \section{Conclusion}
 
