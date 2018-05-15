@@ -81,6 +81,8 @@ fit.lme4.%.Rout: names.R parameters.R simulate_tree.R phyloglmm_setup.R phyloglm
 
 fit.lme4.large.1.Rout:
 
+### pez can only fit multiple sites
+
 fit.pez.%.Rout: names.R parameters.R simulate_tree.R fit_pez.R
 	$(run-R)
 

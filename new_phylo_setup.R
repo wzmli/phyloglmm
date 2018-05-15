@@ -1,5 +1,26 @@
 ## new phyloglmm_setup
 
+phylo.to.Z <- function(r,stand=FALSE){
+  ntip <- length(r$tip.label)
+  Zid <- Matrix(0.0,ncol=length(r$edge.length),nrow=ntip)
+  nodes <- (ntip+1):max(r$edge)
+  root <- nodes[!(nodes %in% r$edge[,2])]
+  for (i in 1:ntip){
+    cn <- i  ## current node
+    while (cn != root){
+      ce <- which(r$edge[,2]==cn)   ## find current edge
+      Zid[i,ce] <- 1   ## set Zid to 1
+      cn <- r$edge[ce,1]            ## find previous node
+    }
+  }
+  sig <- det(vcv(r))^(1/ntip)
+  Z <- t(sqrt(r$edge.length) * t(Zid))
+  if(stand){Z <- t(sqrt(r$edge.length/sig) * t(Zid))}
+  rownames(Z) <- r$tip.label
+  colnames(Z) <- 1:length(r$edge.length)
+  return(Z)                                  
+}
+
 phylo_lmm2 <- function(formula,data,phylo,phylonm=NULL,phyloZ=NULL,nsp=NULL,control,REML){
   lmod <- lFormula2(formula=formula,data = data,control=control, REML=REML,phylonm=phylonm, phyloZ=phyloZ)
   # lmod$reTrms <- modify_phylo_retrms2(lmod$reTrms,phylo,phylonm,phyloZ,nsp)
@@ -190,95 +211,95 @@ mkBlist2 <- function (x, frloc, phylonm,phyloZ, drop.unused.levels = TRUE)
   list(ff = ff, sm = sm, nl = nl, cnms = colnames(mm))
 }
 
-modify_phylo_retrms2 <- function(rt,phylo,phylonm,phyloZ,nsp){
-  ## FIXME: better way to specify phylonm
-  ## need to replace Zt, Lind, Gp, flist, Ztlist
-  n.edge <- nrow(phylo$edge)
-  
-  ## Find the location of phylo random effect
-  phylo.pos <- c()
-  for(i in 1:length(phylonm)){
-    phylo.pos <- c(phylo.pos,which(names(rt$cnms)==phylonm[[i]]))
-  }
-  
-  ## need to know number of number of speices to split index
-  ## Fixme, the current index spliting is broken
-  if(is.null(nsp)){
-    nsp <- nrow(rt[["Lambdat"]])/length(rt[["cnms"]][[phylonm]]) 
-  }
-  inds <- c(0,cumsum(sapply(rt$Ztlist,nrow)))
-  ## Zt: substitute phylo Z for previous dummy (scalar-intercept) Z
-  ## Gp: substitute new # random effects (n.edge) for old # (n.phylo)
-  Gpdiff <- diff(rt$Gp)  ## old numbers
-  Gpdiff_new <- Gpdiff
-  rt[["Gp"]] <- as.integer(c(0,cumsum(Gpdiff_new))) ## reconstitute
-  
-  ## Split index length according to RE complexity w.r.t cov-triangle for each RE
-  Lind_split_length <- sapply(rt[["cnms"]]
-                              , function(i){
-                                (length(i)*(length(i)+1))/2
-                              })
-  Lind_list <- list()
-  ##Fixme, manually hacked Lind_list with a for loop. This will break if we have 
-  ## terms on the left side of the bar/pipe
-  
-  ### lFormula is creating the all RE index w.r.t nsp lengths into a simple vector, we have to use the function above to split properly
-  # Lind_list <- split(rt[["Lind"]],rep(seq_along(Lind_split_length),Lind_split_length*nsp))
-  Lind_list <- split(rt[["Lind"]],rep(seq_along(Gpdiff),Gpdiff))
-  if(names(rt[["cnms"]][1]) %in% c("sp:site","site:sp")){ ### hack
-    for(i in 1:length(rt$cnms)){
-      Lind_list[[i]] <- rep(i,sum(rt$Lind==i))
-    }
-    if(length(rt[["cnms"]][2]$sp) == 2){
-      Lind_list[[2]] <- rep(c(2,3,4),sum(rt$Lind==2)) 
-    }
-  }
-  
-  ## Lambdat: replace block-diagonal element in Lambdat with a
-  ## larger diagonal matrix
-  Lambdat_list <- split_blkMat(rt[["Lambdat"]],inds)
-  
-  for(i in phylo.pos){
-    ## each sp is being rep w.r.t the complexity of RE in their respective Zt
-    repterms <- length(rt[["cnms"]][[i]])
-    if(names(rt[["cnms"]][i]) %in% c("sp:site","site:sp")){
-      repterms <- nsite ### If this is a special case, it will always be number of sites
-      n.edge <- n.edge*repterms ## This is simply a term to create correct dim for Lind and Lambdat
-    }
-    ## reconstitute Zt from new Ztlist
-    ## We have to rep the same number of sp terms and edges in phyloZ to match Zt 
-    rt[["Ztlist"]][[i]] <- rt[["Ztlist"]][[i]]
-    ## switch places inside kronecker
-    Gpdiff_new[i] <- n.edge  ## replace
-    
-    ## We have to create the Lind to match the theta field with larger reps w.r.t n.edges
-    Lind_num <- unique(Lind_list[[i]])
-    Lind_list[[i]] <- rep(Lind_list[[i]][seq_along(1:length(Lind_num))],n.edge)
-    Lambdat_list[[i]] <- Diagonal(n.edge)
-    
-    left_RE_pipe <- length(rt[["cnms"]][[i]])
-    
-    ## function to create sparse matrix templete w.r.t RE complexity
-    SM_template <- function(n){
-      rr <- rep(1:n,n:1)
-      cc <- unlist(lapply(seq(n),function(ll){seq(ll,n)}))
-      xx <- as.numeric(rr==cc)
-      return(sparseMatrix(i=rr,j=cc,x=xx))
-    }
-    temp_lambda <- SM_template(left_RE_pipe)
-    Lambdat_list[[i]] <- bdiag(replicate(n.edge,temp_lambda))
-  }
-  rt[["Zt"]] <- do.call(rbind,rt[["Ztlist"]])
-  rt[["Lind"]] <- unlist(Lind_list)
-  rt[["Lambdat"]] <- Matrix::.bdiag(Lambdat_list)
-  ## flist: Not sure how this part is being used.
-  rt[["flist"]] <- as.list(rt[["flist"]])
-  ## Todo: fix flist
-  # 	for(i in 1:length(rt[["flist"]])){
-  # 	  rt[["flist"]][i] <- factor(paste0("edge_",seq(n.edge)))
-  # 	}
-  return(rt)
-}
+# modify_phylo_retrms2 <- function(rt,phylo,phylonm,phyloZ,nsp){
+#   ## FIXME: better way to specify phylonm
+#   ## need to replace Zt, Lind, Gp, flist, Ztlist
+#   n.edge <- nrow(phylo$edge)
+#   
+#   ## Find the location of phylo random effect
+#   phylo.pos <- c()
+#   for(i in 1:length(phylonm)){
+#     phylo.pos <- c(phylo.pos,which(names(rt$cnms)==phylonm[[i]]))
+#   }
+#   
+#   ## need to know number of number of speices to split index
+#   ## Fixme, the current index spliting is broken
+#   if(is.null(nsp)){
+#     nsp <- nrow(rt[["Lambdat"]])/length(rt[["cnms"]][[phylonm]]) 
+#   }
+#   inds <- c(0,cumsum(sapply(rt$Ztlist,nrow)))
+#   ## Zt: substitute phylo Z for previous dummy (scalar-intercept) Z
+#   ## Gp: substitute new # random effects (n.edge) for old # (n.phylo)
+#   Gpdiff <- diff(rt$Gp)  ## old numbers
+#   Gpdiff_new <- Gpdiff
+#   rt[["Gp"]] <- as.integer(c(0,cumsum(Gpdiff_new))) ## reconstitute
+#   
+#   ## Split index length according to RE complexity w.r.t cov-triangle for each RE
+#   Lind_split_length <- sapply(rt[["cnms"]]
+#                               , function(i){
+#                                 (length(i)*(length(i)+1))/2
+#                               })
+#   Lind_list <- list()
+#   ##Fixme, manually hacked Lind_list with a for loop. This will break if we have 
+#   ## terms on the left side of the bar/pipe
+#   
+#   ### lFormula is creating the all RE index w.r.t nsp lengths into a simple vector, we have to use the function above to split properly
+#   # Lind_list <- split(rt[["Lind"]],rep(seq_along(Lind_split_length),Lind_split_length*nsp))
+#   Lind_list <- split(rt[["Lind"]],rep(seq_along(Gpdiff),Gpdiff))
+#   if(names(rt[["cnms"]][1]) %in% c("sp:site","site:sp")){ ### hack
+#     for(i in 1:length(rt$cnms)){
+#       Lind_list[[i]] <- rep(i,sum(rt$Lind==i))
+#     }
+#     if(length(rt[["cnms"]][2]$sp) == 2){
+#       Lind_list[[2]] <- rep(c(2,3,4),sum(rt$Lind==2)) 
+#     }
+#   }
+#   
+#   ## Lambdat: replace block-diagonal element in Lambdat with a
+#   ## larger diagonal matrix
+#   Lambdat_list <- split_blkMat(rt[["Lambdat"]],inds)
+#   
+#   for(i in phylo.pos){
+#     ## each sp is being rep w.r.t the complexity of RE in their respective Zt
+#     repterms <- length(rt[["cnms"]][[i]])
+#     if(names(rt[["cnms"]][i]) %in% c("sp:site","site:sp")){
+#       repterms <- nsite ### If this is a special case, it will always be number of sites
+#       n.edge <- n.edge*repterms ## This is simply a term to create correct dim for Lind and Lambdat
+#     }
+#     ## reconstitute Zt from new Ztlist
+#     ## We have to rep the same number of sp terms and edges in phyloZ to match Zt 
+#     rt[["Ztlist"]][[i]] <- rt[["Ztlist"]][[i]]
+#     ## switch places inside kronecker
+#     Gpdiff_new[i] <- n.edge  ## replace
+#     
+#     ## We have to create the Lind to match the theta field with larger reps w.r.t n.edges
+#     Lind_num <- unique(Lind_list[[i]])
+#     Lind_list[[i]] <- rep(Lind_list[[i]][seq_along(1:length(Lind_num))],n.edge)
+#     Lambdat_list[[i]] <- Diagonal(n.edge)
+#     
+#     left_RE_pipe <- length(rt[["cnms"]][[i]])
+#     
+#     ## function to create sparse matrix templete w.r.t RE complexity
+#     SM_template <- function(n){
+#       rr <- rep(1:n,n:1)
+#       cc <- unlist(lapply(seq(n),function(ll){seq(ll,n)}))
+#       xx <- as.numeric(rr==cc)
+#       return(sparseMatrix(i=rr,j=cc,x=xx))
+#     }
+#     temp_lambda <- SM_template(left_RE_pipe)
+#     Lambdat_list[[i]] <- bdiag(replicate(n.edge,temp_lambda))
+#   }
+#   rt[["Zt"]] <- do.call(rbind,rt[["Ztlist"]])
+#   rt[["Lind"]] <- unlist(Lind_list)
+#   rt[["Lambdat"]] <- Matrix::.bdiag(Lambdat_list)
+#   ## flist: Not sure how this part is being used.
+#   rt[["flist"]] <- as.list(rt[["flist"]])
+#   ## Todo: fix flist
+#   # 	for(i in 1:length(rt[["flist"]])){
+#   # 	  rt[["flist"]][i] <- factor(paste0("edge_",seq(n.edge)))
+#   # 	}
+#   return(rt)
+# }
 
 
 phylo_glmm2 <- function(formula,data,phylo,phylonm=NULL,phyloZ=NULL,control,family){
