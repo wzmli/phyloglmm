@@ -80,8 +80,8 @@ if(nsite == 1){
 
 site <- matrix(kronecker(1:nsite, matrix(1, nrow = nspp, ncol =
                                            1)), nrow = nspp * nsite, ncol = 1)
-sp <- matrix(kronecker(matrix(1, nrow = nsite, ncol = 1), 1:nspp),
-             nrow = nspp * nsite, ncol = 1)
+
+sp <- rep(phy$tip.label,nsite)
 
 dat <- data.frame(Y = YY, X=XX, site = as.factor(site), sp = as.factor(sp),site_name = rep(site_name,each=nspp))
 
