@@ -5,17 +5,16 @@ library(nlme)
 
 dat <- (dat
 	%>% rowwise()
-	%>% mutate(phylo=paste("t",sp,sep="")
-	, obs=phylo
-	)
+	%>% mutate(sp=paste("t",sp,sep=""))
 )
 
 dat <- data.frame(dat)
-
-print(phy)
+sp_order <- data.frame(sp=phy$tip.label)
+ordered_dat <- left_join(sp_order,dat)
+rownames(ordered_dat) <- phy$tip.label
 
 tt <- system.time(fit_gls <- gls(Y~X
-	, data=dat
+	, data=ordered_dat
 	, correlation=corBrownian(phy=phy) 
 #	, correlation=corPagel(0.5,phy=phy)
 	, verbose=FALSE

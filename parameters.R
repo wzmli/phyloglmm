@@ -9,6 +9,7 @@ set.seed(seed)
 #nspp <- 20
 
 nsite <- 20
+nsite <- 1
 
 # residual variance (set to zero for binary data)
 sd.resid <- 10

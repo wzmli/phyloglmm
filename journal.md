@@ -5,6 +5,8 @@
 Going to clean up the repo and rerun everything.
 I want to purrr some of the fast fitting steps, but simulating the phylogenetic tree still takes a long time.
 
+GLS is very fragile. We have to simulate a single site and cannot simulate multiple site and filter for single site. Filtering for a single site will run into singlar problems (I don't know why), maybe because the way we are matrix multiplying in the tree simulation code.
+
 ## Mar 8th 2018
 
 Now there is a switch in phylo.to.Z species branch function that does the equilvalent scaling.
