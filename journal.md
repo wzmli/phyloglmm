@@ -2,6 +2,9 @@
 
 ## May 15th 2018
 
+The order for phyZ and dataframe is more robust.
+Do we want to stick phyZ before lFormula?
+
 Going to clean up the repo and rerun everything.
 I want to purrr some of the fast fitting steps, but simulating the phylogenetic tree still takes a long time.
 
