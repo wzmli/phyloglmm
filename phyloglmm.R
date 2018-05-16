@@ -22,9 +22,9 @@ print(head(dat))
 
 lme4time <- system.time(
 	lme4fit <- phylo_lmm(Y ~ X
-		+ (1|sp)
+		 + (1|sp)
 		# + (0 + X|sp)
-#		+ (1+X|sp)
+		#+ (1+X|sp)
 		, data=dat
 		, phylonm = c("sp","site:sp")
 		, phylo = phy

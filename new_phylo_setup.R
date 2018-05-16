@@ -21,7 +21,7 @@ phylo.to.Z <- function(r,stand=FALSE){
   return(Z)                                  
 }
 
-phylo_lmm <- function(formula,data,phylo,phylonm=NULL,phyloZ=NULL,nsp=NULL,control,REML){
+phylo_lmm <- function(formula,data,phylo,phylonm=NULL,phyloZ=NULL,control,REML){
   lmod <- lFormula(formula=formula,data = data,control=control, REML=REML,phylonm=phylonm, phyloZ=phyloZ)
   # lmod$reTrms <- modify_phylo_retrms2(lmod$reTrms,phylo,phylonm,phyloZ,nsp)
   devfun <- do.call(mkLmerDevfun, lmod)
@@ -177,12 +177,15 @@ mkBlist <- function (x, frloc, phylonm,phyloZ, drop.unused.levels = TRUE)
     stop("Invalid grouping factor specification, ", deparse(x[[3]]), 
          call. = FALSE)
   if (drop.unused.levels) 
-    ff <- factor(ff, exclude = NA, levels=as.character(ff))
+    ff <- factor(ff, exclude = NA)
+  if(phylonm[1] %in% names(frloc)){
+    phyloZ <- phyloZ[levels(frloc[,phylonm[1]]),]
+  }
   nl <- length(levels(ff))
   mm <- model.matrix(eval(substitute(~foo, list(foo = x[[2]]))), 
                      frloc)
   sm <- fac2sparse(ff, to = "d", drop.unused.levels = drop.unused.levels)
-  if(grepl("sp",x[3])){
+  if(grepl(phylonm[1],x[3])){
     # nbranch <- ncol(phyloZ)
     nrep <- nrow(sm)/nrow(phyloZ)
 #     bmat <- matrix(0,nrow=nbranch,ncol=length(levels(ff)))
@@ -193,10 +196,10 @@ mkBlist <- function (x, frloc, phylonm,phyloZ, drop.unused.levels = TRUE)
     lkr <- 1
     rkr <- 1
     if(nrep > 1){
-      if(strsplit(as.character(x[[3]]),":")[[2]] == "sp"){
+      if(strsplit(as.character(x[[3]]),":")[[2]] == phylonm[1]){
         lkr <- nrep
       }
-      if(strsplit(as.character(x[[3]]),":")[[2]] == "site"){
+      if(strsplit(as.character(x[[3]]),":")[[2]] == phylonm[2]){
         rkr <- nrep
       }
     # sm <- t(sm)
