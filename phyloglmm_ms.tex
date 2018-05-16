@@ -62,8 +62,10 @@
 %% stuff for editing
 %\usepackage[markup=nocolor,addedmarkup=bf,deletedmarkup=sout]{changes}
 %% to suppress notes & comments: \usepackage[final]{changes}
-\usepackage[backgroundcolor=lightgray]{todonotes}
 \usepackage{setspace}
+\usepackage{changes}
+\usepackage[backgroundcolor=lightgray,textsize=tiny]{todonotes}
+
 \bibliographystyle{chicago}
 \title{Reformulating phylogenetic models to improve flexibility and speed}
 \author{Michael Li and Ben Bolker}
@@ -83,6 +85,7 @@
 \newcommand{\ml}[1]{{\color{red} ML: #1}}
 
 \newcommand{\add}[1]{{\color{blue} ADD: #1}}
+
 
 %\SweaveOpts{concordance=TRUE}
 %\SweaveOpts{concordance=TRUE}
