@@ -4,6 +4,7 @@
 
 The order for phyZ and dataframe is more robust.
 Do we want to stick phyZ before lFormula?
+If we are going to stick it right before lFormula, we can even fix the order there, instead of mkBlist.
 
 Going to clean up the repo and rerun everything.
 I want to purrr some of the fast fitting steps, but simulating the phylogenetic tree still takes a long time.
