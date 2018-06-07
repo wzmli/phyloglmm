@@ -19,8 +19,8 @@ include sub.mk
 # todo.md
 # journal.md
 
-ms.pdf: main.tex ms.tex
-	pdflatex ms
+ms.pdf: main.tex phyloglmm_ms.tex
+	pdflatex phyloglmm_ms
 
 
 Makefile:

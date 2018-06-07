@@ -6,11 +6,13 @@ One particular area of growth is phylogenetic comparative analysis using phyloge
 Although a wide range of sophisticated statistical tools for comparative analyses exist, many of these tools are either inflexible, or too computationally expensive to analyze large volumes of data.
 In such case, researchers often try to find ways to simplify or revert to simpler models (i.e. model reduction or ignore phylogenetic relationships, or both) for practical uses \cite{bunnefeld2012island, ord2010adaptation},
 \todo{what do these papers do?}
+\todo{bunnefeld2012island : used taxon for random slopes but did not include phylogenetic information.
+ord2010adaptation : used OU procress with means (single obs per taxa)}
 which can lead to both statistical and biological issues \cite{felsenstein1985phylogenies, li2017statistical}. 
 In this paper, we propose an alternative method for flexibly and efficiently modeling phylogenetic relationships via mixed effect models, highlighting various complexities of phylogenetic relationships through random effects.
 
 There are two general challenges in linking the evolutionary process to a phylogenetic comparative statistical framework.
-First, we need a method for incorporating phylogenetic relationships among species into the model of the relationships among traits
+First, we need a method for incorporating phylogenetic relationships among species into the model of the relationships among traits.
 The classic phylogenetic regression assumes that phylogenetic correlation among the residuals from a regression between the traits arises because the residual variation evolves along the branches of the phylogeny according to a Brownian motion process; this assumption leads to Felsenstein's method of phylogenetically independent contrasts (PICs) \citep{felsenstein1985phylogenies}.
 More recent approaches -- including phylogenetic generalized linear mixed models (PGLMM) \citep{ives2011generalized}, Pagel's $\lambda$ \citep{pagel1999inferring}, and Blomberg's $K$ \citep{blomberg2003testing} --- build upon Felsenstein's PICs by allowing extra parameters to correct for possible bias. They partition the phylogenetically correlated residual variation into phylogenetically uncorrelated residual variation (observation error or tip variation) and phylogenetic signal  \citep[biological/evolutionary process error:][]{hansen2012interpreting} \todo{do PGLMMs do this, or just Blomberg/Pagel? How do B/P differ?}
 However, when multiple observations (or repeated measures) of the same species (taxon) are being observed, this introduces another level of variation; in this case, phylogenetic signal and tip variation are now both part of the evolutionary process error and residual variation is associated with observation level variation (the standard statistical definition). 
