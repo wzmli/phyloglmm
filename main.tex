@@ -14,7 +14,7 @@ In this paper, we propose an alternative method for flexibly and efficiently mod
 
 There are two general challenges in linking the evolutionary process to a phylogenetic comparative statistical framework.
 First, we need a method for incorporating phylogenetic relationships among species into the model of the relationships among traits.
-The classic phylogenetic regression assumes that phylogenetic correlation among the residuals from a regression between the traits arises because the residual variation evolves along the branches of the phylogeny according to a Brownian motion process; this assumption leads to Felsenstein's method of phylogenetically independent contrasts (PICs) \citep{felsenstein1985phylogenies}.
+The classic phylogenetic regression assumes that phylogenetic correlation (PC) among the residuals from a regression between the traits arises because the residual variation evolves along the branches of the phylogeny according to a Brownian motion process; this assumption leads to Felsenstein's method of phylogenetically independent contrasts (PICs) \citep{felsenstein1985phylogenies}.
 More recent approaches -- including phylogenetic generalized linear mixed models (PGLMM) \citep{ives2011generalized}, Pagel's $\lambda$ \citep{pagel1999inferring}, and Blomberg's $K$ \citep{blomberg2003testing} --- build upon Felsenstein's PICs by allowing extra parameters to correct for possible bias. They partition the phylogenetically correlated residual variation into (1) phylogenetically uncorrelated residual variation (observation error or tip variation) and (2) phylogenetic signal  \citep[biological/evolutionary process error:][]{hansen2012interpreting} \todo{do PGLMMs do this, or just Blomberg/Pagel? How do B/P differ?}
 \todo{They all do this. B's K is a scaled ratio of of variance, and P's lambda is a scaling parameter of the correlation.} 
 However, when multiple observations (or repeated measures) of the same species (taxon) are being observed, this introduces another level of variation; in this case, phylogenetic signal and tip variation are now both part of the evolutionary process error and residual variation is associated with observation level variation (the standard statistical definition). 
@@ -36,7 +36,7 @@ The typical phylogenetic regression is of the form:
 y & = XB + \epsilon \label{eq:gls1} \\ 
 \epsilon & \sim \textrm{MVN}(0,\sigma^{2}C), \label{eq:gls2}
 \end{align}
-where $y$ is an $n \times 1$ vector of measurable response; $X$ is an $n \times m$ model matrix containing 1's in the first column and the $m$ predictor variables (phenotypic traits or environmental variables); $B$ is an $m$ vector of coefficients; $\epsilon$ is the residual error and assumed to be multivariate normally distributed with a variance-covariance matrix given by $\sigma^{2}_{\epsilon}C$ in which $C$ is an $n \times n$ matrix of the phylogenetic correlation (PC).
+where $y$ is an $n \times 1$ vector of measurable response; $X$ is an $n \times m$ model matrix containing 1's in the first column and the $m$ predictor variables (phenotypic traits or environmental variables); $B$ is an $m$ vector of coefficients; $\epsilon$ is the residual error and assumed to be multivariate normally distributed with a variance-covariance matrix given by $\sigma^{2}_{\epsilon}C$ in which $C$ is an $n \times n$ matrix of the phylogenetic correlation.
 The PC matrix is inferred from the topology of the evolutionary tree by capturing the evolutionary changes that occurred on all the branches, which can be incorporated in statistical methods.
 
 % More recently, researchers use linear mixed model and generalized linear mixed model framework to model complex systems with phylogenetic structures.
@@ -64,6 +64,14 @@ An alternative approach is to model the phylogenetic correlation as a \textit{Ga
 In particular, suppose that the evolutionary process is a Brownian motion, which means the evolution of a continuous trait is a random walk and daughter species after speciation are all independent.  
 In that case, the phylogenetic variability of a particular observation can be written as the sum of the evolutionary changes that occurred on all of the branches in the phylogeny in its past. 
 Thus, the evolutionary history for each species can be modeled with a sequence of independent errors with species--branch matrix $S$, rather than having to impose a correlation $C$. 
+
+$S$ is a matrix product of an $n \times b$ indicator matrix $S_{id}$ of branch indices, and an adjusted branch length vector $B_{adj}$:
+
+\begin{align}
+B_{adj} & = (\frac{Bl}{\omega})^{1/2} \\
+\omega & = \textrm{det}(\Sigma)^{1/n},
+\end{align}
+where $Bl$ is the branch length vector, $\omega$ is a scaling factor, and $\Sigma$ is the variance-covariance matrix of the phylogenetic tree.
 This is mathematically equivalent under BM assumption where we can reconstruct C by matrix multiplying $S$ by itself.
 
 The random-effect model matrix $Z$ can be decomposed into term-wise model matrix $Z_{i}$ as described in \citet{bates2015fitting}.
