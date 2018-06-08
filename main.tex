@@ -166,7 +166,7 @@ Furthermore, it was not practical for pez to fit large sample size simulation da
 
 We used our method and fitted the full model of the dune meadow data recently used with pez \cite(li2017canfun}. 
 We have obtained identical results for fix and random effect estimates and approximately 120 times faster compared to pez. 
-See supplement for full details. 
+Codes for fitting dune meadow analysis using lme4 and pez are provided in the supplements. 
 
 \newpage
 
@@ -185,10 +185,10 @@ Thus, any model that can account for at least two sources of variation (one for 
 
 \subsection{Random Slopes}
 
-In classic GLMM (without phylogenetic relationships), random slopes models are not always appropriate, but they are relevant over a wider range of scenarios than people are currently thinking about \cite{schielzeth2013nested, cleasby2015quantifying}.
+In classic GLMM (without phylogenetic relationships), random slopes models are not always appropriate, but they are relevant over a wider range of scenarios than people are currently thinking about \cite{schielzeth2008conclusions, cleasby2015quantifying}.
 When analyzing evolutionary process among species between species traits and environmental variables, it is entirely plausible that the relationship across different traits and predictor variables are varying in a phylogenetically correlated way.
 Although the effects of including phylogenetically correlated random slopes are relatively low compared to process and residual variation in the intercept, it is still useful and informative than ignoring it from the model.
-It may be easier to simplify the phylogenetic relationships (at the random slopes level) and think about the random-slopes model in a strictly hierarchical setting (i.e., estimating different slopes for each family, or taxon \cite{ord2010adaptation}) - the PGLMM collapses to a standard random-slopes model. \ml{which would only be identifiable if ...}
+It may be easier to simplify the phylogenetic relationships (at the random slopes level) and think about the random-slopes model in a strictly hierarchical setting (i.e., estimating different slopes for each family, or taxon \cite{bunnefeld2012island}) - the PGLMM collapses to a standard random-slopes model. 
 However, in the PGLMM context, as long as there's variation in the predictor among tips, there will be variation among taxa at some level, so random-slopes models will (almost always) be *theoretically* identifiable.
 
 \subsection{Extension and alternatives}
