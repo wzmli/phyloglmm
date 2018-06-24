@@ -179,9 +179,9 @@ Under the Brownian motion evolution process assumption, modelling via independen
 \subsection{Process and residual (observation) variabilities and confoundings}
 
 Process and observation errors are highly confounded in phylogenetic regression.
-The effects of models that include both process and residual variations (i.e. pglmm, pglm) instead of the less realistic model that assumes variation due to evolution and zero observation (gls) was large. 
+The effects of models that include both process and residual variations (i.e. PGLMM, PGLM) instead of the less realistic model that assumes variation due to evolution and zero observation (PGLS) was large. 
 In particular, models that did not include residual variation tended to over-estimate the amount of variabilities in the evolution process. 
-Thus, any model that can account for at least two sources of variation (one for the residual variance, and at least one for the process variation) will be sufficient to a first approximation (i.e. Pagel's lambda, Blomberg's K). 
+Thus, any model that can account for at least two sources of variation (one for the residual variance, and at least one for the process variation) will be sufficient to a first approximation (i.e. Pagel's $\lambda$, Blomberg's $K$). 
 
 \subsection{Random Slopes}
 
@@ -189,7 +189,9 @@ In classic GLMM (without phylogenetic relationships), random slopes models are n
 When analyzing evolutionary process among species between species traits and environmental variables, it is entirely plausible that the relationship across different traits and predictor variables are varying in a phylogenetically correlated way.
 Although the effects of including phylogenetically correlated random slopes are relatively low compared to process and residual variation in the intercept, it is still useful and informative than ignoring it from the model.
 It may be easier to simplify the phylogenetic relationships (at the random slopes level) and think about the random-slopes model in a strictly hierarchical setting (i.e., estimating different slopes for each family, or taxon \cite{bunnefeld2012island}) - the PGLMM collapses to a standard random-slopes model. 
+Users should be aware of two important questions when fitting random-slope models: How much data do we need in order to practically estimate the random slopes? and Are we making a mistake by ignoring random slopes \cite{schielzeth2008conclusions}? 
 However, in the PGLMM context, as long as there's variation in the predictor among tips, there will be variation among taxa at some level, so random-slopes models will (almost always) be *theoretically* identifiable.
+
 
 \subsection{Extension and alternatives}
 
@@ -197,8 +199,7 @@ Our analysis covers the classical phylogenetic comparative methods (i.e. phyloge
 Even within the scope there is additional room for exploration we neglected, such as exploring phylogenetic multivariate response models, non-BM evolution processes (such as Ornstein-Uhlenbeck (OU) process which accounts for both selection and drift processes \cite{butler2004phylogenetic}), Bayesian approaches \cite{hadfield2010general}.
 More broadly, the simple independence error approach we developed here offers a more efficient and mathematical equivalent way to do Brownian motion evolution process phylogenetic comparative analysis. 
 This approach can in principle be combined flexibly with the state of the art phylogenetic mixed models using platforms that supports independent latent variables such as MCMCglmm \cite{hadfield2010mcmc}; a widely used Bayesian approach to PGLMM.
-However, in principle just like GLMM and most statistically models, users should be aware the amount of data they have and the complexity of the model they want to fit.
-\ml{This note should go somewhere here: how much data do we need in order to practically estimate the random slopes? Are we making a mistake (cf Schielzeth) by ignoring random slopes? What should we do when we don't have enough data? (cf. Barr et al 2013 "keep it maximal"; Bates, Vashisth, etc etc who don't like that, possibility of Bayesian approaches, etc etc etc)}
+However, in principle just like GLMM and most statistically models, users should be aware the amount of data they have and the complexity of the model they want to fit (i.e. What should we do when we don't have enough data? Should we use a complex model and overfit \cite{barr2013random}, the right balance of complexity and data \cite{baayen2008mixed} or possibility of Bayesian approaches \cite{hadfield2010mcmc}).
 More importantly, this implementation in lme4 allows users to fit phylogenetic mixed models to the fullest ( that other frequentest platforms lack of (i.e. large data, unbalanced species observations, complex random effects) and explore new ideas.
 
 
