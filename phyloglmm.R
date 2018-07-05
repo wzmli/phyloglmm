@@ -29,7 +29,6 @@ lme4time <- system.time(
 		, phylonm = c("sp","site:sp")
 		, phylo = phy
 		, phyloZ=phyZ
-		, nsp = nspp
 		, control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore"
 		)
 		, REML = FALSE

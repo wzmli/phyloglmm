@@ -21,7 +21,7 @@ dat <- (dat
 )	
 
 # lme4timecor <- system.time(
-  lme4fitcor <- phylo_glmm2(Y ~ X + (1|sp)
+  lme4fitcor <- phylo_glmm(Y ~ X + (1+X|sp) + (1|obs) + (0+X|obs)
     , data=dat
     , phylonm = "sp"
     , family = poisson
@@ -32,5 +32,5 @@ dat <- (dat
 # )
 
 # print(lme4timecor)
-# print(summary(lme4fitcor))
+print(summary(lme4fitcor))
 

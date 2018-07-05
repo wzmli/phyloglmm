@@ -115,6 +115,11 @@ csplot.Rout: csplot.R
 
 ### fitting poisson (NEED TO FIX)
 
+Ignore += outline.html
+
+simulate_poistree.Rout: parameters.R simulate_poistree.R
+	$(run-R)
+
 fit_poisson.Rout: parameters.R simulate_poistree.Rout phyloglmm_setup.R phyloglmm_pois.R
 	$(run-R)
 
