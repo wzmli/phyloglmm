@@ -5,6 +5,7 @@ library(Matrix)
 library(lme4)
 library(dplyr)
 
+
 # maxit <- 100000000
 # reltol <- 0.000000001
 
@@ -85,7 +86,9 @@ peztime_1 <- system.time(
 )
 
 # 
-# print(peztime_1)
+print(peztime_1)
 print(summary(pezfit_1))
-# print(lme4time_1)
+print(lme4time_1)
 print(summary(lme4fit_1))
+
+print(peztime_1/lme4time_1)
