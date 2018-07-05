@@ -6,7 +6,7 @@ seed <- 5191
 set.seed(seed)
 # simnum <- 200
 # Generate simulated data for nspp species and nsite sites
-nspp <- 100
+nspp <- 500
 
 nsite <- 20
 #nsite <- 1
@@ -36,5 +36,5 @@ ss <- 6 ## sp:site
 
 # MCMC iterations
 
-nitt <- 2e5 ## was 5e6
+nitt <- 2e4 ## was 5e6
 

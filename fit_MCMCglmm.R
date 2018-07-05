@@ -7,7 +7,7 @@ dat <- (dat
 	 %>% mutate(phylo=paste("t",sp,sep="")
       , obs=phylo
       )
-	 %>% filter(site == 1) 
+#	 %>% filter(site == 1) 
 )
 
 dat <- data.frame(dat)
@@ -21,7 +21,7 @@ prior <- list(G=list(G1=list(V=10,nu=0.1)
 
 
 MCMC_time <- system.time(
-	MCMCglmm_fit <- MCMCglmmhacked(Y~1
+	MCMCglmm_fit <- MCMCglmmhacked(Y~1+X
 		, random=~ sp
 		, family="gaussian"
 		, ginverse=list(sp=inv.phylo$Ainv)
