@@ -126,7 +126,7 @@ fit_poisson.Rout: parameters.R simulate_poistree.Rout phyloglmm_setup.R phyloglm
 
 ### Fitting using other platforms (NEED TO FIX/CLEAN)
 
-fit_MCMCglmm.Rout: parameters.Rout simulate_tree.Rout fit_MCMCglmm.R
+fit_MCMCglmm.Rout: parameters.Rout simulate_tree.R MCMCglmmhacked.R fit_MCMCglmm.R
 	$(run-R)
 
 fit_glmmPQL.Rout: parameters.Rout simulate_tree.Rout fit_glmmPQL.R
