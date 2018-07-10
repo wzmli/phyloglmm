@@ -36,5 +36,5 @@ ss <- 6 ## sp:site
 
 # MCMC iterations
 
-nitt <- 2e4 ## was 5e6
+nitt <- 2e3 ## was 5e6
 

@@ -18,9 +18,13 @@ dat <- (dat
 
 dat <- data.frame(dat)
 
-TMBstruc <- glmmTMB(Y ~ X  + (1+X|sp)
+source("glmmTMBhacked.R")
+
+aa <- glmmTMBhacked(Y ~ X  + (1|sp)
   , data=dat
-  , doFit=FALSE) # doFit=FALSE) in BB's update
+  , phyloZ = phyZ
+  , phylonm = "sp"
+  , doFit=TRUE) # doFit=FALSE) in BB's update
 
 TMBstruc_new <- modify_TMBstruc(TMBstruc,phy,phylonm="sp",phyloZ=phyZ)
 

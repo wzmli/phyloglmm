@@ -28,7 +28,7 @@ MCMC_time <- system.time(
 		, prior=prior
 		, data=dat
 		, nitt=nitt
-		, burnin=1000
+		, burnin=500
 		, thin=nitt/1000
 		, singular.ok = TRUE
 		, verbose=TRUE)
