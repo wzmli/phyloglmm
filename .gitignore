@@ -12,3 +12,11 @@
 *.Rds
 *.rds
 target.mk
+
+*.aux
+*.log
+*.bbl
+*.blg
+*.deps
+*.out
+*.soc
