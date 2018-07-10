@@ -117,12 +117,6 @@ csplot.Rout: csplot.R
 
 Ignore += outline.html
 
-simulate_poistree.Rout: parameters.R simulate_poistree.R
-	$(run-R)
-
-fit_poisson.Rout: parameters.R simulate_poistree.Rout phyloglmm_setup.R phyloglmm_pois.R
-	$(run-R)
-
 
 ### Fitting using other platforms (NEED TO FIX/CLEAN)
 
