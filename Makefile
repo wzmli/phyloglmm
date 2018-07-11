@@ -129,6 +129,9 @@ fit_poisson.Rout: parameters.R simulate_poistree.Rout phyloglmm_setup.R phyloglm
 fit_MCMCglmm.Rout: parameters.R simulate_tree.R MCMCglmmhacked.R fit_MCMCglmm.R
 	$(run-R)
 
+fit_brms.Rout: parameters.R simulate_tree.R fit_brms.R
+	$(run-R)
+
 fit_glmmPQL.Rout: parameters.Rout simulate_tree.Rout fit_glmmPQL.R
 	$(run-R)
 
