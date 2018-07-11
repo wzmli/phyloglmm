@@ -6,7 +6,7 @@ seed <- 5191
 set.seed(seed)
 # simnum <- 200
 # Generate simulated data for nspp species and nsite sites
-nspp <- 500
+nspp <- 50
 
 nsite <- 20
 #nsite <- 1
@@ -19,9 +19,9 @@ beta0 <- 0
 beta1 <- 0
 
 # magnitude of random effects
-sd.B0 <- 4
-sd.B1 <- 2
-sd.B1 <- 0.00000001
+sd.B0 <- 0.00000001
+sd.B1 <- 10
+#sd.B1 <- 0.00000001
 
 rho.B01 <- 0.7
 rho.B01 <- 0
@@ -36,5 +36,5 @@ ss <- 6 ## sp:site
 
 # MCMC iterations
 
-nitt <- 2e3 ## was 5e6
+nitt <- 2e4 ## was 5e6
 

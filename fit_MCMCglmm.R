@@ -14,7 +14,7 @@ dat <- data.frame(dat)
 
 inv.phylo <- inverseA(phy,nodes="TIPS",scale=TRUE)
 
-prior <- list(G=list(G1=list(V=10,nu=0.1)
+prior <- list(G=list(G1=list(V=10,nu=0.01)
                      )
               , R=list(V=1,nu=1)
               )
@@ -22,7 +22,7 @@ prior <- list(G=list(G1=list(V=10,nu=0.1)
 
 MCMC_time <- system.time(
 	MCMCglmm_fit <- MCMCglmmhacked(Y~1+X
-		, random=~ sp
+		, random=~ us(X):sp
 		, family="gaussian"
 		, ginverse=list(sp=inv.phylo$Ainv)
 		, prior=prior
