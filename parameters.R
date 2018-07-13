@@ -21,7 +21,8 @@ beta1 <- 0
 # magnitude of random effects
 sd.B0 <- 4
 sd.B1 <- 2
-sd.B1 <- 0.00000001
+#sd.B1 <- 0.00000001
+sd.B0 <- 0.00000001
 
 rho.B01 <- 0.7
 rho.B01 <- 0

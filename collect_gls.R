@@ -14,7 +14,7 @@ glsdf <- data.frame(phylo.int = numeric(obs)
   , time = numeric(obs)
 )
 
-df_glslist <- list(glsdf,glsdf,glsdf,glsdf,glsdf,glsdf)
+df_glslist <- list(glsdf,glsdf,glsdf,glsdf,glsdf,glsdf,glsdf)
 
 for(i in 1:length(results_dir_glslist)){
   results_dir <- results_dir_glslist[[i]]
@@ -33,7 +33,7 @@ gls_df <- (bind_rows(df_glslist)
      %>% select(-time)
 #     %>% group_by(model)
      %>% gather(key="parameter",value="estimate",-model)
-     %>% mutate(model = factor(model,levels=c("TIP50","TIP200","RI50","RI200","RI500","RI1000")))
+     %>% mutate(model = factor(model,levels=c("TIP50","TIP200","RI50","RI200","RI500","RI1000","RSI200")))
 )
 
 gg <- (ggplot(gls_df,aes(y=estimate,x=model,group=model))
