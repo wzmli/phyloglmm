@@ -64,7 +64,7 @@ fit.pois.Rout: simulate_poistree.Rout phyloglmm_setup.R new_phylo_setup.R phylog
 fit.gls.%.Rout: names.R parameters.R simulate_tree.R fit_gls.R
 	$(run-R)
 
-fit.gls.large.1.Rout:
+fit.gls.test.1.Rout:fit_gls.R
 
 ### phylolm
 
@@ -80,6 +80,7 @@ fit.lme4.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R phyloglm
 	$(run-R)
 
 fit.lme4.large.1.Rout: phyloglmm.R
+fit.lme4.test.1.Rout: phyloglmm.R
 
 ### pez can only fit multiple sites
 
@@ -98,6 +99,9 @@ fit_cs.pez.%.Rout: names.R parameters.R simulate_tree.R phyloglmm_setup.Rout fit
 
 ### Collect and plot results
 
+collect_gls.Rout: collect_gls.R
+	$(run-R)
+
 collect.Rout: collect.R
 	$(run-R)
 
@@ -113,15 +117,8 @@ msplot.Rout: msplot.R
 csplot.Rout: csplot.R
 	$(run-R)
 
-### fitting poisson (NEED TO FIX)
 
 Ignore += outline.html
-
-simulate_poistree.Rout: parameters.R simulate_poistree.R
-	$(run-R)
-
-fit_poisson.Rout: parameters.R simulate_poistree.Rout phyloglmm_setup.R phyloglmm_pois.R
-	$(run-R)
 
 
 ### Fitting using other platforms (NEED TO FIX/CLEAN)

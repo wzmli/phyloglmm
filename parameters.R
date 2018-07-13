@@ -1,15 +1,15 @@
 ### parameters for phylogenetic tree simulations
-seed <- 5191
+#seed <- 5191
 #nspp <- 20
 
 
 set.seed(seed)
 # simnum <- 200
 # Generate simulated data for nspp species and nsite sites
-nspp <- 50
+#nspp <- 50
 
 nsite <- 20
-#nsite <- 1
+nsite <- 1
 
 # residual variance (set to zero for binary data)
 sd.resid <- 10
@@ -21,7 +21,7 @@ beta1 <- 0
 # magnitude of random effects
 sd.B0 <- 4
 sd.B1 <- 2
-#sd.B1 <- 0.00000001
+sd.B1 <- 0.00000001
 
 rho.B01 <- 0.7
 rho.B01 <- 0

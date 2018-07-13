@@ -42,4 +42,4 @@ print(summary(lme4fit))
 
 lme4_list <- list(lme4fit, lme4time)
 
-# saveRDS(lme4_list, file=paste("datadir/lme4_test",size,seed,"rds",sep="."))
+saveRDS(lme4_list, file=paste("datadir/test/",size,seed,"rds",sep="."))

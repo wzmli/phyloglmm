@@ -1,3 +1,22 @@
+July 12th 2018
+
+Testing what happens when we don't include random slopes, intercept.
+
+Single observation per species
+Simulate random intercept only
+- random intercept and no residual (tip variation)
+- residual only
+
+Simulate random slope no intercept 
+- tip 
+- intercept
+- slope
+- tip + intercept 
+- tip + slope
+- intercept + slope
+- tip + intercept + slope
+
+
 Oct 1st 2017
 
 Hacked lme4 object does not play nicely with "simulate" so we are reverting back to using pez-ish simulation method.

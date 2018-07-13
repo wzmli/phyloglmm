@@ -17,6 +17,5 @@ tt <- system.time(fit_gls <- gls(Y~X
 print(fit_gls)
 print(summary(fit_gls))
 
-
 gls_list <- list(fit_gls,tt)
-saveRDS(gls_list,file=paste("datadir/gls_phyfull",size,seed,"rds",sep="."))
+saveRDS(gls_list,file=paste("test/RIonly",size,seed,"rds",sep="."))
