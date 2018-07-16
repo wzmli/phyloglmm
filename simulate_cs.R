@@ -37,5 +37,5 @@ new_y <- simulate(tempmod, newparams=list(theta=c(ss/sigma(tempmod)
                                                     , t2
                                                     , t3
 )
-, beta = c(beta0,beta1)))
+, beta = c(beta0,beta1)),allow.new.levels=TRUE)
 dat$new_y <- new_y[[1]]
