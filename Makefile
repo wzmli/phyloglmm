@@ -97,6 +97,9 @@ fit_cs.lme4.%.Rout: names.R parameters.R simulate_tree.R phyloglmm_setup.Rout fi
 fit_cs.pez.%.Rout: names.R parameters.R simulate_tree.R phyloglmm_setup.Rout fit_cs_pez.R
 	$(run-R)
 
+fit.brms.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R simulate_cs.R fit_brms.R
+	$(run-R)
+
 ### Collect and plot results
 
 collect_gls.Rout: collect_gls.R
@@ -124,9 +127,6 @@ Ignore += outline.html
 ### Fitting using other platforms (NEED TO FIX/CLEAN)
 
 fit_MCMCglmm.Rout: parameters.R simulate_tree.R MCMCglmmhacked.R fit_MCMCglmm.R
-	$(run-R)
-
-fit_brms.Rout: parameters.R simulate_tree.R new_phylo_setup.R simulate_cs.R fit_brms.R
 	$(run-R)
 
 fit_glmmPQL.Rout: parameters.Rout simulate_tree.Rout fit_glmmPQL.R
