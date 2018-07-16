@@ -1,3 +1,11 @@
+July 16th 2018
+
+brms can do everything lme4 does but really slow
+- mcmcglmm cannot do nested/compound symmetric/site:sp interaction case without hack (not doing it).
+- the problem with MCMCglmm is we cannot use ginverse with interaction
+
+for now, let's run slow brms, pez and lme4
+
 July 12th 2018
 
 Testing what happens when we don't include random slopes, intercept.

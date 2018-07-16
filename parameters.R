@@ -1,6 +1,6 @@
 ### parameters for phylogenetic tree simulations
-#seed <- 5191
-#nspp <- 20
+seed <- 5191
+nspp <- 20
 
 
 set.seed(seed)
@@ -9,7 +9,7 @@ set.seed(seed)
 #nspp <- 50
 
 nsite <- 20
-nsite <- 1
+nsite <- 2
 
 # residual variance (set to zero for binary data)
 sd.resid <- 10
@@ -22,10 +22,10 @@ beta1 <- 0
 sd.B0 <- 4
 sd.B1 <- 2
 #sd.B1 <- 0.00000001
-sd.B0 <- 0.00000001
+#sd.B0 <- 0.00000001
 
 rho.B01 <- 0.7
-rho.B01 <- 0
+#rho.B01 <- 0
 
 # whether or not to include phylogenetic signal in B0 and B1
 signal.B0 <- TRUE
@@ -37,5 +37,5 @@ ss <- 6 ## sp:site
 
 # MCMC iterations
 
-nitt <- 2e4 ## was 5e6
+nitt <- 8000  ##2e4 ## was 5e6
 

@@ -126,7 +126,7 @@ Ignore += outline.html
 fit_MCMCglmm.Rout: parameters.R simulate_tree.R MCMCglmmhacked.R fit_MCMCglmm.R
 	$(run-R)
 
-fit_brms.Rout: parameters.R simulate_tree.R fit_brms.R
+fit_brms.Rout: parameters.R simulate_tree.R new_phylo_setup.R simulate_cs.R fit_brms.R
 	$(run-R)
 
 fit_glmmPQL.Rout: parameters.Rout simulate_tree.Rout fit_glmmPQL.R

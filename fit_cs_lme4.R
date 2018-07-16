@@ -17,8 +17,8 @@ print(head(dat))
 
 tempmod <- phylo_lmm(Y ~ X
   + (1|sp)
-  + (0 + X|sp)
- # + (1 + X|sp)
+  # + (0 + X|sp)
+ + (1 + X|sp)
   + (1|sp:site)
   , data=dat
   , phylonm = c("sp","sp:site")
@@ -44,8 +44,8 @@ dat$new_y <- new_y[[1]]
 lme4time <- system.time(
   lme4fit <- phylo_lmm(new_y ~ X
     + (1|sp)
-    + (0 + X | sp)
-#	 + (1 + X | sp)
+    # + (0 + X | sp)
+	 + (1 + X | sp)
 	 + (1|sp:site)
     , data=dat
     , phylonm = c("sp","sp:site")
