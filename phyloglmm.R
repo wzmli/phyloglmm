@@ -8,23 +8,24 @@ library(dplyr)
 print(covmat)
 print(cov2cor(covmat))
 
+t1 <- proc.time()
+
 phyZ <- phylo.to.Z(phy)
 
 dat <- (dat
 	%>% mutate(obs = sp)
 )	
 
-print(head(dat))
 
 #debug(phylo_lmm)
 #debug(modify_phylo_retrms)
 
 
-lme4time <- system.time(
 	lme4fit <- phylo_lmm(Y ~ X
 		 + (1|sp)
 		# + (0 + X|sp)
-		#+ (1+X|sp)
+#		 + (1|site)
+#		 + (1+X|sp)
 		, data=dat
 		, phylonm = c("sp","site:sp")
 		, phylo = phy
@@ -33,8 +34,10 @@ lme4time <- system.time(
 		)
 		, REML = FALSE
 	)
-)
 
+t2 <- proc.time()
+
+lme4time <- t2-t1
 print(lme4time)
 
 print(summary(lme4fit))
@@ -42,4 +45,4 @@ print(summary(lme4fit))
 
 lme4_list <- list(lme4fit, lme4time)
 
-saveRDS(lme4_list, file=paste("datadir/test/",size,seed,"rds",sep="."))
+#saveRDS(lme4_list, file=paste("datadir/lme4",size,seed,"rds",sep="."))

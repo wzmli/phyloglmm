@@ -1,6 +1,6 @@
 ### parameters for phylogenetic tree simulations
-# seed <- 5191
-# nspp <- 25
+seed <- 5191
+nspp <- 20
 
 
 set.seed(seed)
@@ -36,5 +36,5 @@ ss <- 6 ## sp:site
 
 # MCMC iterations
 
-nitt <- 8000  ##2e4 ## was 5e6
+nitt <- 20000  ##2e4 ## was 5e6
 

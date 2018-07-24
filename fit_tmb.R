@@ -2,6 +2,7 @@
 
 library(dplyr)
 library(glmmTMB)
+library(lme4)
 library(Matrix)
 
 phyZ <- phylo.to.Z(phy)
@@ -19,27 +20,33 @@ dat <- (dat
 dat <- data.frame(dat)
 
 source("glmmTMBhacked.R")
-
-aa <- glmmTMBhacked(Y ~ X  + (1|sp)
+source("new_phylo_setup.R")
+# debug(glmmTMBhacked)
+# debug(mktempmodhacked)
+# debug(getXReTrmshacked)
+# debug(mkReTrms)
+hackedmod <- glmmTMBhacked(Y ~ X  + (1|sp)
   , data=dat
   , phyloZ = phyZ
   , phylonm = "sp"
-  , doFit=TRUE) # doFit=FALSE) in BB's update
+  , doFit=FALSE
+  ) # doFit=FALSE) in BB's update
 
-TMBstruc_new <- modify_TMBstruc(TMBstruc,phy,phylonm="sp",phyloZ=phyZ)
-
-# glmmTMB_fit <- glmmTMB:::fitTMB(TMBstruc_new)
-# tt <- tidy(glmmTMB_fit,scales=c(ran_pars="vcov",fixed=NA))
-# glmmTMB_res <- tt[,c("term","estimate","std.error")]
-
-glmmTMB_fit <- fit_TMBstruc(TMBstruc_new)
-print(glmmTMB_fit$report)
-
-
-glmmTMB_res <- matrix(c(glmmTMB_fit$fit$par[1:2]
- 	, exp(glmmTMB_fit$fit$par[3:4])^2)
-	, ncol=1, 
-	dimnames=list(c("intercept","cofactor","var.phylo","var.obs"),NULL)
+tempmod <- glmmTMB(Y ~ X  + (1|sp)
+  , data=dat
+  , doFit=FALSE
 )
 
-print(glmmTMB_res)
+n.edge <- ncol(phyZ)
+
+tempmod$condReStruc$`1 | sp`$blockReps <- n.edge
+tempmod$condList$Z <- t(hackedmod$condList$reTrms$Zt)
+## data *inside* data.tmb is actually the most critical to allow correct fit
+tempmod$data.tmb$terms$`1 | sp`$blockReps <- n.edge
+tempmod$data.tmb$Z <- t(hackedmod$condList$reTrms$Zt)
+tempmod$parameters$b <- rep(0,ncol(hackedmod$data.tmb$Z))
+
+ff <- glmmTMB:::fitTMB(tempmod)
+
+print(ff)
+print(tempmod)

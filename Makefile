@@ -126,7 +126,7 @@ Ignore += outline.html
 
 ### Fitting using other platforms (NEED TO FIX/CLEAN)
 
-fit_MCMCglmm.Rout: parameters.R simulate_tree.R MCMCglmmhacked.R fit_MCMCglmm.R
+fit.MCMCglmm.%.Rout: names.R parameters.R simulate_tree.R MCMCglmmhacked.R fit_MCMCglmm.R
 	$(run-R)
 
 fit_glmmPQL.Rout: parameters.Rout simulate_tree.Rout fit_glmmPQL.R
@@ -136,6 +136,8 @@ fit_glmmPQL.Rout: parameters.Rout simulate_tree.Rout fit_glmmPQL.R
 fit_tmb.Rout: parameters.R simulate_tree.R phyloglmm_setup.R tmb_setup.R fit_tmb.R
 	$(run-R)
 
+fit_lme4.Rout: parameters.R simulate_tree.R new_phylo_setup.R phyloglmm.R
+	$(run-R)
 
 #### Li et al 2017 examples
 
