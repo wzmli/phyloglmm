@@ -5,7 +5,7 @@ library(glmmTMB)
 library(lme4)
 library(Matrix)
 
-phyZ <- phylo.to.Z(phy)
+phyZ <- phylo.to.Z(phy,stand=TRUE)
 
 # dat <- (dat
 #         %>% rowwise()
@@ -30,11 +30,13 @@ hackedmod <- glmmTMBhacked(Y ~ X  + (1|sp)
   , phyloZ = phyZ
   , phylonm = "sp"
   , doFit=FALSE
+  # , dispformula = 0
   ) # doFit=FALSE) in BB's update
 
 tempmod <- glmmTMB(Y ~ X  + (1|sp)
   , data=dat
   , doFit=FALSE
+  , dispformula = ~0
 )
 
 n.edge <- ncol(phyZ)
@@ -49,4 +51,4 @@ tempmod$parameters$b <- rep(0,ncol(hackedmod$data.tmb$Z))
 ff <- glmmTMB:::fitTMB(tempmod)
 
 print(ff)
-print(tempmod)
+#print(tempmod)

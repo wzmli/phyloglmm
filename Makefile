@@ -136,6 +136,9 @@ fit_glmmPQL.Rout: parameters.Rout simulate_tree.Rout fit_glmmPQL.R
 fit_tmb.Rout: parameters.R simulate_tree.R phyloglmm_setup.R tmb_setup.R fit_tmb.R
 	$(run-R)
 
+fit_gls.Rout: parameters.R simulate_tree.R fit_gls.R
+	$(run-R)
+
 fit_lme4.Rout: parameters.R simulate_tree.R new_phylo_setup.R phyloglmm.R
 	$(run-R)
 
