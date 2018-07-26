@@ -1,3 +1,8 @@
+July 25th 2018
+
+Standardize phyZ will run into problems with glmmTMB nlminb (NA/NaN function evaluation) when we have a lot of species (nspp > 300).
+Otherwise, it fixes the "scaling" problem (yay!). 
+
 July 16th 2018
 
 brms can do everything lme4 does but really slow
