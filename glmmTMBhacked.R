@@ -101,13 +101,15 @@ mkTMBStruchacked <- function (formula, ziformula, dispformula, combForm, mf, fr,
   if (!glmmTMB:::usesDispersion(family$family)) {
     dispformula[] <- ~0
   }
-  condList <- getXReTrmshacked(formula, mf, fr, phyloZ=phyloZ, phylonm=phylonm)
+  condList <- glmmTMB:::getXReTrms(formula, mf, fr)
+  condListhacked <- getXReTrmshacked(formula, mf, fr, phyloZ=phyloZ, phylonm=phylonm)
   ziList <- glmmTMB:::getXReTrms(ziformula, mf, fr)
   dispList <- glmmTMB:::getXReTrms(dispformula, mf, fr, ranOK = FALSE, 
                          "dispersion")
   ziReStruc <- with(ziList, getReStruc(reTrms, ss))
   grpVar <- with(condList, getGrpVar(reTrms$flist))
   condReStruc <- with(condList, getReStruc(reTrms, ss))
+  n.edge <- ncol(phyZ)
   nobs <- nrow(fr)
   if (is.null(offset <- model.offset(fr))) 
     offset <- rep(0, nobs)
@@ -132,6 +134,17 @@ mkTMBStruchacked <- function (formula, ziformula, dispformula, combForm, mf, fr,
                                     thetaf = rep(0, numThetaFamily)))
   randomArg <- c(if (ncol(data.tmb$Z) > 0) "b", if (ncol(data.tmb$Zzi) > 
                                                     0) "bzi")
+  
+  for(i in 1:length(condReStruc)){
+    condReStruc[[i]]$blockReps <- n.edge
+    data.tmb$terms[[i]]$blockReps <- n.edge
+  }
+  
+  condList$Z <- t(condListhacked$reTrms$Zt)
+  data.tmb$Z <- t(condListhacked$reTrms$Zt)
+  
+  parameters$b <- rep(0,ncol(data.tmb$Z))
+  
   return(lme4:::namedList(data.tmb, parameters, mapArg, randomArg, 
                    grpVar, condList, ziList, dispList, condReStruc, ziReStruc, 
                    family, respCol, allForm = lme4:::namedList(combForm, formula, 

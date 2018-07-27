@@ -23,32 +23,16 @@ source("glmmTMBhacked.R")
 source("new_phylo_setup.R")
 # debug(glmmTMBhacked)
 # debug(mktempmodhacked)
+# debug(mkTMBStruchacked)
 # debug(getXReTrmshacked)
 # debug(mkReTrms)
 hackedmod <- glmmTMBhacked(Y ~ X  + (1|sp)
   , data=dat
   , phyloZ = phyZ
   , phylonm = "sp"
-  , doFit=FALSE
-  # , dispformula = 0
-  ) # doFit=FALSE) in BB's update
+  , doFit=TRUE
+  , dispformula = ~1
+  ) 
 
-tempmod <- glmmTMB(Y ~ X  + (1|sp)
-  , data=dat
-  , doFit=FALSE
-  , dispformula = ~0
-)
 
-n.edge <- ncol(phyZ)
-
-tempmod$condReStruc$`1 | sp`$blockReps <- n.edge
-tempmod$condList$Z <- t(hackedmod$condList$reTrms$Zt)
-## data *inside* data.tmb is actually the most critical to allow correct fit
-tempmod$data.tmb$terms$`1 | sp`$blockReps <- n.edge
-tempmod$data.tmb$Z <- t(hackedmod$condList$reTrms$Zt)
-tempmod$parameters$b <- rep(0,ncol(hackedmod$data.tmb$Z))
-
-ff <- glmmTMB:::fitTMB(tempmod)
-
-print(ff)
-#print(tempmod)
+print(hackedmod)
