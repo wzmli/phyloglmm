@@ -1,5 +1,22 @@
 ## Journal
 
+## July 27th 2018
+
+- I don't like having both journal and notes.
+
+Stuff to report
+
+- We more or less have an idea/ ball park of what happens when one assumes a _pure_ evolution/ errorless model. 
+We need to be careful and standardize phyZ or else we will run into trouble as number of species increase. 
+At the moment, only glmmTMB can fit this example, but nlminb will break when we try to fit more than 300 species.
+
+- For bayesian methods, brms can do all cases (but really slow). 
+MCMCglmm is a little faster but it cannot do nested/compound symmetric/site:sp interaction case without digging into the guts (not doing it). 
+The reason MCMCglmm fails because it does not allow ginverse with interactions.
+We can always (should definitely list all cases on the chart) find a model where all models can fit _easily_, but I am not comfortable with making _bold_ comparisons because matching platforms for a _fair_ comparison is hard (we can always do it and say it is hard).
+
+
+
 ## May 15th 2018
 
 The order for phyZ and dataframe is more robust.
