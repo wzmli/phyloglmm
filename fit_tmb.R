@@ -19,8 +19,6 @@ dat <- (dat
 
 dat <- data.frame(dat)
 
-source("glmmTMBhacked.R")
-source("new_phylo_setup.R")
 # debug(glmmTMBhacked)
 # debug(mktempmodhacked)
 # debug(mkTMBStruchacked)
@@ -32,6 +30,7 @@ hackedmod <- glmmTMBhacked(Y ~ X  + (1|sp)
   , phylonm = "sp"
   , doFit=TRUE
   , dispformula = ~1
+  , control=glmmTMBControl(optCtrl=list(trace=1))
   ) 
 
 

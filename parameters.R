@@ -1,6 +1,6 @@
 ### parameters for phylogenetic tree simulations
 seed <- 5191
-nspp <- 300
+nspp <- 500
 
 
 set.seed(seed)
