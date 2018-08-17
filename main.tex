@@ -9,7 +9,7 @@ In such cases, researchers may try to find ways to simplify their analyses (i.e.
 %% bunnefeld2012island: used taxon for random slopes but did not include phylogenetic information
 %% ord2010adaptation : used OU process with means (single obs per taxa),
 %%  i.e. ignoring within-taxon variation?
-which can lead to statistical issues and erroneous conclusions.
+which can lead to statistical issues and erroneous conclusions
 \cite{felsenstein1985phylogenies, li2017statistical}.
 % \bmb{What precise ``issues'' do you have in mind? Don't think we need to state them here, but we should know. Based on your comments, I can guess that (1) by using random slopes across taxa, Bunnefeld 2012 is neglecting more subtle variation due to differential relatedness? (2) not sure whether taking taxon-level means (Ord 2010) is actually a problem. Ignores some variation,
 % but it might be ignorable (cf. Murtaugh 2007 ``Simplicity and complexity in ecological data analysis'')}
@@ -17,26 +17,48 @@ In this paper, we propose an alternative method for flexibly and efficiently mod
 % \bmb{nice!}
 
 There are two general challenges in linking the evolutionary process to a phylogenetic comparative statistical framework.
-Separating 
-First, we need a method for incorporating phylogenetic relationships among species into the model of the relationships among traits. 
-
-\bmb{prev sentence doesn't seem be quite the right lead-in to the rest of the paragraph? You go on to talk about the tip-variation/residual-variation confounding issue. Maybe replace with something talking more specifically about resolving tip variation?}
-
+% Phylogenetic signal : the magnitude of phylogenetic correlation
+The first challenge is segregating phylogenetic signals \citep{blomberg2003testing} and other sources of variation that are present in residuals.  
+% \bmb{prev sentence doesn't seem be quite the right lead-in to the rest of the paragraph? You go on to talk about the tip-variation/residual-variation confounding issue. Maybe replace with something talking more specifically about resolving tip variation?}
 The classic phylogenetic regression assumes that phylogenetic correlation (PC) among the residuals from a regression between the traits arises because the residual variation evolves along the branches of the phylogeny according to a Brownian motion process; if the traits are normally distributed and observed without any additional error or within-species variation, this leads to Felsenstein's method of phylogenetically independent contrasts (PICs) \citep{felsenstein1985phylogenies}.
 More recent approaches -- including phylogenetic generalized linear mixed models (PGLMM) \citep{ives2011generalized}, Pagel's $\lambda$ \citep{pagel1999inferring}, and Blomberg's $K$ \citep{blomberg2003testing} --- build upon Felsenstein's PICs by considering different response distributions and allowing extra parameters to account for additional complexities in the evolutionary process. They partition the phylogenetically correlated residual variation into (1) phylogenetically uncorrelated residual variation (observation error or tip variation) and (2) phylogenetic signal  \citep[biological/evolutionary process error:][]{hansen2012interpreting}.
 However, when multiple observations (or repeated measures) of the same species (taxon) are being observed, this introduces another level of variation; in this case, phylogenetic signal and tip variation are now both part of the evolutionary process error and residual variation is associated with observation level variation (the standard statistical definition).
 \bmb{This is a good point, well expressed. Does PGLMM lump tip variation
   and within-species variation, or is this primarily an issue with Blomberg/Pagel? Thinking about Boettiger's critique \cite{boettiger2013is} (don't know if it's been peer-reviewed, we could ask him), which might be resolved if we think explicitly about within-species variation \ldots}
-  
-Despite the addition of multiple observations per tip taxon (species) being  statistically straightforward, it is rarely seen: existing platforms are unable to fit multiple observations, or unbalanced design data, or both.
-\bmb{OK, but we should be prepared to support this. Could we construct a table of existing approaches/platforms with their capabilities?}
-\ml{todo}
+\ml{I think it is more like our simulation test. In Boettiger's example, it is treating sister taxa as different species. So it is using a phylogenetic tree of 8 species instead of 4.}
+Despite the addition of multiple observations per tip taxon (species) being statistically straightforward, it is rarely seen: existing platforms are unable to fit multiple observations, or unbalanced design data, or both.
+% \bmb{OK, but we should be prepared to support this. Could we construct a table of existing approaches/platforms with their capabilities?}
 
 
-The second challenge is flexibly incorporating models of phylogenetic relationships along with other common features of statistical models, such as variation among multiple different grouping variables or variation in effects (slopes) as well as correlated residual variation.
+The second challenge is flexibly model phylogenetic relationships along with other common features of statistical models, such as variation among multiple different grouping variables or variation in effects (random slopes) \citep{schielzeth2008conclusions} as well as correlated residual variation.
 \bmb{maybe we can focus on random slopes here? Need to point out that example studies below are \emph{exceptions} to the general assumption of random intercepts only (how did they manage to do their inference?)}
+Several recent studies have tried to incorporate phylogenetic signals beyond species level and looked at species response to phylogenetic signals with changes in environmental factors.
 For example, \cite{nowakowski2018phylogenetic} considered phylogenetically correlated slopes in response to habitat conversion when studying the abundance of amphibian species, while \cite{li2017canfun} considered phylogenetically correlated species nested within sites for plant abundance. 
 The tools available for extending phylogenetic relationships to common statistical regression features are relatively inflexible; thus, sophisticated biologists have turned to more flexible Bayesian approaches, despite their computational burden \cite{hadfield2010mcmc, burkner2016brms}.
+Table 1 provides a summary of model complexities, platforms and data constraints for phylogenetic comparative analysis.
+
+\begin{tabularx}{\textwidth}{|X|X|X|X|}
+\hline
+Model & Method & Data & Platform \\
+\hline
+\hline
+GLM (Simple)  & No Residual & Single Observation & GLS \\
+\hline
+              & Residual    & Single Observation & Pagel's $\lambda$ \\
+              & + phylo intercept &                    & Blomberg's $K$ \\ 
+              &             &                    & phylolm \\
+\hline
+GLMM (Complex)& Random effects & Single Observation & pez \\ 
+              &                & Balanced Design &  \\
+\hline
+              &                & Unrestricted  & lme4, glmmTMB \\
+\hline
+Bayesian GLMM &                & Balanced Design & MCMCglmm \\ 
+\hline        
+              &                & Unrestricted   & brms \\
+\hline
+\end{tabularx}
+
 
 In this paper, we will propose an alternative formulation of phylogenetic generalized linear mixed models that is mathematically equivalent to previous approaches.
 However, our new formulation is more flexible; it can be incorporated relatively easily into any mixed-model platform that allows new random-effects design matrices to be specified, and can be easily extended along with the features of mixed model such as multiple observational designs, phylogenetic random-slopes models, and multiple (nested or crossed) random effects.
@@ -301,4 +323,8 @@ phylogenetically related species respond similar (share common response) to the 
 \hline
 \end{tabularx}
             
-                                                                        
+            
+            
+            
+            
+                                                              
