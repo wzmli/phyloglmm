@@ -19,6 +19,7 @@ dat <- (dat
 
 dat <- data.frame(dat)
 
+# source("glmmTMBhacked.R")
 # debug(glmmTMBhacked)
 # debug(mktempmodhacked)
 # debug(mkTMBStruchacked)

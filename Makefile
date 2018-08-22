@@ -71,7 +71,7 @@ fit.gls.test.1.Rout:fit_gls.R
 fit.phylolm.%.Rout: names.R parameters.R simulate_tree.R fit_phylolm.R
 	$(run-R)
 
-fit.phylolm.large.1.Rout:
+fit.phylolm.large.1.Rout: parameters.R fit_phylolm.R
 
 
 ### lme4 can fit single and multiple sites
@@ -128,6 +128,8 @@ Ignore += outline.html
 
 fit.MCMCglmm.%.Rout: names.R parameters.R simulate_tree.R MCMCglmmhacked.R fit_MCMCglmm.R
 	$(run-R)
+
+fit.MCMCglmm.small.1.Rout:
 
 fit_glmmPQL.Rout: parameters.Rout simulate_tree.Rout fit_glmmPQL.R
 	$(run-R)

@@ -1,24 +1,42 @@
 glmmTMBhacked <- function (formula, data = NULL, family = gaussian(), ziformula = ~0, 
-          dispformula = ~1, weights = NULL, offset = NULL, se = TRUE, phyloZ = NULL
-          , phylonm = NULL ,
-          verbose = FALSE, doFit = TRUE, control = glmmTMBControl()) 
+                           dispformula = ~1, weights = NULL, offset = NULL, contrasts = NULL, phyloZ = NULL, 
+                           phylonm = NULL,
+                           na.action = na.fail, se = TRUE, verbose = FALSE, doFit = TRUE, 
+                           control = glmmTMBControl(), REML = FALSE) 
 {
   call <- mf <- mc <- match.call()
-  if (is.character(family)) 
+  if (is.character(family)) {
+    if (family == "beta") {
+      family <- "beta_family"
+      warning("please use ", sQuote("beta_family()"), " rather than ", 
+              sQuote("\"beta\""), " to specify a Beta-distributed response")
+    }
     family <- get(family, mode = "function", envir = parent.frame())
-  if (is.function(family)) 
+  }
+  if (is.function(family)) {
     family <- family()
+  }
   if (is.null(family$family)) {
     print(family)
     stop("'family' not recognized")
   }
-  if (!all(c("family", "link") %in% names(family))) 
+  fnames <- names(family)
+  if (!all(c("family", "link") %in% fnames)) 
     stop("'family' must contain at least 'family' and 'link' components")
+  if (length(miss_comp <- setdiff(c("linkfun", "variance"), 
+                                  fnames)) > 0) {
+    warning("some components missing from ", sQuote("family"), 
+            ": downstream methods may fail")
+  }
   if (grepl("^quasi", family$family)) 
     stop("\"quasi\" families cannot be used in glmmTMB")
   link <- family$link
   environment(formula) <- parent.frame()
   call$formula <- mc$formula <- formula
+  if (!is.null(eval(substitute(offset), data, enclos = environment(formula)))) {
+    formula <- addForm0(formula, makeOp(substitute(offset), 
+                                        op = quote(offset)))
+  }
   environment(ziformula) <- environment(formula)
   call$ziformula <- ziformula
   environment(dispformula) <- environment(formula)
@@ -28,13 +46,16 @@ glmmTMBhacked <- function (formula, data = NULL, family = gaussian(), ziformula 
   mf <- mf[c(1L, m)]
   mf$drop.unused.levels <- TRUE
   mf[[1]] <- as.name("model.frame")
-  if (glmmTMB:::inForm(ziformula, quote(.))) {
-    ziformula <- update(RHSForm(drop.special2(formula), as.form = TRUE), 
+  if (inForm(ziformula, quote(.))) {
+    ziformula <- update(glmmTMB:::RHSForm(drop.special2(formula), as.form = TRUE), 
                         ziformula)
   }
   formList <- list(formula, ziformula, dispformula)
-  formList <- lapply(formList, function(x) noSpecials(lme4:::subbars(x), 
-                                                      delete = FALSE))
+  for (i in seq_along(formList)) {
+    f <- formList[[i]]
+    f <- noSpecials(subbars(f), delete = FALSE)
+    formList[[i]] <- f
+  }
   combForm <- do.call(addForm, formList)
   environment(combForm) <- environment(formula)
   for (i in c("weights", "offset")) {
@@ -46,7 +67,7 @@ glmmTMBhacked <- function (formula, data = NULL, family = gaussian(), ziformula 
   nobs <- nrow(fr)
   weights <- as.vector(model.weights(fr))
   if (!is.null(weights) & !glmmTMB:::okWeights(family$family)) {
-    stop("'weights' are not available for this family. See `dispformula` instead.")
+    stop("'weights' are not available for this family.")
   }
   if (is.null(weights)) 
     weights <- rep(1, nobs)
@@ -54,41 +75,55 @@ glmmTMBhacked <- function (formula, data = NULL, family = gaussian(), ziformula 
   names(respCol) <- names(fr)[respCol]
   y <- fr[, respCol]
   if (is.matrix(y)) {
-    if (family$family == "binomial") {
-      warning("binomial models with N>1 are preferably specified as proportion~..., weights=N")
-    }
-    else {
+    if (!glmmTMB:::binomialType(family$family)) {
       stop("matrix-valued responses are not allowed")
     }
   }
   etastart <- start <- mustart <- NULL
   if (!is.null(family$initialize)) {
-    eval(family$initialize)
+    local(eval(family$initialize))
   }
-  y <- as.numeric(y)
-  if (grepl("^truncated", family$family) & (any(y < 1)) & (ziformula == 
-                                                           ~0)) 
+  if (grepl("^truncated", family$family) && (!is.factor(y) && 
+                                             any(y < 1)) & (ziformula == ~0)) 
     stop(paste0("'", names(respCol), "'", " contains zeros (or values below the allowable range). ", 
                 "Zeros are compatible with a trucated distribution only when zero-inflation is added."))
   TMBStruc <- mkTMBStruchacked(formula, ziformula, dispformula, combForm, 
-                         mf, fr, yobs = y, respCol, offset, weights, family = family, 
-                         se = se, phyloZ = phyloZ, phylonm = phylonm ,call = call, verbose = verbose)
+                               mf, fr, yobs = y, respCol, weights, contrasts = contrasts, 
+                               family = family, se = se, call = call, verbose = verbose, 
+                               REML = REML, phylonm=phylonm, phyloZ=phyloZ)
   TMBStruc$control <- lapply(control, eval, envir = TMBStruc)
   if (!doFit) 
     return(TMBStruc)
-  # res <- fit_TMBstruc(TMBStruc)
   res <- glmmTMB:::fitTMB(TMBStruc)
   return(res)
 }
 
 mkTMBStruchacked <- function (formula, ziformula, dispformula, combForm, mf, fr, 
-          yobs, respCol, offset, weights, family, se = NULL, phyloZ = phyloZ, phylonm = phylonm, 
-          call = NULL, verbose = NULL, ziPredictCode = "corrected", doPredict = 0, 
-          whichPredict = integer(0)) 
+                              yobs, respCol, weights, contrasts=contrasts, size = NULL, family, se = NULL, phyloZ = phyloZ, 
+                              phylonm=phylonm,
+                              call = NULL, verbose = NULL, ziPredictCode = "corrected", 
+                              doPredict = 0, whichPredict = integer(0), REML = FALSE) 
 {
+  if (!is(family, "family")) {
+    if (is.list(family)) {
+      warning("specifying ", sQuote("family"), " as a plain list is deprecated")
+    }
+    fname <- family$family
+    args <- family["link"]
+    ff <- try(do.call(fname, args), silent = TRUE)
+    if (!inherits(ff, "try-error")) {
+      family <- ff
+    }
+    else {
+      if (is.null(family$linkfun)) {
+        family <- c(family, make.link(family$link))
+      }
+    }
+  }
   mapArg <- NULL
+  dispformula.orig <- dispformula
   if (glmmTMB:::usesDispersion(family$family) && (dispformula == ~0)) {
-    if (family != "gaussian") 
+    if (family$family != "gaussian") 
       stop("~0 dispersion not implemented for ", sQuote(family$family), 
            " family")
     betad_init <- log(sqrt(.Machine$double.eps))
@@ -101,25 +136,48 @@ mkTMBStruchacked <- function (formula, ziformula, dispformula, combForm, mf, fr,
   if (!glmmTMB:::usesDispersion(family$family)) {
     dispformula[] <- ~0
   }
-  condList <- glmmTMB:::getXReTrms(formula, mf, fr)
-  condListhacked <- getXReTrmshacked(formula, mf, fr, phyloZ=phyloZ, phylonm=phylonm)
-  ziList <- glmmTMB:::getXReTrms(ziformula, mf, fr)
+  condList <- glmmTMB:::getXReTrms(formula, mf, fr, contrasts = contrasts)
+  condListhacked <- getXReTrmshacked(formula, mf, fr, contrasts = contrasts, phylonm = phylonm, phyloZ = phyloZ)
+  ziList <- glmmTMB:::getXReTrms(ziformula, mf, fr, contrasts = contrasts)
   dispList <- glmmTMB:::getXReTrms(dispformula, mf, fr, ranOK = FALSE, 
-                         "dispersion")
+                                   type = "dispersion", contrasts = contrasts)
+  condReStruc <- with(condList, getReStruc(reTrms, ss))
   ziReStruc <- with(ziList, getReStruc(reTrms, ss))
   grpVar <- with(condList, getGrpVar(reTrms$flist))
-  condReStruc <- with(condList, getReStruc(reTrms, ss))
-  n.edge <- ncol(phyZ)
   nobs <- nrow(fr)
-  if (is.null(offset <- model.offset(fr))) 
-    offset <- rep(0, nobs)
-  if (is.null(weights <- fr[["(weights)"]])) 
+  if (is.null(weights)) 
     weights <- rep(1, nobs)
+  if (glmmTMB:::binomialType(family$family)) {
+    if (is.factor(yobs)) {
+      yobs <- pmin(as.numeric(yobs) - 1, 1)
+      size <- rep(1, nobs)
+    }
+    else {
+      if (is.matrix(yobs)) {
+        size <- yobs[, 1] + yobs[, 2]
+        yobs <- yobs[, 1]
+      }
+      else {
+        if (all(yobs %in% c(0, 1))) {
+          size <- rep(1, nobs)
+        }
+        else {
+          yobs <- weights * yobs
+          size <- weights
+          weights <- rep(1, nobs)
+        }
+      }
+    }
+  }
+  if (is.null(size)) 
+    size <- numeric(0)
   data.tmb <- lme4:::namedList(X = condList$X, Z = condList$Z, Xzi = ziList$X, 
-                        Zzi = ziList$Z, Xd = dispList$X, yobs, respCol, offset, 
-                        weights, terms = condReStruc, termszi = ziReStruc, family = glmmTMB:::.valid_family[family$family], 
-                        link = glmmTMB:::.valid_link[family$link], ziPredictCode = glmmTMB:::.valid_zipredictcode[ziPredictCode], 
-                        doPredict = doPredict, whichPredict = whichPredict)
+                               Zzi = ziList$Z, Xd = dispList$X, yobs, respCol, offset = condList$offset, 
+                               zioffset = ziList$offset, doffset = dispList$offset, 
+                               weights, size, terms = condReStruc, termszi = ziReStruc, 
+                               family = glmmTMB:::.valid_family[family$family], link = glmmTMB:::.valid_link[family$link], 
+                               ziPredictCode = glmmTMB:::.valid_zipredictcode[ziPredictCode], 
+                               doPredict = doPredict, whichPredict = whichPredict)
   getVal <- function(obj, component) vapply(obj, function(x) x[[component]], 
                                             numeric(1))
   beta_init <- if (family$link %in% c("identity", "inverse")) 
@@ -134,37 +192,41 @@ mkTMBStruchacked <- function (formula, ziformula, dispformula, combForm, mf, fr,
                                     thetaf = rep(0, numThetaFamily)))
   randomArg <- c(if (ncol(data.tmb$Z) > 0) "b", if (ncol(data.tmb$Zzi) > 
                                                     0) "bzi")
-  
-  for(i in 1:length(condReStruc)){
-    condReStruc[[i]]$blockReps <- n.edge
-    data.tmb$terms[[i]]$blockReps <- n.edge
-  }
-  
-  condList$Z <- t(condListhacked$reTrms$Zt)
-  data.tmb$Z <- t(condListhacked$reTrms$Zt)
-  
-  parameters$b <- rep(0,ncol(data.tmb$Z))
-  
+  if (REML) 
+    randomArg <- c(randomArg, "beta")
+  dispformula <- dispformula.orig
   return(lme4:::namedList(data.tmb, parameters, mapArg, randomArg, 
-                   grpVar, condList, ziList, dispList, condReStruc, ziReStruc, 
-                   family, respCol, allForm = lme4:::namedList(combForm, formula, 
-                                                        ziformula, dispformula), fr, se, call, verbose))
+                          grpVar, condList, ziList, dispList, condReStruc, ziReStruc, 
+                          family, contrasts, respCol, allForm = lme4:::namedList(combForm, 
+                                                                                 formula, ziformula, dispformula), fr, se, call, verbose, 
+                          REML))
 }
 
-getXReTrmshacked <- function (formula, mf, fr, ranOK = TRUE, type = "", phyloZ=phyloZ, phylonm=phylonm) 
+getXReTrmshacked <- function (formula, mf, fr, ranOK = TRUE, type = "", contrasts, phyloZ = phyloZ, 
+                              phylonm = phylonm) 
 {
   fixedform <- formula
-  glmmTMB:::RHSForm(fixedform) <- lme4:::nobars(glmmTMB:::RHSForm(fixedform))
+  glmmTMB:::RHSForm(fixedform) <- nobars(glmmTMB:::RHSForm(fixedform))
   nobs <- nrow(fr)
   if (identical(glmmTMB:::RHSForm(fixedform), ~0) || identical(glmmTMB:::RHSForm(fixedform), 
-                                                     ~-1)) {
+                                                               ~-1)) {
     X <- NULL
   }
   else {
     mf$formula <- fixedform
     terms_fixed <- terms(eval(mf, envir = environment(fixedform)))
-    X <- model.matrix(fixedform, fr, contrasts)
+    X <- model.matrix(glmmTMB:::drop.special2(fixedform), fr, contrasts)
+    offset <- rep(0, nobs)
     terms <- list(fixed = terms(terms_fixed))
+    if (inForm(fixedform, quote(offset))) {
+      for (o in extractForm(fixedform, quote(offset))) {
+        offset_nm <- deparse(o)
+        if (length(offset_nm) > 1) {
+          stop("trouble reconstructing offset name")
+        }
+        offset <- offset + fr[[offset_nm]]
+      }
+    }
   }
   ranform <- formula
   if (is.null(lme4:::findbars(ranform))) {
@@ -182,51 +244,6 @@ getXReTrmshacked <- function (formula, mf, fr, ranOK = TRUE, type = "", phyloZ=p
     ss <- unlist(ss$reTrmClasses)
     Z <- t(reTrms$Zt)
   }
-  lme4:::namedList(X, Z, reTrms, ss, terms)
+  lme4:::namedList(X, Z, reTrms, ss, terms, offset)
 }
 
-getRestruchacked <- function (reTrms, ss = NULL) 
-{
-  if (is.null(reTrms)) {
-    list()
-  }
-  else {
-    assign <- attr(reTrms$flist, "assign")
-    nreps <- vapply(assign, function(i) length(levels(reTrms$flist[[i]])), 
-                    0)
-    blksize <- diff(reTrms$Gp)/nreps
-    if (is.null(ss)) {
-      ss <- rep("us", length(blksize))
-    }
-    covCode <- .valid_covstruct[ss]
-    parFun <- function(struc, blksize) {
-      switch(as.character(struc), `0` = blksize, `1` = blksize * 
-               (blksize + 1)/2, `2` = blksize + 1, `3` = 2, 
-             `4` = 2, `5` = 2, `6` = 2, `7` = 3, `8` = 2 * 
-               blksize - 1)
-    }
-    blockNumTheta <- mapply(parFun, covCode, blksize, SIMPLIFY = FALSE)
-    ans <- lapply(seq_along(ss), function(i) {
-      tmp <- list(blockReps = nreps[i], blockSize = blksize[i], 
-                  blockNumTheta = blockNumTheta[[i]], blockCode = covCode[i])
-      if (ss[i] == "ar1") {
-        if (any(reTrms$cnms[[i]][1] == "(Intercept)")) 
-          warning("AR1 not meaningful with intercept")
-      }
-      if (ss[i] == "ou") {
-        times <- parseNumLevels(reTrms$cnms[[i]])
-        if (ncol(times) != 1) 
-          stop("'ou' structure is for 1D coordinates only.")
-        if (is.unsorted(times, strictly = TRUE)) 
-          stop("'ou' is for strictly sorted times only.")
-        tmp$times <- drop(times)
-      }
-      if (ss[i] %in% c("exp", "gau", "mat")) {
-        coords <- parseNumLevels(reTrms$cnms[[i]])
-        tmp$dist <- as.matrix(dist(coords))
-      }
-      tmp
-    })
-    setNames(ans, names(reTrms$Ztlist))
-  }
-}

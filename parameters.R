@@ -1,6 +1,6 @@
 ### parameters for phylogenetic tree simulations
 seed <- 5191
-nspp <- 500
+nspp <- 50
 
 
 set.seed(seed)
@@ -9,7 +9,7 @@ set.seed(seed)
 #nspp <- 50
 
 nsite <- 10
-nsite <- 1
+# nsite <- 1
 
 # residual variance (set to zero for binary data)
 sd.resid <- 10

@@ -4,7 +4,9 @@ library(dplyr)
 library(phylolm)
 
 dat <- data.frame(dat)
-rownames(dat) <- dat$sp
+#rownames(dat) <- dat$sp
+
+print(head(dat))
 
 tt <- system.time(fit_phylolm <- phylolm(Y~X
     , data=dat
