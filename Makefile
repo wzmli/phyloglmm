@@ -64,14 +64,14 @@ fit.pois.Rout: simulate_poistree.Rout phyloglmm_setup.R new_phylo_setup.R phylog
 fit.gls.%.Rout: names.R parameters.R simulate_tree.R fit_gls.R
 	$(run-R)
 
-fit.gls.test.1.Rout:fit_gls.R
+fit.gls.ss.large.1.Rout:fit_gls.R
 
 ### phylolm
 
 fit.phylolm.%.Rout: names.R parameters.R simulate_tree.R fit_phylolm.R
 	$(run-R)
 
-fit.phylolm.large.1.Rout: parameters.R fit_phylolm.R
+fit.phylolm.ss.large.1.Rout: fit_phylolm.R
 
 
 ### lme4 can fit single and multiple sites
@@ -79,8 +79,7 @@ fit.phylolm.large.1.Rout: parameters.R fit_phylolm.R
 fit.lme4.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R phyloglmm.R
 	$(run-R)
 
-fit.lme4.large.1.Rout: phyloglmm.R
-fit.lme4.test.1.Rout: phyloglmm.R
+fit.lme4.ss.large.1.Rout: phyloglmm.R
 
 ### pez can only fit multiple sites
 
@@ -129,7 +128,7 @@ Ignore += outline.html
 fit.MCMCglmm.%.Rout: names.R parameters.R simulate_tree.R MCMCglmmhacked.R fit_MCMCglmm.R
 	$(run-R)
 
-fit.MCMCglmm.small.1.Rout:
+fit.MCMCglmm.ss.small.1.Rout: fit_MCMCglmm.R
 
 fit_glmmPQL.Rout: parameters.Rout simulate_tree.Rout fit_glmmPQL.R
 	$(run-R)
@@ -174,7 +173,7 @@ compare_pez_lme4.Rout: phylosig.Rout get_RE.R hacked_code/0_pkg_func.R phyloglmm
 ### Makestuff
 
 clean:
-	rm .*.RData *.Rout *.wrapR.r *.Rlog *.wrapR.rout
+	rm .*.RData *.Rout *.wrapR.r *.Rlog *.wrapR.rout .*.wrapR.rout .*.Rout.pdf .*.Rlog
 
 ## Change this name to download a new version of the makestuff directory
 # Makefile: start.makestuff

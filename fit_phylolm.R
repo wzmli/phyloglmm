@@ -21,6 +21,6 @@ print(summary(fit_phylolm))
 
 
 phylolm_list <- list(fit_phylolm,tt)
-# saveRDS(phylolm_list,file=paste("datadir/phylolm_phyfull",size,seed,"rds",sep="."))
+saveRDS(phylolm_list,file=paste("datadir/phylolm",numsite,size,seed,"rds",sep="."))
 
-
+#rdnosave()

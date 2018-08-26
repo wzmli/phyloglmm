@@ -21,11 +21,7 @@ dat <- (dat
 #debug(modify_phylo_retrms)
 
 
-	lme4fit <- phylo_lmm(Y ~ X
-		 + (1|sp)
-		# + (0 + X|sp)
-#		 + (1|site)
-#		 + (1+X|sp)
+lme4fit <- phylo_lmm(Y ~ X + (1+X|sp)
 		, data=dat
 		, phylonm = c("sp","site:sp")
 		, phylo = phy
@@ -45,4 +41,6 @@ print(summary(lme4fit))
 
 lme4_list <- list(lme4fit, lme4time)
 
-#saveRDS(lme4_list, file=paste("datadir/lme4",size,seed,"rds",sep="."))
+saveRDS(lme4_list, file=paste("datadir/lme4",ss,size,seed,"rds",sep="."))
+
+#rdnosave()
