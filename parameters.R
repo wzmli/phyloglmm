@@ -33,4 +33,4 @@ ss <- 6 ## sp:site
 # MCMC iterations
 
 nitt <- 80000  ##2e4 ## was 5e6
-
+stan_nitt <- 10000

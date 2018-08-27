@@ -99,6 +99,7 @@ fit_cs.pez.%.Rout: names.R parameters.R simulate_tree.R phyloglmm_setup.Rout fit
 fit.brms.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R simulate_cs.R fit_brms.R
 	$(run-R)
 
+fit.brms.ss.small.1.Rout: fit_brms.R
 ### Collect and plot results
 
 collect_gls.Rout: collect_gls.R
