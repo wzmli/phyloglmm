@@ -194,6 +194,14 @@ mkTMBStruchacked <- function (formula, ziformula, dispformula, combForm, mf, fr,
                                                     0) "bzi")
   if (REML) 
     randomArg <- c(randomArg, "beta")
+  n.edge <- ncol(phyZ)
+  for(i in 1:length(condReStruc)){
+    condReStruc[[i]]$blockReps <- n.edge
+    data.tmb$terms[[i]]$blockReps <- n.edge
+  }
+  condList$Z <- t(condListhacked$reTrms$Zt)
+  data.tmb$Z <- t(condListhacked$reTrms$Zt)
+  parameters$b <- rep(0,ncol(data.tmb$Z))
   dispformula <- dispformula.orig
   return(lme4:::namedList(data.tmb, parameters, mapArg, randomArg, 
                           grpVar, condList, ziList, dispList, condReStruc, ziReStruc, 
