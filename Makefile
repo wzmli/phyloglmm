@@ -73,13 +73,19 @@ fit.phylolm.%.Rout: names.R parameters.R simulate_tree.R fit_phylolm.R
 
 fit.phylolm.ss.large.1.Rout: fit_phylolm.R
 
-
 ### lme4 can fit single and multiple sites
 
 fit.lme4.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R phyloglmm.R
 	$(run-R)
 
-fit.lme4.ss.large.1.Rout: phyloglmm.R
+fit.lme4.ms.xlarge.1.Rout: phyloglmm.R
+
+### tmb
+
+fit.glmmTMB.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R glmmTMBhacked.R fit_tmb.R
+	$(run-R)
+
+fit.glmmTMB.ss.xlarge.1.Rout: fit_tmb.R
 
 ### pez can only fit multiple sites
 
@@ -96,7 +102,7 @@ fit_cs.lme4.%.Rout: names.R parameters.R simulate_tree.R phyloglmm_setup.Rout fi
 fit_cs.pez.%.Rout: names.R parameters.R simulate_tree.R phyloglmm_setup.Rout fit_cs_pez.R
 	$(run-R)
 
-fit.brms.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R simulate_cs.R fit_brms.R
+fit.brms.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R  simulate_cs.R fit_brms.R
 	$(run-R)
 
 fit.brms.ss.small.1.Rout: fit_brms.R

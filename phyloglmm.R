@@ -28,7 +28,7 @@ lme4fit <- phylo_lmm(Y ~ X + (1+X|sp)
 		, phyloZ=phyZ
 		, control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore"
 		)
-		, REML = FALSE
+		, REML = TRUE
 	)
 
 t2 <- proc.time()
@@ -41,6 +41,6 @@ print(summary(lme4fit))
 
 lme4_list <- list(lme4fit, lme4time)
 
-saveRDS(lme4_list, file=paste("datadir/lme4",ss,size,seed,"rds",sep="."))
+saveRDS(lme4_list, file=paste("datadir/lme4",numsite,size,seed,"rds",sep="."))
 
 #rdnosave()
