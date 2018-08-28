@@ -1,5 +1,11 @@
 ## Journal
 
+## August 27
+
+- cannot use compute.brlen("Grafen") to make ultrametric trees because the "scaling" trick will not work (det(vcv) will be zero)
+- cannot scale non-ultrametric trees (MCMCglmm)
+- scale simulated tree at the first step to avoid all these problems.
+
 ## July 27th 2018
 
 - I don't like having both journal and notes.

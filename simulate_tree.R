@@ -11,7 +11,7 @@ phy <- rtree(n = nspp)
 
 # standardize the phylogenetic covariance matrix to have determinant 1 (optional)
 Vphy <- vcv(phy)
-# Vphy <- Vphy/(det(Vphy)^(1/nspp))
+Vphy <- Vphy/(det(Vphy)^(1/nspp)) ## for MCMCglmm?
 
 iD <- t(chol(Vphy))
 Xsd <- 1

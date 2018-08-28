@@ -13,7 +13,7 @@ dat <- (dat
 dat <- data.frame(dat)
 
 time1 <- proc.time()
-inv.phylo <- inverseA(phy,nodes="TIPS",scale=TRUE)
+inv.phylo <- inverseA(phy,nodes="TIPS",scale=FALSE)
 
 prior <- list(G=list(G1=list(V=diag(2),nu=2)
 #						, G2 = list(V=1,nu=2)
