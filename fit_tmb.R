@@ -25,14 +25,17 @@ dat <- data.frame(dat)
 # debug(mkTMBStruchacked)
 # debug(getXReTrmshacked)
 # debug(mkReTrms)
-hackedmod <- glmmTMBhacked(Y ~ X  + (1|sp)
+hackedmod <- glmmTMBhacked(Y ~ X  + (1 + X|sp)
   , data=dat
   , phyloZ = phyZ
   , phylonm = "sp"
   , doFit=TRUE
   , dispformula = ~1
   , control=glmmTMBControl(optCtrl=list(trace=1))
+  , REML = TRUE
   ) 
 
 
-print(hackedmod)
+print(summary(hackedmod))
+
+#rdnosave()

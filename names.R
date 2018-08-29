@@ -8,10 +8,10 @@ seed <- as.numeric(targetname[5])
 if(size == "small"){nspp <- 25}
 if(size == "med"){nspp <- 50}
 if(size == "large"){nspp <- 100}
-if(size == "xlarge"){nspp <- 600}
+if(size == "xlarge"){nspp <- 300}
 
 
 if(numsite == "ss"){nsite <- 1}
-if(numsite == "ms"){nsite <- 10}
+if(numsite == "ms"){nsite <- 25}
 
 datadir <- "datadir/"

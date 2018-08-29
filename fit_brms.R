@@ -12,7 +12,7 @@ dat <- (dat
 
 dat <- data.frame(dat)
 
-inv.phylo <- MCMCglmm:::inverseA(phy,nodes="TIPS",scale=TRUE)
+inv.phylo <- MCMCglmm:::inverseA(phy,nodes="TIPS",scale=FALSE)
 
 brms_time1 <- proc.time()
   A <- solve(inv.phylo$Ainv)
