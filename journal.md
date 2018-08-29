@@ -1,5 +1,41 @@
 ## Journal
 
+## August 28
+
+Two _full_ models, single site vs multiple site.
+
+Single site model will have 
+1+X|sp + residual
+
+mismatch model:
+gls(glmmTMB proxy?) 
+phylolm
+
+match models:
+lme4
+glmmtmb
+mcmcglmm
+brms
+
+multiple sites:
+1+X|sp (1+X|taxa?!?) + 1|site + 1|site:sp + residual
+pez
+lme4
+glmmtmb
+brms 
+
+1. efficiency (time)
+2. data size 
+3. goodness of fit?
+
+
+Discussion 
+Are we doing too much? 
+AIC for reduce models and what assumptions and when is it okay to "neglict" random slope ... 
+Diagnostic test for phylogenetic signal?
+
+
+
 ## August 27
 
 - cannot use compute.brlen("Grafen") to make ultrametric trees because the "scaling" trick will not work (det(vcv) will be zero)
