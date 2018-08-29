@@ -23,7 +23,8 @@ if(nsite == 1){
 #	X <- iD %*% rnorm(n=nspp,sd=Xsd)
 }
 if(nsite > 1){
-X <- matrix(1:nsite, nrow = 1, ncol = nsite)
+X <- rnorm(n = nspp*nsite, sd=Xsd)
+B_site <- matrix(1:nsite, nrow = 1, ncol = nsite)
 # X <- (X - mean(X))/sd(X)
 }
 site_name <- sapply(1:nsite, function(x){paste("site","_",x,sep="")})
@@ -74,9 +75,9 @@ YY <- matrix(Y, nrow = nspp * nsite, ncol = 1)
 XX <- matrix(kronecker(X, matrix(1, nrow = nspp, ncol = 1)), nrow =
                nspp * nsite, ncol = 1)
 
-if(nsite == 1){
+# if(nsite == 1){
 	XX <- matrix(X,nrow=nspp,ncol=1)
-}
+# }
 
 site <- matrix(kronecker(1:nsite, matrix(1, nrow = nspp, ncol =
                                            1)), nrow = nspp * nsite, ncol = 1)
