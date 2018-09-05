@@ -38,9 +38,9 @@ lme4time <- t3-t1
 if(numsite == "ms"){
   
   tempmod <- phylo_lmm(Y ~ X
-    + (1|sp:site)
-    + (1 + X|sp)
-    + (1 | obs)
+    + (1 | sp:site)
+    + (1 + X |sp)
+    + (1 + X | obs)
     + (1 | site)
     , data=dat
     , phylonm = c("sp","sp:site")
@@ -55,22 +55,23 @@ if(numsite == "ms"){
   t2 <- rho.B01*sd.B1/sigma(tempmod)
   t3 <- sqrt((sd.B1/sigma(tempmod))^2 - t2^2)
   
-  new_y <- simulate(tempmod, newparams=list(theta=c(ss/sigma(tempmod)
-                                                    , t1
-                                                    , t2
-                                                    , t3
-                                                    # , sd.B1/sigma(tempmod)
-                                                      , sd.tip/sigma(tempmod)
-                                                      , sd.site/sigma(tempmod)
+  t4 <- sd.tip/sigma(tempmod)
+  t5 <- rho.slopetip*sd.slope/sigma(tempmod)
+  t6 <- sqrt((sd.slope/sigma(tempmod))^2 - t5^2)
+  new_y <- simulate(tempmod
+  	, newparams=list(theta=c(ss/sigma(tempmod)
+   	, t1, t2, t3
+		, t4, t5, t6
+     	, sd.site/sigma(tempmod)
   )
   , beta = c(beta0,beta1)))
   dat$new_y <- new_y[[1]]
   
 t4 <- proc.time()
     lme4fit <- phylo_lmm(new_y ~ X
-      + (1|sp:site)
+      + (1 | sp:site)
       + (1 + X | sp)
-      + (1 | obs)
+		+ (1 + X | obs)
       + (1 | site)
       , data=dat
       , phylonm = c("sp","sp:site")

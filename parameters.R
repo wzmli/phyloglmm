@@ -14,15 +14,17 @@ sd.resid <- 10
 beta0 <- 0
 beta1 <- 0
 
-# magnitude of random effects
+# magnitude of phylogenetic random effects
 sd.B0 <- 4
 sd.B1 <- 2
-#sd.B1 <- 0.00000001
-#sd.B0 <- 0.00000001
+rho.B01 <- 0.7
+
+# magnitude of random effects
+
 sd.site <- 8
 sd.tip <- 5
-
-rho.B01 <- 0.7
+sd.slope <- 3
+rho.slopetip <- 0.4
 
 # whether or not to include phylogenetic signal in B0 and B1
 signal.B0 <- TRUE

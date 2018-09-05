@@ -58,6 +58,8 @@ fit.pois.Rout: simulate_poistree.Rout phyloglmm_setup.R new_phylo_setup.R phylog
 
 ######################################################################
 
+example.Rout: parameters.R example.R
+	$(run-R)
 
 ### Single site 
 
@@ -86,7 +88,7 @@ fit.lme4.ms.xlarge.1.Rout: phyloglmm.R
 fit.glmmTMB.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R glmmTMBhacked.R fit_tmb.R
 	$(run-R)
 
-fit.glmmTMB.ss.xlarge.1.Rout: fit_tmb.R
+fit.glmmTMB.ss.xlarge.2.Rout: fit_tmb.R
 
 ### pez can only fit multiple sites
 
