@@ -5,7 +5,7 @@ Ever-increasing data collection capabilities (such as genomic sequencing, teleme
 As a result, researchers are interested in exploring ways to study more complicated systems and fitting more models to data or synthetic databases of species traits.
 One particular area of growth is phylogenetic comparative analysis using phylogenetic (eco-evolutionary) regression \cite{hansen2012interpreting}. 
 Comparative analyses explore the relationships among species traits (including occurrence within communities) while taking the underlying/latent evolutionary relationships of the species into account; in some cases, researchers are interested in quantifying the evolutionary signals underly traits rather than simply controlling for them.
-Unlike ordinary regression, where biologist look at the change in the of predictor variables (for example, observable species trait and environmental factors) on the response variable; the evolutionary relationship between species are unobservable. 
+Unlike ordinary regression, where biologist look at the change in the of predictor variables (for example, species trait and environmental factors) on the response variable that are often observable; in phylogenetic regression, the evolutionary relationship between species are unobservable and assumed to evolve in some underlying evolutionary process \citep{felsenstein1985phylogenies, butler2004phylogenetic}. 
 While evolutionary relationships are biologically important and interesting, they often get neglected in multi-species analyses. 
 Recently, biologist have started to incorportate phylogenetic relationships to multi-species modelling, and there exist a range of statistical tools for comparative analyses, but many of these tools are either inflexible, or too computationally expensive to analyze large volumes of data.
 In such cases, researchers may try to find ways to simplify their analyses (i.e. simplifying the model by making assumptions of the evolutionary process) \citep{bunnefeld2012island, ord2010adaptation},
@@ -21,19 +21,19 @@ In this paper, we propose an alternative method for flexibly and efficiently mod
 
 There are two general challenges in linking the evolutionary process to a phylogenetic comparative statistical framework.
 % Phylogenetic signal : the magnitude of phylogenetic correlation
-The first challenge is segregating phylogenetic signals \citep{blomberg2003testing} and other sources of variation that are present in residuals.  
+The first challenge is to identify and segregate phylogenetic signals \citep{blomberg2003testing} and other sources of variation that are present in residuals.  
 % \bmb{prev sentence doesn't seem be quite the right lead-in to the rest of the paragraph? You go on to talk about the tip-variation/residual-variation confounding issue. Maybe replace with something talking more specifically about resolving tip variation?}
 The classic phylogenetic regression assumes that phylogenetic correlation (PC) among the residuals from a regression between the traits arises because the residual variation evolves along the branches of the phylogeny according to a Brownian motion process; if the traits are normally distributed and observed without any additional error or within-species variation, this leads to Felsenstein's method of phylogenetically independent contrasts (PICs) \citep{felsenstein1985phylogenies}.
 More recent approaches -- including phylogenetic generalized linear mixed models (PGLMM) \citep{ives2011generalized}, Pagel's $\lambda$ \citep{pagel1999inferring}, and Blomberg's $K$ \citep{blomberg2003testing} --- build upon Felsenstein's PICs by considering different response distributions and allowing extra parameters to account for additional complexities in the evolutionary process. They partition the phylogenetically correlated residual variation into (1) phylogenetically uncorrelated residual variation (observation error or tip variation) and (2) phylogenetic signal  \citep[biological/evolutionary process error:][]{hansen2012interpreting}.
 However, when multiple observations (or repeated measures) of the same species (taxon) are being observed, this introduces another level of variation; in this case, phylogenetic signal and tip variation are now both part of the evolutionary process error (we will call this species/interept level variation) and residual variation is associated with observation level variation (the standard statistical definition).
-\ml{make a diagram!}
+\mli{make a diagram!}
 %\bmb{This is a good point, well expressed. Does PGLMM lump tip variation and within-species variation, or is this primarily an issue with Blomberg/Pagel? Thinking about Boettiger's critique \cite{boettiger2013is} (don't know if it's been peer-reviewed, we could ask him), which might be resolved if we think explicitly about within-species variation \ldots
-%\ml{I think it is more like our simulation test. In Boettiger's example, it is treating sister taxa as different species. So it is using a phylogenetic tree of 8 species instead of 4.}
+%\mli{I think it is more like our simulation test. In Boettiger's example, it is treating sister taxa as different species. So it is using a phylogenetic tree of 8 species instead of 4.}
 Despite the addition of multiple observations per tip taxon (species) being statistically straightforward, it is rarely seen: existing platforms are unable to fit multiple observations, or unbalanced design data, or both.
 % \bmb{OK, but we should be prepared to support this. Could we construct a table of existing approaches/platforms with their capabilities?}
 
 
-The second challenge is flexibly model phylogenetic relationships to other predictor variables (predictor level variation), that is, the variation among multiple different grouping predictor variables or variation in effects (random slopes) (i.e phylogenetically related species may behave/ have similar changes in effect or in similar conditions) as well as correlated variation.
+The second challenge is flexibly model phylogenetic relationships to other predictor variables (predictor level variation), that is, the variation among multiple different grouping predictor variables (random levels) or variation in effects (random slopes) (i.e phylogenetically related species may behave/ have similar changes in effect or in similar conditions) as well as correlated variation.
 While it is reasonable to examine evolutionary relationships between species with their response, it is plausiable the changes in effect or levels of the predictor variables have on the response variable are also phylogenetically correlated. 
 %\bmb{maybe we can focus on random slopes here? Need to point out that example studies below are \emph{exceptions} to the general assumption of random intercepts only (how did they manage to do their inference?)}
 Several recent studies have tried to incorporate phylogenetic signals beyond species level and looked at species response to phylogenetic signals with changes in environmental factors.
@@ -97,10 +97,10 @@ where $\bX$ is an $n \times m$ model matrix containing $m$ predictor variables (
 The PC matrix is inferred from the topology of the evolutionary tree by capturing the evolutionary changes that occurred on all the branches, which can be incorporated in statistical methods \citep{garamszegi2014modern}.
 
 %\bmb{give a ref for this? maybe Paradis's ape book, or Garamszegi's book, or ?}
-%\ml{chapter 7 in garamszegi 2014}
+%\mli{chapter 7 in garamszegi 2014}
 
 % More recently, researchers use linear mixed model and generalized linear mixed model framework to model complex systems with phylogenetic structures.
-%\ml{Why? Data type, interactions, random effects, etc... Need to really explain random effects here. Alternatively, we can drop this line and write this...}
+%\mli{Why? Data type, interactions, random effects, etc... Need to really explain random effects here. Alternatively, we can drop this line and write this...}
 An alternative modelling approach is to use linear mixed effects modelling framework \citep{lynch1991methods}.
 The typical linear mixed model has the form:
 \begin{align}
@@ -112,7 +112,7 @@ where $Z$ is an $n \times m$ model matrix for the $m$ -- dimensional vector-valu
 Analogously, the phylogenetic regression given by \ref{eq:gls1} can be represented in the mixed model framework by constraining $\bSigma(\theta) = \sigma^2 \bC$.
 
 \bmb{worth including the \pkg{MCMCglmm}/\pkg{brms} inverse-VCV formulation here? And/or contacting Eric Pedersen to find out about his Markov Random Field phylog. stuff in GAM?}
-\ml{inverse VCV for BLUP? an alternative way to find the inverse of the vcv(phy)}
+\mli{inverse VCV for BLUP? an alternative way to find the inverse of the vcv(phy)}
 
 \subsection{Reformulating phylogenetic correlation matrix}
 % The standard problem of phylogenetic comparative methods is to analyze relationships among data where the observations are gathered from nodes (usually tips) of a phylogenetic tree.
@@ -122,6 +122,7 @@ Analogously, the phylogenetic regression given by \ref{eq:gls1} can be represent
 
 \newcommand{\bS}{{\mathbf S}}
 \newcommand{\bJ}{{\mathbf J}}
+\newcommand{\bB}{{\mathbf B}}
 \newcommand{\bBadj}{{\mathbf B}_{\mbox{\tiny adj}}}
 \newcommand{\bomega}{{\boldsymbol \omega}}
 \newcommand{\bell}{{\boldsymbol \ell}}
@@ -132,7 +133,33 @@ In particular, suppose that the evolutionary process is a Brownian motion, which
 In that case, the phylogenetic variability of a particular observation can be written as the sum of the evolutionary changes that occurred on all of the branches in the phylogeny in its past. 
 Thus, the evolutionary history for each species can be modeled with a sequence of independent errors with species--branch matrix $\bS$, rather than having to impose a correlation $\bC$. 
 
-$\bS$ is a matrix product of an $n \times b$ indicator matrix $\bS_{id}$ of branch indices, and an adjusted branch length vector $\bBadj$:
+\subsubsection*{Constructing the species--branch matrix}
+
+$\bS$ is a matrix product of an $n \times b$ indicator matrix $\bS_{id}$ of branch indices, and a branch length vector $\bB$.
+For example, \mli{ref fig:tree} is a phylogenetic tree with three species:
+
+\mli{example.Rout}
+\begin{align*}
+\bS_{id} = \begin{bmatrix}
+1 & 1 & 0 & 0 \\ 
+1 & 0 & 1 & 0 \\ 
+0 & 0 & 0 & 1
+\end{bmatrix} , 
+\bB = \begin{bmatrix}
+L1 \\
+L2 \\
+L3 \\
+L4 
+\end{bmatrix}
+\\
+\bS = \bS_{id} \bB = \begin{bmatrix}
+L1 & L2 & 0 & 0 \\
+L1 &  0 &L3 & 0 \\
+0  &  0 & 0  & L4
+\end{bmatrix}
+\end{align*}
+
+
 
 \begin{align}
 \bBadj & = (\frac{\bell}{\bomega})^{1/2} \\
@@ -140,7 +167,11 @@ $\bS$ is a matrix product of an $n \times b$ indicator matrix $\bS_{id}$ of bran
 \end{align}
 % \bmb{would like to avoid multi-letter notation if possible; multi-letter subscripts should be text, e.g. ${\mathbf B}_{\mbox{\tiny adj}}$ (using macros to define stuff in one place \ldots) Also consider $\ell$ as a replacement for $l$}
 where $\bell$ is the branch length vector, $\bomega$ is a scaling factor, and $\bSigma_{phy}$ is the variance-covariance matrix of the phylogenetic tree.
+For example, 
 This is mathematically equivalent under BM assumption where we can reconstruct $\bC$ by matrix multiplying $\bS$ by itself.
+
+
+\subsubsection*{Constructing the random effects model matrix}
 
 The random-effect model matrix $\bZ$ can be decomposed into term-wise model matrix $\bZ_{i}$ as described in \citet{bates2015fitting}.
 Thus, the phylogenetic correlated random-effect matrix $\bZ^{C}_{i}$ is
@@ -148,7 +179,6 @@ Thus, the phylogenetic correlated random-effect matrix $\bZ^{C}_{i}$ is
 \begin{equation}
 \bZ^{C}_{i} = (\bS^{T}_{i}\bJ^{T}_{i} \ast \bX^{T}_{i})^{T}, \label{eq:ZC}
 \end{equation}
-\ml{need a matrix diagram on the linear algebra}
 where $\ast$ is the Khatri-Rao product \citep{khatri1968solutions}, $\bS_{i}$ is an $\ell_{i} \times b_{i}$ matrix of species--branch relations; $\bJ_{i}$ the indicator matrix of grouping factors indices matrix size $n \times \ell_{i}$; $X_{i}$ is the raw random effects model matrix size $n \times p_{i}$. 
 
 \subsection{Simulation}
@@ -160,7 +190,7 @@ For models with multiple sites, we also assume for species and site interactions
 
 \subsection{Platforms}
 
-Our algorithmic approach is general and could be implemented in a wide range of computational platforms that support independent latent variables. We implemented our approach using the R packages \pkg{lme4} \citep{bates2015fitting} and \pkg{glmmTMB} \ml{citation}.
+Our algorithmic approach is general and could be implemented in a wide range of computational platforms that support independent latent variables. We implemented our approach using the R packages \pkg{lme4} \citep{bates2015fitting} and \pkg{glmmTMB} \mli{citation}.
 We compare our approach with five other R packages that can fit phylogenetic comparative models: \pkg{nlme} \citep{pinheiro2014r}, \pkg{phylolm} \citep{ho2014phylolm}, \pkg{pez} \citep{pearse2015pez}, \pkg{MCMCglmm} \cite{hadfield2010mcmc}, and \pkg{brms} \citep{burkner2016brms}.
 % \bmb{I think nlme can do other evolutionary models as well? May not be worth mentioning ...}
 % \begin{verbatim}
@@ -170,12 +200,12 @@ We compare our approach with five other R packages that can fit phylogenetic com
 Phylogenetic generalized least squares (PGLS) (\code{gls} in \pkg{nlme}) is one of the most widely used techniques in phylogenetic comparative analysis; it allows for the analysis of relationships among species traits in its residual variance and can also handle multiple predictor variables.
 Phylogenetic generalized linear models (PGLM) (\code{phyloglm} in \pkg{phylolm}) is a slightly more flexible variation of PGLS that can allow observational residuals.
 Both packages can do other evolutionary models and different correlation structures (i.e. Pagel's $\lambda$, Blombergs $K$ and etc.)
-Neither PGLS nor PGLM can multiple observations or predictor level variation \ml{intercept level vs predictor level?}. 
+Neither PGLS nor PGLM can multiple observations or predictor level variation \mli{intercept level vs predictor level?}. 
 One of the relatively few packages that currently fit phylogenetic correlations to predictor level variationis is \pkg{pez}, which can handle adding additional uncorrelated random slopes and interactions with intercept.
 
 \bmb{I like the commented-out table here (maybe in supp material? or maybe useful enough that it's worth including in the main text?) although it could take a lot of fussing to get it right}
   
-% Table \ml{ref something} provides the statistically equivalent fitting capabilities of common/existing phylogenetic methods.
+% Table \mli{ref something} provides the statistically equivalent fitting capabilities of common/existing phylogenetic methods.
 
 % % \begin{table}
 % % \begin{center}
