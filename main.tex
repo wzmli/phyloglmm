@@ -126,19 +126,29 @@ Analogously, the phylogenetic regression given by \ref{eq:gls1} can be represent
 \newcommand{\bBadj}{{\mathbf B}_{\mbox{\tiny adj}}}
 \newcommand{\bomega}{{\boldsymbol \omega}}
 \newcommand{\bell}{{\boldsymbol \ell}}
-
+\newcommand{\e}{{ \epsilon}}
 
 An alternative approach is to model the phylogenetic correlation as a \textit{Gaussian process}. 
 In particular, suppose that the evolutionary process is a Brownian motion, which means the evolution of a continuous trait is a random walk and daughter species after speciation are all independent.  
 In that case, the phylogenetic variability of a particular observation can be written as the sum of the evolutionary changes that occurred on all of the branches in the phylogeny in its past. 
-Thus, the evolutionary history for each species can be modeled with a sequence of independent errors with species--branch matrix $\bS$, rather than having to impose a correlation $\bC$. 
+Thus, the evolutionary history for each species can be modeled with a sequence of independent errors with species--branch matrix $\bS$, rather than having to impose a correlation $\bC$.
+For example, \mli{ref fig:tree} is a phylogenetic tree with three species, the corresponding $\bS$.
 
-\subsubsection*{Constructing the species--branch matrix}
+\begin{align*}
+\bS = \begin{bmatrix}
+\ell_1 \e_1 & \ell_2 \e_2 & 0 & 0 \\
+\ell_1 \e_1 &  0 & \ell_3 \e_3 & 0 \\
+0  &  0 & 0  & \ell_4 \e_4
+\end{bmatrix}
+\end{align*}
+The error value corresponding to tip 1 is $\ell_1 \e_1 + \ell_2 \e_2$, where $\ell_i$ is the square root of the branch length and the $\ell_i$ are independent, homoscedastic Normal variates. 
+
+
+\subsubsection*{Constructing the random effects model matrix}
 
 $\bS$ is a matrix product of an $n \times b$ indicator matrix $\bS_{id}$ of branch indices, and a branch length vector $\bB$.
 For example, \mli{ref fig:tree} is a phylogenetic tree with three species:
 
-\mli{example.Rout}
 \begin{align*}
 \bS_{id} = \begin{bmatrix}
 1 & 1 & 0 & 0 \\ 
@@ -146,16 +156,10 @@ For example, \mli{ref fig:tree} is a phylogenetic tree with three species:
 0 & 0 & 0 & 1
 \end{bmatrix} , 
 \bB = \begin{bmatrix}
-L1 \\
-L2 \\
-L3 \\
-L4 
-\end{bmatrix}
-\\
-\bS = \bS_{id} \bB = \begin{bmatrix}
-L1 & L2 & 0 & 0 \\
-L1 &  0 &L3 & 0 \\
-0  &  0 & 0  & L4
+\ell_1 \\
+\ell_2 \\
+\ell_3 \\
+\ell_4 
 \end{bmatrix}
 \end{align*}
 
@@ -169,9 +173,6 @@ L1 &  0 &L3 & 0 \\
 where $\bell$ is the branch length vector, $\bomega$ is a scaling factor, and $\bSigma_{phy}$ is the variance-covariance matrix of the phylogenetic tree.
 For example, 
 This is mathematically equivalent under BM assumption where we can reconstruct $\bC$ by matrix multiplying $\bS$ by itself.
-
-
-\subsubsection*{Constructing the random effects model matrix}
 
 The random-effect model matrix $\bZ$ can be decomposed into term-wise model matrix $\bZ_{i}$ as described in \citet{bates2015fitting}.
 Thus, the phylogenetic correlated random-effect matrix $\bZ^{C}_{i}$ is
