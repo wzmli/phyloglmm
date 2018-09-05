@@ -114,7 +114,7 @@ Analogously, the phylogenetic regression given by \ref{eq:gls1} can be represent
 \bmb{worth including the \pkg{MCMCglmm}/\pkg{brms} inverse-VCV formulation here? And/or contacting Eric Pedersen to find out about his Markov Random Field phylog. stuff in GAM?}
 \mli{inverse VCV for BLUP? an alternative way to find the inverse of the vcv(phy)}
 
-\subsection{Reformulating phylogenetic correlation matrix}
+\subsection{Reformulating phylogenetic covariance matrix}
 % The standard problem of phylogenetic comparative methods is to analyze relationships among data where the observations are gathered from nodes (usually tips) of a phylogenetic tree.
 % Phylogenetic independent contrasts is a generalization of the paired comparisons method where contrasts are taken for each bifurcation (nodes) in a phylogenetic tree. 
 % Assuming that traits evolve independently in each lineage following speciation, then the trait divergences that occur at one node are independent of divergence at other nodes.  
@@ -144,29 +144,29 @@ For example, \mli{ref fig:tree} is a phylogenetic tree with three species, the c
 The error value corresponding to tip 1 is $\ell_1 \e_1 + \ell_2 \e_2$, where $\ell_i$ is the square root of the branch length and the $\ell_i$ are independent, homoscedastic Normal variates. 
 
 
-\subsubsection*{Constructing the random effects model matrix}
+\subsubsection*{Constructing the species--branch random effects model matrix}
 
-$\bS$ is a matrix product of an $n \times b$ indicator matrix $\bS_{id}$ of branch indices, and a branch length vector $\bB$.
-For example, \mli{ref fig:tree} is a phylogenetic tree with three species:
+The error-free $\bS$ is a matrix product of an $n \times b$ indicator matrix $\bS_{ind}$ of branch indices, and a branch length vector $\bell$.
 
 \begin{align*}
-\bS_{id} = \begin{bmatrix}
+\bS_{ind} = \begin{bmatrix}
 1 & 1 & 0 & 0 \\ 
 1 & 0 & 1 & 0 \\ 
 0 & 0 & 0 & 1
 \end{bmatrix} , 
-\bB = \begin{bmatrix}
+\bell = \begin{bmatrix}
 \ell_1 \\
 \ell_2 \\
 \ell_3 \\
 \ell_4 
 \end{bmatrix}
 \end{align*}
+The $\bS$ matrix has a very nice property that $\bS \bS^T$ gives the variance-covariance matrix of the phylogeny. 
 
 \mli{cite ives book for standardizing VCV with the determinate scaling factor}
 
 \begin{align}
-\bBadj & = (\frac{\bell}{\bomega})^{1/2} \\
+\bell_{adj} & = (\frac{\bell}{\bomega})^{1/2} \\
 \bomega & = \textrm{det}(\bSigma_{phy})^{1/n},
 \end{align}
 % \bmb{would like to avoid multi-letter notation if possible; multi-letter subscripts should be text, e.g. ${\mathbf B}_{\mbox{\tiny adj}}$ (using macros to define stuff in one place \ldots) Also consider $\ell$ as a replacement for $l$}
