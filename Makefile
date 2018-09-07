@@ -58,7 +58,7 @@ fit.pois.Rout: simulate_poistree.Rout phyloglmm_setup.R new_phylo_setup.R phylog
 
 ######################################################################
 
-example.Rout: parameters.R example.R
+example.Rout: example.R
 	$(run-R)
 
 ### Single site 
