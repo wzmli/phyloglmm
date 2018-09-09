@@ -32,11 +32,11 @@ if(numsite == "ss"){
 t3 <- proc.time()
 glmmTMBtime <- t3-t1
 
-source("glmmTMBhacked.R")
-debug(glmmTMBhacked)
-debug(mkTMBStruchacked)
-debug(getXReTrmshacked)
-debug(mkReTrms)
+# source("glmmTMBhacked.R")
+# debug(glmmTMBhacked)
+# debug(mkTMBStruchacked)
+# debug(getXReTrmshacked)
+# debug(mkReTrms)
 
 if(numsite == "ms"){
   tempmod <- phylo_lmm(Y ~ X
@@ -91,7 +91,7 @@ print(summary(hackedmod))
 glmmTMB_list <- list(hackedmod, glmmTMBtime)
 
 
-saveRDS(glmmTMB_list, file=paste("datadir/glmmTMB",numsite,size,seed,"rds",sep="."))
+# saveRDS(glmmTMB_list, file=paste("datadir/glmmTMB",numsite,size,seed,"rds",sep="."))
 
 #rdnosave()
 

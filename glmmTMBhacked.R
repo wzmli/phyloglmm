@@ -195,9 +195,27 @@ mkTMBStruchacked <- function (formula, ziformula, dispformula, combForm, mf, fr,
   if (REML) 
     randomArg <- c(randomArg, "beta")
   n.edge <- ncol(phyZ)
+  relength <- length(condReStruc)
+  if(relength == 1){
+    REname <- unlist(strsplit(names(condReStruc), " "))
+    rightbar <- REname[length(REname)]
+    if(rightbar %in% phylonm){
+      condReStruc$blockReps <- n.edge
+      data.tmb$terms$blockReps <- n.edge
+    }
+  }
+  if(relength > 1){
   for(i in 1:length(condReStruc)){
-    condReStruc[[i]]$blockReps <- n.edge
-    data.tmb$terms[[i]]$blockReps <- n.edge
+    REname <- unlist(strsplit(names(condReStruc[i]), " "))
+    rightbar <- REname[length(REname)]
+    if(rightbar %in% phylonm){
+      condReStruc[i]$blockReps <- n.edge
+      data.tmb$terms[[i]]$blockReps <- n.edge
+      if(rightbar == "sp:site"){
+        data.tmb$terms[[i]]$blockReps <- n.edge*25 ##FIXME: pull out number of site from somewhere 
+      }
+    }
+  }
   }
   condList$Z <- t(condListhacked$reTrms$Zt)
   data.tmb$Z <- t(condListhacked$reTrms$Zt)
