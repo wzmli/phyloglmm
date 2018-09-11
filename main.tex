@@ -132,7 +132,15 @@ An alternative approach is to model the phylogenetic correlation as a \textit{Ga
 In particular, suppose that the evolutionary process is a Brownian motion, which means the evolution of a continuous trait is a random walk and daughter species after speciation are all independent.  
 In that case, the phylogenetic variability of a particular observation can be written as the sum of the evolutionary changes that occurred on all of the branches in the phylogeny in its past. 
 Thus, the evolutionary history for each species can be modeled with a sequence of independent errors with species--branch matrix $\bS$, rather than having to impose a correlation $\bC$.
-For example, \mli{ref fig:tree} is a phylogenetic tree with three species, the corresponding $\bS$.
+For example, figure \ref{fig:tree} is a phylogenetic tree with three species, the corresponding $\bS$ is in the form:
+
+\begin{center}
+\begin{figure}[h]
+  \includegraphics[scale=0.8,page=1]{./git_push/tree.pdf}
+  \caption{\bmb{caption ??}}
+\label{fig:tree}
+\end{figure}
+\end{center}
 
 \begin{align*}
 \bS = \begin{bmatrix}
@@ -148,7 +156,7 @@ The error value corresponding to tip 1 is $\ell_1 \e_1 + \ell_2 \e_2$, where $\e
 
 The error-free $\bS$ is a matrix product of an $n \times b$ indicator matrix $\bS_{ind}$ of branch indices, and a branch length vector $\bell$.
 
-\begin{align*}
+\begin{align}
 \bS_{ind} = \begin{bmatrix}
 1 & 1 & 0 & 0 \\ 
 1 & 0 & 1 & 0 \\ 
@@ -160,31 +168,95 @@ The error-free $\bS$ is a matrix product of an $n \times b$ indicator matrix $\b
 \ell_3 \\
 \ell_4 
 \end{bmatrix}
-\end{align*}
-The $\bS$ matrix has a very nice property that $\bS \bS^T$ gives the variance-covariance matrix of the phylogeny. 
-
-\mli{cite ives book for standardizing VCV with the determinate scaling factor}
-
-\begin{align}
-\bell_{adj} & = (\frac{\bell}{\bomega})^{1/2} \\
-\bomega & = \textrm{det}(\bSigma_{phy})^{1/n},
+\label{eq:S}
 \end{align}
-% \bmb{would like to avoid multi-letter notation if possible; multi-letter subscripts should be text, e.g. ${\mathbf B}_{\mbox{\tiny adj}}$ (using macros to define stuff in one place \ldots) Also consider $\ell$ as a replacement for $l$}
-where $\bell$ is the branch length vector, $\bomega$ is a scaling factor, and $\bSigma_{phy}$ is the variance-covariance matrix of the phylogenetic tree.
-For example, 
-This is mathematically equivalent under BM assumption where we can reconstruct $\bC$ by matrix multiplying $\bS$ by itself.
+The $\bS$ matrix has a very nice property that $\bS \bS^T$ gives the variance-covariance matrix of the phylogeny. 
 
 The random-effect model matrix $\bZ$ can be decomposed into term-wise model matrix $\bZ_{i}$ as described in \citet{bates2015fitting}.
 Thus, the phylogenetic correlated random-effect matrix $\bZ^{C}_{i}$ is
 
 \begin{equation}
-\bZ^{C}_{i} = (\bS^{T}_{i}\bJ^{T}_{i} \ast \bX^{T}_{i})^{T}, \label{eq:ZC}
+\bZ^{C}_{i} = (\bS^{T}_{adji}\bJ^{T}_{i} \ast \bX^{T}_{i})^{T}, \label{eq:ZC}
 \end{equation}
-where $\ast$ is the Khatri-Rao product \citep{khatri1968solutions}, $\bS_{i}$ is an $\ell_{i} \times b_{i}$ matrix of species--branch relations; $\bJ_{i}$ the indicator matrix of grouping factors indices matrix size $n \times \ell_{i}$; $X_{i}$ is the raw random effects model matrix size $n \times p_{i}$. 
+where $\ast$ is the Khatri-Rao product \citep{khatri1968solutions}, $\bS_{adji}$ is an $m_{i} \times b_{i}$ matrix of the scaled species--branch matrix; $\bJ_{i}$ the indicator matrix of grouping factors indices matrix size $n \times m_{i}$; $X_{i}$ is the raw random effects model matrix size $n \times p_{i}$. 
+
+
+\mli{move example to the supp}
+% For example, using the phylogeny above (figure \ref{fig:tree}), if we begin with a raw model matrix,
+% 
+% \begin{align}
+% \bX = \begin{bmatrix}
+% 1 & t_1  \\ 
+% 1 & t_2  \\ 
+% 1 & t_3 
+% \end{bmatrix} 
+% \end{align}
+% then the term-wise phylogenetic random effects model matrix is,
+% 
+% \begin{align}
+% \bZ^{C}_{i} = (\bS^{T}_{adji}\bJ^{T}_{i} \ast \bX^{T}_{i})^{T} =
+% \Bigg[
+% \Bigg(
+% \begin{bmatrix}
+% \ell_{adj1} & \ell_{adj1}  & 0 \\
+% \ell_{adj2} &  0  & 0 \\
+% 0  &  \ell_{adj3} & 0 \\
+% 0 & 0 &  \ell_{adj4} 
+% \end{bmatrix}
+% \begin{bmatrix}
+% 1 & 0  & 0 \\
+% 0 & 1  & 0 \\
+% 0 & 0  & 1  
+% \end{bmatrix}
+% \Bigg)
+% \ast
+% \begin{bmatrix}
+% 1   & 1   & 1  \\ 
+% t_1 & t_2 & t_3
+% \end{bmatrix} 
+% \Bigg]^T
+% \\
+% = \begin{bmatrix}
+% \ell_{adj1} & \ell_{adj1}t_1 & \ell_{adj2} & \ell_{adj2}t_1 & 0 & 0 & 0 & 0 \\
+% \ell_{adj1} & \ell_{adj1}t_2 & 0 & 0 & \ell_{adj3} & \ell_{adj3}t_2 & 0 & 0 \\
+% 0 & 0 & 0 & 0 & 0 & 0 & \ell_{adj4} & \ell_{adj4}t_3
+% \end{bmatrix}
+% \end{align}
+
+
+
+The scaled species--branch matrix $\bS_{adji}$ is scaled version of $\bS$ via the standardized generalized variance (SGV).
+SGVs are used as an intrinsic/natural way to scale down the variance-covariance matrix measured in different scales (for example, phylogenetic distance, years and etc) compariable to other variation in the model \citep{sengupta1987tests}.
+SGV is the $nth$ root of the generalized variance (GV), or the determinant of the variance-covariance matrix, where GV measures the overall size or volume of the variance-covariance matrix.  
+The SGV is given by:
+\begin{align}
+\bomega & = \textrm{det}(\bSigma_{phy})^{1/n},
+\end{align}
+where $n$ is the number of species in the phylogeny.
+
+The analog in the $\bS$ is to scale the branch vector $\bell$ by square root of the SGV:
+\begin{align}
+\bell_{adj} & = \frac{\bell}{\sqrt{\bomega}}
+\end{align} 
+and the $\bS_{adj}$ is the matrix product of $\bS_{ind}$ and $\bell_{adj}$.
 
 \subsection{Simulation}
 
-We generated test data based on the simple mixed model formulation \ref{eq:glmm1}, \ref{eq:glmm2}, \ref{eq:glmm3} with a single response variable $\bY$ and a single predictor continuous variable $\bX$ for $n$ (25, 50, and 100) species, and $m$ (1 and 25) sites/groups. 
+We generated test data based on the simple mixed model formulation \ref{eq:glmm1}, \ref{eq:glmm2}, \ref{eq:glmm3} with a single response variable $\bY$ and a single predictor continuous variable $\bX$ for $n$ (25, 50, and 100) species and $m$ (1 and 25) sites/groups. 
+For wider range of comparisons, we simulate one observation ($X_i,Y_i$) per species for every site.  
+For single-site model, the full simulation model is the following:
+
+\begin{align}
+\bY & = (\beta_0 + b_{phy_{int}}) + (\beta_1 + b_{phy_{slope}}) X + b_{obs}\\
+(b_{phy_{int}}, b_{phy_{slope}}) & \sim \textrm{MVN} \Bigg( 0, \begin{bmatrix}
+\sigma^2_{phy_{int}} & \sigma_{phy_{int},phy_{slope}} \\ 
+\sigma_{phy_{int},phy_{slope}} & \sigma^2_{phy_{slope}}
+\end{bmatrix}
+\Bigg) \\
+b_{obs} & \sim \textrm{MVN} ( 0 , \Sigma)
+\end{align}
+
+
 To account for multiple levels of phylogenetic signals, we assume phylogenetic signals in the intercept $b_0$, and slope $b_1$. \bmb{clarify what you mean by ``multiple levels of phylog. signals'' here?}
 We further assume that random slope and intercept are correlated. \bmb{, ``i.e. ...'' it will help readers unfamiliar with these ideas to give slightly more detailed examples}
 For models with multiple sites, we also assume for species and site interactions random effects, an equivalent version of nested random effects or phylogenetic attraction described in \cite{helmus2007separating} with the main random effects.
