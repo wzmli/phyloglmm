@@ -176,9 +176,9 @@ The random-effect model matrix $\bZ$ can be decomposed into term-wise model matr
 Thus, the phylogenetic correlated random-effect matrix $\bZ^{C}_{i}$ is
 
 \begin{equation}
-\bZ^{C}_{i} = (\bS^{T}_{adji}\bJ^{T}_{i} \ast \bX^{T}_{i})^{T}, \label{eq:ZC}
+\bZ^{C}_{i} = (\bS^{T}_{i}\bJ^{T}_{i} \ast \bX^{T}_{i})^{T}, \label{eq:ZC}
 \end{equation}
-where $\ast$ is the Khatri-Rao product \citep{khatri1968solutions}, $\bS_{adji}$ is an $m_{i} \times b_{i}$ matrix of the scaled species--branch matrix; $\bJ_{i}$ the indicator matrix of grouping factors indices matrix size $n \times m_{i}$; $X_{i}$ is the raw random effects model matrix size $n \times p_{i}$. 
+where $\ast$ is the Khatri-Rao product \citep{khatri1968solutions}, $\bS_{i}$ is an $m_{i} \times b_{i}$ matrix of the species--branch matrix; $\bJ_{i}$ the indicator matrix of grouping factors indices matrix size $n \times m_{i}$; $X_{i}$ is the raw random effects model matrix size $n \times p_{i}$. 
 
 
 \mli{move example to the supp}
@@ -224,21 +224,21 @@ where $\ast$ is the Khatri-Rao product \citep{khatri1968solutions}, $\bS_{adji}$
 % \end{align}
 
 
-
-The scaled species--branch matrix $\bS_{adji}$ is scaled version of $\bS$ via the standardized generalized variance (SGV).
-SGVs are used as an intrinsic/natural way to scale down the variance-covariance matrix measured in different scales (for example, phylogenetic distance, years and etc) compariable to other variation in the model \citep{sengupta1987tests}.
-SGV is the $nth$ root of the generalized variance (GV), or the determinant of the variance-covariance matrix, where GV measures the overall size or volume of the variance-covariance matrix.  
-The SGV is given by:
-\begin{align}
-\bomega & = \textrm{det}(\bSigma_{phy})^{1/n},
-\end{align}
-where $n$ is the number of species in the phylogeny.
-
-The analog in the $\bS$ is to scale the branch vector $\bell$ by square root of the SGV:
-\begin{align}
-\bell_{adj} & = \frac{\bell}{\sqrt{\bomega}}
-\end{align} 
-and the $\bS_{adj}$ is the matrix product of $\bS_{ind}$ and $\bell_{adj}$.
+% 
+% The scaled species--branch matrix $\bS_{adji}$ is scaled version of $\bS$ via the standardized generalized variance (SGV).
+% SGVs are used as an intrinsic/natural way to scale down the variance-covariance matrix measured in different scales (for example, phylogenetic distance, years and etc) compariable to other variation in the model \citep{sengupta1987tests}.
+% SGV is the $nth$ root of the generalized variance (GV), or the determinant of the variance-covariance matrix, where GV measures the overall size or volume of the variance-covariance matrix.  
+% The SGV is given by:
+% \begin{align}
+% \bomega & = \textrm{det}(\bSigma_{phy})^{1/n},
+% \end{align}
+% where $n$ is the number of species in the phylogeny.
+% 
+% The analog in the $\bS$ is to scale the branch vector $\bell$ by square root of the SGV:
+% \begin{align}
+% \bell_{adj} & = \frac{\bell}{\sqrt{\bomega}}
+% \end{align} 
+% and the $\bS_{adj}$ is the matrix product of $\bS_{ind}$ and $\bell_{adj}$.
 
 \subsection{Simulation}
 
@@ -256,14 +256,39 @@ For single-site model, the full simulation model is the following:
 b_{obs} & \sim \textrm{MVN} ( 0 , \Sigma)
 \end{align}
 
+The full single site simulation model contains two fixed effects parameters ($\beta_0$ and $\beta_1$), and four random effect parameters (phylogenetic random intercept, phylogenetic random slope, correlation between phylogenetic random slope and intercept and observation variance).  
+Predictor and intercept level random variation/effect of species are not applicable in this simulation setting with single observation per species because it will be confounded with the observational level variation (residuals).
 
-To account for multiple levels of phylogenetic signals, we assume phylogenetic signals in the intercept $b_0$, and slope $b_1$. \bmb{clarify what you mean by ``multiple levels of phylog. signals'' here?}
-We further assume that random slope and intercept are correlated. \bmb{, ``i.e. ...'' it will help readers unfamiliar with these ideas to give slightly more detailed examples}
+The full multi-site simulation model :
+
+\begin{align}
+\bY & = (\beta_0 + b_{phy_{int}} + b_{sp_{int}} + b_{site}) + (\beta_1 + b_{phy_{slope}} + b_{sp_{slope}}) X + b_{sp:site interaction} + b_{obs}\\
+(b_{phy_{int}}, b_{phy_{slope}}) & \sim \textrm{MVN} \Bigg( 0, \begin{bmatrix}
+\sigma^2_{phy_{int}} & \sigma_{phy_{int},phy_{slope}} \\ 
+\sigma_{phy_{int},phy_{slope}} & \sigma^2_{phy_{slope}}
+\end{bmatrix}
+\Bigg) \\
+(b_{sp_{int}}, b_{sp_{slope}}) & \sim \textrm{MVN} \Bigg( 0, \begin{bmatrix}
+\sigma^2_{sp_{int}} & \sigma_{sp_{int},phy_{slope}} \\ 
+\sigma_{sp_{int},sp_{slope}} & \sigma^2_{sp_{slope}}
+\end{bmatrix}
+\Bigg) \\
+b_{site} & \sim \textrm{MVN} ( 0 , \Sigma_{site}) \\
+b_{sp:site} & \sim \textrm{MVN} (0, kron(\bf{I}_{site}, \sigma^2_{phy})) \\
+b_{obs} & \sim \textrm{MVN} ( 0 , \Sigma)
+\end{align}
+
+% 
+% To account for multiple levels of phylogenetic signals, we assume phylogenetic signals in the intercept $b_0$, and slope $b_1$. \bmb{clarify what you mean by ``multiple levels of phylog. signals'' here?}
+% We further assume that random slope and intercept are correlated. 
+
+\bmb{, ``i.e. ...'' it will help readers unfamiliar with these ideas to give slightly more detailed examples}
 For models with multiple sites, we also assume for species and site interactions random effects, an equivalent version of nested random effects or phylogenetic attraction described in \cite{helmus2007separating} with the main random effects.
 
 \subsection{Platforms}
 
-Our algorithmic approach is general and could be implemented in a wide range of computational platforms that support independent latent variables. We implemented our approach using the R packages \pkg{lme4} \citep{bates2015fitting} and \pkg{glmmTMB} \mli{citation}.
+Our algorithmic approach is general and could be implemented in a wide range of computational platforms that support independent latent variables. 
+We implemented our approach using the R packages \pkg{lme4} \citep{bates2015fitting} and \pkg{glmmTMB} \mli{citation}.
 We compare our approach with five other R packages that can fit phylogenetic comparative models: \pkg{nlme} \citep{pinheiro2014r}, \pkg{phylolm} \citep{ho2014phylolm}, \pkg{pez} \citep{pearse2015pez}, \pkg{MCMCglmm} \cite{hadfield2010mcmc}, and \pkg{brms} \citep{burkner2016brms}.
 % \bmb{I think nlme can do other evolutionary models as well? May not be worth mentioning ...}
 % \begin{verbatim}
