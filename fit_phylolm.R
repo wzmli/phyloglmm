@@ -3,9 +3,6 @@ library(ape)
 library(dplyr)
 library(phylolm)
 
-print("hello")
-
-
 dat <- data.frame(dat)
 #rownames(dat) <- dat$sp
 

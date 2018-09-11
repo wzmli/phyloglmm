@@ -18,13 +18,13 @@ t2 <- proc.time()
 
 if(numsite == "ss"){
   hackedmod <- glmmTMBhacked(Y ~ X  
-    + (1 + X | sp) 
+    + ( 1 + X | sp) 
     , data=dat
     , phyloZ = phyZ
     , phylonm = c("sp", "sp:site")
     , doFit=TRUE
     , dispformula = ~1
-    , control=glmmTMBControl(optCtrl=list(trace=1))
+    # , control=glmmTMBControl(optCtrl=list(trace=1))
     , REML = TRUE
   ) 
 }
@@ -91,7 +91,7 @@ print(summary(hackedmod))
 glmmTMB_list <- list(hackedmod, glmmTMBtime)
 
 
-# saveRDS(glmmTMB_list, file=paste("datadir/glmmTMB",numsite,size,seed,"rds",sep="."))
+saveRDS(glmmTMB_list, file=paste("datadir/glmmTMB",numsite,size,seed,"rds",sep="."))
 
 #rdnosave()
 

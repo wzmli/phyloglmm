@@ -10,7 +10,7 @@ print(cov2cor(covmat))
 
 t1 <- proc.time()
 
-phyZ <- phylo.to.Z(phy,stand=TRUE)
+phyZ <- phylo.to.Z(phy,stand=FALSE)
 
 dat <- (dat
 	%>% mutate(obs = sp

@@ -8,7 +8,7 @@ rownames(dat) <- dat$sp
 
 tt <- system.time(fit_gls <- gls(Y~X
 	, data=dat
-#	, correlation=corBrownian(phy=phy) 
+	, correlation=corBrownian(phy=phy) 
 #	, correlation=corPagel(0.5,phy=phy)
 	, verbose=FALSE
 )

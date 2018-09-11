@@ -201,7 +201,7 @@ mkTMBStruchacked <- function (formula, ziformula, dispformula, combForm, mf, fr,
     rightbar <- REname[length(REname)]
     if(rightbar %in% phylonm){
       condReStruc$blockReps <- n.edge
-      data.tmb$terms$blockReps <- n.edge
+      data.tmb$terms[[1]]$blockReps <- n.edge
     }
   }
   if(relength > 1){
