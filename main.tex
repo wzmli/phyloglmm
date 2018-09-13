@@ -298,27 +298,41 @@ One of the relatively few packages that currently fit phylogenetic correlations 
   
 % Table \mli{ref something} provides the statistically equivalent fitting capabilities of common/existing phylogenetic methods.
 
-% % \begin{table}
-% % \begin{center}
-% 
-% \begin{tabularx}{\textwidth}{|X|X|X|}
-% \hline
-% Type of RE	& Formula	& Platform	\\
-% \hline
-% 
-% Single site intercept	  &	1 $\mid$ sp	& gls (if residual = 0), phyloglm, \pkg{lme4} \\
-% Single site intercept and uncorrelated slopes		&  1 $\mid$ sp + trait $\mid$ sp		& \pkg{lme4} \\
-% Single site intercept and correlated slopes 			& 1 + trait $\mid$ sp					& \pkg{lme4} \\
-% \hline
-% Multiple site intercept 									&  1 $\mid$ sp 						& \pkg{pez}, \pkg{lme4} \\
-% Multiple site intercept and uncorrelated slopes 	&  1 $\mid$ sp + trait $\mid$ sp 		& \pkg{pez}, \pkg{lme4} \\
-% Multiple site intercept and correlated slopes 	& 	1 + trait $\mid$ sp					& \pkg{lme4} \\
-% \hline
-% \end{tabularx}
-% % \vspace{1in}
-% % ditto with site interaction								& ditto above $\mid$ sp:site		& ditto above \\
-% % \end{center}
-% % \end{table}
+% \begin{table}
+% \begin{center}
+
+\begin{tabularx}{\textwidth}{|c||c|c|c|c|c|c|}
+\hline
+Package	& \small{nlme}	& \small{phylolm}	& \small{lme4/glmmTMB} & \small{pez} & \small{brms} & \small{MCMCglmm} \\
+\hline
+\hline
+Single Site & & & & & & \\
+Random effects & X & X & X & & X & X \\
+\hline
+Phylo intercept & X & X & X &  & X & X \\
+Phylo slope &  &  & X &  & X & X \\
+Phylo correlation &  &  & X &  & X & X \\
+Residual & & X & X &  & X & X \\
+\hline
+\hline
+Multiple Site & & & & & & \\
+Random effects &  &  & X & X & X & X \\
+\hline
+Phylo intercept &  &  & X & X & X & X \\
+Phylo slope &  &  & X & X & X & X \\
+Phylo correlation &  &  & X &  & X & X \\
+Phylo interaction & &  & X & X & X &  \\
+Species intercept & &  & X & X & X & X \\
+Species slope & & & X & X & X & X \\
+Species correlation & &  & X &  & X & X \\
+Residual & &  & X & X & X & X \\
+\hline
+
+\end{tabularx}
+% \vspace{1in}
+% ditto with site interaction								& ditto above $\mid$ sp:site		& ditto above \\
+% \end{center}
+% \end{table}
 
 \section{Results}
 
