@@ -7,40 +7,44 @@ library(grid)
 theme_set(theme_bw())
 zmargin <- theme(panel.margin=grid::unit(0,"lines"))
 
-data_list <- readRDS("./datadir/result_list.RDS")
+#data_list <- readRDS("./datadir/result_list.RDS")
 
-gls_data <- data_list[[1]]
-lme4ss_data <- data_list[[2]]
-lme4ss_slope_data <- data_list[[3]]
-lme4ms_data <- data_list[[4]]
-pez_data <- data_list[[5]]
-lme4ms_slope_data <- data_list[[6]]
-pez_slope_data <- data_list[[7]]
-lme4cs_data <- data_list[[8]]
-pez_cs_data <- data_list[[9]]
-lme4cs_slope_data <- data_list[[10]]
-pez_cs_slope_data <- data_list[[11]]
-
-
-gls_data2 <- (gls_data
-  %>% transmute(sd=resid
-    , sdtype = "phylo"
-    , model = model
-    , time = time)
-  %>% separate(model,c("platform","size","type"),"_")
-  %>% select(platform, type, size, sdtype, sd, time)
-  %>% mutate(sdtype = ifelse(type %in% c("nophy","noresidnophy"), "resid", sdtype)
-             , type = ifelse(type == "nophy", "noresid",type)
-             , type = ifelse(type == "noresidnophy", "resid", type)
-  )
+ssdat <- (ssdat
+	%>% separate(model,c("platform", "sites", "size", "seed","saveformat"), "[.]")
+	%>% select(time, platform, size, resid, phylo_int, phylo_X, phylo_cor)
+	%>% gather(key=sdtype, value=sd, -c(platform, size, time))
+	%>% mutate(size = factor(size, 
+			levels=c("small","med","large"), labels=c("25","50","100")
+			)
+		)
 )
 
-gg_gls <- (ggplot(data=gls_data2,aes(x=size,y=sd))
-  + facet_grid(type~sdtype, scale="free_y")
-  + geom_violin()
-  + ggtitle("GLS")
+gg_ss <- (ggplot(data=ssdat, aes(x=size, y=sd, fill=platform))
+  + facet_wrap(~sdtype, scale="free_y")
+  + geom_violin(position=position_dodge(width=0.2),alpha=0.4)
+  + ggtitle("Single site")
 )
 
+print(gg_ss)
+
+msdat <- (msdat
+	%>% separate(model,c("platform", "sites", "size", "seed", "saveformat"),"[.]")
+	%>% select(-c(sites,seed,saveformat))
+	%>% gather(key=sdtype, value=sd, -c(platform,size,time))
+	%>% mutate(size = factor(size,
+			levels=c("small","med","large"), labels=c("25","50","100")
+			)
+		)
+)
+
+gg_ms <- (gg_ss
+	%+% msdat
+	+ ggtitle("Multiple Sites")
+)
+
+print(gg_ms)
+
+quit()
 # print(gg_gls)
 
 lme4ss_data2 <- (lme4ss_data
