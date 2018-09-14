@@ -6,10 +6,16 @@ library(nlme)
 dat <- data.frame(dat)
 rownames(dat) <- dat$sp
 
+print(phy)
+
+phy_var <- diag(vcv(phy))
+
+varweights <- varFixed(~phy_var)
+
 tt <- system.time(fit_gls <- gls(Y~X
 	, data=dat
 	, correlation=corBrownian(phy=phy)
-	, weights = varFixed(~diag(vcv(phy)))
+	, weights = varweights
 #	, correlation=corPagel(0.5,phy=phy)
 	, verbose=FALSE
 )

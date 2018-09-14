@@ -66,7 +66,8 @@ example.Rout: example.R
 fit.gls.%.Rout: names.R parameters.R simulate_tree.R fit_gls.R
 	$(run-R)
 
-fit.gls.ss.large.1.Rout:fit_gls.R
+fit.gls.ss.large.1.Rout: fit_gls.R
+fit.glmmTMB.ss.large.1.Rout:
 
 ### phylolm
 
@@ -89,22 +90,21 @@ fit.lme4.ms.xlarge.1.Rout: phyloglmm.R
 fit.glmmTMB.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R glmmTMBhacked.R fit_tmb.R
 	$(run-R)
 
-fit.glmmTMB.ss.large.2.Rout: fit_tmb.R
+fit.glmmTMB.ss.xlarge.2.Rout: fit_tmb.R
 
 ### pez can only fit multiple sites
 
-fit.pez.%.Rout: names.R parameters.R simulate_tree.R fit_pez.R
-	$(run-R)
-
-fit.pez.large.1.Rout:
+fit.pez.ms.large.1.Rout: fit_pez.R
 
 ### Multiple sites compound symmetric case
 
 fit_cs.lme4.%.Rout: names.R parameters.R simulate_tree.R phyloglmm_setup.Rout fit_cs_lme4.R
 	$(run-R)
 
-fit_cs.pez.%.Rout: names.R parameters.R simulate_tree.R phyloglmm_setup.Rout fit_cs_pez.R
+fit.pez.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R fit_pez.R
 	$(run-R)
+
+fit.pez.ms.small.1.Rout: fit_pez.R
 
 fit.brms.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R  simulate_cs.R fit_brms.R
 	$(run-R)
