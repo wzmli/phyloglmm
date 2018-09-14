@@ -18,12 +18,12 @@ t2 <- proc.time()
 
 if(numsite == "ss"){
   hackedmod <- glmmTMBhacked(Y ~ X  
-    + ( 1 + X | sp) 
+    + (1| sp) 
     , data=dat
     , phyloZ = phyZ
     , phylonm = c("sp", "sp:site")
     , doFit=TRUE
-    , dispformula = ~1
+    , dispformula = ~0
     # , control=glmmTMBControl(optCtrl=list(trace=1))
     , REML = TRUE
   ) 

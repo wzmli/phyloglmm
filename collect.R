@@ -4,6 +4,7 @@ library(pez)
 library(lme4)
 library(dplyr)
 library(ggplot2)
+library(brms)
 library(tidyr)
 
 #### Collect gls results ----
@@ -79,6 +80,33 @@ lme4ss_results <- function(tt){
 
 lme4ss_data <- lme4ss_results(lme4ss_res)
 
+### collect brms ----
+
+brms_path <- "./datadir/brms/"
+brmsss_res <- list.files(path = brms_path, pattern = "ss")
+brmsss_results <- function(tt){
+  brms_df <- data.frame(resid = numeric(200)
+    , phylo_X = numeric(200)
+    , phylo_int = numeric(200)
+    , phylo_cor = numeric(200)
+    , model = numeric(200)
+    , time = numeric(200)
+  )
+  for(i in 1:length(tt)){
+    brms_obj <- readRDS(paste(brms_path,tt[i],sep=""))
+    sd_dat <- as.data.frame(posterior_samples(brms_obj[[1]],c("^sigma","^sd_","^cor_")))
+    brms_df[i,"resid"] <- median(sd_dat[,"sigma"])
+    brms_df[i, "phylo_X"] <- median(sd_dat[,"sd_sp__X"])
+    brms_df[i, "phylo_int"] <- median(sd_dat[,"sd_sp__Intercept"])
+    brms_df[i,"phylo_cor"] <- median(sd_dat[,"cor_sp__Intercept__X"])
+    brms_df[i,"model"] <- tt[i]
+    brms_df[i,"time"] <- brms_obj[[2]][[1]]
+  }
+  return(brms_df)
+}
+
+brmsss_data <- brmsss_results(brmsss_res)
+
 #### Collect phylolm single site results ----
 ## need to check out NA cases
 
@@ -104,10 +132,10 @@ phylolm_results <- function(tt){
 
 phylolm_data <- phylolm_results(phylolm_res)
 
-ssdat <- rbind(gls_data, phylolm_data, lme4ss_data)
+ssdat <- rbind(gls_data, phylolm_data, lme4ss_data, brmsss_data)
 
 
-### Collect multiple sites
+### Collect multiple sites ----
 
 lme4ms_res <- list.files(path = lme4_path, pattern = "ms")
 lme4ms_results <- function(tt){
