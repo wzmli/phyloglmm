@@ -38,9 +38,9 @@ lme4time <- t3-t1
 
 if(numsite == "ms"){
   
-  tempmod <- phylo_lmm(y ~ X
+  tempmod <- phylo_lmm(Y ~ X
     + (1 | sp:site)
-    + (1 + X |sp)
+    + (1 + X | sp)
     + (1 + X | obs)
     + (1 | site)
     , data=dat

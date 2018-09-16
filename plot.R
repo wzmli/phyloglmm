@@ -11,10 +11,10 @@ zmargin <- theme(panel.margin=grid::unit(0,"lines"))
 
 ssdat <- (ssdat
 	%>% separate(model,c("platform", "sites", "size", "seed","saveformat"), "[.]")
-	%>% select(time, platform, size, resid, phylo_int, phylo_X, phylo_cor)
-	%>% gather(key=sdtype, value=sd, -c(platform, size, time))
-	%>% mutate(size = factor(size, 
-			levels=c("small","med","large"), labels=c("25","50","100")
+	%>% select(time, platform, size, seed, resid, phylo_int, phylo_X, phylo_cor)
+	%>% gather(key=sdtype, value=sd, -c(platform, size, seed, time))
+	%>% mutate(size = factor(size
+	      , levels=c("small","med","large","xlarge"), labels=c("25","50","100","1000")
 			)
 		)
 )
@@ -32,7 +32,7 @@ msdat <- (msdat
 	%>% select(-c(sites,seed,saveformat))
 	%>% gather(key=sdtype, value=sd, -c(platform,size,time))
 	%>% mutate(size = factor(size,
-			levels=c("small","med","large"), labels=c("25","50","100")
+			levels=c("small","med","large","xlarge"), labels=c("25","50","100","1000")
 			)
 		)
 )
@@ -43,6 +43,8 @@ gg_ms <- (gg_ss
 )
 
 print(gg_ms)
+
+print(summary(msdat %>% filter(platform == "pez")))
 
 quit()
 # print(gg_gls)

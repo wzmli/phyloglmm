@@ -66,7 +66,9 @@ example.Rout: example.R
 fit.gls.%.Rout: names.R parameters.R simulate_tree.R fit_gls.R
 	$(run-R)
 
-fit.gls.ss.large.1.Rout: fit_gls.R
+fit.gls.ss.large.104.Rout:
+
+fit.gls.ss.xlarge.7777.Rout: fit_gls.R
 fit.glmmTMB.ss.large.1.Rout:
 
 ### phylolm
