@@ -339,14 +339,33 @@ Residual & &  & X & X & X & X \\
 \begin{center}
 \begin{figure}[h]
   \includegraphics[scale=0.8,page=1]{./git_push/ssplot.pdf}
-  \caption{\bmb{caption ??}}
+  \caption{Old}
+\end{figure}
+\end{center}
+
+\begin{center}
+\begin{figure}[h]
+  \includegraphics[scale=0.8,page=1]{./git_push/plot.pdf}
+  \caption{New}
 \label{ssplot}
 \end{figure}
 \end{center}
 
+
 \bmb{Need to think a little harder about the important points/order here (might be time to do the exercise where you take the results and boil them back down to short bullet points, in order to figure out whether you've said the important stuff, in the right order). Maybe lead by saying that all platforms give similar answers - to the extent that they are fitting the same statistical model (this might even be emphasized/explained above, in Methods). Am I correct in believing that phylolm=\pkg{lme4} but without intercept/slope correlation, and gls is additionally missing random slopes?}
 
 \bmb{add refs to figures \ldots}
+
+\begin{itemize}
+\item{full model provides good estimates (except for correlation)}
+\item{reduced models try to fit with whatever parameters they have available (over-estimates the simulation parameters)}
+\item{no slope vs slope}
+\item{no correlation vs correlation}
+\item{as size/data/number of species increase, the parameter estimates gets better}
+\item{single site models are fast}
+\item{estimates gets closer to simulation parameter as number of species increase}
+\item{lme4/tmb are fast, everything else is slow for multiple sites}
+\end{itemize}
 
 The full model (which matches the simulation model that incorporates phylogenetic signal on the intercept, slope and correlation) provides good estimates of the different levels of the phylogenetic variation signal (Figure 1 and 2). \bmb{delete ``signal''? or ``variation''? what does ``phylogenetic variation signal'' mean?}
 
@@ -370,16 +389,23 @@ Furthermore, it was not practical for \pkg{pez} to fit large sample size simulat
 \begin{center}
 \begin{figure}[h]
   \includegraphics[scale=0.8,page=1]{./csplot.pdf}
-  \caption{\bmb{caption??}}
+  \caption{old}
 \end{figure}
 \end{center}
 
 \begin{center}
 \begin{figure}[h]
-\includegraphics[scale=0.8,page=2]{./csplot.pdf}
-\caption{\bmb{caption??}}
+  \includegraphics[scale=0.8,page=2]{./git_push/plot.pdf}
+  \caption{new}
 \end{figure}
 \end{center}
+
+% \begin{center}
+% \begin{figure}[h]
+% \includegraphics[scale=0.8,page=2]{./csplot.pdf}
+% \caption{\bmb{caption??}}
+% \end{figure}
+% \end{center}
 
 % \begin{center}
 % \begin{figure}[h]
