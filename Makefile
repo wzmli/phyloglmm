@@ -96,7 +96,7 @@ fit.glmmTMB.ss.xlarge.2.Rout: fit_tmb.R
 
 ### pez can only fit multiple sites
 
-fit.pez.ms.large.1.Rout: fit_pez.R
+fit.pez.ms.small.1.Rout: fit_pez.R
 
 ### Multiple sites compound symmetric case
 
