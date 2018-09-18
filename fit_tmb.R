@@ -23,7 +23,7 @@ if(numsite == "ss"){
     , phyloZ = phyZ
     , phylonm = c("sp", "sp:site")
     , doFit=TRUE
-    , dispformula = ~0
+    , dispformula = ~1
     # , control=glmmTMBControl(optCtrl=list(trace=1))
     , REML = TRUE
   ) 
@@ -41,7 +41,7 @@ glmmTMBtime <- t3-t1
 if(numsite == "ms"){
   tempmod <- phylo_lmm(Y ~ X
     + (1 | sp:site)
-    + (1 + X |sp)
+    + (1 + X | sp)
     + (1 + X | obs)
     + (1 | site)
     , data=dat
@@ -52,20 +52,21 @@ if(numsite == "ms"){
     , REML = TRUE
   )
   
-  t1 <- sd.B0/sigma(tempmod)
-  t2 <- rho.B01*sd.B1/sigma(tempmod)
-  t3 <- sqrt((sd.B1/sigma(tempmod))^2 - t2^2)
+  t1 <- sd.B0
+  t2 <- rho.B01*sd.B1
+  t3 <- sqrt(sd.B1^2 - t2^2)
   
-  t4 <- sd.tip/sigma(tempmod)
-  t5 <- rho.slopetip*sd.slope/sigma(tempmod)
-  t6 <- sqrt((sd.slope/sigma(tempmod))^2 - t5^2)
+  t4 <- sd.tip
+  t5 <- rho.slopetip*sd.slope
+  t6 <- sqrt(sd.slope^2 - t5^2)
   new_y <- simulate(tempmod
-    , newparams=list(theta=c(ss/sigma(tempmod)
+    , newparams=list(theta=c(ss
         , t1, t2, t3
         , t4, t5, t6
-        , sd.site/sigma(tempmod)
-        )
+        , sd.site
+        )/sd.resid
       , beta = c(beta0, beta1)
+		, sigma = sd.resid
       )
     )
   dat$new_y <- new_y[[1]]

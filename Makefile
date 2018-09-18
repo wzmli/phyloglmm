@@ -66,7 +66,9 @@ example.Rout: example.R
 fit.gls.%.Rout: names.R parameters.R simulate_tree.R fit_gls.R
 	$(run-R)
 
-fit.gls.ss.large.1.Rout: fit_gls.R
+fit.gls.ss.large.104.Rout:
+
+fit.gls.ss.xlarge.7777.Rout: fit_gls.R
 fit.glmmTMB.ss.large.1.Rout:
 
 ### phylolm
@@ -94,7 +96,7 @@ fit.glmmTMB.ss.xlarge.2.Rout: fit_tmb.R
 
 ### pez can only fit multiple sites
 
-fit.pez.ms.large.1.Rout: fit_pez.R
+fit.pez.ms.small.1.Rout: fit_pez.R
 
 ### Multiple sites compound symmetric case
 
