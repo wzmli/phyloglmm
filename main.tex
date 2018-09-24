@@ -338,14 +338,25 @@ Residual & &  & X & X & X & X \\
 
 \begin{center}
 \begin{figure}[h]
-  \includegraphics[scale=0.8,page=1]{./git_push/ssplot.pdf}
-  \caption{Old}
+  \includegraphics[scale=0.8,page=1]{./git_push/plot.Rout.pdf}
+  \caption{New}
+\label{ssplot}
 \end{figure}
 \end{center}
 
+
 \begin{center}
 \begin{figure}[h]
-  \includegraphics[scale=0.8,page=1]{./git_push/plot.pdf}
+  \includegraphics[scale=0.8,page=2]{./git_push/plot.Rout.pdf}
+  \caption{New}
+\label{ssplot}
+\end{figure}
+\end{center}
+
+
+\begin{center}
+\begin{figure}[h]
+  \includegraphics[scale=0.8,page=3]{./git_push/plot.Rout.pdf}
   \caption{New}
 \label{ssplot}
 \end{figure}
@@ -367,7 +378,7 @@ Residual & &  & X & X & X & X \\
 \item{lme4/tmb are fast, everything else is slow for multiple sites}
 \end{itemize}
 
-The full model (which matches the simulation model that incorporates phylogenetic signal on the intercept, slope and correlation) provides good estimates of the different levels of the phylogenetic variation signal (Figure 1 and 2). \bmb{delete ``signal''? or ``variation''? what does ``phylogenetic variation signal'' mean?}
+The full model (which matches the simulation model that incorporates phylogenetic signal on the intercept, slope and correlation) provides good estimates for all parameters except for random correlation parameters 
 
 In general, the phylogenetic signal estimates are more robust for all models (including models without random slope and correlation) with more data, except PGLS in the single site simulations. \bmb{(2) please define ``robustness'' -- usually means lack of sensitivity to model misspecification.  Are you talking about the variance of the estimates? I'd prefer not to use ``robust'' in a non-standard way if possible (2) what are small/medium/large? I see that $n=\{20,100,500\}$ and $m=\{1,20\}$, but not sure how these match up to ``small'', ``medium'', ``large''; is Figure 1 all $m=1$? Might be worth just labeling by $n=??$ rather than using small/medium/large}
 It is unclear how different levels of phylogenetic signal are being confounded under the error free (without tip variation) assumption for the PGLS models.

@@ -1,5 +1,12 @@
 ## Journal
 
+## Sept 18
+
+pez is problematic. 
+We need to do compbren (forcing evo at the same location) and scale it in order to "control" fitting simulated parameter and match lme4.
+
+PS: intercept random effects are fine, but not random slope
+
 ## August 28
 
 Two _full_ models, single site vs multiple site.

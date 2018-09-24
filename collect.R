@@ -6,6 +6,7 @@ library(dplyr)
 library(ggplot2)
 library(brms)
 library(tidyr)
+library(phylolm)
 
 #### Collect gls results ----
 
@@ -174,19 +175,19 @@ ssdat <- rbind(gls_data, phylolm_data, lme4ss_data, brmsss_data)
 lme4_path <- "./datadir/lme4/"
 lme4ms_res <- list.files(path = lme4_path, pattern = "ms")
 lme4ms_results <- function(tt){
-	lme4ms_df <- data.frame(resid = numeric(900)
-		, phylo_X = numeric(900)
-		, phylo_int = numeric(900)
-		, phylo_cor = numeric(900)
-		, phylo_interaction = numeric(900)
-		, species_X = numeric(900)
-		, species_int = numeric(900)
-		, species_cor = numeric(900)
-		, site_int = numeric(900)
-		, B0 = numeric(900)
-		, B1 = numeric(900)
-		, model = numeric(900)
-		, time = numeric(900)
+	lme4ms_df <- data.frame(resid = numeric(310)
+		, phylo_X = numeric(310)
+		, phylo_int = numeric(310)
+		, phylo_cor = numeric(310)
+		, phylo_interaction = numeric(310)
+		, species_X = numeric(310)
+		, species_int = numeric(310)
+		, species_cor = numeric(310)
+		, site_int = numeric(310)
+		, B0 = numeric(310)
+		, B1 = numeric(310)
+		, model = numeric(310)
+		, time = numeric(310)
 		)
 	for(i in 1:length(tt)){
 	  lme4_obj <- readRDS(paste(lme4_path,tt[i],sep=""))
@@ -306,9 +307,87 @@ pez_data <- pez_results(pez_res)
 
 
 
-msdat <- rbind(lme4ms_data,pez_data)
+lme4pez_path <- "./datadir/lme4pez/"
+lme4pez_res <- list.files(path = lme4pez_path, pattern = "ms")
+lme4pez_results <- function(tt){
+  lme4ms_df <- data.frame(resid = numeric(300)
+                          , phylo_X = numeric(300)
+                          , phylo_int = numeric(300)
+                          , phylo_cor = NA
+                          , phylo_interaction = numeric(300)
+                          , species_X = numeric(300)
+                          , species_int = numeric(300)
+                          , species_cor = NA
+                          , site_int = numeric(300)
+                          , B0 = numeric(300)
+                          , B1 = numeric(300)
+                          , model = numeric(300)
+                          , time = numeric(300)
+  )
+  for(i in 1:length(tt)){
+    lme4_obj <- readRDS(paste(lme4pez_path,tt[i],sep=""))
+    covmat <- as.data.frame(lme4::VarCorr(lme4_obj[[1]]))
+    lme4ms_df[i,"resid"] <- (covmat 
+                             %>% filter(grp=="Residual") 
+                             %>% select(sdcor) 
+                             %>% as.numeric()
+    )
+    lme4ms_df[i, "phylo_X"] <- (covmat 
+                                %>% filter((grp=="sp") & (var1 =="X")) 
+                                %>% select(sdcor) 
+                                %>% as.numeric()
+    )
+    lme4ms_df[i, "phylo_int"] <- (covmat 
+                                  %>% filter((grp=="sp.1") 
+                                             & (var1 == "(Intercept)")
+                                             & (is.na(var2))
+                                  ) 
+                                  %>% select(sdcor) 
+                                  %>% as.numeric()
+    )
+    lme4ms_df[i,"phylo_interaction"] <- (covmat
+                                         %>% filter((grp=="sp:site"))
+                                         %>% select(sdcor)
+                                         %>% as.numeric()
+    )
+    lme4ms_df[i, "species_X"] <- (covmat 
+                                  %>% filter((grp=="obs") & (var1 =="X"))
+                                  %>% select(sdcor)
+                                  %>% as.numeric()
+    )
+    lme4ms_df[i, "species_int"] <- (covmat 
+                                    %>% filter((grp=="obs.1") 
+                                               & (var1 == "(Intercept)")
+                                               & (is.na(var2))
+                                    ) 
+                                    %>% select(sdcor) 
+                                    %>% as.numeric()
+    )
+    lme4ms_df[i,"site_int"] <- (covmat 
+                                %>% filter(grp=="site")
+                                %>% select(sdcor) 
+                                %>% as.numeric()
+    )
+    B0 <- coef(summary(lme4_obj[[1]]))["(Intercept)","Estimate"]
+    B0se <- coef(summary(lme4_obj[[1]]))["(Intercept)","Std. Error"]
+    B1 <- coef(summary(lme4_obj[[1]]))["X","Estimate"]
+    B1se <- coef(summary(lme4_obj[[1]]))["X","Std. Error"]
+    lme4ms_df[i,"B0"] <- as.numeric(between(0, B0-1.96*B0se, B0+1.96*B0se))
+    lme4ms_df[i,"B1"] <- as.numeric(between(0, B1-1.96*B1se, B1+1.96*B1se))
+    lme4ms_df[i,"model"] <- tt[i]
+    lme4ms_df[i,"time"] <- lme4_obj[[2]][[1]]
+  }
+  return(lme4ms_df)
+}
+
+lme4pez_data <- lme4pez_results(lme4pez_res)
+
+
+
+msdat <- rbind(lme4ms_data,pez_data, lme4pez_data)
 #### Save results ----
+data_list <- list(ssdat,msdat)
 
 # data_list <- list(gls_data, lme4ss_data, lme4ss_slope_data, lme4ms_data, pez_data, lme4ms_slope_data , pez_slope_data, lme4cs_data, pez_cs_data, lme4cs_slope_data, pez_cs_slope_data)
-# saveRDS(data_list,file="./datadir/result_list.RDS")
+saveRDS(data_list,file="./datadir/collect.RDS")
 # rdsave(ssdat, msdat)

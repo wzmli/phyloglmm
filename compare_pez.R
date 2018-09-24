@@ -1,104 +1,112 @@
-## Compare pez
-
-
-### rep li and ives example 
-
+## simulate and fit compound symmetric case
 library(ape)
 library(Matrix)
 library(lme4)
 library(dplyr)
+library(pez)
 
-maxit <- 10000000
-reltol <- 0.00000001
 
+dat <- (dat
+	%>% mutate(obs = sp
+		, site = site_name
+		)
+	%>% arrange(sp,site)
+)
+
+print(dat)
+phyZ <- phylo.to.Z(phy)
+# 
 # debug(phylo_lmm)
 # debug(modify_phylo_retrms)
 
-dd <- data.frame(dat)
-print(dd %>% count(site))
-## 28 sp in each site
+Vphy <- Vphy[levels(dat$sp),levels(dat$sp)]
 
-phy <- get_phylo(veg.long = dune.veg2
-                 , trait = dune.traits2[c(1, 2)]
-                 , trait.re = c("log.sla")
-                 , phylo = dune.phylo2
-                 , trans = "log"
+# random intercept with species independent
+sp.int <- list(1, sp = dat$sp, covar = diag(nspp))
+
+# random intercept with species showing phylogenetic covariances
+phy.int <- list(1, sp = dat$sp, covar = Vphy)
+
+# random slope with species independent
+sp.X <- list(dat$X, sp = dat$sp, covar = diag(nspp))
+
+# random slope with species showing phylogenetic covariances
+phy.X <- list(dat$X, sp = dat$sp, covar = Vphy)
+
+# sp:site
+phy.interaction <- list(1, sp = dat$sp, covar = Vphy, site = dat$site)
+
+site.int <- list(1, site=dat$site, covar = diag(nsite))
+
+tempmod <- phylo_lmm(Y ~ X
+	+ (1 | sp:site)
+	+ (1 + X | sp)
+	+ (1 + X | obs)
+	+ (1 | site)
+	, data=dat
+	, phylonm = c("sp", "sp:site")
+	, phylo = phy
+	, phyloZ = phyZ
+	, control = lmerControl(check.nobs.vs.nlev = "ignore", check.nobs.vs.nRE = "ignore")
+	, REML = TRUE
 )
 
-phyZ <- phylo.to.Z(phy)
-phyZ <- phyZ[order(rownames(phyZ)),]
 
-dat <- (dat
-        %>% rowwise()
-        %>% mutate(obs = sp
-        )
-)	
+rho.B01 <- 0
+rho.slopetip <- 0
 
-REs <- get_RE(veg.long = dune.veg2
-              , trait = dune.traits2[c(1, 2)]
-              , trait.re = c("log.sla")
-              , phylo = dune.phylo2
-              , trans = "log"
+t1 <- sd.B0
+t2 <- rho.B01*sd.B1
+t3 <- sqrt(sd.B1^2 - t2^2)
+
+t4 <- sd.tip
+t5 <- rho.slopetip*sd.slope
+t6 <- sqrt(sd.slope^2 - t5^2)
+
+new_y <- simulate(tempmod
+	, newparams=list(theta=c(ss
+	, t1, t2, t3
+	, t4, t5, t6
+	, sd.site)/sd.resid
+	, beta = c(beta0,beta1)
+	, sigma = sd.resid
+	)
 )
 
-# get_RE returns a list of random effects in this order:
-# re.site
-# re.sp
-# re.phy
-# re.nested.phy
+dat$new_y <- new_y[[1]]
 
-re.site <- REs[[1]]
-re.sp <- REs[[2]]
-re.sp.phy <- REs[[3]]
-re.nested.phy <- REs[[4]]
-re.sla = list(unname(unlist(dat["log.sla"])), site = dat$site, covar = diag(nsite))
-
-re.hacked <- re.sp.phy
-re.hacked$covar <- kronecker(diag(20),re.sp.phy$covar)
-dimnames(re.hacked$covar)[[1]] <- rep(dimnames(re.sp.phy$covar)[[1]],20)
-dimnames(re.hacked$covar)[[2]] <- rep(dimnames(re.sp.phy$covar)[[2]],20)
-
-pez_nested <-  communityPGLMM(formula = "Y ~ 1 + log.sla + annual"
-  , data = dat
-	, family = "gaussian"
-	, sp = dat$sp
-	, site = dat$site
-	, random.effects = list(re.nested.phy)
-	, REML = F
-	, verbose = F
-	# , s2.init = c(1.5, rep(0.01, 3))
-	, reltol = reltol
-	, maxit = maxit
-)
-
-hacked_nested<-  hacked_pez(formula = "Y ~ 1 + log.sla + annual"
-  , data = dat
-  , family = "gaussian"
-  , sp = dat$sp
-  , site = dat$site
-  , random.effects = list(re.hacked)
-  , REML = F
-  , verbose = F
-  # , s2.init = c(1.5, rep(0.01, 4))
-  , reltol = reltol
-  , maxit = maxit
-)
-
-hacked_nested_bad<-  hacked_pez_bad(formula = "Y ~ 1 + log.sla + annual"
+pezfit <- communityPGLMM(new_y ~ X
 	, data = dat
 	, family = "gaussian"
 	, sp = dat$sp
 	, site = dat$site
-	, random.effects = list(re.hacked)  
-	, REML = F 
-	, verbose = F
-# , s2.init = c(1.5, rep(0.01, 4))
-	, reltol = reltol
-	, maxit = maxit 
+	, random.effects = list(phy.interaction
+	, phy.int, phy.X
+	, sp.int, sp.X
+	, site.int
+	)
+	, REML = TRUE
+	, verbose = FALSE
+)
+
+lme4fit <- phylo_lmm(new_y ~ X
+	+ (1 | sp)
+	+ (0 + X | sp)
+	+ (1 | obs)
+	+ (0 + X | obs)
+	+ (1 | site)
+	+ (1 | sp:site)
+	, data = dat
+	, phylonm = c("sp", "sp:site")
+	, phylo = phy
+	, phyloZ = phyZ
+	, control = lmerControl(check.nobs.vs.nlev="ignore", check.nobs.vs.nRE = "ignore")
+	, REML = TRUE
 )
 
 
-print(summary(pez_nested))
-print(summary(hacked_nested_bad))
-print(summary(hacked_nested))
+res_list <- list(pezfit, lme4fit)
 
+saveRDS(res_list, file=paste("datadir/compare",numsite,size,seed,"rds",sep="."))
+
+#rdnosave()

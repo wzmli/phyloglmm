@@ -10,12 +10,16 @@ dat <- (dat
 	%>% mutate(obs = sp
 		, site = site_name
 		)
+	%>% arrange(sp,site)
 )
 
+print(dat)
 phyZ <- phylo.to.Z(phy)
 # 
 # debug(phylo_lmm)
 # debug(modify_phylo_retrms)
+
+Vphy <- Vphy[levels(dat$sp),levels(dat$sp)]
 
 # random intercept with species independent
 sp.int <- list(1, sp = dat$sp, covar = diag(nspp))
@@ -32,7 +36,7 @@ phy.X <- list(dat$X, sp = dat$sp, covar = Vphy)
 # sp:site
 phy.interaction <- list(1, sp = dat$sp, covar = Vphy, site = dat$site)
 
-sp.site <- list(1, site=dat$site, covar = diag(nsite))
+site.int <- list(1, site=dat$site, covar = diag(nsite))
 
 tempmod <- phylo_lmm(Y ~ X
 	+ (1 | sp:site)
@@ -72,9 +76,10 @@ fittime <- system.time(
 		, sp = dat$sp
 		, site = dat$site
 		, random.effects = list(phy.interaction
-			, phy.int, phy.X
-			, sp.int, sp.X
-			, sp.site)
+			 , phy.int, phy.X
+			 , sp.int, sp.X
+			, site.int
+			)
 		, REML = TRUE
 		, verbose = FALSE
 	)

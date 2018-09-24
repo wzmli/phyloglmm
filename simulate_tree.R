@@ -7,11 +7,12 @@ set.seed(seed)
 phy <- rtree(n = nspp)
 
 ## Compute branch lengths using other methods (optional)
-#phy2 <- compute.brlen(phy, method = "Grafen", power = 0.5)
+#phy <- compute.brlen(phy, method = "Grafen", power = 0.5)
 
 # standardize the phylogenetic covariance matrix to have determinant 1 (optional)
 Vphy <- vcv(phy)
-# Vphy <- Vphy/(det(Vphy)^(1/nspp)) ## for MCMCglmm?
+#Vphy <- Vphy/max(Vphy)
+#Vphy <- Vphy/(det(Vphy)^(1/nspp)) ## for MCMCglmm?
 
 iD <- t(chol(Vphy))
 Xsd <- 1

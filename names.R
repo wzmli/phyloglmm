@@ -12,6 +12,6 @@ if(size == "xlarge"){nspp <- 1000}
 
 
 if(numsite == "ss"){nsite <- 1}
-if(numsite == "ms"){nsite <- 25}
+if(numsite == "ms"){nsite <- 20}
 
 datadir <- "datadir/"

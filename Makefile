@@ -1,4 +1,5 @@
 ### testing phylog in lme4-verse
+print(summary(msdat %>% filter(platform == "pez")))
 
 ### Hooks 
 current: target
@@ -83,6 +84,9 @@ fit.phylolm.ss.large.1.Rout: fit_phylolm.R
 fit.lme4.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R phyloglmm.R
 	$(run-R)
 
+fit.lme4pez.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R lme4pez.R
+	$(run-R)
+
 fit.lme4.ss.xlarge.1.Rout: phyloglmm.R
 fit.lme4.ms.small.1.Rout: phyloglmm.R
 fit.lme4.ms.large.1221.Rout:
@@ -107,6 +111,15 @@ fit.pez.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R fit_pez.R
 	$(run-R)
 
 fit.pez.ms.small.1.Rout: fit_pez.R
+fit.lme4.ms.small.1.Rout: phyloglmm.R
+
+compare.pez.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R compare_pez.R
+	$(run-R)
+
+compare.pez.ms.small.1.Rout: compare_pez.R
+
+fit.pez.ms.med.1.Rout: fit_pez.R
+fit.lme4.ms.med.1.Rout: phyloglmm.R
 
 fit.brms.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R  simulate_cs.R fit_brms.R
 	$(run-R)
@@ -120,7 +133,7 @@ collect_gls.Rout: collect_gls.R
 collect.Rout: collect.R
 	$(run-R)
 
-plot.Rout: collect.Rout plot.R
+plot.Rout: ./datadir/collect.RDS plot.R
 	$(run-R)
 
 ssplot.Rout: ssplot.R
@@ -132,6 +145,9 @@ msplot.Rout: msplot.R
 csplot.Rout: csplot.R
 	$(run-R)
 
+
+peztest.Rout: new_phylo_setup.R peztest.R
+	$(run-R)
 
 Ignore += outline.html
 
