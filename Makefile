@@ -145,6 +145,8 @@ msplot.Rout: msplot.R
 csplot.Rout: csplot.R
 	$(run-R)
 
+compare_pez_plot.Rout: compare_pez_plot.R
+	$(run-R)
 
 peztest.Rout: new_phylo_setup.R peztest.R
 	$(run-R)
