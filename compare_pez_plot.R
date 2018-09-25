@@ -116,6 +116,7 @@ pez_results <- function(tt){
                        , B0 = numeric(200)
                        , B1 = numeric(200)
                        , model = numeric(200)
+                       , convcode = numeric(200)
                        , platform = "pez"
   )
   for(i in 1:length(tt)){
@@ -127,6 +128,7 @@ pez_results <- function(tt){
     pez_df[i,"species_int"] <- sqrt(unlist(pez_obj[[1]]["s2r"]))[3]
     pez_df[i,"species_X"] <- sqrt(unlist(pez_obj[[1]]["s2r"]))[4]
     pez_df[i,"site_int"] <- sqrt(unlist(pez_obj[[1]]["s2r"]))[5]
+    pez_df[i,"convcode"] <- pez_obj[[1]]["convcode"]
     B0 <- unlist(pez_obj[[1]]["B"])[1]
     B0se <- unlist(pez_obj[[1]]["B.se"])[1]
     B1 <- unlist(pez_obj[[1]]["B"])[2]
@@ -147,7 +149,7 @@ msdat <- (lme4ms_data
 	%>% separate(model, c("platform", "sites", "size", "seed", "saveformat"), "[.]") 
 )
 
-gg_temp <- (ggplot(msdat, aes(colour=size))
+gg_temp <- (ggplot(msdat, aes(colour=factor(convcode)))
   + geom_abline(slope = 1, intercept = 0)
   + theme_bw()
 )
