@@ -142,9 +142,12 @@ pez_data <- pez_results(pez_res)
 # 
 # msdat_raw <- rbind(lme4ms_data,pez_data)
 
-msdat <- (lme4ms_data %>% left_join(.,pez_data,by = "model"))
+msdat <- (lme4ms_data 
+	%>% left_join(.,pez_data,by = "model")
+	%>% separate(model, c("platform", "sites", "size", "seed", "saveformat"), "[.]") 
+)
 
-gg_temp <- (ggplot(msdat)
+gg_temp <- (ggplot(msdat, aes(colour=size))
   + geom_abline(slope = 1, intercept = 0)
   + theme_bw()
 )
