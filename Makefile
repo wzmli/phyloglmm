@@ -51,6 +51,9 @@ phyloglmm_setup.Rout:
 simulate_tree.Rout: names.R parameters.R simulate_tree.R
 	$(run-R)
 
+pez_simulate_tree.Rout: pez_simulate_tree.R
+	$(run-R)
+
 simulate_poistree.Rout: parameters.R simulate_poistree.R
 	$(run-R)
 
@@ -200,6 +203,9 @@ compare_pez.Rout: phylosig.Rout get_RE.R hacked_code/0_pkg_func.R phyloglmm_setu
 compare_pez_lme4.Rout: phylosig.Rout get_RE.R hacked_code/0_pkg_func.R phyloglmm_setup.R hacked_nested.R compare_pez_lme4.R
 	$(run-R)
 
+
+newsim.Rout: newsim.R
+	$(run-R)
 
 ### Makestuff
 

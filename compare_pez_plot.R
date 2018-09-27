@@ -10,20 +10,20 @@ library(phylolm)
 library(cowplot)
 
 lme4_path <- "./datadir/"
-lme4ms_res <- list.files(path = lme4_path, pattern = "compare")
+lme4ms_res <- list.files(path = lme4_path, pattern = "med")
 lme4ms_results <- function(tt){
-  lme4ms_df <- data.frame(resid = numeric(200)
-                          , phylo_X = numeric(200)
-                          , phylo_int = numeric(200)
-                          , phylo_cor = numeric(200)
-                          , phylo_interaction = numeric(200)
-                          , species_X = numeric(200)
-                          , species_int = numeric(200)
-                          , species_cor = numeric(200)
-                          , site_int = numeric(200)
-                          , B0 = numeric(200)
-                          , B1 = numeric(200)
-                          , model = numeric(200)
+  lme4ms_df <- data.frame(resid = numeric(63)
+                          , phylo_X = numeric(63)
+                          , phylo_int = numeric(63)
+                          , phylo_cor = numeric(63)
+                          , phylo_interaction = numeric(63)
+                          , species_X = numeric(63)
+                          , species_int = numeric(63)
+                          , species_cor = numeric(63)
+                          , site_int = numeric(63)
+                          , B0 = numeric(63)
+                          , B1 = numeric(63)
+                          , model = numeric(63)
                           , platform = "lme4"
   )
   for(i in 1:length(tt)){
@@ -102,21 +102,21 @@ lme4ms_data <- lme4ms_results(lme4ms_res)
 
 
 pez_path <- "./datadir/"
-pez_res <- list.files(path = pez_path, pattern = "compare")
+pez_res <- list.files(path = pez_path, pattern = "med")
 pez_results <- function(tt){
-  pez_df <- data.frame(resid = numeric(200)
-                       , phylo_X = numeric(200)
-                       , phylo_int = numeric(200)
+  pez_df <- data.frame(resid = numeric(63)
+                       , phylo_X = numeric(63)
+                       , phylo_int = numeric(63)
                        , phylo_cor = NA
-                       , phylo_interaction = numeric(200)
-                       , species_X = numeric(200)
-                       , species_int = numeric(200)
+                       , phylo_interaction = numeric(63)
+                       , species_X = numeric(63)
+                       , species_int = numeric(63)
                        , species_cor = NA
-                       , site_int = numeric(200)
-                       , B0 = numeric(200)
-                       , B1 = numeric(200)
-                       , model = numeric(200)
-                       , convcode = numeric(200)
+                       , site_int = numeric(63)
+                       , B0 = numeric(63)
+                       , B1 = numeric(63)
+                       , model = numeric(63)
+                       , convcode = numeric(63)
                        , platform = "pez"
   )
   for(i in 1:length(tt)){
@@ -169,3 +169,14 @@ print(gg_site_int)
 
 print(plot_grid(gg_phylo_int, gg_species_int, gg_phylo_X, gg_species_X, gg_interaction, gg_resid, ncol=2 ))
 
+
+head(lme4ms_data)
+rlme4 <-(lme4ms_data
+  %>% select(-c(model, platform, phylo_cor, species_cor))
+  %>% gather(key = type, value = sd)
+  %>% filter(sd > 0.0)
+)
+
+print(ggplot(rlme4, aes(y=sd, x=type))+geom_violin()+coord_flip())
+
+print(rlme4 %>% filter(type %in% c("B1","B0")) %>% summary())

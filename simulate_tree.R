@@ -4,7 +4,7 @@ library(ape)
 ## library(MASS)  ## for mvrnorm() ## don't load so we don't screw up dplyr::select()
 set.seed(seed)
 
-phy <- rtree(n = nspp)
+phy <- rcoal(n = nspp)
 
 ## Compute branch lengths using other methods (optional)
 #phy <- compute.brlen(phy, method = "Grafen", power = 0.5)
