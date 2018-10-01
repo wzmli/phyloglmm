@@ -8,23 +8,23 @@ set.seed(seed)
 #nsite <- 10
 
 # residual variance (set to zero for binary data)
-sd.resid <- 10
+sd.resid <- 0.0000001
 # sd.resid <- 0.000000001
 # # fixed effects
 beta0 <- 0
 beta1 <- 0
 
 # magnitude of phylogenetic random effects
-sd.B0 <- 4
+sd.B0 <- 10
 sd.B1 <- 2
-rho.B01 <- 0.7
+rho.B01 <- 0.0
 
 # magnitude of random effects
 
 sd.site <- 8
-sd.tip <- 5
+sd.tip <- 100
 sd.slope <- 3
-rho.slopetip <- 0.4
+rho.slopetip <- 0.0
 
 # whether or not to include phylogenetic signal in B0 and B1
 signal.B0 <- TRUE

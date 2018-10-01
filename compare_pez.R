@@ -3,8 +3,8 @@ library(ape)
 library(Matrix)
 library(lme4)
 library(dplyr)
-library(pez)
-
+#library(pez)
+library(phyr)
 
 dat <- (dat
 	%>% mutate(obs = sp
@@ -21,22 +21,6 @@ phyZ <- phylo.to.Z(phy)
 
 Vphy <- Vphy[levels(dat$sp),levels(dat$sp)]
 
-# random intercept with species independent
-sp.int <- list(1, sp = dat$sp, covar = diag(nspp))
-
-# random intercept with species showing phylogenetic covariances
-phy.int <- list(1, sp = dat$sp, covar = Vphy)
-
-# random slope with species independent
-sp.X <- list(dat$X, sp = dat$sp, covar = diag(nspp))
-
-# random slope with species showing phylogenetic covariances
-phy.X <- list(dat$X, sp = dat$sp, covar = Vphy)
-
-# sp:site
-phy.interaction <- list(1, sp = dat$sp, covar = Vphy, site = dat$site)
-
-site.int <- list(1, site=dat$site, covar = diag(nsite))
 
 tempmod <- phylo_lmm(Y ~ X
 	+ (1 | sp:site)
@@ -75,18 +59,17 @@ new_y <- simulate(tempmod
 
 dat$new_y <- new_y[[1]]
 
-pezfit <- communityPGLMM(new_y ~ X
+#phyrfit <- communityPGLMM(new_y ~ X
+#	+ (1 | sp__)
+#	+ (X | sp__)
+	+ (1 | site)
+	+ (1 | sp__@site)
 	, data = dat
 	, family = "gaussian"
-	, sp = dat$sp
-	, site = dat$site
-	, random.effects = list(phy.interaction
-	, phy.int, phy.X
-	, sp.int, sp.X
-	, site.int
-	)
+	, tree = phy
 	, REML = TRUE
-	, verbose = FALSE
+	, cpp = T
+	, verbose = T
 )
 
 lme4fit <- phylo_lmm(new_y ~ X
@@ -104,9 +87,10 @@ lme4fit <- phylo_lmm(new_y ~ X
 	, REML = TRUE
 )
 
+print(phyrfit)
+print(summary(lme4fit))
+res_list <- list(phyrfit, lme4fit)
 
-res_list <- list(pezfit, lme4fit)
-
-saveRDS(res_list, file=paste("datadir/compare",numsite,size,seed,"rds",sep="."))
+#saveRDS(res_list, file=paste("datadir/compare",numsite,size,seed,"rds",sep="."))
 
 #rdnosave()

@@ -13,7 +13,10 @@ phylo.to.Z <- function(r,stand=FALSE){
       cn <- r$edge[ce,1]            ## find previous node
     }
   }
-  sig <- det(vcv(r))^(1/ntip)
+  V <- vcv(r)
+  # V <- V/max(V)
+  sig <- exp(as.numeric(determinant(V)["modulus"])/ntip)
+  # sig <- det(V)^(1/ntip)
   Z <- t(sqrt(r$edge.length) * t(Zid))
   if(stand){Z <- t(sqrt(r$edge.length/sig) * t(Zid))}
   rownames(Z) <- r$tip.label

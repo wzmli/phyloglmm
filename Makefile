@@ -51,6 +51,9 @@ phyloglmm_setup.Rout:
 simulate_tree.Rout: names.R parameters.R simulate_tree.R
 	$(run-R)
 
+phylo_re_plot.Rout: phylo_re_plot.R
+	$(run-R)
+
 pez_simulate_tree.Rout: pez_simulate_tree.R
 	$(run-R)
 
@@ -119,7 +122,7 @@ fit.lme4.ms.small.1.Rout: phyloglmm.R
 compare.pez.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R compare_pez.R
 	$(run-R)
 
-compare.pez.ms.small.1.Rout: compare_pez.R
+compare.pez.ms.large.1.Rout: compare_pez.R
 
 fit.pez.ms.med.1.Rout: fit_pez.R
 fit.lme4.ms.med.1.Rout: phyloglmm.R
@@ -205,6 +208,10 @@ compare_pez_lme4.Rout: phylosig.Rout get_RE.R hacked_code/0_pkg_func.R phyloglmm
 
 
 newsim.Rout: newsim.R
+	$(run-R)
+
+
+retest.Rout: retest.R
 	$(run-R)
 
 ### Makestuff
