@@ -7,7 +7,7 @@ library(tidyr)
 library(ggtree)
 library(cowplot)
 
-set.seed(1011)
+set.seed(11)
 nspp <- 5
 nrep <- 5
 phy <- rtree(n = nspp)
@@ -24,11 +24,11 @@ gg_tree <- (ggtree(phy)
 
 Vphy <- vcv(phy)
 
-physd.y <- 2
+physd.y <- 5
 physd.x <- 2
 
-sd.y <- 0
-sd.x <- 0
+sd.y <- 1
+sd.x <- 
 
 sd.resid <- 1
 
@@ -100,10 +100,9 @@ dat2 <- dat2 %>% mutate(ll = paste(sp,1:(nspp*nrep),sep="_"))
 
 print(dat2)
 
-gg <- (ggplot(dat2, aes(x=sd, y=value, group=ll, colour=ll))
+gg <- (ggplot(dat2, aes(x=sd, y=value, group=ll, colour=obs))
   + geom_point()
   + geom_line(alpha=0.5)
-  + scale_color_manual(values=c(rep(1:nspp,each=nrep)))
   + theme_bw()
   + theme(legend.position = "none")
 )
@@ -112,15 +111,14 @@ print(gg_tree)
 
 print(gg)
 
-gg2 <- (ggplot(dat, aes(y=X.phyint.e, x=1, color=sp))
+gg2 <- (ggplot(dat, aes(y=Y.phy, x="1", color=obs))
 	+ geom_point()
-	+ scale_color_manual(values = c(1:nspp))
 	+ theme_bw()
 )
 
 print(gg2)
 
-print(plot_grid(gg_tree, gg, nrow=1))
+print(plot_grid(gg_tree, gg, gg2, nrow=1))
 
 print(plot_grid(gg,gg2,nrow=1,rel_widths = c(1,0.5)))
 

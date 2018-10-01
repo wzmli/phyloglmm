@@ -110,7 +110,7 @@ server <- function(input, output) {
     
     physigma <- kronecker(phycovmat, Vphy) 
     
-    betas <- c(0,50)
+    betas <- c(0,0)
     
     b_phy <- MASS::mvrnorm(n=1, mu=rep(betas,each=nspp), Sigma=physigma)
     
