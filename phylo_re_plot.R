@@ -8,7 +8,7 @@ library(ggtree)
 library(cowplot)
 
 set.seed(11)
-nspp <- 5
+nspp <- 10
 nrep <- 5
 phy <- rtree(n = nspp)
 
@@ -24,13 +24,13 @@ gg_tree <- (ggtree(phy)
 
 Vphy <- vcv(phy)
 
-physd.y <- 5
-physd.x <- 2
+physd.y <- 20
+physd.x <- 5
 
-sd.y <- 1
-sd.x <- 
+sd.y <- 0
+sd.x <- 0 
 
-sd.resid <- 1
+sd.resid <- 0
 
 phycormat <- matrix(c(1,1,1,1),nrow=2)
 physdvec <- c(physd.y, physd.x)
@@ -39,7 +39,7 @@ phycovmat <- phyvarmat * phycormat
 
 physigma <- kronecker(phycovmat, Vphy) 
 
-betas <- c(0,2)
+betas <- c(0,0)
 
 b_phy <- MASS::mvrnorm(n=1, mu=rep(betas,each=nspp), Sigma=physigma)
 
@@ -50,15 +50,20 @@ print(data.frame(Y.phy, X.phy))
 
 
 cormat <- matrix(c(1,1,1,1),nrow=2)
+
+print(cormat)
 sdvec <- c(sd.y, sd.x)
 varmat <- sdvec %*% t(sdvec)
 covmat <- varmat * cormat
+
+print(covmat)
 
 sigma_b <- kronecker(covmat, diag(nspp)) 
 
 b <- MASS::mvrnorm(n=1, mu=rep(betas,each=nspp), Sigma=sigma_b)
 
 Y.int <- rep(head(b,nspp), each = nrep)
+
 X.int <- rep(tail(b,nspp), each = nrep)
 
 print(data.frame(Y.int,X.int))
@@ -86,10 +91,12 @@ dat <- data.frame(sp = rep(rownames(Vphy), each = nrep)
 
 print(data.frame(Y.phyint, X.phyint))
 
+print(plot(Y.phyint, X.phyint))
+
 dat <- dat %>% mutate(sp = factor(sp,levels=rownames(Vphy)), obs=sp)
 
 dat2 <- (dat
-  %>% gather(key = sd, value, -c(sp,obs,X.phyint.e, X.phy, Y))
+  %>% gather(key = sd, value, -c(sp,obs,X.phyint.e, X.phy))
   %>% mutate(sd = factor(sd,levels=c("Y.phy","Y.phyint","Y.phyint.e","Y")))
 )
 

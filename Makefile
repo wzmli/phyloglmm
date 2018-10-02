@@ -54,6 +54,9 @@ simulate_tree.Rout: names.R parameters.R simulate_tree.R
 phylo_re_plot.Rout: phylo_re_plot.R
 	$(run-R)
 
+phytree_var_plot.Rout: phytree_var_plot.R
+	$(run-R)
+
 pez_simulate_tree.Rout: pez_simulate_tree.R
 	$(run-R)
 

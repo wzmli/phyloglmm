@@ -4,6 +4,8 @@ library(ape)
 library(cowplot)
 library(gridExtra)
 library(ggtree)
+library(dplyr)
+library(tidyr)
 
 # Define UI for app that draws a histogram ----
 ui <- fluidPage(
@@ -18,8 +20,14 @@ ui <- fluidPage(
     sidebarPanel(
       
       # Input: Slider for the number of bins ----
-      sliderInput(inputId = "seed",
-                  label = "seed",
+      sliderInput(inputId = "treeseed",
+                  label = "Tree seed",
+                  min = 1,
+                  max = 100,
+                  value = 1),
+      
+      sliderInput(inputId = "simseed",
+                  label = "Simulation seed",
                   min = 1,
                   max = 100,
                   value = 1),
@@ -90,7 +98,7 @@ server <- function(input, output) {
   #    re-executed when inputs (input$bins) change
   # 2. Its output type is a plot
   dat <- reactive({
-    set.seed(input$seed)
+    set.seed(input$treeseed)
     nspp <- input$nspp
     nrep <- input$nrep
     
@@ -111,6 +119,8 @@ server <- function(input, output) {
     physigma <- kronecker(phycovmat, Vphy) 
     
     betas <- c(0,0)
+    
+    set.seed(input$simseed)
     
     b_phy <- MASS::mvrnorm(n=1, mu=rep(betas,each=nspp), Sigma=physigma)
     
