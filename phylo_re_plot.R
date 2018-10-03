@@ -6,10 +6,13 @@ library(dplyr)
 library(tidyr)
 library(ggtree)
 library(cowplot)
+library(Hmisc)
 
-set.seed(11)
-nspp <- 10
-nrep <- 5
+tree_seed <- 101
+
+set.seed(tree_seed)
+nspp <- 200
+nrep <- 50
 phy <- rtree(n = nspp)
 
 x <- rnorm(nspp*nrep, sd=1)
@@ -24,15 +27,15 @@ gg_tree <- (ggtree(phy)
 
 Vphy <- vcv(phy)
 
-physd.y <- 20
-physd.x <- 5
+physd.y <- 10
+physd.x <- 0
 
-sd.y <- 0
+sd.y <- 5
 sd.x <- 0 
 
-sd.resid <- 0
+sd.resid <- 2
 
-phycormat <- matrix(c(1,1,1,1),nrow=2)
+phycormat <- matrix(c(1,0,0,1),nrow=2)
 physdvec <- c(physd.y, physd.x)
 phyvarmat <- physdvec %*% t(physdvec)
 phycovmat <- phyvarmat * phycormat
@@ -41,22 +44,23 @@ physigma <- kronecker(phycovmat, Vphy)
 
 betas <- c(0,0)
 
+seed <- 1011
+
+set.seed(seed)
+
 b_phy <- MASS::mvrnorm(n=1, mu=rep(betas,each=nspp), Sigma=physigma)
 
 Y.phy <- rep(head(b_phy,nspp), each = nrep)
 X.phy <- rep(tail(b_phy,nspp), each = nrep) 
 
-print(data.frame(Y.phy, X.phy))
 
-
-cormat <- matrix(c(1,1,1,1),nrow=2)
+cormat <- matrix(c(1,0,0,1),nrow=2)
 
 print(cormat)
 sdvec <- c(sd.y, sd.x)
 varmat <- sdvec %*% t(sdvec)
 covmat <- varmat * cormat
 
-print(covmat)
 
 sigma_b <- kronecker(covmat, diag(nspp)) 
 
@@ -66,7 +70,6 @@ Y.int <- rep(head(b,nspp), each = nrep)
 
 X.int <- rep(tail(b,nspp), each = nrep)
 
-print(data.frame(Y.int,X.int))
 
 Y.e <- rnorm(nspp*nrep, sd=sd.resid)
 X.e <- rnorm(nspp*nrep, sd=1)
@@ -76,8 +79,6 @@ X.phyint <- X.phy + X.int
 X.phyint.e <- X.phyint + X.e
 Y.phyint.e <- Y.phyint + Y.e
 Y <- Y.phyint.e + X.phyint.e
-
-reorder_tip <- phy$tip.label[nspp:1]
 
 dat <- data.frame(sp = rep(rownames(Vphy), each = nrep)
   , Y.phy
@@ -89,51 +90,42 @@ dat <- data.frame(sp = rep(rownames(Vphy), each = nrep)
 )
 
 
-print(data.frame(Y.phyint, X.phyint))
+dat <- dat %>% mutate(sp = factor(sp,levels=rownames(Vphy)), obs=sp, site=rep(1:nrep,nspp))
 
-print(plot(Y.phyint, X.phyint))
+source("new_phylo_setup.R")
 
-dat <- dat %>% mutate(sp = factor(sp,levels=rownames(Vphy)), obs=sp)
+phyZ <- phylo.to.Z(phy, stand=FALSE)
 
-dat2 <- (dat
-  %>% gather(key = sd, value, -c(sp,obs,X.phyint.e, X.phy))
-  %>% mutate(sd = factor(sd,levels=c("Y.phy","Y.phyint","Y.phyint.e","Y")))
+mod1 <- phylo_lmm(Y.phyint.e~1
+  + (1 | sp)
+  + (1 | obs)
+  , data=dat
+  , phylonm = c("sp","sp:site")
+  , phylo = phy
+  , phyloZ=phyZ
+  , control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
+  , REML = FALSE                  
 )
 
-# print(dat2)
+source("phyr_hacked.R")
 
-
-dat2 <- dat2 %>% mutate(ll = paste(sp,1:(nspp*nrep),sep="_"))
-
-print(dat2)
-
-gg <- (ggplot(dat2, aes(x=sd, y=value, group=ll, colour=obs))
-  + geom_point()
-  + geom_line(alpha=0.5)
-  + theme_bw()
-  + theme(legend.position = "none")
+mod2 <- phyr_hacked(Y.phyint.e ~ 1 + (1|sp__)
+  , data = dat
+  , family = "gaussian"
+  , tree = phy
+  , REML = FALSE
+  , cpp = TRUE
 )
 
-print(gg_tree)
-
-print(gg)
-
-gg2 <- (ggplot(dat, aes(y=Y.phy, x="1", color=obs))
-	+ geom_point()
-	+ theme_bw()
+mod3 <- phyr::communityPGLMM(Y.phyint.e ~ 1 + (1|sp__)
+  , data = dat
+  , family = "gaussian"
+  , tree = phy
+  , REML = FALSE
+  , cpp = TRUE
 )
 
-print(gg2)
 
-print(plot_grid(gg_tree, gg, gg2, nrow=1))
-
-print(plot_grid(gg,gg2,nrow=1,rel_widths = c(1,0.5)))
-
-gg3 <- (ggplot(dat, aes(x=X.phyint.e, y=Y, color=sp))
-	+ geom_point()
-	+ theme_bw()
-)
-
-print(gg3)
-#print(plot_grid(gg_tree,gg,nrow=2))
-
+print(summary(mod1))
+print(mod2)
+print(mod3)

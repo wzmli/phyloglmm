@@ -12,7 +12,7 @@ set.seed(treeseed)
 nspp <- 3
 nrep <- 100
 
-phy <- rcoal(n = nspp)
+phy <- rtree(n = nspp)
 print(plot(phy))
 Vphy <- ape::vcv(phy)
 physd <- 3

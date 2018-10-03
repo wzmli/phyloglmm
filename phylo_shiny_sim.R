@@ -180,7 +180,7 @@ server <- function(input, output) {
     dat <- dat %>% mutate(sp = factor(sp,levels=rownames(Vphy)), obs=sp)
     
     dat2 <- (dat
-             %>% gather(key = sd, value, -c(sp,obs,X.phyint.e, X.phy))
+             %>% gather(key = sd, value, -c(sp,obs,X.phyint.e, X.phy, Y))
              %>% mutate(sd = factor(sd,levels=c("Y.phy","Y.phyint","Y.phyint.e","Y")))
     )
     
