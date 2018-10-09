@@ -8,12 +8,12 @@ library(ggtree)
 library(cowplot)
 library(Hmisc)
 
-tree_seed <- 121
+tree_seed <- 122
 
 set.seed(tree_seed)
-nspp <- 1200
-nsite <- 10
-nrep <- 10
+nspp <- 90
+nsite <- 90
+nrep <- 20
 
 phy <- rtree(n = nspp)
 
@@ -28,17 +28,22 @@ gg_tree <- (ggtree(phy)
 # print(phy$tip.label)
 
 Vphy <- vcv(phy)
+Vphy <- Vphy/(det(Vphy)^(1/nspp))
 
-physd.y <- 10
-physd.x <- 10
+print(det(Vphy))
 
-sd.y <- 5
-sd.x <- 2 
+physd.y <- 0
+physd.x <- 0
 
-sd.site <- 2
-sd.resid <- 1
+sd.y <- 0
+sd.x <- 0 
 
-phycormat <- matrix(c(1,0.7,0.7,1),nrow=2)
+sd.site <- 0
+sd.resid <- 0.5
+
+sd.attract <- 5
+
+phycormat <- matrix(c(1,0.0,0.0,1),nrow=2)
 physdvec <- c(physd.y, physd.x)
 phyvarmat <- physdvec %*% t(physdvec)
 phycovmat <- phyvarmat * phycormat
@@ -58,10 +63,9 @@ X.phy <- rep(tail(b_phy,nspp), each = nrep*nsite)*X
 
 ## each trait will have nrep*nsite repeats
 
-cormat <- matrix(c(1,0.4,0.4,1),nrow=2)
+cormat <- matrix(c(1,0.0,0.0,1),nrow=2)
 
 
-print(cormat)
 sdvec <- c(sd.y, sd.x)
 varmat <- sdvec %*% t(sdvec)
 covmat <- varmat * cormat
@@ -81,6 +85,28 @@ b_site <- rnorm(n=nsite, mean=0, sd=sd.site)
 Y.site <- rep(rep(b_site,each=1),nspp*nrep)
 
 Y.e <- rnorm(nspp*nrep*nsite, sd=sd.resid)
+
+sdvec <- rep(sd.attract, nsite)
+varmat <- sdvec %*% t(sdvec)
+
+#print(varmat)
+covmat <- varmat * Diagonal(nsite)
+
+sigma_attract <- kronecker(covmat, Diagonal(nspp))
+sigma_attract2 <- (sd.attract^2)*Vphy
+
+sp_site_list <- list()
+for(i in 1:nsite){
+	sp_site_list[[i]] <- MASS::mvrnorm(n=1, mu=rep(0,nspp), Sigma=sigma_attract2)
+}
+
+sp_site_unlist <- unlist(sp_site_list)
+
+
+ch <- Cholesky(sigma_attract)
+
+b_attract <- sparseMVN::rmvn.sparse(n=1, mu=rep(0, each=nsite*nspp), CH=ch, prec=FALSE)
+
 
 Y.phyint <- Y.phy + Y.int
 X.phyint <- X.phy + X.int
@@ -102,16 +128,29 @@ dat <- data.frame(sp = rep(rownames(Vphy), each = nrep*nsite)
 )
 
 
-dat <- dat %>% mutate(sp = factor(sp,levels=rownames(Vphy)), obs=sp)
+dat <- (dat 
+	%>% mutate(sp = factor(sp,levels=rownames(Vphy))
+		, obs=sp
+		)
+	%>% arrange(site)
+	%>% mutate(
+		sp_site = #rep(sp_site_unlist, each = nrep) 
+		rep(b_attract,each=nrep)
+	  , new_y = Y + sp_site
+	  )
+)
+
 
 source("new_phylo_setup.R")
 
 phyZ <- phylo.to.Z(phy, stand=FALSE)
 
-mod1 <- phylo_lmm(Y~1+X
-  + (1 + X| obs)
-  + (1 + X| sp)
-  + (1 | site)
+mod1 <- phylo_lmm(new_y~1+X
+#  + (1 + X| obs)
+#  + (1 + X| sp)
+#  + (1 | site)
+#  + (1 | sp:site)
+  + (1 | obs:site)
   , data=dat
   , phylonm = c("sp","sp:site")
   , phylo = phy
@@ -119,6 +158,10 @@ mod1 <- phylo_lmm(Y~1+X
   , control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
   , REML = FALSE                  
 )
+
+
+gg <- ggplot(dat, aes(y=new_y,x=factor(site),color=factor(site))) + geom_point()
+print(gg)
 
 source("phyr_hacked.R")
 
