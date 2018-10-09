@@ -1,5 +1,4 @@
 ### testing phylog in lme4-verse
-print(summary(msdat %>% filter(platform == "pez")))
 
 ### Hooks 
 current: target

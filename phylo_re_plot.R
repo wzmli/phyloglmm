@@ -11,9 +11,9 @@ library(Hmisc)
 tree_seed <- 122
 
 set.seed(tree_seed)
-nspp <- 90
-nsite <- 90
-nrep <- 20
+nspp <- 300
+nsite <- 200
+nrep <- 1
 
 phy <- rtree(n = nspp)
 
@@ -28,7 +28,7 @@ gg_tree <- (ggtree(phy)
 # print(phy$tip.label)
 
 Vphy <- vcv(phy)
-Vphy <- Vphy/(det(Vphy)^(1/nspp))
+# Vphy <- Vphy/(det(Vphy)^(1/nspp))
 
 print(det(Vphy))
 
@@ -39,7 +39,7 @@ sd.y <- 0
 sd.x <- 0 
 
 sd.site <- 0
-sd.resid <- 0.5
+sd.resid <- 1
 
 sd.attract <- 5
 
@@ -134,8 +134,8 @@ dat <- (dat
 		)
 	%>% arrange(site)
 	%>% mutate(
-		sp_site = #rep(sp_site_unlist, each = nrep) 
-		rep(b_attract,each=nrep)
+		sp_site = rep(sp_site_unlist, each = nrep) 
+		# rep(b_attract,each=nrep)
 	  , new_y = Y + sp_site
 	  )
 )
@@ -148,9 +148,9 @@ phyZ <- phylo.to.Z(phy, stand=FALSE)
 mod1 <- phylo_lmm(new_y~1+X
 #  + (1 + X| obs)
 #  + (1 + X| sp)
-#  + (1 | site)
-#  + (1 | sp:site)
-  + (1 | obs:site)
+ # + (1 | site)
+ + (1 | sp:site)
+  # + (1 | obs:site)
   , data=dat
   , phylonm = c("sp","sp:site")
   , phylo = phy
@@ -165,7 +165,7 @@ print(gg)
 
 source("phyr_hacked.R")
 
-# mod2 <- phyr_hacked(Y.phyint.site.e ~ 1 + (1|sp__) + (1|site)
+# mod2 <- phyr_hacked(new_y ~ 1 + X + (1|sp__@site)
 #   , data = dat
 #   , family = "gaussian"
 #   , tree = phy

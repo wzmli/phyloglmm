@@ -208,7 +208,7 @@ mkBlist <- function (x, frloc, phylonm,phyloZ, drop.unused.levels = TRUE)
     }
     # bmat <- kronecker(kronecker(diag(lkr),phyloZ),diag(rkr))
     bmat <- kronecker(diag(lkr),phyloZ)
-    sm <- t(t(sm) %*% bmat)
+    sm <- t(sm[ff,] %*% bmat)
     nl <- nrow(sm)
   }
   sm <- KhatriRao(sm, t(mm))
