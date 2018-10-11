@@ -79,7 +79,7 @@ gg_ms <- (gg_ss
 print(gg_ms)
 
 print(gg_ms
-	%+% (msdat %>% filter(platform %in% c("lme4","lme4pez")))
+	%+% (msdat %>% filter(platform %in% c("lme4")))
 	+ ggtitle("TODO: cowplot y-int simulation parameter")
 )
 

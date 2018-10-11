@@ -1,92 +1,100 @@
 ### simulate phylogenetic tree
 
 library(ape)
+library(MASS)
+library(sparseMVN)
+library(Matrix)
+library(dplyr)
 ## library(MASS)  ## for mvrnorm() ## don't load so we don't screw up dplyr::select()
-set.seed(seed)
+set.seed(tree_seed)
 
-phy <- rcoal(n = nspp)
+phy <- rtree(n = nspp)
 
-## Compute branch lengths using other methods (optional)
-#phy <- compute.brlen(phy, method = "Grafen", power = 0.5)
-
-# standardize the phylogenetic covariance matrix to have determinant 1 (optional)
 Vphy <- vcv(phy)
-#Vphy <- Vphy/max(Vphy)
-#Vphy <- Vphy/(det(Vphy)^(1/nspp)) ## for MCMCglmm?
 
-iD <- t(chol(Vphy))
-Xsd <- 1
+# Generate environmental site variable
 
-# Generate environmental site variable and standardize it
+X <- rnorm(n=nspp*nsite*nrep, sd=Xsd)
 
-if(nsite == 1){
-	X <- rnorm(n=nspp,sd=Xsd)
-#	X <- iD %*% rnorm(n=nspp,sd=Xsd)
-}
-if(nsite > 1){
-X <- rnorm(n = nspp*nsite, sd=Xsd)
-B_site <- matrix(1:nsite, nrow = 1, ncol = nsite)
-# X <- (X - mean(X))/sd(X)
-}
-site_name <- sapply(1:nsite, function(x){paste("site","_",x,sep="")})
+# Generate phylogenetic intercept and slope
 
-cormat <- matrix(c(1,rho.B01,rho.B01,1),2,2)
-sdvec <- c(sd.B0,sd.B1)
+phycormat <- matrix(c(1,phyrho.B01,phyrho.B01,1),2,2)
+physdvec <- c(physd.B0,physd.B1)
+phyvarmat <- physdvec %*% t(physdvec)
+phycovmat <- phyvarmat * phycormat
+
+
+phySigma <- kronecker(phycovmat,Vphy)
+
+b_phy <- MASS::mvrnorm(n=1
+	, mu=rep(c(beta0,beta1),each=nspp)
+	, Sigma=phySigma
+)
+
+Y.phy <- rep(head(b_phy, nspp), each = nrep*nsite) 
+X.phy <- rep(tail(b_phy, nspp), each = nrep*nsite)*X
+
+
+# Generate random intercept and slope
+
+cormat <- matrix(c(1, rho.B01, rho.B01, 1), 2, 2)
+
+sdvec <- c(sd.B0, sd.B1)
 varmat <- sdvec %*% t(sdvec)
 covmat <- varmat * cormat
 
-#print(covmat)
+bSigma <- kronecker(covmat, diag(nspp))
 
-Sigma <- kronecker(covmat,Vphy)
+b <- MASS::mvrnorm(n=1
+	, mu=rep(c(beta0, beta1), each = nspp)
+	, Sigma = bSigma)
 
-#if((signal.B0==signal.B1) & (signal.B0 == FALSE)){
-#	Sigma <- kronecker(covmat,diag(nspp))
-#}
+Y.re <- rep(head(b, nspp), each = nsite*nrep)
+X.re <- rep(tail(b, nspp), each = nsite*nrep)*X
 
-b.all <- MASS::mvrnorm(n=1
-	, mu=rep(c(beta0,beta1),each=nspp)
-	, Sigma=Sigma
+# Generate random sites and phylogenetic species-site interaction
+
+site <- rep(1:nsite, nspp*nrep)
+b_site <- rnorm(n=nsite, mean=beta0, sd = sd.site)
+Y.site <- rep(b_site, nspp*nrep)
+
+interaction_sdvec <- rep(sd.interaction, nsite)
+interaction_varmat <- interaction_sdvec %*% t(interaction_sdvec)
+interaction_covmat <- interaction_varmat * Diagonal(nsite)
+
+interactionSigma <- kronecker(interaction_covmat, Vphy)
+
+interaction_Cholesky <- Cholesky(interactionSigma)
+
+b_interaction <- sparseMVN::rmvn.sparse(n=1
+	, mu=rep(beta0, each = nsite*nspp)
+	, CH = interaction_Cholesky
+	, prec = FALSE # use covariance_Choloesky when F
 )
 
-b0 <- b.all[1:nspp] 
-b1 <- b.all[(nspp+1):(2*nspp)]
+# Generate observation error
 
-y <- matrix(outer(b0, array(1, dim = c(1, nsite))), nrow = nspp,
-            ncol = nsite) + matrix(outer(b1, X), nrow = nspp, ncol = nsite)
+Y.e <- rnorm(nspp*nsite*nrep, sd = sd.resid)
 
-if(nsite == 1){
-y <- matrix(outer(b0, array(1, dim = c(1, nsite))), nrow = nspp,
-	ncol = nsite) + matrix(b1*X, nrow = nspp, ncol = nsite)
-}
-e <- rnorm(nspp * nsite, sd = sd.resid) # add residual variance 
-y <- y + matrix(e, nrow = nspp, ncol = nsite)
-y <- matrix(y, nrow = nspp * nsite, ncol = 1)
+Y <- Y.phy + Y.re + X.phy + X.re + Y.site + Y.e
 
-Y <- y
-Y <- matrix(Y, nrow = nspp, ncol = nsite)
+dat_nointeraction <- data.frame(sp = rep(rownames(Vphy), each = nrep*nsite)
+	,Y, X, site)
 
-# name the simulated species 1:nspp and sites 1:nsites
-rownames(Y) <- 1:nspp
-colnames(Y) <- 1:nsite
+dat <- (dat_nointeraction
+	%>% mutate(sp = factor(sp, levels = rownames(Vphy))
+		, obs = sp
+		)
+	%>% arrange(site)
+	%>% mutate(sp_site = rep(b_interaction, each = nrep)
+		, new_y = Y + sp_site
+		)
+)
 
 
-# Transform data matrices into "long" form, and generate a data frame
-YY <- matrix(Y, nrow = nspp * nsite, ncol = 1)
 
-XX <- matrix(kronecker(X, matrix(1, nrow = nspp, ncol = 1)), nrow =
-               nspp * nsite, ncol = 1)
 
-# if(nsite == 1){
-	XX <- matrix(X,nrow=nspp,ncol=1)
-# }
 
-site <- matrix(kronecker(1:nsite, matrix(1, nrow = nspp, ncol =
-                                           1)), nrow = nspp * nsite, ncol = 1)
 
-sp <- rep(phy$tip.label,nsite)
 
-dat <- data.frame(Y = YY, X=XX, site = as.factor(site), sp = as.factor(sp),site_name = rep(site_name,each=nspp))
-
-print(dim(dat))
-print(head(dat))
 

@@ -208,7 +208,10 @@ mkBlist <- function (x, frloc, phylonm,phyloZ, drop.unused.levels = TRUE)
     }
     # bmat <- kronecker(kronecker(diag(lkr),phyloZ),diag(rkr))
     bmat <- kronecker(diag(lkr),phyloZ)
-    sm <- t(sm[ff,] %*% bmat)
+    if(nrow(sm) == nspp*nsite){
+      sm <- t(sm[ff,])
+    }
+    sm <- t(t(sm) %*% bmat)
     nl <- nrow(sm)
   }
   sm <- KhatriRao(sm, t(mm))

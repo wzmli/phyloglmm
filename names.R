@@ -3,7 +3,7 @@ targetname <- unlist(strsplit(rtargetname,"[.]"))
 platform <- targetname[2]
 numsite <- targetname[3]
 size <- targetname[4]
-seed <- as.numeric(targetname[5])
+tree_seed <- as.numeric(targetname[5])
 
 if(size == "small"){nspp <- 25}
 if(size == "med"){nspp <- 50}

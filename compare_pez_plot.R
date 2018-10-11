@@ -9,21 +9,21 @@ library(tidyr)
 library(phylolm)
 library(cowplot)
 
-lme4_path <- "./datadir/compare_ultra"
-lme4ms_res <- list.files(path = lme4_path, pattern = "med")
+lme4_path <- "./datadir/"
+lme4ms_res <- list.files(path = lme4_path, pattern = "rds")
 lme4ms_results <- function(tt){
-  lme4ms_df <- data.frame(resid = numeric(100)
-                          , phylo_X = numeric(100)
-                          , phylo_int = numeric(100)
-                          , phylo_cor = numeric(100)
-                          , phylo_interaction = numeric(100)
-                          , species_X = numeric(100)
-                          , species_int = numeric(100)
-                          , species_cor = numeric(100)
-                          , site_int = numeric(100)
-                          , B0 = numeric(100)
-                          , B1 = numeric(100)
-                          , model = numeric(100)
+  lme4ms_df <- data.frame(resid = numeric(10)
+                          , phylo_X = numeric(10)
+                          , phylo_int = numeric(10)
+                          , phylo_cor = numeric(10)
+                          , phylo_interaction = numeric(10)
+                          , species_X = numeric(10)
+                          , species_int = numeric(10)
+                          , species_cor = numeric(10)
+                          , site_int = numeric(10)
+                          , B0 = numeric(10)
+                          , B1 = numeric(10)
+                          , model = numeric(10)
                           , platform = "lme4"
   )
   for(i in 1:length(tt)){
@@ -102,21 +102,21 @@ lme4ms_data <- lme4ms_results(lme4ms_res)
 
 
 pez_path <- "./datadir/"
-pez_res <- list.files(path = pez_path, pattern = "med")
+pez_res <- list.files(path = pez_path, pattern = "rds")
 pez_results <- function(tt){
-  pez_df <- data.frame(resid = numeric(100)
-                       , phylo_X = numeric(100)
-                       , phylo_int = numeric(100)
+  pez_df <- data.frame(resid = numeric(10)
+                       , phylo_X = numeric(10)
+                       , phylo_int = numeric(10)
                        , phylo_cor = NA
-                       , phylo_interaction = numeric(100)
-                       , species_X = numeric(100)
-                       , species_int = numeric(100)
+                       , phylo_interaction = numeric(10)
+                       , species_X = numeric(10)
+                       , species_int = numeric(10)
                        , species_cor = NA
-                       , site_int = numeric(100)
-                       , B0 = numeric(100)
-                       , B1 = numeric(100)
-                       , model = numeric(100)
-                       , convcode = numeric(100)
+                       , site_int = numeric(10)
+                       , B0 = numeric(10)
+                       , B1 = numeric(10)
+                       , model = numeric(10)
+                       , convcode = numeric(10)
                        , platform = "pez"
   )
   for(i in 1:length(tt)){

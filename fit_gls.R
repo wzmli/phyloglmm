@@ -12,7 +12,7 @@ phy_var <- diag(vcv(phy))
 
 varweights <- varFixed(~phy_var)
 
-tt <- system.time(fit_gls <- gls(Y~X
+tt <- system.time(fit_gls <- gls(new_y~X
 	, data=dat
 	, correlation=corBrownian(phy=phy)
 	, weights = varweights
@@ -25,6 +25,6 @@ print(fit_gls)
 print(summary(fit_gls))
 
 gls_list <- list(fit_gls,tt)
-saveRDS(gls_list,file=paste("datadir/gls",numsite,size,seed,"rds",sep="."))
+saveRDS(gls_list,file=paste("datadir/gls",numsite,size,tree_seed,"rds",sep="."))
 
 #rdnosave()

@@ -75,9 +75,9 @@ example.Rout: example.R
 fit.gls.%.Rout: names.R parameters.R simulate_tree.R fit_gls.R
 	$(run-R)
 
-fit.gls.ss.large.104.Rout:
+fit.gls.ss.xlarge.104.Rout: fit_gls.R
 
-fit.gls.ss.xlarge.7777.Rout: fit_gls.R
+fit.gls.ss.large.7777.Rout: fit_gls.R
 fit.glmmTMB.ss.large.1.Rout:
 
 ### phylolm
@@ -85,7 +85,7 @@ fit.glmmTMB.ss.large.1.Rout:
 fit.phylolm.%.Rout: names.R parameters.R simulate_tree.R fit_phylolm.R
 	$(run-R)
 
-fit.phylolm.ss.large.1.Rout: fit_phylolm.R
+fit.phylolm.ss.xlarge.1.Rout: fit_phylolm.R
 
 ### lme4 can fit single and multiple sites
 
@@ -95,8 +95,8 @@ fit.lme4.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R phyloglm
 fit.lme4pez.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R lme4pez.R
 	$(run-R)
 
-fit.lme4.ss.xlarge.1.Rout: phyloglmm.R
-fit.lme4.ms.small.1.Rout: phyloglmm.R
+fit.lme4.ss.xlarge.2.Rout: phyloglmm.R
+fit.lme4.ms.xlarge.12.Rout: phyloglmm.R
 fit.lme4.ms.large.1221.Rout:
 fit.lme4.ms.xlarge.1.Rout: phyloglmm.R
 ### tmb
@@ -118,13 +118,19 @@ fit_cs.lme4.%.Rout: names.R parameters.R simulate_tree.R phyloglmm_setup.Rout fi
 fit.pez.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R fit_pez.R
 	$(run-R)
 
+fit.phyr.%.Rout: names.R parameters.R simulate_tree.R fit_phyr.R
+	$(run-R)
+
+fit.phyr.ms.small.1.Rout: fit_phyr.R
+
 fit.pez.ms.small.1.Rout: fit_pez.R
+
 fit.lme4.ms.small.1.Rout: phyloglmm.R
 
 compare.pez.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R compare_pez.R
 	$(run-R)
 
-compare.pez.ms.large.1.Rout: compare_pez.R
+compare.pez.ms.small.1.Rout: compare_pez.R
 
 fit.pez.ms.med.1.Rout: fit_pez.R
 fit.lme4.ms.med.1.Rout: phyloglmm.R

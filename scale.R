@@ -4,7 +4,7 @@ library(MCMCglmm)
 
 seed <- 202
 set.seed(seed)
-nspp <- 5
+nspp <- 10
 
 phy <- rtree(nspp)
 plot(phy)
@@ -18,5 +18,6 @@ plot(uphy)
 uvc <- vcv(uphy)
 print(det(uvc))
 
+inverseA(phy,scale=TRUE)
 inverseA(phy,scale=FALSE)
-inverseA(uphy)
+aa <- inverseA(uphy)
