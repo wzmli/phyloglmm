@@ -25,8 +25,8 @@ The first challenge is to identify and segregate phylogenetic signals \citep{blo
 % \bmb{prev sentence doesn't seem be quite the right lead-in to the rest of the paragraph? You go on to talk about the tip-variation/residual-variation confounding issue. Maybe replace with something talking more specifically about resolving tip variation?}
 The classic phylogenetic regression assumes that phylogenetic correlation (PC) among the residuals from a regression between the traits arises because the residual variation evolves along the branches of the phylogeny according to a Brownian motion process; if the traits are normally distributed and observed without any additional error or within-species variation, this leads to Felsenstein's method of phylogenetically independent contrasts (PICs) \citep{felsenstein1985phylogenies}.
 More recent approaches -- including phylogenetic generalized linear mixed models (PGLMM) \citep{ives2011generalized}, Pagel's $\lambda$ \citep{pagel1999inferring}, and Blomberg's $K$ \citep{blomberg2003testing} --- build upon Felsenstein's PICs by considering different response distributions and allowing extra parameters to account for additional complexities in the evolutionary process. They partition the phylogenetically correlated residual variation into (1) phylogenetically uncorrelated residual variation (observation error or tip variation) and (2) phylogenetic signal  \citep[biological/evolutionary process error:][]{hansen2012interpreting}.
-However, when multiple observations (or repeated measures) of the same species (taxon) are being observed, this introduces another level of variation; in this case, phylogenetic signal and tip variation are now both part of the evolutionary process error (we will call this species/interept level variation) and residual variation is associated with observation level variation (the standard statistical definition).
-\mli{make a diagram!}
+However, when multiple observations (or repeated measures) of the same species (taxon) are being observed, this introduces another level of variation; in this case, phylogenetic signal and tip variation are now both part of the evolutionary process error (we will call this species/intercept level variation) and residual variation is associated with observation level variation (the standard statistical definition).
+\mli{See shiny}
 %\bmb{This is a good point, well expressed. Does PGLMM lump tip variation and within-species variation, or is this primarily an issue with Blomberg/Pagel? Thinking about Boettiger's critique \cite{boettiger2013is} (don't know if it's been peer-reviewed, we could ask him), which might be resolved if we think explicitly about within-species variation \ldots
 %\mli{I think it is more like our simulation test. In Boettiger's example, it is treating sister taxa as different species. So it is using a phylogenetic tree of 8 species instead of 4.}
 Despite the addition of multiple observations per tip taxon (species) being statistically straightforward, it is rarely seen: existing platforms are unable to fit multiple observations, or unbalanced design data, or both.
@@ -254,7 +254,7 @@ For single-site model, the full simulation model is the following:
 \Bigg) \\
 b_{obs} & \sim \textrm{MVN} ( 0 , \Sigma)
 \end{align}
-where it contains two fixed effect parameters ($\beta_0$ and $\beta_1$), and four random effect parameters (phylogenetic random intercept, phylogenetic random slope, correlation between phylogenetic random slope and intercept and observation variance).  
+where it contains two fixed effect parameters ($\beta_0$ and $\beta_1$), three random effect parameters (phylogenetic random intercept, phylogenetic random slope and correlation between phylogenetic random slope and intercept) and observation/residual variance.  
 Predictor and intercept level random variation/effect of species are not applicable in this simulation setting with single observation per species because it will confound with the observational level variation (residuals).
 
 We extend the simulation model by adding multiple sites where each site will have one observation per species. The multiple-site full model is the following: 
@@ -266,7 +266,7 @@ We extend the simulation model by adding multiple sites where each site will hav
 \end{bmatrix}
 \Bigg) \\
 (b_{sp_{int}}, b_{sp_{slope}}) & \sim \textrm{MVN} \Bigg( 0, \begin{bmatrix}
-\sigma^2_{sp_{int}} & \sigma_{sp_{int},phy_{slope}} \\ 
+\sigma^2_{sp_{int}} & \sigma_{sp_{int},sp_{slope}} \\ 
 \sigma_{sp_{int},sp_{slope}} & \sigma^2_{sp_{slope}}
 \end{bmatrix}
 \Bigg) \\
