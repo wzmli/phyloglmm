@@ -7,6 +7,7 @@ library(ggplot2)
 library(brms)
 library(tidyr)
 library(phylolm)
+library(phyr)
 
 #### Collect gls results ----
 
@@ -263,24 +264,22 @@ lme4ms_results <- function(tt){
 
 lme4ms_data <- lme4ms_results(lme4ms_res)
 
-
-
 pez_path <- "./datadir/pez/"
 pez_res <- list.files(path = pez_path)
 pez_results <- function(tt){
-  pez_df <- data.frame(resid = numeric(200)
-    , phylo_X = numeric(200)
-    , phylo_int = numeric(200)
+  pez_df <- data.frame(resid = numeric(40)
+    , phylo_X = numeric(40)
+    , phylo_int = numeric(40)
     , phylo_cor = NA
-    , phylo_interaction = numeric(200)
-    , species_X = numeric(200)
-    , species_int = numeric(200)
+    , phylo_interaction = numeric(40)
+    , species_X = numeric(40)
+    , species_int = numeric(40)
     , species_cor = NA
-    , site_int = numeric(200)
-    , B0 = numeric(200)
-    , B1 = numeric(200)
-    , model = numeric(200)
-    , time = numeric(200)
+    , site_int = numeric(40)
+    , B0 = numeric(40)
+    , B1 = numeric(40)
+    , model = numeric(40)
+    , time = numeric(40)
   )
   for(i in 1:length(tt)){
     pez_obj <- readRDS(paste(pez_path,tt[i],sep=""))
@@ -307,22 +306,66 @@ pez_data <- pez_results(pez_res)
 
 
 
+phyr_path <- "./datadir/phyr/"
+phyr_res <- list.files(path = phyr_path)
+phyr_results <- function(tt){
+  phyr_df <- data.frame(resid = numeric(40)
+                       , phylo_X = numeric(40)
+                       , phylo_int = numeric(40)
+                       , phylo_cor = NA
+                       , phylo_interaction = numeric(40)
+                       , species_X = numeric(40)
+                       , species_int = numeric(40)
+                       , species_cor = NA
+                       , site_int = numeric(40)
+                       , B0 = numeric(40)
+                       , B1 = numeric(40)
+                       , model = numeric(40)
+                       , time = numeric(40)
+  )
+  for(i in 1:length(tt)){
+    phyr_obj <- readRDS(paste(phyr_path,tt[i],sep=""))
+    phyr_df[i,"resid"] <- sqrt(unlist(phyr_obj[[1]]["s2resid"]))
+    phyr_df[i,"phylo_interaction"] <- sqrt(unlist(phyr_obj[[1]]["s2n"]))
+    phyr_df[i,"phylo_int"] <- sqrt(unlist(phyr_obj[[1]]["s2r"]))[2]
+    phyr_df[i,"phylo_X"] <- sqrt(unlist(phyr_obj[[1]]["s2r"]))[4]
+    phyr_df[i,"species_int"] <- sqrt(unlist(phyr_obj[[1]]["s2r"]))[1]
+    phyr_df[i,"species_X"] <- sqrt(unlist(phyr_obj[[1]]["s2r"]))[3]
+    phyr_df[i,"site_int"] <- sqrt(unlist(phyr_obj[[1]]["s2r"]))[5]
+    B0 <- unlist(phyr_obj[[1]]["B"])[1]
+    B0se <- unlist(phyr_obj[[1]]["B.se"])[1]
+    B1 <- unlist(phyr_obj[[1]]["B"])[2]
+    B1se <- unlist(phyr_obj[[1]]["B.se"])[2]
+    phyr_df[i,"B0"] <- as.numeric(between(0, B0-1.96*B0se, B0+1.96*B0se))
+    phyr_df[i,"B1"] <- as.numeric(between(0, B1-1.96*B1se, B1+1.96*B1se))
+    phyr_df[i,"model"] <- tt[i]
+    phyr_df[i,"time"] <- phyr_obj[[2]][[1]]
+  }
+  return(phyr_df)
+}
+
+phyr_data <- phyr_results(phyr_res)
+
+
+
+
+
 lme4pez_path <- "./datadir/lme4pez/"
 lme4pez_res <- list.files(path = lme4pez_path, pattern = "ms")
 lme4pez_results <- function(tt){
-  lme4ms_df <- data.frame(resid = numeric(300)
-                          , phylo_X = numeric(300)
-                          , phylo_int = numeric(300)
+  lme4ms_df <- data.frame(resid = numeric(40)
+                          , phylo_X = numeric(40)
+                          , phylo_int = numeric(40)
                           , phylo_cor = NA
-                          , phylo_interaction = numeric(300)
-                          , species_X = numeric(300)
-                          , species_int = numeric(300)
+                          , phylo_interaction = numeric(40)
+                          , species_X = numeric(40)
+                          , species_int = numeric(40)
                           , species_cor = NA
-                          , site_int = numeric(300)
-                          , B0 = numeric(300)
-                          , B1 = numeric(300)
-                          , model = numeric(300)
-                          , time = numeric(300)
+                          , site_int = numeric(40)
+                          , B0 = numeric(40)
+                          , B1 = numeric(40)
+                          , model = numeric(40)
+                          , time = numeric(40)
   )
   for(i in 1:length(tt)){
     lme4_obj <- readRDS(paste(lme4pez_path,tt[i],sep=""))
@@ -384,7 +427,7 @@ lme4pez_data <- lme4pez_results(lme4pez_res)
 
 
 
-msdat <- rbind(lme4ms_data,pez_data, lme4pez_data)
+msdat <- rbind(lme4ms_data,pez_data, phyr_data)
 #### Save results ----
 data_list <- list(ssdat,msdat)
 

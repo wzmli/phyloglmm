@@ -20,6 +20,7 @@ ssdat <- (ssdat_raw
 			)
 			, platform = factor(platform, levels=c("gls", "phylolm","lme4", "brms"))
 		)
+	%>% filter(platform != "brms")
 )
 
 
@@ -67,7 +68,7 @@ msdat <- (msdat_raw
 	%>% mutate(size = factor(size,
 			levels=c("small","med","large","xlarge"), labels=c("25","50","100","1000")
 			)
-			, platform = factor(platform, levels=c("pez","lme4pez","lme4"))
+			, platform = factor(platform, levels=c("pez","phyr","lme4"))
 		)
 )
 
