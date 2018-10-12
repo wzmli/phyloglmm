@@ -14,7 +14,6 @@ dat <- (dat
 	%>% mutate(obs = sp)
 )	
 
-t2 <- proc.time()
 #debug(phylo_lmm)
 #debug(modify_phylo_retrms)
 
@@ -28,8 +27,6 @@ if(numsite == "ss"){
 		)
 		, REML = TRUE
 	)
-t3 <- proc.time()
-lme4time <- t3-t1
 }
 
 if(numsite == "ms"){
@@ -45,12 +42,12 @@ t4 <- proc.time()
       , phylo = phy
       , phyloZ=phyZ
       , control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
-      , REML = TRUE
+      , REML = FALSE
     )
-t5 <- proc.time()
-lme4time <- t2-t1 + (t5-t4)
 }
+t2 <- proc.time()
 
+lme4time <- t2 - t1 
 print(lme4time)
 
 print(summary(lme4fit))
