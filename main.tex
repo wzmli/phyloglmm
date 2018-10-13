@@ -444,26 +444,32 @@ Codes for fitting dune meadow analysis using \pkg{lme4} and \pkg{pez} are provid
 
 % \bmb{say something about the implications of this [e.g. good enough for getting an overall impression of phylog. whatever-it-is but not enough for detailed description/inference about the evolutionary process?] (or maybe that should be saved for the Discussion?)}
 
-We have fitted models including maximum capabilities \bmb{???} to model varying levels of variation/phylogenetic signal to simulated data with our simple model with a single response and predictor variable.
-Using models that can include/account for multiple levels of variation is necessary for robust fits, but models that include phylogenetic signal in the intercept level can work as well as the full model. \bmb{clarify?}
-Under the Brownian motion evolution process assumption, modelling via independent errors is much more computationally efficient than imposing equivalent correlation structures. \bmb{clarify? you mean that assuming int/slope independence is much faster? Don't remember seeing such an example in the results?}
+The evolutionary model simulations presented in this paper are an oversimplification of real evolutionary processes in nature, but it is analogous to how researchers fit models to study complicated systems (as it is impossible to create a model to "match" the complexities of nature).
+We have fitted models using different platforms/methods that best match the simulation models. 
+Models that cannot match the simulation (full) model are expected to underperform; it is important to understand the limitations and performance of these simpler models/assumptions that are restricted by the commonly used methods available.
+Using models that include some form of phylogenetic variation and residual variation is necessary to \mli{correctly/robustly?} detect evolutionary process.
 
 \subsection{Process and residual (observation) variabilities and confoundings}
 
-
-
-Process and observation errors are highly confounded in phylogenetic regression.
+Process and observation errors are highly confounded in phylogenetic regression if it is not handled correctly. 
 The effects of models that include both process and residual variations (i.e. PGLMM, PGLM) instead of the less realistic model that assumes variation due to evolution and zero observation (PGLS) was large. 
-In particular, models that did not include residual variation tended to over-estimate the amount of variability in the evolutionary process. 
-Thus, any model that can account for at least two sources of variation (one for the residual variance, and at least one for the process variation) will be sufficient to a first approximation (i.e. Pagel's $\lambda$, Blomberg's $K$).
+% In particular, models that did not include residual variation tended to over-estimate the amount of variability in the evolutionary process. 
+Thus, for single measurement per species model, any method that can account for at least two sources of variation (one for the residual variance, and at least one for the process variation) will be sufficient to a first approximation (i.e. Pagel's $\lambda$, Blomberg's $K$).
+However, if multiple measurements/observations are considered/allowed per species, then using methods such as Pagel's $\lambda$ can potentially incorrectly estimate the amount of phylogenetic process by substituting tip variation with residual variation. 
+
+\mli{this is specifically targeting boettiger's critque on Pagel's lambda.
+https://www.carlboettiger.info/2013/10/11/is-it-time-to-retire-pagels-lambda.html
+The difference between the two figures is what it thinks the "tip" variation is. For the second plot, if we treat the sister taxas as "multiple" observation with some observation error on it, then you will get back to the first plot.}
+
 \bmb{again, we/you need to think carefully about what these coarse measures are good for; just avoiding mis-estimating the strength of trait/trait or trait/environment parameters? Is it worth doing some sims on that, or do we basically believe if the total amount of phylogenetic signal is correctly assessed, that we get the right answer for the trait effect? Is \cite{schielzeth2009conclusions} relevant/a useful analogy? (You cite it below, but there are two separate questions: (1) whether including random slopes gives us more insight into evol processes; (2) whether omitting random slopes gives us bad answers even when we're not interested in them.) Worth citing/discussing \cite{uyeda2018rethinking} (as an example of even deeper analysis of evolutionary processes, beyond BM etc.)?}
 
 \subsection{Random Slopes}
 
 \bmb{I think you need a lot more here; what does a random slopes model mean? You have one sentence that says ``people should be thinking about random slopes''. Then you talk about correlation (which is a much more subtle/less important issue, I think).}
 In classic GLMM (without phylogenetic relationships), random slopes models are not always appropriate, but they are relevant over a wider range of scenarios than people are currently thinking about \cite{schielzeth2008conclusions, cleasby2015quantifying}.
-When analyzing evolutionary process among species between species traits and environmental variables, it is entirely plausible that the relationship across different traits and predictor variables are varying in a phylogenetically correlated way.
-Although the effects of including phylogenetically correlated random slopes are relatively low compared to process and residual variation in the intercept, it is still useful and informative than ignoring it from the model.
+When analyzing relationships among species between traits and environmental variables, it is entirely plausible that change in effect of predictor variables have on traits are changing in a phylogenetically correlated way.
+In fact, it is easier to interpret random slopes in the evolutionary process context (i.e, are size of different species phylogenetically correlated, or growth rate through time of different species phylogenetically correlated?)
+\mli{I like to think of it in a longitudinal setting of observing plant length/height. At time zero, they are all still seeds, one can imagine the growth rate are different plant species grow in a phylogenetically correlated way (similar species have similar growth rates).}
 It may be easier to simplify the phylogenetic relationships (at the random slopes level) and think about the random-slopes model in a strictly hierarchical setting (i.e., estimating different slopes for each family, or taxon \cite{bunnefeld2012island}) - the PGLMM collapses to a standard random-slopes model. 
 Users should be aware of two important questions when fitting random-slope models: How much data do we need in order to practically estimate the random slopes? and Are we making a mistake by ignoring random slopes \cite{schielzeth2008conclusions}? 
 However, in the PGLMM context, as long as there's variation in the predictor among tips, there will be variation among taxa at some level, so random-slopes models will (almost always) be \emph{theoretically} identifiable.
