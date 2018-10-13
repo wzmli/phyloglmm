@@ -367,31 +367,36 @@ Residual & &  & X & X & X & X \\
 
 \bmb{add refs to figures \ldots}
 
-\begin{itemize}
-\item{full model provides good estimates (except for correlation)}
-\item{reduced models try to fit with whatever parameters they have available (over-estimates the simulation parameters)}
-\item{no slope vs slope}
-\item{no correlation vs correlation}
-\item{as size/data/number of species increase, the parameter estimates gets better}
-\item{single site models are fast}
-\item{estimates gets closer to simulation parameter as number of species increase}
-\item{lme4/tmb are fast, everything else is slow for multiple sites}
-\end{itemize}
+% \begin{itemize}
+% \item{full model provides good estimates (except for correlation)}
+% \item{reduced models try to fit with whatever parameters they have available (over-estimates the simulation parameters)}
+% \item{no slope vs slope}
+% \item{no correlation vs correlation}
+% \item{as size/data/number of species increase, the parameter estimates gets better}
+% \item{single site models are fast}
+% \item{estimates gets closer to simulation parameter as number of species increase}
+% \item{lme4/tmb are fast, everything else is slow for multiple sites}
+% \end{itemize}
 
-The full single site model using \pkg{lme4} (which matches the signle simulation model that incorporates phylogenetic intercept, slope and correlation) provides good estimates for all parameters except for random correlation parameter ($\sigma_{phy_{int},phy_{slope}}$) and have nominal coverage for the fixed effect parameters ($\beta_0$ and $\beta_1$) as number of species increase. 
+The full single site model using phyloglmm (which matches the signle simulation model that incorporates phylogenetic intercept, slope and correlation) provides good estimates for all parameters except for random correlation parameter ($\sigma_{phy_{int},phy_{slope}}$) and fixed effect parameters ($\beta_0$ and $\beta_1$) estimates approaches nominal coverage as number of species increases. 
 
-In general, models that cannot match the simulation model (gls and phylolm) will try to fit the data with the available parameters. Phylolm (which lack the phylogenetic slope parameter) provides good estimates for phylogenetic intercept parameter ($\sigma_{phy}_{int}$) but overestimates the residual/observation standard deviation and have a bad coverage for the fixed slope parameter.
+In general, models that cannot match the simulation model (PGLS and PGLM) will try to fit the data with the available parameters. PGLM (which lacks the phylogenetic slope parameter) provides good estimates for phylogenetic intercept parameter ($\sigma_{phy_{int}}$) but overestimates the residual/observation standard deviation and have a bad coverage for the fixed slope parameter.
+PGLS, with only one parameter available, confounds all the other variations (phylogenetic slope and residual variation) into the single parameter (phylogenetic intercept), resulting in overestimating the phylogenetic intercept as well as large RMSE and overcovering for $\beta_0$, and bad estimates for $\beta_1$. 
+\mli{double check this, what happens when X is also phylogenetically correlated?}
 
-the phylogenetic signal estimates are more robust for all models (including models without random slope and correlation) with more data, except PGLS in the single site simulations. \bmb{(2) please define ``robustness'' -- usually means lack of sensitivity to model misspecification.  Are you talking about the variance of the estimates? I'd prefer not to use ``robust'' in a non-standard way if possible (2) what are small/medium/large? I see that $n=\{20,100,500\}$ and $m=\{1,20\}$, but not sure how these match up to ``small'', ``medium'', ``large''; is Figure 1 all $m=1$? Might be worth just labeling by $n=??$ rather than using small/medium/large}
-It is unclear how different levels of phylogenetic signal are being confounded under the error free (without tip variation) assumption for the PGLS models.
-\bmb{can we figure this out, even in an empirical/crude way??? it's tough to have results without knowing the true value they're aiming for ...}
-Models with only two parameters/levels of variation capture the true phylogenetic intercept and tip variation reasonably well despite neglecting phylogenetic variation in the slopes (\pkg{gls}) and correlation between the intercepts and slopes (\pkg{phylolm}). \bmb{say something about the implications of this [e.g. good enough for getting an overall impression of phylog. whatever-it-is but not enough for detailed description/inference about the evolutionary process?] (or maybe that should be saved for the Discussion?)}
+% \bmb{(2) please define ``robustness'' -- usually means lack of sensitivity to model.  Are you talking about the variance of the estimates? I'd prefer not to use ``robust'' in a non-standard way if possible (2) what are small/medium/large? I see that $n=\{20,100,500\}$ and $m=\{1,20\}$, but not sure how these match up to ``small'', ``medium'', ``large''; is Figure 1 all $m=1$? Might be worth just labeling by $n=??$ rather than using small/medium/large}
+% It is unclear how different levels of phylogenetic signal are being confounded under the error free (without tip variation) assumption for the PGLS models.
+% \bmb{can we figure this out, even in an empirical/crude way??? it's tough to have results without knowing the true value they're aiming for ...}
+
+\bmb{say something about the implications of this [e.g. good enough for getting an overall impression of phylog. whatever-it-is but not enough for detailed description/inference about the evolutionary process?] (or maybe that should be saved for the Discussion?)}
 
 Platforms using the mixed model framework for multiple site simulations follow similar behaviour as the single-site simulation (i.e. different levels of phylogenetic signals and variations are closer to the simulated parameters with more data). 
 All parameter estimates are much more robust for the multiple site than the single site simulations, especially slope-intercept correlations.
 The lack of phylogenetic correlation in \pkg{pez}'s statistical models does not appear to hurt its ability to estimate other aspects of phylogenetic signal; in fact, its slightly simpler model may be responsible for its slightly less variable estimates.
 \bmb{Can you identify the extreme cases in \pkg{lme4}'s estimate? Are these singular models? Would they be diagnosable? Can you say anything about when the assumption of independence of slope and intercept \textbf{would} be a problem? (If you can think of such a scenario, you could run sims for one such example - don't need to go into great detail, but being able to say that you confirmed that it's a problem in such-and-such a case would be important.)}
-However, despite the similarities of robustness estimation, the efficiency (measured by computational speed) of sampling independent errors in \pkg{lme4} is dramatically better (orders of magnitude faster) than \pkg{pez}.
+\mli{save it for random slope discussion}
+
+However, despite the similarities of estimation, the efficiency (measured by computational speed) of sampling independent errors in \pkg{lme4} is  better than \pkg{pez}. For example, the median of 50 vs 300 seconds for the medium-size example.
 \bmb{be more specific, e.g. ``median of 8 vs 800 seconds for the medium-size example''. Clarify what ``independent errors'' means here?}
 Furthermore, it was not practical for \pkg{pez} to fit large sample size simulation data as the computational speed did not scale linearly.
 \bmb{Can you put a lower bound on \pkg{pez}'s computation time? How long did you take to give up? How does it scale? can you either figure out from first principles
@@ -426,7 +431,7 @@ Furthermore, it was not practical for \pkg{pez} to fit large sample size simulat
 % \end{figure}
 % \end{center}
 
-\bmb{Can you give more motivation for this? Why is it here?}
+% \bmb{Can you give more motivation for this? Why is it here?}
 
 We used our method and fitted the full model of the dune meadow data recently used with \pkg{pez} \cite{li2017canfun}. 
 We have obtained identical results for fix and random effect estimates and approximately 120 times faster compared to \pkg{pez}. 
