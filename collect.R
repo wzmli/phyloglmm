@@ -267,19 +267,19 @@ lme4ms_data <- lme4ms_results(lme4ms_res)
 pez_path <- "./datadir/pez/"
 pez_res <- list.files(path = pez_path)
 pez_results <- function(tt){
-  pez_df <- data.frame(resid = numeric(40)
-    , phylo_X = numeric(40)
-    , phylo_int = numeric(40)
+  pez_df <- data.frame(resid = numeric(174)
+    , phylo_X = numeric(174)
+    , phylo_int = numeric(174)
     , phylo_cor = NA
-    , phylo_interaction = numeric(40)
-    , species_X = numeric(40)
-    , species_int = numeric(40)
+    , phylo_interaction = numeric(174)
+    , species_X = numeric(174)
+    , species_int = numeric(174)
     , species_cor = NA
-    , site_int = numeric(40)
-    , B0 = numeric(40)
-    , B1 = numeric(40)
-    , model = numeric(40)
-    , time = numeric(40)
+    , site_int = numeric(174)
+    , B0 = numeric(174)
+    , B1 = numeric(174)
+    , model = numeric(174)
+    , time = numeric(174)
   )
   for(i in 1:length(tt)){
     pez_obj <- readRDS(paste(pez_path,tt[i],sep=""))
@@ -309,19 +309,19 @@ pez_data <- pez_results(pez_res)
 phyr_path <- "./datadir/phyr/"
 phyr_res <- list.files(path = phyr_path)
 phyr_results <- function(tt){
-  phyr_df <- data.frame(resid = numeric(40)
-                       , phylo_X = numeric(40)
-                       , phylo_int = numeric(40)
+  phyr_df <- data.frame(resid = numeric(58)
+                       , phylo_X = numeric(58)
+                       , phylo_int = numeric(58)
                        , phylo_cor = NA
-                       , phylo_interaction = numeric(40)
-                       , species_X = numeric(40)
-                       , species_int = numeric(40)
+                       , phylo_interaction = numeric(58)
+                       , species_X = numeric(58)
+                       , species_int = numeric(58)
                        , species_cor = NA
-                       , site_int = numeric(40)
-                       , B0 = numeric(40)
-                       , B1 = numeric(40)
-                       , model = numeric(40)
-                       , time = numeric(40)
+                       , site_int = numeric(58)
+                       , B0 = numeric(58)
+                       , B1 = numeric(58)
+                       , model = numeric(58)
+                       , time = numeric(58)
   )
   for(i in 1:length(tt)){
     phyr_obj <- readRDS(paste(phyr_path,tt[i],sep=""))
@@ -349,81 +349,81 @@ phyr_data <- phyr_results(phyr_res)
 
 
 
-
-lme4pez_path <- "./datadir/lme4pez/"
-lme4pez_res <- list.files(path = lme4pez_path, pattern = "ms")
-lme4pez_results <- function(tt){
-  lme4ms_df <- data.frame(resid = numeric(40)
-                          , phylo_X = numeric(40)
-                          , phylo_int = numeric(40)
-                          , phylo_cor = NA
-                          , phylo_interaction = numeric(40)
-                          , species_X = numeric(40)
-                          , species_int = numeric(40)
-                          , species_cor = NA
-                          , site_int = numeric(40)
-                          , B0 = numeric(40)
-                          , B1 = numeric(40)
-                          , model = numeric(40)
-                          , time = numeric(40)
-  )
-  for(i in 1:length(tt)){
-    lme4_obj <- readRDS(paste(lme4pez_path,tt[i],sep=""))
-    covmat <- as.data.frame(lme4::VarCorr(lme4_obj[[1]]))
-    lme4ms_df[i,"resid"] <- (covmat 
-                             %>% filter(grp=="Residual") 
-                             %>% select(sdcor) 
-                             %>% as.numeric()
-    )
-    lme4ms_df[i, "phylo_X"] <- (covmat 
-                                %>% filter((grp=="sp") & (var1 =="X")) 
-                                %>% select(sdcor) 
-                                %>% as.numeric()
-    )
-    lme4ms_df[i, "phylo_int"] <- (covmat 
-                                  %>% filter((grp=="sp.1") 
-                                             & (var1 == "(Intercept)")
-                                             & (is.na(var2))
-                                  ) 
-                                  %>% select(sdcor) 
-                                  %>% as.numeric()
-    )
-    lme4ms_df[i,"phylo_interaction"] <- (covmat
-                                         %>% filter((grp=="sp:site"))
-                                         %>% select(sdcor)
-                                         %>% as.numeric()
-    )
-    lme4ms_df[i, "species_X"] <- (covmat 
-                                  %>% filter((grp=="obs") & (var1 =="X"))
-                                  %>% select(sdcor)
-                                  %>% as.numeric()
-    )
-    lme4ms_df[i, "species_int"] <- (covmat 
-                                    %>% filter((grp=="obs.1") 
-                                               & (var1 == "(Intercept)")
-                                               & (is.na(var2))
-                                    ) 
-                                    %>% select(sdcor) 
-                                    %>% as.numeric()
-    )
-    lme4ms_df[i,"site_int"] <- (covmat 
-                                %>% filter(grp=="site")
-                                %>% select(sdcor) 
-                                %>% as.numeric()
-    )
-    B0 <- coef(summary(lme4_obj[[1]]))["(Intercept)","Estimate"]
-    B0se <- coef(summary(lme4_obj[[1]]))["(Intercept)","Std. Error"]
-    B1 <- coef(summary(lme4_obj[[1]]))["X","Estimate"]
-    B1se <- coef(summary(lme4_obj[[1]]))["X","Std. Error"]
-    lme4ms_df[i,"B0"] <- as.numeric(between(0, B0-1.96*B0se, B0+1.96*B0se))
-    lme4ms_df[i,"B1"] <- as.numeric(between(0, B1-1.96*B1se, B1+1.96*B1se))
-    lme4ms_df[i,"model"] <- tt[i]
-    lme4ms_df[i,"time"] <- lme4_obj[[2]][[1]]
-  }
-  return(lme4ms_df)
-}
-
-lme4pez_data <- lme4pez_results(lme4pez_res)
+# 
+# lme4pez_path <- "./datadir/lme4pez/"
+# lme4pez_res <- list.files(path = lme4pez_path, pattern = "ms")
+# lme4pez_results <- function(tt){
+#   lme4ms_df <- data.frame(resid = numeric(40)
+#                           , phylo_X = numeric(40)
+#                           , phylo_int = numeric(40)
+#                           , phylo_cor = NA
+#                           , phylo_interaction = numeric(40)
+#                           , species_X = numeric(40)
+#                           , species_int = numeric(40)
+#                           , species_cor = NA
+#                           , site_int = numeric(40)
+#                           , B0 = numeric(40)
+#                           , B1 = numeric(40)
+#                           , model = numeric(40)
+#                           , time = numeric(40)
+#   )
+#   for(i in 1:length(tt)){
+#     lme4_obj <- readRDS(paste(lme4pez_path,tt[i],sep=""))
+#     covmat <- as.data.frame(lme4::VarCorr(lme4_obj[[1]]))
+#     lme4ms_df[i,"resid"] <- (covmat 
+#                              %>% filter(grp=="Residual") 
+#                              %>% select(sdcor) 
+#                              %>% as.numeric()
+#     )
+#     lme4ms_df[i, "phylo_X"] <- (covmat 
+#                                 %>% filter((grp=="sp") & (var1 =="X")) 
+#                                 %>% select(sdcor) 
+#                                 %>% as.numeric()
+#     )
+#     lme4ms_df[i, "phylo_int"] <- (covmat 
+#                                   %>% filter((grp=="sp.1") 
+#                                              & (var1 == "(Intercept)")
+#                                              & (is.na(var2))
+#                                   ) 
+#                                   %>% select(sdcor) 
+#                                   %>% as.numeric()
+#     )
+#     lme4ms_df[i,"phylo_interaction"] <- (covmat
+#                                          %>% filter((grp=="sp:site"))
+#                                          %>% select(sdcor)
+#                                          %>% as.numeric()
+#     )
+#     lme4ms_df[i, "species_X"] <- (covmat 
+#                                   %>% filter((grp=="obs") & (var1 =="X"))
+#                                   %>% select(sdcor)
+#                                   %>% as.numeric()
+#     )
+#     lme4ms_df[i, "species_int"] <- (covmat 
+#                                     %>% filter((grp=="obs.1") 
+#                                                & (var1 == "(Intercept)")
+#                                                & (is.na(var2))
+#                                     ) 
+#                                     %>% select(sdcor) 
+#                                     %>% as.numeric()
+#     )
+#     lme4ms_df[i,"site_int"] <- (covmat 
+#                                 %>% filter(grp=="site")
+#                                 %>% select(sdcor) 
+#                                 %>% as.numeric()
+#     )
+#     B0 <- coef(summary(lme4_obj[[1]]))["(Intercept)","Estimate"]
+#     B0se <- coef(summary(lme4_obj[[1]]))["(Intercept)","Std. Error"]
+#     B1 <- coef(summary(lme4_obj[[1]]))["X","Estimate"]
+#     B1se <- coef(summary(lme4_obj[[1]]))["X","Std. Error"]
+#     lme4ms_df[i,"B0"] <- as.numeric(between(0, B0-1.96*B0se, B0+1.96*B0se))
+#     lme4ms_df[i,"B1"] <- as.numeric(between(0, B1-1.96*B1se, B1+1.96*B1se))
+#     lme4ms_df[i,"model"] <- tt[i]
+#     lme4ms_df[i,"time"] <- lme4_obj[[2]][[1]]
+#   }
+#   return(lme4ms_df)
+# }
+# 
+# lme4pez_data <- lme4pez_results(lme4pez_res)
 
 
 
