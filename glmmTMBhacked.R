@@ -195,6 +195,7 @@ mkTMBStruchacked <- function (formula, ziformula, dispformula, combForm, mf, fr,
   if (REML) 
     randomArg <- c(randomArg, "beta")
   n.edge <- ncol(phyZ)
+  n.site <- length(unique(fr[["site"]]))
   relength <- length(condReStruc)
   if(relength == 1){
     REname <- unlist(strsplit(names(condReStruc), " "))
@@ -212,7 +213,7 @@ mkTMBStruchacked <- function (formula, ziformula, dispformula, combForm, mf, fr,
       condReStruc[i]$blockReps <- n.edge
       data.tmb$terms[[i]]$blockReps <- n.edge
       if(rightbar == "sp:site"){
-        data.tmb$terms[[i]]$blockReps <- n.edge*25 ##FIXME: pull out number of site from somewhere 
+        data.tmb$terms[[i]]$blockReps <- n.edge*n.site ##FIXME: pull out number of site from somewhere 
       }
     }
   }

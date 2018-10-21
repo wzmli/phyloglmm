@@ -27,6 +27,7 @@ ssdat <- (ssdat_raw
 gg_ss <- (ggplot(data=ssdat, aes(x=size, y=sd, fill=platform))
   + facet_wrap(~sdtype, scale="free_y")
   + geom_violin(position=position_dodge(width=0.2),alpha=0.4)
+  + geom_hline(aes(yintercept = yint))
   + ggtitle("Single site")
 )
 
@@ -103,4 +104,15 @@ ms_coverage <- (msdat
 
 print(gg_mscoverage <- gg_sscoverage %+% ms_coverage)
 
+
+ms_coverage <- (msdat
+                %>% filter(!(sd %in% c(-1,1)))
+                %>% group_by(platform, size)
+                %>% summarise(B0_coverage = mean(B0, na.rm=TRUE)
+                              , B1_coverage = mean(B1, na.rm=TRUE)
+                )
+                %>% gather(key=fixed_parameter, value=coverage, -c(platform, size))
+)
+
+print(gg_mscoverage <- gg_sscoverage %+% ms_coverage)
 
