@@ -6,7 +6,7 @@ library(lme4)
 library(Matrix)
 t1 <- proc.time()
 
-phyZ <- phylo.to.Z(phy,stand=TRUE)
+phyZ <- phylo.to.Z(phy,stand=FALSE)
 
 dat <- (dat
   %>% mutate(obs = sp
@@ -35,7 +35,9 @@ if(numsite == "ss"){
 if(numsite == "ms"){
 	hackedmod <- glmmTMBhacked(new_y ~ X  
 + (1 | sp:site)
-	+ (1 + X | sp) 
+#	+ (1 | sp)
+	+ (1 + X | sp)
+#	+ (1 | obs)
 	+ (1 + X | obs)
 	+ (1 | site)
   , data=dat
@@ -43,7 +45,7 @@ if(numsite == "ms"){
   , phylonm = c("sp", "sp:site")
   , doFit=TRUE
   , dispformula = ~1
-#  , control=glmmTMBControl(optCtrl=list(trace=1))
+  , control=glmmTMBControl(optCtrl=list(trace=1))
   , REML = FALSE
   ) 
 }
