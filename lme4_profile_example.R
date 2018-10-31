@@ -1,0 +1,15 @@
+## lme4 profile example 
+
+lme4obj <- readRDS("datadir/lme4/lme4.ms.small.7.rds")
+
+## check for convergence
+lme4obj[[1]]@optinfo$conv$opt
+
+## check for NaN/1/-1/...
+print(lme4obj[[1]])
+
+lme4_profile <- confint(lme4obj[[1]]
+  , method = "profile"
+  , parm = c("(Intercept)","X")
+)
+
