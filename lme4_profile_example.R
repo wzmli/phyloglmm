@@ -1,6 +1,6 @@
 ## lme4 profile example 
 
-lme4obj <- readRDS("datadir/lme4/lme4.ms.small.7.rds")
+lme4obj <- readRDS("datadir/lme4/lme4.ms.small.78.rds")
 
 ## check for convergence
 lme4obj[[1]]@optinfo$conv$opt
