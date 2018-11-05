@@ -22,6 +22,7 @@ gls_results <- function(tt){
     , B1 = numeric(300)
     , model = numeric(300)
     , time = numeric(300)
+    , convergence = NA
   )
   for(i in 1:length(tt)){
     gls_obj <- readRDS(paste(gls_path,tt[i],sep=""))
@@ -53,6 +54,7 @@ lme4ss_results <- function(tt){
     , B1 = numeric(300)
     , model = numeric(300)
     , time = numeric(300)
+    , convergence = NA
   )
   for(i in 1:length(tt)){
     lme4_obj <- readRDS(paste(lme4_path,tt[i],sep=""))
@@ -91,6 +93,7 @@ lme4ss_results <- function(tt){
     lme4ss_df[i,"B1"] <- as.numeric(between(0, B1-1.96*B1se, B1+1.96*B1se))
     lme4ss_df[i,"model"] <- tt[i]
     lme4ss_df[i,"time"] <- lme4_obj[[2]][[1]]
+    lme4ss_df[i,"convergence"] <- lme4_obj[[1]]@optinfo$conv$opt
     }
   return(lme4ss_df)
 }
@@ -149,6 +152,7 @@ phylolm_results <- function(tt){
     , B1 = numeric(300)
     , model = numeric(300)
     , time = numeric(300)
+    , convergence = NA
   )
   for(i in 1:length(tt)){
     phylolm_obj <- readRDS(paste(phylolm_path,tt[i],sep=""))
@@ -168,7 +172,7 @@ phylolm_results <- function(tt){
 
 phylolm_data <- phylolm_results(phylolm_res)
 
-ssdat <- rbind(gls_data, phylolm_data, lme4ss_data, brmsss_data)
+ssdat <- rbind(gls_data, phylolm_data, lme4ss_data)#, brmsss_data)
 
 
 ### Collect multiple sites ----
@@ -176,19 +180,20 @@ ssdat <- rbind(gls_data, phylolm_data, lme4ss_data, brmsss_data)
 lme4_path <- "./datadir/lme4/"
 lme4ms_res <- list.files(path = lme4_path, pattern = "ms")
 lme4ms_results <- function(tt){
-	lme4ms_df <- data.frame(resid = numeric(310)
-		, phylo_X = numeric(310)
-		, phylo_int = numeric(310)
-		, phylo_cor = numeric(310)
-		, phylo_interaction = numeric(310)
-		, species_X = numeric(310)
-		, species_int = numeric(310)
-		, species_cor = numeric(310)
-		, site_int = numeric(310)
-		, B0 = numeric(310)
-		, B1 = numeric(310)
-		, model = numeric(310)
-		, time = numeric(310)
+	lme4ms_df <- data.frame(resid = numeric(468)
+		, phylo_X = numeric(468)
+		, phylo_int = numeric(468)
+		, phylo_cor = numeric(468)
+		, phylo_interaction = numeric(468)
+		, species_X = numeric(468)
+		, species_int = numeric(468)
+		, species_cor = numeric(468)
+		, site_int = numeric(468)
+		, B0 = numeric(468)
+		, B1 = numeric(468)
+		, model = numeric(468)
+		, time = numeric(468)
+		, convergence = NA
 		)
 	for(i in 1:length(tt)){
 	  lme4_obj <- readRDS(paste(lme4_path,tt[i],sep=""))
@@ -258,6 +263,7 @@ lme4ms_results <- function(tt){
 	  lme4ms_df[i,"B1"] <- as.numeric(between(0, B1-1.96*B1se, B1+1.96*B1se))
 	  lme4ms_df[i,"model"] <- tt[i]
 	  lme4ms_df[i,"time"] <- lme4_obj[[2]][[1]]
+	  lme4ms_df[i,"convergence"] <- lme4_obj[[1]]@optinfo$conv$opt
 	}
 	return(lme4ms_df)
 }
@@ -280,6 +286,7 @@ pez_results <- function(tt){
     , B1 = numeric(207)
     , model = numeric(207)
     , time = numeric(207)
+    , convergence = NA
   )
   for(i in 1:length(tt)){
     pez_obj <- readRDS(paste(pez_path,tt[i],sep=""))
@@ -298,6 +305,7 @@ pez_results <- function(tt){
     pez_df[i,"B1"] <- as.numeric(between(0, B1-1.96*B1se, B1+1.96*B1se))
     pez_df[i,"model"] <- tt[i]
     pez_df[i,"time"] <- pez_obj[[1]][[1]]
+    pez_df[i,"convergence"] <- pez_obj[[2]]["convcode"]
   }
   return(pez_df)
 }
@@ -322,6 +330,7 @@ phyr_results <- function(tt){
                        , B1 = numeric(210)
                        , model = numeric(210)
                        , time = numeric(210)
+                       , convergence = NA
   )
   for(i in 1:length(tt)){
     phyr_obj <- readRDS(paste(phyr_path,tt[i],sep=""))
@@ -340,6 +349,7 @@ phyr_results <- function(tt){
     phyr_df[i,"B1"] <- as.numeric(between(0, B1-1.96*B1se, B1+1.96*B1se))
     phyr_df[i,"model"] <- tt[i]
     phyr_df[i,"time"] <- phyr_obj[[2]][[1]]
+    phyr_df[i,"convergence"] <- phyr_obj[[1]]["convcode"]
   }
   return(phyr_df)
 }

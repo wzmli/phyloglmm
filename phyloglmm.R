@@ -25,7 +25,7 @@ if(numsite == "ss"){
 		, phyloZ=phyZ
 		, control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore"
 		)
-		, REML = TRUE
+		, REML = FALSE
 	)
 }
 
@@ -34,8 +34,7 @@ if(numsite == "ms"){
 t4 <- proc.time()
     lme4fit <- phylo_lmm(new_y ~ X
       + (1 + X | sp)
-	 	+ (1 | obs)
-		+ (0 + X | obs)
+		+ (1 + X | obs)
       + (1 | site)
 		+ (1 | sp:site)
       , data=dat

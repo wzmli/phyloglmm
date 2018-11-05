@@ -101,10 +101,15 @@ fit.lme4.ms.small.1.Rout:
 fit.lme4.ms.xlarge.1.Rout: phyloglmm.R
 ### tmb
 
+lme4_profile.Rout: lme4_profile.R
+	$(run-R)
+
 fit.glmmTMB.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R glmmTMBhacked.R fit_tmb.R
 	$(run-R)
 
-fit.glmmTMB.ms.small.2.Rout: fit_tmb.R
+fit.lme4.ms.large.2.Rout:
+fit.glmmTMB.ms.xlarge.2.Rout: fit_tmb.R
+fit.glmmTMB.ss.xlarge.2.Rout: fit_tmb.R
 
 ### pez can only fit multiple sites
 
@@ -135,7 +140,7 @@ compare.pez.ms.small.1.Rout: compare_pez.R
 fit.pez.ms.med.1.Rout: fit_pez.R
 fit.lme4.ms.med.1.Rout: phyloglmm.R
 
-fit.brms.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R  simulate_cs.R fit_brms.R
+fit.brms.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R  fit_brms.R
 	$(run-R)
 
 fit.brms.ss.small.1.Rout: fit_brms.R
