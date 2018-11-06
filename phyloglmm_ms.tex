@@ -104,7 +104,7 @@ One particular area of growth is phylogenetic comparative analysis using phyloge
 Comparative analyses explore the relationships among species traits (including occurrence within communities) while taking the underlying/latent evolutionary relationships of the species into account; researchers may be interested in controlling for the statistical effects of phylogenetic correlation, quantifying the evolutionary signals that underly traits or both.
 Unlike ordinary regression, where all of the variables of interest (for example, species trait and environmental factors) are directly observable, in phylogenetic regression, the evolutionary relationship between species are unobservable and assumed to evolve according to some underlying (latent) evolutionary process \citep{felsenstein1985phylogenies, butler2004phylogenetic}. 
 % While evolutionary relationships are biologically important and interesting, they often get neglected in applications and multi-species analyses \citep{bunnefeld2012island, santamaria2012evolution}. 
-Over the last few decades, biologists have incorporated phylogenetic relationships to multi-species modelling \citep{garland1992procedures, freckleton2002phylogenetic, ord2010adaptation, davies2013phylogenetic} , and recently, a demend of integration of evolutionary knowledge in studying ecological applications \citep{winter2013phylogenetic, santamaria2012evolution, lankau2011incorporating, lavergne2010biodiversity, mace2008evolutionary} 
+Over the last few decades, biologists have incorporated phylogenetic relationships to multi-species modelling \citep{garland1992procedures, freckleton2002phylogenetic, ord2010adaptation, davies2013phylogenetic} , and recently, a demend of integration of evolutionary knowledge in studying ecological applications such as biodiversity conservation, effects of climate change, and many more \citep{winter2013phylogenetic, santamaria2012evolution, lankau2011incorporating, lavergne2010biodiversity, mace2008evolutionary}. 
 %such as ecological conser, the effects of climate change  \citep{santamaria2012evolution}. \mli{cite more here}.
 While there exist a range of statistical tools for comparative analyses, many of these tools are either inflexible, or too computationally expensive to analyze large volumes of data.
 In such cases, researchers may try to find ways to simplify their analyses (i.e. controlling for individual-varation of species and neglecting phylogenetic correlation between species \citep{bunnefeld2012island}, comparing species family \citep{tella1999habitat}, neglecting within-species variation \citep{ord2010adaptation}, and etc).
@@ -285,46 +285,46 @@ where $\ast$ is the Khatri-Rao product \citep{khatri1968solutions}, $\bS_{i}$ is
 
 
 \mli{move example to the supp}
-% For example, using the phylogeny above (figure \ref{fig:tree}), if we begin with a raw model matrix,
-% 
-% \begin{align}
-% \bX = \begin{bmatrix}
-% 1 & t_1  \\ 
-% 1 & t_2  \\ 
-% 1 & t_3 
-% \end{bmatrix} 
-% \end{align}
-% then the term-wise phylogenetic random effects model matrix is,
-% 
-% \begin{align}
-% \bZ^{C}_{i} = (\bS^{T}_{adji}\bJ^{T}_{i} \ast \bX^{T}_{i})^{T} =
-% \Bigg[
-% \Bigg(
-% \begin{bmatrix}
-% \ell_{adj1} & \ell_{adj1}  & 0 \\
-% \ell_{adj2} &  0  & 0 \\
-% 0  &  \ell_{adj3} & 0 \\
-% 0 & 0 &  \ell_{adj4} 
-% \end{bmatrix}
-% \begin{bmatrix}
-% 1 & 0  & 0 \\
-% 0 & 1  & 0 \\
-% 0 & 0  & 1  
-% \end{bmatrix}
-% \Bigg)
-% \ast
-% \begin{bmatrix}
-% 1   & 1   & 1  \\ 
-% t_1 & t_2 & t_3
-% \end{bmatrix} 
-% \Bigg]^T
-% \\
-% = \begin{bmatrix}
-% \ell_{adj1} & \ell_{adj1}t_1 & \ell_{adj2} & \ell_{adj2}t_1 & 0 & 0 & 0 & 0 \\
-% \ell_{adj1} & \ell_{adj1}t_2 & 0 & 0 & \ell_{adj3} & \ell_{adj3}t_2 & 0 & 0 \\
-% 0 & 0 & 0 & 0 & 0 & 0 & \ell_{adj4} & \ell_{adj4}t_3
-% \end{bmatrix}
-% \end{align}
+For example, using the phylogeny above (figure \ref{fig:tree}), if we begin with a raw model matrix,
+
+\begin{align}
+\bX = \begin{bmatrix}
+1 & t_1  \\ 
+1 & t_2  \\ 
+1 & t_3 
+\end{bmatrix} 
+\end{align}
+then the term-wise phylogenetic random effects model matrix is,
+
+\begin{align}
+\bZ^{C}_{i} = (\bS^{T}_{adji}\bJ^{T}_{i} \ast \bX^{T}_{i})^{T} =
+\Bigg[
+\Bigg(
+\begin{bmatrix}
+\ell_{adj1} & \ell_{adj1}  & 0 \\
+\ell_{adj2} &  0  & 0 \\
+0  &  \ell_{adj3} & 0 \\
+0 & 0 &  \ell_{adj4} 
+\end{bmatrix}
+\begin{bmatrix}
+1 & 0  & 0 \\
+0 & 1  & 0 \\
+0 & 0  & 1  
+\end{bmatrix}
+\Bigg)
+\ast
+\begin{bmatrix}
+1   & 1   & 1  \\ 
+t_1 & t_2 & t_3
+\end{bmatrix} 
+\Bigg]^T
+\\
+= \begin{bmatrix}
+\ell_{adj1} & \ell_{adj1}t_1 & \ell_{adj2} & \ell_{adj2}t_1 & 0 & 0 & 0 & 0 \\
+\ell_{adj1} & \ell_{adj1}t_2 & 0 & 0 & \ell_{adj3} & \ell_{adj3}t_2 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & \ell_{adj4} & \ell_{adj4}t_3
+\end{bmatrix}
+\end{align}
 
 
 % 
@@ -439,14 +439,20 @@ Residual & &  & X & X & X & X \\
 \end{table}
 
 \subsection{Simulation and evaluations}
-We simulated 100 phylogenetic trees for each sample size (25,50,100) and incorporated with simulation parameters (illustrated in figure 2 and 5) to simulate responses via the simulation model (\ref{eq:ss_sim}, \ref{eq:ms_sim}).
+We simulated 100 phylogenetic trees for each sample size (25,50,100, 500) and incorporated with simulation parameters (illustrated in figure 2 and 5) to simulate responses via the simulation model (\ref{eq:ss_sim}, \ref{eq:ms_sim}).
 All model variants via different platforms were used to fit each realization.
-Tables \ref{model_variant} shows the parameters that are estimable for each model/platform. 
-We combined two convergence criteria to assess convergence for the main parameters (R0, Peff, Prep): we required a value of the
-Gelman and Rubin statistic and an effective sample size (ESS) greater than 400 for each replication. For
-each replication we sample four chains starting with 4000 iterations; w
+Tables \ref{model_variant} shows the parameters that are estimable for each platform. 
+All model must pass its respective convergence test before evaluating goodness of fit. 
+For bayesian GLMM, we combined two convergence criteria to assess convergence: we required a value of the
+Gelman and Rubin statistic and an effective sample size (ESS) greater than 1000 for each replication. 
+For each replication we sample two chains starting with 10000 iterations. 
 
-
+We used coverage to assess model fit.
+Coverage refers to the frequency with which the computed confidence intervals include the true values of
+parameters.
+We used 90\% (Wald and profile) confidence intervals and quantile-based intervals (for bayesian GLMM)
+to evaluate coverage.
+We also compare computational speed between different platforms.
 
 \section{Results}
 
@@ -492,14 +498,13 @@ each replication we sample four chains starting with 4000 iterations; w
 % \item{lme4/tmb are fast, everything else is slow for multiple sites}
 % \end{itemize}
 
-The full single site model using phyloglmm (which matches the single simulation model that incorporates phylogenetic intercept, slope and correlation) provides good estimates for all parameters except for random correlation parameter ($\sigma_{phy_{int},phy_{slope}}$). 
-Fixed effect parameters ($\beta_0$ and $\beta_1$) estimates approaches nominal coverage as number of species increases.
+The full single site model using phyloglmm (which matches the single simulation model that incorporates phylogenetic intercept, slope and correlation) provides good estimates for all parameters except the random correlation parameter ($\sigma_{phy_{int},phy_{slope}}$). 
+Fixed effect parameters ($\beta_0$ and $\beta_1$) estimates approaches nominal coverage as number of species increases for \pkg{lme4} but not others.
 
 In general, models that cannot match the simulation model (PGLM and PGLS) will try to fit the data with the parameters available. 
-PGLM (which lacks the phylogenetic slope parameter) provides reasonable good estimates for phylogenetic intercept parameter ($\sigma_{phy_{int}}$) but overestimates the residual/observation standard deviation. 
-$\beta_0$ estimates slightly undercover the nominal coverage (90\% with 100 species) and have a bad coverage ($<$ 60\%) for the fixed slope parameter.
-PGLS, with only one parameter available, confounds all variations (phylogenetic intercept, slope and residual variation) into the single parameter (phylogenetic intercept), resulting in overestimating the phylogenetic intercept as well as large RMSE and overcovering for $\beta_0$, and bad estimates for $\beta_1$. 
-\mli{double check this, what happens when X is also phylogenetically correlated?}
+PGLM (which lacks the phylogenetic slope parameter) provides reasonable good estimates for phylogenetic intercept parameter ($\sigma_{phy_{int}}$) but overestimates the residual/observation standard deviation of the intercept ($\beta_0$) estimates slightly undercover the nominal coverage (90\% with 100 species) and have a bad coverage ($<$ 60\%) for the fixed slope parameter.
+PGLS, with only one parameter available, confounds all variations (phylogenetic intercept, slope and residual variation) into the single parameter (phylogenetic intercept), resulting in overestimating the phylogenetic intercept and overcovering for $\beta_0$, and bad estimates for $\beta_1$.
+\mli{refer back to Schielzeth and Forstmeier}
 
 % \bmb{(2) please define ``robustness'' -- usually means lack of sensitivity to model.  Are you talking about the variance of the estimates? I'd prefer not to use ``robust'' in a non-standard way if possible (2) what are small/medium/large? I see that $n=\{20,100,500\}$ and $m=\{1,20\}$, but not sure how these match up to ``small'', ``medium'', ``large''; is Figure 1 all $m=1$? Might be worth just labeling by $n=??$ rather than using small/medium/large}
 % It is unclear how different levels of phylogenetic signal are being confounded under the error free (without tip variation) assumption for the PGLS models.
@@ -530,7 +535,7 @@ PGLS, with only one parameter available, confounds all variations (phylogenetic 
 \end{center}
 
 
-Multiple site fits on the other hand are a lot more similar across platforms (as there are less deviates between the fitted and simulation model) compared to the single site fits.
+Multiple site fits on the other hand, are much more similar across platforms (as the fitted and simulation models are more similar).
 Similar to the single site fits, phyloglmm which matches the simulation model provides good estimates for all parameters except for the random correlation parameter ($\sigma_{sp_{int,slope}}$).
 \mli{either keep it or take it out, because  will affect other parameters}
 The lack of correlation in \pkg{phyr}'s statistical models does not appear to have a large effect on its ability to estimate other parameters, whereas \pkg{pez} underestimates (lower estimates) many parameters.  
@@ -539,7 +544,7 @@ The lack of correlation in \pkg{phyr}'s statistical models does not appear to ha
 
 However, despite the similarities of parameter estimates across platforms/methods for the multiple sites simulations fits, the efficiency (measured by computational speed) are different across playforms/methods and sample size.
 For example, the median time for \pkg{lme4} to fit 50/100 species model takes $~$ 50/100 seconds versus $~$ 200/2000 seconds for \pkg{pez} and \pkg{phyr}. 
-Lastly, it takes $~$ 2000 seconds for lme4 to fit 1000 species model and it was not practical for \pkg{pez} and \pkg{phyr} to fit 1000 species models where the computational speed did not scale linearly with sample size 25/50/100.
+Lastly, it takes $\sim$ 2000 seconds for lme4 to fit 1000 species model; it was not practical for \pkg{pez} and \pkg{phyr} to fit 1000 species models where the computational speed did not scale linearly with sample size 25/50/100.
 \mli{put a lower bound to give up}
 
 \bmb{Can you put a lower bound on \pkg{pez}'s computation time? How long did you take to give up? How does it scale? can you either figure out from first principles
@@ -548,7 +553,7 @@ Lastly, it takes $~$ 2000 seconds for lme4 to fit 1000 species model and it was 
   approximate power?}
 
 We used our method and fitted the full model of the dune meadow data recently used with \pkg{pez} \cite{li2017canfun}. 
-We have obtained identical results for fix and random effect estimates and approximately 120 times faster compared to \pkg{pez}. 
+We have obtained identical results for fix and random effect estimates, our code is approximately 120 times faster than \pkg{pez}. 
 Codes for fitting dune meadow analysis using \pkg{lme4} and \pkg{pez} are provided in the supplements. 
 
 \newpage

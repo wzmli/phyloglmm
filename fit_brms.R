@@ -29,6 +29,7 @@ brms_time1 <- proc.time()
 			, iter = stan_nitt
 			, chains = 2
 		)
+
 brms_time2 <- proc.time()
 
 print(summary(brms_fit))
@@ -37,6 +38,6 @@ brms_time <- brms_time2 - brms_time1
 print(summary(brms_fit))
 
 brms_list <- list(brms_fit,brms_time)
-saveRDS(brms_list,file=paste("datadir/brms",numsite,size,seed,"rds",sep="."))
+saveRDS(brms_list,file=paste("datadir/brms",numsite,size,tree_seed,"rds",sep="."))
 
 #rdnosave()

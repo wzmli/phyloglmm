@@ -4,39 +4,53 @@ library(dplyr)
 library(ggplot2)
 library(tidyr)
 library(grid)
-theme_set(theme_bw())
+# theme_set(theme_bw())
 zmargin <- theme(panel.margin=grid::unit(0,"lines"))
 
 data_list <- readRDS("./datadir/collect.RDS")
-ssdat_raw <- data_list[[1]]
+ssdat_raw <- rbind(data_list[[1]],brmsss_data)
 msdat_raw <- data_list[[2]]
+
+tree_seed = 1
+source("parameters.R")
+
+sspar_df <- data.frame(
+  sdtype = c("resid", "phylo_int", "phylo_X", "phylo_cor")
+  , y_int = c(sd.resid, physd.B0, physd.B1, phyrho.B01)
+)
 
 ssdat <- (ssdat_raw
 	%>% separate(model,c("platform", "sites", "size", "seed","saveformat"), "[.]")
 	%>% select(time, platform, size, seed, resid, phylo_int, phylo_X, phylo_cor, B0, B1)
 	%>% gather(key = sdtype, value = sd, -c(platform, size, seed, time, B0, B1))
 	%>% mutate(size = factor(size
-	      , levels=c("small","med","large","xlarge"), labels=c("25","50","100","1000")
+	      , levels=c("small","med","large","xlarge"), labels=c("25","50","100","500")
 			)
 			, platform = factor(platform, levels=c("gls", "phylolm","lme4", "brms"))
 		)
-	%>% filter(platform != "brms")
+	%>% left_join(.,par_df)
+	# %>% filter(platform != "brms")
 )
 
 
 gg_ss <- (ggplot(data=ssdat, aes(x=size, y=sd, fill=platform))
   + facet_wrap(~sdtype, scale="free_y")
   + geom_violin(position=position_dodge(width=0.2),alpha=0.4)
-  + geom_hline(aes(yintercept = yint))
-  + ggtitle("Single site")
+  + geom_hline(aes(yintercept = y_int))
+  # + scale_fill_manual(values=c("Dark Red","Dark Blue","Dark Green","Purple"))
+  + scale_fill_brewer(palette = "Dark2")
+  # + ggtitle("Single site")
+  + theme_bw()
 )
 
 print(gg_ss)
 
 gg_sstime <- (ggplot(data=ssdat, aes(x=size, y=time, fill=platform))
 	+ geom_violin(position=position_dodge(width=0.2),alpha=0.4)
+	+ scale_fill_brewer(palette = "Dark2")
 	+ scale_y_log10()
-	+ ggtitle("Single site time")
+	+ ylab("Time (seconds)")
+	# + ggtitle("Single site time")
 )
 
 print(gg_sstime)
@@ -55,27 +69,37 @@ gg_sscoverage <- (ggplot(data=ss_coverage
 	+ facet_wrap(~platform, nrow = 1)
 	+ geom_point(size=4)
 	+ geom_hline(aes(yintercept=0.95))
-	+ ggtitle("Single Site coverage")
+	# + ggtitle("Single Site coverage")
+	+ annotate("rect", xmin=0, xmax=4
+	           , ymin=0.95 - 2*sqrt(0.95*0.05/100)
+	           , ymax=0.95 + 2*sqrt(0.95*0.05/100), alpha=0.2)
 )
 
 print(gg_sscoverage)
 
-
+mspar_df <- data.frame(
+  sdtype = c("resid", "phylo_X", "phylo_int", "phylo_cor", "phylo_interaction"
+             , "species_X", "species_int", "species_cor", "site_int")
+  , y_int = c(sd.resid, physd.B1, physd.B0, phyrho.B01, sd.interaction
+              , sd.B1, sd.B0, rho.B01, sd.site)
+)
 
 msdat <- (msdat_raw
 	%>% separate(model,c("platform", "sites", "size", "seed", "saveformat"),"[.]")
 	%>% select(-c(sites,seed,saveformat))
+	%>% filter(convergence != 1)
+	%>% select(-convergence)
 	%>% gather(key=sdtype, value=sd, -c(platform,size,time,B0,B1))
 	%>% mutate(size = factor(size,
-			levels=c("small","med","large","xlarge"), labels=c("25","50","100","1000")
+			levels=c("small","med","large","xlarge"), labels=c("25","50","100","500")
 			)
-			, platform = factor(platform, levels=c("pez","phyr","lme4"))
+			, platform = factor(platform, levels=c("pez","phyr","lme4", "glmmTMB"))
 		)
+	%>% right_join(.,mspar_df)
 )
 
 gg_ms <- (gg_ss
 	%+% msdat
-	+ ggtitle("Multiple Sites (pez is problematic)")
 )
 
 print(gg_ms)

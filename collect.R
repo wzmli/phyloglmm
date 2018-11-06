@@ -113,6 +113,7 @@ brmsss_results <- function(tt){
     , B1 = numeric(200)
     , model = numeric(200)
     , time = numeric(200)
+    , convergence = numeric(200)
   )
   for(i in 1:length(tt)){
     brms_obj <- readRDS(paste(brms_path,tt[i],sep=""))
