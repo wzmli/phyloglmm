@@ -100,6 +100,42 @@ lme4ss_results <- function(tt){
 
 lme4ss_data <- lme4ss_results(lme4ss_res)
 
+
+## single site glmmTMB
+
+glmmTMB_path <- "./datadir/glmmTMB/"
+glmmTMBss_res <- list.files(path = glmmTMB_path, pattern = "ss")
+glmmTMBss_results <- function(tt){
+  glmmTMBss_df <- data.frame(resid = numeric(300)
+    , phylo_X = numeric(300)
+    , phylo_int = numeric(300)
+    , phylo_cor = numeric(300)
+    , B0 = numeric(300)
+    , B1 = numeric(300)
+    , model = numeric(300)
+    , time = numeric(300)
+    , convergence = NA
+  )
+  for(i in 1:length(tt)){
+    glmmTMB_obj <- readRDS(paste(glmmTMB_path,tt[i],sep=""))
+    covobj <- VarCorr(glmmTMB_obj[[1]])[["cond"]]
+    glmmTMBss_df[i,"resid"] <- attr(covobj,"sc")
+    glmmTMBss_df[i, "phylo_X"] <- attr(covobj[["sp"]],"stddev")[["X"]]
+    glmmTMBss_df[i, "phylo_int"] <- attr(covobj[["sp"]],"stddev")[["(Intercept)"]]
+    glmmTMBss_df[i, "phylo_cor"] <- attr(covobj[["sp"]],"correlation")[1,2]
+    B0 <- coef(summary(glmmTMB_obj[[1]]))[["cond"]]["(Intercept)","Estimate"]
+    B0se <- coef(summary(glmmTMB_obj[[1]]))[["cond"]]["(Intercept)","Std. Error"]
+    B1 <- coef(summary(glmmTMB_obj[[1]]))[["cond"]]["X","Estimate"]
+    B1se <- coef(summary(glmmTMB_obj[[1]]))[["cond"]]["X","Std. Error"]
+    glmmTMBss_df[i,"B0"] <- as.numeric(between(0, B0-1.96*B0se, B0+1.96*B0se))
+    glmmTMBss_df[i,"B1"] <- as.numeric(between(0, B1-1.96*B1se, B1+1.96*B1se))
+    glmmTMBss_df[i,"model"] <- tt[i]
+    glmmTMBss_df[i,"time"] <- glmmTMB_obj[[2]][[1]]
+  }
+  return(glmmTMBss_df)
+}
+
+glmmTMBss_data <- glmmTMBss_results(glmmTMBss_res)
 ### collect brms ----
 
 brms_path <- "./datadir/brms/"
@@ -173,7 +209,7 @@ phylolm_results <- function(tt){
 
 phylolm_data <- phylolm_results(phylolm_res)
 
-ssdat <- rbind(gls_data, phylolm_data, lme4ss_data)#, brmsss_data)
+ssdat <- rbind(gls_data, phylolm_data, lme4ss_data, glmmTMBss_data)#, brmsss_data)
 
 
 ### Collect multiple sites ----
@@ -274,19 +310,19 @@ lme4ms_data <- lme4ms_results(lme4ms_res)
 pez_path <- "./datadir/pez/"
 pez_res <- list.files(path = pez_path)
 pez_results <- function(tt){
-  pez_df <- data.frame(resid = numeric(207)
-    , phylo_X = numeric(207)
-    , phylo_int = numeric(207)
+  pez_df <- data.frame(resid = numeric(227)
+    , phylo_X = numeric(227)
+    , phylo_int = numeric(227)
     , phylo_cor = NA
-    , phylo_interaction = numeric(207)
-    , species_X = numeric(207)
-    , species_int = numeric(207)
+    , phylo_interaction = numeric(227)
+    , species_X = numeric(227)
+    , species_int = numeric(227)
     , species_cor = NA
-    , site_int = numeric(207)
-    , B0 = numeric(207)
-    , B1 = numeric(207)
-    , model = numeric(207)
-    , time = numeric(207)
+    , site_int = numeric(227)
+    , B0 = numeric(227)
+    , B1 = numeric(227)
+    , model = numeric(227)
+    , time = numeric(227)
     , convergence = NA
   )
   for(i in 1:length(tt)){
@@ -360,85 +396,54 @@ phyr_data <- phyr_results(phyr_res)
 
 
 
-# 
-# lme4pez_path <- "./datadir/lme4pez/"
-# lme4pez_res <- list.files(path = lme4pez_path, pattern = "ms")
-# lme4pez_results <- function(tt){
-#   lme4ms_df <- data.frame(resid = numeric(40)
-#                           , phylo_X = numeric(40)
-#                           , phylo_int = numeric(40)
-#                           , phylo_cor = NA
-#                           , phylo_interaction = numeric(40)
-#                           , species_X = numeric(40)
-#                           , species_int = numeric(40)
-#                           , species_cor = NA
-#                           , site_int = numeric(40)
-#                           , B0 = numeric(40)
-#                           , B1 = numeric(40)
-#                           , model = numeric(40)
-#                           , time = numeric(40)
-#   )
-#   for(i in 1:length(tt)){
-#     lme4_obj <- readRDS(paste(lme4pez_path,tt[i],sep=""))
-#     covmat <- as.data.frame(lme4::VarCorr(lme4_obj[[1]]))
-#     lme4ms_df[i,"resid"] <- (covmat 
-#                              %>% filter(grp=="Residual") 
-#                              %>% select(sdcor) 
-#                              %>% as.numeric()
-#     )
-#     lme4ms_df[i, "phylo_X"] <- (covmat 
-#                                 %>% filter((grp=="sp") & (var1 =="X")) 
-#                                 %>% select(sdcor) 
-#                                 %>% as.numeric()
-#     )
-#     lme4ms_df[i, "phylo_int"] <- (covmat 
-#                                   %>% filter((grp=="sp.1") 
-#                                              & (var1 == "(Intercept)")
-#                                              & (is.na(var2))
-#                                   ) 
-#                                   %>% select(sdcor) 
-#                                   %>% as.numeric()
-#     )
-#     lme4ms_df[i,"phylo_interaction"] <- (covmat
-#                                          %>% filter((grp=="sp:site"))
-#                                          %>% select(sdcor)
-#                                          %>% as.numeric()
-#     )
-#     lme4ms_df[i, "species_X"] <- (covmat 
-#                                   %>% filter((grp=="obs") & (var1 =="X"))
-#                                   %>% select(sdcor)
-#                                   %>% as.numeric()
-#     )
-#     lme4ms_df[i, "species_int"] <- (covmat 
-#                                     %>% filter((grp=="obs.1") 
-#                                                & (var1 == "(Intercept)")
-#                                                & (is.na(var2))
-#                                     ) 
-#                                     %>% select(sdcor) 
-#                                     %>% as.numeric()
-#     )
-#     lme4ms_df[i,"site_int"] <- (covmat 
-#                                 %>% filter(grp=="site")
-#                                 %>% select(sdcor) 
-#                                 %>% as.numeric()
-#     )
-#     B0 <- coef(summary(lme4_obj[[1]]))["(Intercept)","Estimate"]
-#     B0se <- coef(summary(lme4_obj[[1]]))["(Intercept)","Std. Error"]
-#     B1 <- coef(summary(lme4_obj[[1]]))["X","Estimate"]
-#     B1se <- coef(summary(lme4_obj[[1]]))["X","Std. Error"]
-#     lme4ms_df[i,"B0"] <- as.numeric(between(0, B0-1.96*B0se, B0+1.96*B0se))
-#     lme4ms_df[i,"B1"] <- as.numeric(between(0, B1-1.96*B1se, B1+1.96*B1se))
-#     lme4ms_df[i,"model"] <- tt[i]
-#     lme4ms_df[i,"time"] <- lme4_obj[[2]][[1]]
-#   }
-#   return(lme4ms_df)
-# }
-# 
-# lme4pez_data <- lme4pez_results(lme4pez_res)
+
+glmmTMB_path <- "./datadir/glmmTMB/"
+glmmTMB_res <- list.files(path = glmmTMB_path, pattern = "ms")
+glmmTMBms_results <- function(tt){
+  glmmTMBms_df <- data.frame(resid = numeric(400)
+    , phylo_X = numeric(400)
+    , phylo_int = numeric(400)
+    , phylo_cor = numeric(400)
+    , phylo_interaction = numeric(400)
+    , species_X = numeric(400)
+    , species_int = numeric(400)
+    , species_cor = numeric(400)
+    , site_int = numeric(400)
+    , B0 = numeric(400)
+    , B1 = numeric(400)
+    , model = numeric(400)
+    , time = numeric(400)
+    , convergence = NA
+  )
+  for(i in 1:length(tt)){
+    print(i)
+    glmmTMB_obj <- readRDS(paste(glmmTMB_path,tt[i],sep=""))
+    covobj <- VarCorr(glmmTMB_obj[[1]])[["cond"]]
+    glmmTMBms_df[i,"resid"] <- attr(covobj,"sc")
+    glmmTMBms_df[i, "phylo_X"] <- attr(covobj[["sp"]],"stddev")[["X"]]
+    glmmTMBms_df[i, "phylo_int"] <- attr(covobj[["sp"]],"stddev")[["(Intercept)"]]
+    glmmTMBms_df[i, "phylo_cor"] <- attr(covobj[["sp"]],"correlation")[1,2]
+    glmmTMBms_df[i,"phylo_interaction"] <- attr(covobj[["sp:site"]],"stddev")
+    glmmTMBms_df[i, "species_X"] <- attr(covobj[["obs"]],"stddev")[["X"]]
+    glmmTMBms_df[i, "species_int"] <- attr(covobj[["obs"]],"stddev")[["(Intercept)"]]
+    glmmTMBms_df[i, "species_cor"] <- attr(covobj[["obs"]],"correlation")[1,2]
+    glmmTMBms_df[i, "site_int"] <- attr(covobj[["site"]],"stddev")
+    B0 <- coef(summary(glmmTMB_obj[[1]]))[["cond"]]["(Intercept)","Estimate"]
+    B0se <- coef(summary(glmmTMB_obj[[1]]))[["cond"]]["(Intercept)","Std. Error"]
+    B1 <- coef(summary(glmmTMB_obj[[1]]))[["cond"]]["X","Estimate"]
+    B1se <- coef(summary(glmmTMB_obj[[1]]))[["cond"]]["X","Std. Error"]
+    glmmTMBms_df[i,"B0"] <- as.numeric(between(0, B0-1.96*B0se, B0+1.96*B0se))
+    glmmTMBms_df[i,"B1"] <- as.numeric(between(0, B1-1.96*B1se, B1+1.96*B1se))
+    glmmTMBms_df[i,"model"] <- tt[i]
+    glmmTMBms_df[i,"time"] <- glmmTMB_obj[[2]][[1]]
+  }
+  return(glmmTMBms_df)
+}
+
+glmmTMBms_data <- glmmTMBms_results(glmmTMB_res)
 
 
-
-msdat <- rbind(lme4ms_data,pez_data, phyr_data)
+msdat <- rbind(lme4ms_data,pez_data, phyr_data, glmmTMBms_data)
 #### Save results ----
 data_list <- list(ssdat,msdat)
 
