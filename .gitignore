@@ -20,3 +20,6 @@ target.mk
 *.deps
 *.out
 *.soc
+
+.RData
+.Rhistory
