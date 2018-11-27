@@ -11,5 +11,11 @@ print(lme4obj[[1]])
 lme4_profile <- confint(lme4obj[[1]]
   , method = "profile"
   , parm = c("(Intercept)","X")
-)
+    )
 
+pp <- profile(lme4obj[[1]],
+              which = c("(Intercept)","X"),
+              verbose=20)
+confint(pp)
+
+sessionInfo()

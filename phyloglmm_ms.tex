@@ -101,14 +101,13 @@
 Ever-increasing data collection capabilities (such as genomic sequencing, telemetry studies of animal behaviour, or environmental remote sensing), in combination with large-scale synthetic data bases of species occurrence and phenotypic traits, are making large volumes of biological data available over an ever-wider taxonomic range.
 Researchers are exploiting these data to fit complex models describing species occurrence and traits.
 In particular, phylogenetic comparative analysis (PCA) using phylogenetic (eco-evolutionary) regression \citep{hansen2012interpreting} is
-becoming ever more popular \bmb{might be interesting to some bibliometry, although absolutely not necessary \ldots}
+becoming ever more popular \bmb{might be interesting to do some bibliometry, although absolutely not necessary --- i.e. how do numbers of citations of (whatever) increase relative to the overall size of the eco/evo literature? \ldots}
 PCAs explore the relationships among species traits (including occurrence within communities) while taking the underlying/latent evolutionary relationships of the species into account; they can be used to control for the statistical effects of phylogenetic correlation, to quantify the phylogenetic signals in trait distributions, or both.
-Unlike ordinary regression, where all of the variables of interest (for example, species trait and environmental factors) are directly observable,  PCAs use phylogenetic relationships to estimate the unobserved process of trait evolution \citep{felsenstein1985phylogenies, butler2004phylogenetic}. 
+Unlike ordinary regression, where all of the predictor variables of interest (for example, species traits and environmental factors) are directly observable,  PCAs use phylogenetic relationships to estimate the unobserved process of trait evolution \citep{felsenstein1985phylogenies, butler2004phylogenetic}. 
 % While evolutionary relationships are biologically important and interesting, they often get neglected in applications and multi-species analyses \citep{bunnefeld2012island, santamaria2012evolution}. 
-Over the last few decades, biologists have incorporated phylogenetic relationships to multi-species modelling \citep{garland1992procedures, freckleton2002phylogenetic, ord2010adaptation, davies2013phylogenetic} , and recently, a demend of integration of evolutionary knowledge in studying ecological applications such as biodiversity conservation, effects of climate change, and many more \citep{winter2013phylogenetic, santamaria2012evolution, lankau2011incorporating, lavergne2010biodiversity, mace2008evolutionary}. 
-%such as ecological conser, the effects of climate change  \citep{santamaria2012evolution}. \mli{cite more here}.
-While there exist a range of statistical tools for comparative analyses, many of these tools are either inflexible, or too computationally expensive to analyze large volumes of data.
-In such cases, researchers may try to find ways to simplify their analyses (i.e. controlling for individual-varation of species and neglecting phylogenetic correlation between species \citep{bunnefeld2012island}, comparing species family \citep{tella1999habitat}, neglecting within-species variation \citep{ord2010adaptation}, and etc).
+Ecologists have incorporated phylogenetic relationships in multi-species models \citep{garland1992procedures, freckleton2002phylogenetic, ord2010adaptation, davies2013phylogenetic}; more recently, there is increased demand for integrating evolutionary knowledge to address ecological applications such as biodiversity conservation and the effects of climate change \citep{winter2013phylogenetic, santamaria2012evolution, lankau2011incorporating, lavergne2010biodiversity, mace2008evolutionary}.
+While there are a wide range tools for comparative analyses, they may be either insufficiently flexible or too computationally demanding when analyzing large volumes of data.
+In such cases, researchers must find ways to simplify their analyses (i.e. controlling for individual variation of species \bmb{??} and neglecting phylogenetic correlations among species responses \citep{bunnefeld2012island}; ignoring degrees of relatedness/treating taxon as a strictly hierarchical description \citep{tella1999habitat}; neglecting within-species variation \citep{ord2010adaptation}; etc).
 %% bunnefeld2012island: used taxon for random slopes but did not include phylogenetic information
 %% ord2010adaptation : used OU process with means (single obs per taxa),
 %%  i.e. ignoring within-taxon variation?
@@ -118,7 +117,8 @@ In such cases, researchers may try to find ways to simplify their analyses (i.e.
 % \bmb{What precise ``issues'' do you have in mind? Don't think we need to state them here, but we should know. Based on your comments, I can guess that (1) by using random slopes across taxa, Bunnefeld 2012 is neglecting more subtle variation due to differential relatedness? (2) not sure whether taking taxon-level means (Ord 2010) is actually a problem. Ignores some variation,
 % but it might be ignorable (cf. Murtaugh 2007 ``Simplicity and complexity in ecological data analysis'')}
 In this paper, we propose an alternative method for flexibly and efficiently modeling phylogenetic relationships via mixed effect models, highlighting various complexities of phylogenetic relationships through random effects.
-% \bmb{nice!}
+
+\bmb{somewhere, cite/frame our approach in terms of the recent ``basis functions in ecology'' paper}
 
 There are two general challenges in linking the evolutionary process to a phylogenetic comparative statistical framework.
 % Phylogenetic signal : the magnitude of phylogenetic correlation
@@ -400,9 +400,7 @@ One of the relatively few packages that currently fit phylogenetic correlations 
 Lastly, bayesian phylogenetic GLMM using Markov chain monte carlo (MCMC) are avalible and can handle all cases described above. 
 However, MCMC is often computationally expensive for GLMMs compared to platforms using optimization.
 \pkg{MCMCglmm} \citep{hadfield2010general} is the most commonly used bayesian phylogenetic GLMM, but we will use \pkg{brms} instead, which uses a more powerful MCMC technique called Hamiltonian Monte Carlo (HMC) \citep{duane1987hybrid} that is more efficient \citep{li2018fitting}.
-
-\bmb{I like the commented-out table here (maybe in supp material? or maybe useful enough that it's worth including in the main text?) although it could take a lot of fussing to get it right}
-  
+ 
 % Table \mli{ref something} provides the statistically equivalent fitting capabilities of common/existing phylogenetic methods.
 
 % \begin{table}
@@ -570,6 +568,7 @@ Here are a few points researchers should think about when fitting phylogenetic r
 
 \subsection{Process and residual (observation) variabilities and confoundings}
 
+\bmb{explain: classical scenario for PIC is when we have species-level data (i.e., species averages or ``typical'' values).  What do we do when we have multiple observations per species?  Why can't we just average? (cf. \cite{murtaugh2007simplicity}) with a nested, balanced design, averaging by group and doing 1-way ANOVA gets the same answer for fixed effects as LMMs). \textbf{answers}: (1) unbalanced data (can handle by weighting by $n$, equivalent to assuming homoscedasticity and using inverse-variance weights); (2) non-Gaussian responses (averaging doesn't make sense) [can we use offsets to handle this case? don't know]; (3) maybe for equivalent of randomized block designs? (4) when within-species variance is actually of interest}
 Process and observation errors are highly confounded in phylogenetic regression if it is not handled correctly. 
 For single measurement per species model, any method that can account for at least two sources of variation (one for the residual variance, and at least one for the process variation) will be sufficient to a first approximation (i.e. Pagel's $\lambda$, Blomberg's $K$).
 If multiple observations are allowed per species, then using methods such as Pagel's $\lambda$ can potentially incorrectly estimate the amount of phylogenetic process by substituting tip variation with residual variation. 
