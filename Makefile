@@ -62,7 +62,7 @@ pez_simulate_tree.Rout: pez_simulate_tree.R
 simulate_poistree.Rout: parameters.R simulate_poistree.R
 	$(run-R)
 
-fit.pois.Rout: simulate_poistree.Rout phyloglmm_setup.R new_phylo_setup.R phyloglmm_pois.R
+fit.pois.Rout: simulate_poistree.Rout new_phylo_setup.R phyloglmm_pois.R
 	$(run-R)
 
 ######################################################################
@@ -107,7 +107,7 @@ lme4_profile.Rout: lme4_profile.R
 fit.glmmTMB.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R glmmTMBhacked.R fit_tmb.R
 	$(run-R)
 
-fit.lme4.ms.large.2.Rout:
+fit.lme4.ss.large.2.Rout: fit_tmb.R
 fit.glmmTMB.ms.xlarge.2.Rout: fit_tmb.R
 fit.glmmTMB.ss.xlarge.2.Rout: fit_tmb.R
 

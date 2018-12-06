@@ -5,18 +5,19 @@ library(ape)
 seed <- 5191
 set.seed(seed)
 
-phy <- rtree(n = nspp)
 
-## Compute branch lengths using other methods (optional)
-phy <- compute.brlen(phy, method = "Grafen", power = 0.5)
+nspp <- 500
+phy <- rtree(n = nspp)
 
 # standardize the phylogenetic covariance matrix to have determinant 1 (optional)
 Vphy <- vcv(phy)
 # Vphy <- Vphy/(det(Vphy)^(1/nspp))
 
 # Generate environmental site variable and standardize it
-X <- matrix(1:nsite, nrow = 1, ncol = nsite)
-X <- (X - mean(X))/sd(X)
+X <- rnorm(n=nspp,sd=Xsd)
+
+sd.B0=1
+sd.B1=3
 
 cormat <- matrix(c(1,rho.B01,rho.B01,1),2,2)
 sdvec <- c(sd.B0,sd.B1)
@@ -25,9 +26,6 @@ covmat <- varmat * cormat
 
 Sigma <- kronecker(covmat,Vphy)
 
-#if((signal.B0==signal.B1) & (signal.B0 == FALSE)){
-#	Sigma <- kronecker(covmat,diag(nspp))
-#}
 
 b.all <- MASS::mvrnorm(n=1
                        , mu=rep(c(beta0,beta1),each=nspp)
@@ -37,34 +35,13 @@ b.all <- MASS::mvrnorm(n=1
 b0 <- b.all[1:nspp] 
 b1 <- b.all[(nspp+1):(2*nspp)]
 
-mu <- exp(matrix(outer(b0, array(1, dim = c(1, nsite))), nrow = nspp,
-            ncol = nsite) + matrix(outer(b1, X), nrow = nspp, ncol = nsite))
+mu <- exp(b0+b1*X)
 
-# e <- rnorm(nspp * nsite, sd = sd.resid) # add residual variance 
-# y <- y + matrix(e, nrow = nspp, ncol = nsite)
-mu <- matrix(mu, nrow = nspp * nsite, ncol = 1)
+print(summary(mu))
+
 Y <- rpois(length(mu),mu)
 
-Y <- matrix(Y, nrow = nspp, ncol = nsite)
-
-# name the simulated species 1:nspp and sites 1:nsites
-rownames(Y) <- 1:nspp
-colnames(Y) <- 1:nsite
-
-
-# Transform data matrices into "long" form, and generate a data frame
-YY <- matrix(Y, nrow = nspp * nsite, ncol = 1)
-
-XX <- matrix(kronecker(X, matrix(1, nrow = nspp, ncol = 1)), nrow =
-               nspp * nsite, ncol = 1)
-
-site <- matrix(kronecker(1:nsite, matrix(1, nrow = nspp, ncol =
-                                           1)), nrow = nspp * nsite, ncol = 1)
-sp <- matrix(kronecker(matrix(1, nrow = nsite, ncol = 1), 1:nspp),
-             nrow = nspp * nsite, ncol = 1)
-
-sp <- rep(phy$tip.label,nsite)
-dat <- data.frame(Y = YY, X = XX, site = as.factor(site), sp = as.factor(sp))
+dat <- data.frame(Y, X = X, sp = rownames(Vphy))
 print(dat)
 
 

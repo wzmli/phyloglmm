@@ -8,7 +8,7 @@ tree_seed <- as.numeric(targetname[5])
 if(size == "small"){nspp <- 25}
 if(size == "med"){nspp <- 50}
 if(size == "large"){nspp <- 100}
-if(size == "xlarge"){nspp <- 1000}
+if(size == "xlarge"){nspp <- 500}
 
 
 if(numsite == "ss"){nsite <- 1}
