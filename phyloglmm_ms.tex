@@ -98,16 +98,16 @@
 
 \section{Introduction}
 
-Ever-increasing data collection capabilities (such as genomic sequencing, telemetry studies of animal behaviour, or environmental remote sensing), in combination with large-scale synthetic data bases of species occurrence and phenotypic traits, are making large volumes of biological data available over an ever-wider taxonomic range.
-Researchers are exploiting these data to fit complex models describing species occurrence and traits.
+Ever-increasing data collection capabilities (e.g. genomic sequencing, telemetry studies of animal behaviour, or environmental remote sensing), in combination with large-scale synthetic data bases of species occurrence and phenotypic traits, are making larger volumes of biological data available over an ever-wider taxonomic range.
+Researchers use these data to fit complex models describing species occurrence and traits.
 In particular, phylogenetic comparative analysis (PCA) using phylogenetic (eco-evolutionary) regression \citep{hansen2012interpreting} is
-becoming ever more popular \bmb{might be interesting to do some bibliometry, although absolutely not necessary --- i.e. how do numbers of citations of (whatever) increase relative to the overall size of the eco/evo literature? \ldots}
-PCAs explore the relationships among species traits (including occurrence within communities) while taking the underlying/latent evolutionary relationships of the species into account; they can be used to control for the statistical effects of phylogenetic correlation, to quantify the phylogenetic signals in trait distributions, or both.
-Unlike ordinary regression, where all of the predictor variables of interest (for example, species traits and environmental factors) are directly observable,  PCAs use phylogenetic relationships to estimate the unobserved process of trait evolution \citep{felsenstein1985phylogenies, butler2004phylogenetic}. 
+becoming increasingly popular % \bmb{might be interesting to do some bibliometry, although absolutely not necessary --- i.e. how do numbers of citations of (whatever) increase relative to the overall size of the eco/evo literature? \ldots}
+PCAs explore the relationships among species traits or distributions while taking the underlying evolutionary relationships of the species into account; they can be used to control statistically for phylogenetic relationships, to quantify the phylogenetic signals in trait distributions, or both.
+Unlike standard statistical models, where all of the predictor variables of interest (for example, species traits and environmental factors) are directly observable,  PCAs use phylogenetic relationships to estimate the unobserved process of trait evolution \citep{felsenstein1985phylogenies, butler2004phylogenetic}. 
 % While evolutionary relationships are biologically important and interesting, they often get neglected in applications and multi-species analyses \citep{bunnefeld2012island, santamaria2012evolution}. 
-Ecologists have incorporated phylogenetic relationships in multi-species models \citep{garland1992procedures, freckleton2002phylogenetic, ord2010adaptation, davies2013phylogenetic}; more recently, there is increased demand for integrating evolutionary knowledge to address ecological applications such as biodiversity conservation and the effects of climate change \citep{winter2013phylogenetic, santamaria2012evolution, lankau2011incorporating, lavergne2010biodiversity, mace2008evolutionary}.
-While there are a wide range tools for comparative analyses, they may be either insufficiently flexible or too computationally demanding when analyzing large volumes of data.
-In such cases, researchers must find ways to simplify their analyses (i.e. controlling for individual variation of species \bmb{??} and neglecting phylogenetic correlations among species responses \citep{bunnefeld2012island}; ignoring degrees of relatedness/treating taxon as a strictly hierarchical description \citep{tella1999habitat}; neglecting within-species variation \citep{ord2010adaptation}; etc).
+Ecologists have used phylogenetic relationships in multi-species models \citep{garland1992procedures, freckleton2002phylogenetic, ord2010adaptation, davies2013phylogenetic}; more recently, they have begun to integrate evolutionary knowledge in applied ecological studies addressing biodiversity conservation and the effects of climate change \citep{winter2013phylogenetic, santamaria2012evolution, lankau2011incorporating, lavergne2010biodiversity, mace2008evolutionary}.
+While a wide range of tools is available for comparative analyses, existing procedures may be either insufficiently flexible or too computationally demanding when analyzing large volumes of data.
+In such cases, researchers must find ways to simplify their analyses: for example, treating species effects as independent, thus neglecting phylogenetic correlations among species responses \citep{bunnefeld2012island}; ignoring degrees of relatedness and treating taxon as a strictly hierarchical description \citep{tella1999habitat}; or neglecting within-species variation \citep{ord2010adaptation}.
 %% bunnefeld2012island: used taxon for random slopes but did not include phylogenetic information
 %% ord2010adaptation : used OU process with means (single obs per taxa),
 %%  i.e. ignoring within-taxon variation?
@@ -116,30 +116,33 @@ In such cases, researchers must find ways to simplify their analyses (i.e. contr
 % \citep{felsenstein1985phylogenies, li2017statistical}.
 % \bmb{What precise ``issues'' do you have in mind? Don't think we need to state them here, but we should know. Based on your comments, I can guess that (1) by using random slopes across taxa, Bunnefeld 2012 is neglecting more subtle variation due to differential relatedness? (2) not sure whether taking taxon-level means (Ord 2010) is actually a problem. Ignores some variation,
 % but it might be ignorable (cf. Murtaugh 2007 ``Simplicity and complexity in ecological data analysis'')}
-In this paper, we propose an alternative method for flexibly and efficiently modeling phylogenetic relationships via mixed effect models, highlighting various complexities of phylogenetic relationships through random effects.
+In this paper, we propose an alternative method for flexibly and efficiently modeling phylogenetic relationships via mixed effect models through random effects. 
+This method allow researchers to easily incorporate various complexities without sacrificing speed.
 
-\bmb{somewhere, cite/frame our approach in terms of the recent ``basis functions in ecology'' paper}
 
 There are two general challenges in linking the evolutionary process to a phylogenetic comparative statistical framework.
 % Phylogenetic signal : the magnitude of phylogenetic correlation
-The first challenge is to identify and segregate phylogenetic signals \citep{blomberg2003testing} from other sources of variation that are present in the data.  
+The first challenge is to identify and separate phylogenetic signals from other sources of variation that are present in the data \citep{blomberg2003testing}.  
 % \bmb{prev sentence doesn't seem be quite the right lead-in to the rest of the paragraph? You go on to talk about the tip-variation/residual-variation confounding issue. Maybe replace with something talking more specifically about resolving tip variation?}
-The classic phylogenetic regression assumes that phylogenetic correlation among the residuals from a regression between two species-level traits arises because the residual variation evolves along the branches of the phylogeny according to a Brownian motion process; if the residuals are normally distributed and observed without any additional error or within-species variation, we can use Felsenstein's method of phylogenetically independent contrasts (PICs) \citep{felsenstein1985phylogenies, nicolakakis2000forebrain}.
-More recent approaches -- including phylogenetic generalized linear mixed models (PGLMM) \citep{ives2011generalized}, Pagel's $\lambda$ \citep{pagel1999inferring}, and Blomberg's $K$ \citep{blomberg2003testing} --- build upon PICs by considering different response distributions and allowing extra parameters to account for additional complexities in the evolutionary process. 
-In particular, they can partition residual variation into (1) phylogenetically uncorrelated residual variation (observation error or tip variation) and (2) phylogenetic signal  (biological/evolutionary process error) \citep{hansen2012interpreting}.
-However, when multiple observations (or repeated measures) of the same species (taxon) are being observed, this introduces another level of variation; in this case, phylogenetic signal and tip variation are now both part of the evolutionary process error (we will call this species/intercept level variation) and residual variation is associated with observation level variation within-species.
+The classic phylogenetic regression uses a statistical model that is equivalent to assuming that phylogenetic correlation in the residuals from a regression between two species-level traits arises because the residual variation in the trait that is the dependent variable evolves along the branches of the phylogeny according to a Brownian-motion evolutionary model. 
+If the residuals are normally distributed and observed without any additional error or within-species variation, Felsenstein's method of phylogenetically independent contrasts (PICs) \citep{felsenstein1985phylogenies, nicolakakis2000forebrain} is sufficient to account for the phylogenetic correlation.
+More recent approaches -- including phylogenetic generalized linear mixed models (PGLMM) \citep{ives2011generalized}, Pagel's $\lambda$ \citep{pagel1999inferring}, and Blomberg's $K$ \citep{blomberg2003testing} --- build upon PICs by considering different (non-Normal) response distributions and by accounting for additional complexities in the evolutionary process. 
+In particular, they can partition residual variation into (1) uncorrelated, or independent, residual variation (observation error or tip variation) and (2) phylogenetic signal  (biological/evolutionary process error) \citep{hansen2012interpreting}.
+However, each species' traits are observed more than once, possibly under different conditions, we can potentially distinguish third level of variation; in this case, phylogenetic signal and tip variation are now both part of the evolutionary process error (which we will call intercept-level variation) while the among species residual error is associated with among observations variation within each species.
 %\bmb{This is a good point, well expressed. Does PGLMM lump tip variation and within-species variation, or is this primarily an issue with Blomberg/Pagel? Thinking about Boettiger's critique \cite{boettiger2013is} (don't know if it's been peer-reviewed, we could ask him), which might be resolved if we think explicitly about within-species variation \ldots
 %\mli{I think it is more like our simulation test. In Boettiger's example, it is treating sister taxa as different species. So it is using a phylogenetic tree of 8 species instead of 4.}
-Despite having multiple observations per tip taxon (species), a typical part of observational or experimental design, but it is rarely seen: existing platforms are unable to fit multiple observations, or unbalanced design data, or both.
+Although many studies include multiple observations per species, phylogenetic analyses rarely take advantage of such observations to partition variablility more finely.
+Indeed, many existing methods cannot accommodate multiple observations per species, instead requiring users to collapse the data by taking species averages.
+%Despite having multiple observations per tip taxon (species), a typical part of observational or experimental design, but it is rarely seen: existing platforms are unable to fit multiple observations, or unbalanced design data, or both.
 % \bmb{OK, but we should be prepared to support this. Could we construct a table of existing approaches/platforms with their capabilities?}
 
 %% FIXME
-The second challenge is flexibly model phylogenetic relations.
+The second challenge is flexibly modeling phylogenetic relations.
 While it is reasonable to examine evolutionary relationships between species with their response, it is plausible the changes in effect or levels of the predictor variables have on the response variable are also phylogenetically correlated. 
 %\bmb{maybe we can focus on random slopes here? Need to point out that example studies below are \emph{exceptions} to the general assumption of random intercepts only (how did they manage to do their inference?)}
 Several recent studies have incorporated phylogenetic signals beyond species level and looked at species response to phylogenetic signals with changes in environmental factors.
-For example, \cite{nowakowski2018phylogenetic} considered phylogenetically correlated slopes in response to habitat conversion when studying the abundance of amphibian species using a bayesian implementation of phylogenetic GLMM, while \cite{li2017canfun} considered phylogenetically correlated species nested within sites for plant abundance via phylogenetic GLMM approach. 
-The tools available for extending phylogenetic relationships to predictor variables (or predictor level variation) are relatively inflexible; thus, sophisticated biologists have turned to more flexible Bayesian approaches, despite their computational burden \citep{hadfield2010mcmc, burkner2016brms}.
+For example, \cite{nowakowski2018phylogenetic} considered phylogenetically correlated slopes in response to habitat conversion when studying the abundance of amphibian species using a Bayesian implementation of phylogenetic GLMM, while \cite{li2017canfun} considered phylogenetically correlated species nested within sites for plant abundance via phylogenetic GLMM approach. 
+The tools available for extending phylogenetic relationships to predictor variables (or predictor level variation) are relatively inflexible; thus, computationally sophisticated biologists have turned to more flexible Bayesian approaches, despite their computational burden \citep{hadfield2010mcmc, burkner2016brms}.
 Table 1 provides a summary of model complexities, platforms and data constraints for phylogenetic comparative analysis.
 
 \newcommand{\pkg}[1]{{\tt #1}}
@@ -150,7 +153,7 @@ Table 1 provides a summary of model complexities, platforms and data constraints
 Model & Method & Data & Platform \\
 \hline
 \hline
-GLM (Simple)  & No Residual & Single Observation & GLS, PIC \\
+GLM (Simple)  & Correlated residual & Single Observation & GLS, PIC \\
 \hline
               & Residual    & Single Observation & Pagel's $\lambda$ \\
               & + phylo intercept &                    & Blomberg's $K$ \\ 
