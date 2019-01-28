@@ -4,6 +4,7 @@
 \usepackage{color}
 \usepackage{soul}
 \usepackage{tabularx}
+\usepackage{multirow}
 % use \xspace to allow for space after a macro as necessary
 \usepackage{xspace}
 \usepackage[top=1in, bottom=1in, left=1.25in, right=1.25in]{geometry}
@@ -56,6 +57,7 @@
 
 \usepackage{alltt}
 \usepackage[sort]{natbib}
+\usepackage{blkarray}
 \usepackage{amsmath}
 \usepackage{alltt}
 \usepackage{hyperref}
@@ -96,13 +98,13 @@
 
 \keywords{phyloglmm, species--branch matrix, phylogenetic correlation, phylogenetic comparative methods}
 
+
 \section{Introduction}
 
 Ever-increasing data collection capabilities (e.g. genomic sequencing, telemetry studies of animal behaviour, or environmental remote sensing), in combination with large-scale synthetic data bases of species occurrence and phenotypic traits, are making larger volumes of biological data available over an ever-wider taxonomic range.
 Researchers use these data to fit complex models describing species occurrence and traits.
-In particular, phylogenetic comparative analysis (PCA) using phylogenetic (eco-evolutionary) regression \citep{hansen2012interpreting} is
-becoming increasingly popular % \bmb{might be interesting to do some bibliometry, although absolutely not necessary --- i.e. how do numbers of citations of (whatever) increase relative to the overall size of the eco/evo literature? \ldots}
-PCAs explore the relationships among species traits or distributions while taking the underlying evolutionary relationships of the species into account; they can be used to control statistically for phylogenetic relationships, to quantify the phylogenetic signals in trait distributions, or both.
+In particular, phylogenetic comparative analysis (PCA) using phylogenetic (eco-evolutionary) regression \citep{hansen2012interpreting} is becoming increasingly popular. % \bmb{might be interesting to do some bibliometry, although absolutely not necessary --- i.e. how do numbers of citations of (whatever) increase relative to the overall size of the eco/evo literature? \ldots}
+PCAs explore the relationships among species traits or distributions while taking the underlying evolutionary relationships of the species into account; they can be used to control statistically for phylogenetic relationships, to quantify the phylogenetic signals (a measure of dependence among species responses due to their phylogenetic relationships) in trait distributions, or both.
 Unlike standard statistical models, where all of the predictor variables of interest (for example, species traits and environmental factors) are directly observable,  PCAs use phylogenetic relationships to estimate the unobserved process of trait evolution \citep{felsenstein1985phylogenies, butler2004phylogenetic}. 
 % While evolutionary relationships are biologically important and interesting, they often get neglected in applications and multi-species analyses \citep{bunnefeld2012island, santamaria2012evolution}. 
 Ecologists have used phylogenetic relationships in multi-species models \citep{garland1992procedures, freckleton2002phylogenetic, ord2010adaptation, davies2013phylogenetic}; more recently, they have begun to integrate evolutionary knowledge in applied ecological studies addressing biodiversity conservation and the effects of climate change \citep{winter2013phylogenetic, santamaria2012evolution, lankau2011incorporating, lavergne2010biodiversity, mace2008evolutionary}.
@@ -136,7 +138,8 @@ Indeed, many existing methods cannot accommodate multiple observations per speci
 %Despite having multiple observations per tip taxon (species), a typical part of observational or experimental design, but it is rarely seen: existing platforms are unable to fit multiple observations, or unbalanced design data, or both.
 % \bmb{OK, but we should be prepared to support this. Could we construct a table of existing approaches/platforms with their capabilities?}
 
-%% FIXME
+
+%% FIXME: second sentence
 The second challenge is flexibly modeling phylogenetic relations.
 While it is reasonable to examine evolutionary relationships between species with their response, it is plausible the changes in effect or levels of the predictor variables have on the response variable are also phylogenetically correlated. 
 %\bmb{maybe we can focus on random slopes here? Need to point out that example studies below are \emph{exceptions} to the general assumption of random intercepts only (how did they manage to do their inference?)}
@@ -148,35 +151,29 @@ Table 1 provides a summary of model complexities, platforms and data constraints
 \newcommand{\pkg}[1]{{\tt #1}}
 \newcommand{\code}[1]{{\tt #1}}
 
-\begin{tabularx}{\textwidth}{|X|X|X|X|}
+%% FIXME: chart looks ugly
+\begin{table}[]
+\begin{tabular}{|l|l|l|l|}
 \hline
-Model & Method & Data & Platform \\
-\hline
-\hline
-GLM (Simple)  & Correlated residual & Single Observation & GLS, PIC \\
-\hline
-              & Residual    & Single Observation & Pagel's $\lambda$ \\
-              & + phylo intercept &                    & Blomberg's $K$ \\ 
-              &             &                    & via phylolm, GLS \\
-\hline
-GLMM (Complex)& Random effects & Single Observation & \pkg{pez} \\ 
-              &                & Balanced Design &  \\
-\hline
-              &                & Unrestricted  & \pkg{lme4}, \pkg{glmmTMB} \\
-\hline
-Bayesian GLMM &                & Balanced Design & \pkg{MCMCglmm} \\ 
-\hline        
-              &                & Unrestricted   & \pkg{brms} \\
-\hline
-\end{tabularx}
+\textbf{Model}                                                                                    & \textbf{Method}                                                       & \textbf{Data}                                                                & \textbf{Platform}                                                                              \\ \hline
+\multirow{2}{*}{\begin{tabular}[c]{@{}l@{}}Generalized Linear \\ Model (GLM)\end{tabular}}        & Correlated residual                                                   & Single Observation                                                           & \begin{tabular}[c]{@{}l@{}}\pkg{nlme}:gls, \\ \pkg{ape}:pic\end{tabular}                                   \\ \cline{2-4} 
+                                                                                                  & \begin{tabular}[c]{@{}l@{}}Residual \\ + phylo intercept\end{tabular} & Single Observation                                                           & \begin{tabular}[c]{@{}l@{}}Pagel's $\lambda$\\ Blomberg's $k$ \\ via \pkg{nlme}:gls\\ \pkg{phylolm}\end{tabular} \\ \hline
+\multirow{2}{*}{\begin{tabular}[c]{@{}l@{}}Generalized Linear \\ Mixed Model (GLMM)\end{tabular}} & \multirow{2}{*}{Random effect}                                        & \begin{tabular}[c]{@{}l@{}}Single Observation\\ Balanced Design\end{tabular} & \pkg{pez}                                                                                            \\ \cline{3-4} 
+                                                                                                  &                                                                       & Unrestricted                                                                 & \pkg{lme4}, \pkg{glmmTMB}                                                                                  \\ \hline
+\multirow{2}{*}{Bayesian GLMM}                                                                    & \multirow{2}{*}{Random effect}                                        & Balanced Design                                                              & \pkg{MCMCglmm}                                                                                       \\ \cline{3-4} 
+                                                                                                  &                                                                       & Unrestricted                                                                 & \pkg{brms}                                                                                           \\ \hline
+\end{tabular}
+\end{table}
 
-
-However, in this paper, we will propose an alternative formulation of phylogenetic generalized linear mixed models that is mathematically equivalent to previous approaches.
-Our new formulation is more flexible; it can be incorporated relatively easily into any mixed-model platform that allows new random-effects design matrices to be specified, and can be easily extended along with the features of mixed model such as multiple observational designs, phylogenetic random-slopes models, and multiple (nested or crossed) random effects.
-We will compare our technique coded in R package \pkg{lme4} and \pkg{glmmTMB} with existing methods/platforms (i.e. \pkg{nlme} \citep{pinheiro2014r}, \pkg{phylolm} \citep{ho2014phylolm}, \pkg{pez} \citep{pearse2015pez} \pkg{phyr} (Li et al, unpublished), \pkg{MCMCglmm} \citep{hadfield2010mcmc}, and \pkg{brms} \citep{burkner2016brms}) to data from simulated model that incorporates phylogenetic signal from both predictors and tips/species, as well as residual variation.
-We also expect that it will be faster, because \pkg{lme4} and \pkg{glmmTMB} are optimized in performance using efficient computational linear algebra techniques. 
-In principle, for any given valid method that matches the simulation model should eventually converge to the simulated parameters. 
-We end by discussing opportunities and practicalities of our method and comments on the state of art for this area of research. 
+%% FIXME: second sentence
+In this paper, we will propose an alternative formulation of phylogenetic generalized linear mixed models that is mathematically equivalent to previous approaches, but more flexible.
+Our new formulation can be incorporated in any framework that allows for random effect without the need to implement special correlation structures.
+%% can be incorporated relatively easily into any mixed-model platform that allows new random-effects design matrices to be specified, and can be easily extended along with the features of mixed model such as multiple observational designs, phylogenetic random-slopes models, and multiple (nested or crossed) random effects.
+We will compare our technique coded in R package \pkg{lme4} and \pkg{glmmTMB} with existing R packages (i.e. \pkg{nlme} \citep{pinheiro2014r}, \pkg{phylolm} \citep{ho2014phylolm}, \pkg{pez} \citep{pearse2015pez} \pkg{phyr} (Li et al, unpublished), \pkg{MCMCglmm} \citep{hadfield2010mcmc}, and \pkg{brms} \citep{burkner2016brms}) fitting models to data from simulated model that incorporates phylogenetic signal from both predictors and tips/species, as well as residual variation.
+As well as being flexible, we also expect that our approach will be fast, because \pkg{lme4} and \pkg{glmmTMB} use efficient approaches. 
+%% FIXME: move to methods/simulations
+% In principle, for any given valid method that matches the simulation model should eventually converge to the simulated parameters. 
+% We end by discussing opportunities and practicalities of our method and comments on the state of art for this area of research. 
 
 \section{Materials and Methods}
 
@@ -190,7 +187,9 @@ We end by discussing opportunities and practicalities of our method and comments
 \newcommand{\be}{{\mathbf e}}
 \newcommand{\bSigma}{{\boldsymbol \Sigma}}
 
-The standard phylogenetic regression takes the form 
+\subsection{Phylogenetic regression}
+
+The standard phylogenetic regression can be formulated as
 
 %\bmb{boldface matrices/vectors i.e. $\bX \bbeta$? or not worth the trouble? How about $\bmu=\bX \bbeta$; $\bY \sim \textrm{MVN}(\bmu,\sigma^2 \bC)$ for greater generality? (OK, I see that you move in this direction later.  But I'm not sure it's worth the detour of using two different notations? even if you are going to extend to include fixed effects, $Z$, etc. later ...}:
 
@@ -198,7 +197,7 @@ The standard phylogenetic regression takes the form
 \bmu & = \bX \bbeta  \label{eq:gls1} \\ 
 \bY & \sim \textrm{MVN}(\bmu,\sigma^{2} \bC), \label{eq:gls2}
 \end{align}
-where $\bX$ is an $n \times m$ model matrix containing $m$ predictor variables (phenotypic traits or environmental variables, typically including an intercept column of ones); $\bbeta$ is an $m$-vector of coefficients; $\bY$ is an $n \times 1$ response vector which is assumed to be multivariate normally distributed with mean $\bmu$ and variance-covariance matrix given by $\sigma^{2} \bC$ where $\bC$ is a $n \times n$ phylogenetic correlation matrix.
+where $\bX$ is an $n \times m$ model matrix, describing $n$ observations of $m$ predictor variables (phenotypic traits or environmental variables, typically including an intercept column of ones); $\bbeta$ is an $m$-vector of coefficients; $\bY$ is an $n \times 1$ response vector which is assumed to be multivariate normally distributed with mean $\bmu$ and variance-covariance matrix given by $\sigma^{2} \bC$ where $\bC$ is a $n \times n$ phylogenetic correlation matrix.
 The PC matrix is inferred from the topology of the evolutionary tree by quantifying the degree of shared evolution between any pair of taxa \citep{garamszegi2014modern}.
 
 %\bmb{give a ref for this? maybe Paradis's ape book, or Garamszegi's book, or ?}
@@ -206,22 +205,32 @@ The PC matrix is inferred from the topology of the evolutionary tree by quantify
 
 % More recently, researchers use linear mixed model and generalized linear mixed model framework to model complex systems with phylogenetic structures.
 %\mli{Why? Data type, interactions, random effects, etc... Need to really explain random effects here. Alternatively, we can drop this line and write this...}
-An alternative modelling approach is to use linear mixed effects modelling framework \citep{lynch1991methods}.
-The typical linear mixed model has the form:
+
+\subsection{Phylogenetic generalized linear mixed model}
+Alternatively, one can use the generalized linear mixed effects modelling (GLMM) framework \citep{lynch1991methods}.
+The classic generalized linear mixed effect model is an extension of the classic regression model, a kind of hierarchical linear model that can flexibly incorportate more than one kind of variability through random effects and for non-gaussian responses.
+The typical GLMM has the form:
 \begin{align}
-\bY & \sim \textrm{Distr}(\bmu) \label{eq:glmm1} \\
-g(\bmu) & = \bX \bbeta + \bZ \bb + \be \label{eq:glmm2} \\
+\bY & \sim \mathbf{f}(\bmu,\bSigma) \label{eq:glmm1} \\
+\bmu & = \bX \bbeta + \bZ \bb  \label{eq:glmm2} \\
 \bb & \sim \textrm{MVN}(0, \bSigma(\theta)) \label{eq:glmm3} \\
-\be & \sim \textrm{MVN}(0, \sigma^2_{residual} \label{eq:glmm4})
 \end{align}
-where $\bZ$ is an $n \times m$ model matrix for the $n$ -- dimensional vector-valued $m$ predictor variables; $\bb$ (sometimes referred as the "G" effect) represents the conditional modes and assumed to be multivariate normally distributed with a variance-covariance matrix given by $\bSigma(\theta)$; $\be$ (sometimes referred as "R" effect) represents the residuals.
-Analogously, the phylogenetic regression given by \ref{eq:gls1} can be represented in the mixed model framework by constraining $\bSigma(\theta) = \sigma^2 \bC$ and $\sigma^2_{residual} = 0$.
+where $\bZ$ is an $n \times m$ model matrix for the $n$ -- dimensional vector-valued $m$ predictor variables; $\bb$ (sometimes referred as the "G-side" effect) represents the conditional modes and assumed to be multivariate normally distributed with a variance-covariance matrix given by $\bSigma(\theta)$; $\be$ (sometimes referred as "R" effect) represents the residuals. %% FIXME: see basis-fn paper
+Analogously, the phylogenetic regression given by (\ref{eq:gls1}) can be represented in the mixed model framework by constraining $\bSigma(\theta) = \sigma^2 \bC$ and $\sigma^2_{residual} = 0$.
+
+There are serveral advantages in modelling phylogenetic correlated traits in the mixed model framework.
+First, random intercepts can allow the response trait to vary across groups/levels within grouping predictors (e.g. patch, site, experiment, and etc). 
+Second, it can also allow the response (trait or distribution) to vary according to the phylogenetic relationships across species (i.e. similar species will have similiar responses), and between species (tip variation).
+The third type of variation that is often neglected or rarely considered are random slopes.
+Random slopes can allow fixed effects (size of the effect in continuous predictor variables) to vary for each species. 
+Analogous to modelling the repsonse dependency via phylogenetic relationship among species, phylogenetic random slopes can allow fixed effects to account for the phylogenetic relations (i.e. similar species will have similar size of the effects on the response than distinct pairs).
+
 
 % \bmb{worth including the \pkg{MCMCglmm}/\pkg{brms} inverse-VCV formulation here? And/or contacting Eric Pedersen to find out about his Markov Random Field phylog. stuff in GAM?}
 % \mli{inverse VCV for BLUP? an alternative way to find the inverse of the vcv(phy)}
 % \mli{G vs R, PIC and simple variations (phylolm ...) uses R and no G}
 
-\subsection{Reformulating phylogenetic covariance matrix}
+\subsection{Reformulating the phylogenetic covariance matrix}
 % The standard problem of phylogenetic comparative methods is to analyze relationships among data where the observations are gathered from nodes (usually tips) of a phylogenetic tree.
 % Phylogenetic independent contrasts is a generalization of the paired comparisons method where contrasts are taken for each bifurcation (nodes) in a phylogenetic tree. 
 % Assuming that traits evolve independently in each lineage following speciation, then the trait divergences that occur at one node are independent of divergence at other nodes.  
@@ -236,31 +245,38 @@ Analogously, the phylogenetic regression given by \ref{eq:gls1} can be represent
 \newcommand{\e}{{ \epsilon}}
 
 An alternative approach is to model the phylogenetic correlation as a \textit{Gaussian process}. 
-In particular, suppose that the evolutionary process is a Brownian motion, which means the evolution of a continuous trait is a random walk with daughter species evolving independently after speciation.  
-In that case, the phylogenetic variability of a particular observation can be written as the sum of the evolutionary changes that occurred on all of the branches in the phylogeny in its past. 
-Thus, the evolutionary history for each species can be modeled with a sequence of independent errors with species--branch matrix $\bS$, equivalently to imposing a correlation $\bC$.
-For example, as shown in figure \ref{fig:tree}, the corresponding $\bS$ is in the form:
+In particular, suppose that the evolutionary process is a Brownian motion, which means that evolution of a continuous trait evolve independently, following a standard Brownian motion, along each branch of the phylogeny.
+In this case, the phylogenetic variability of a particular species can be written as the sum of the variances of evolutionary changes that occurred on all of the branches in its history. 
+Thus, modeling the evolutionary history of each species with a sequence of independent errors with species--branch matrix $\bS$, is equivalent to imposing a correlation $\bC$.
+For example, for the phylogeny in figure \ref{fig:tree}, the corresponding $\bS$ takes the form:
 
+%% FIXME: need top/side labels
 \begin{center}
 \begin{figure}[h]
   \includegraphics[scale=0.8,page=1]{./git_push/tree.pdf}
-  \caption{\bmb{caption ??}}
+  \caption{Three species phylogenetic tree.}
 \label{fig:tree}
 \end{figure}
 \end{center}
 
-\begin{align*}
-\bS = \begin{bmatrix}
-\ell_1 \e_1 & \ell_2 \e_2 & 0 & 0 \\
-\ell_1 \e_1 &  0 & \ell_3 \e_3 & 0 \\
-0  &  0 & 0  & \ell_4 \e_4
-\end{bmatrix}
-\end{align*}
-The error value corresponding to tip 1 is $\ell_1 \e_1 + \ell_2 \e_2$, where $\ell_i$ is the square root of the branch length $L_i$ in figure \ref{fig:tree} and the $\ell_i$ are independent, homoscedastic Normal variates with zero mean and $\sigma^2$ variance (i.e. variance for tip 1 is $(\ell_1 \e_1 + \ell_2 \e_2)^2 = (\ell_1^2 + \ell_2^2)\sigma^2$, linear in branch length) 
+\[
+\begin{blockarray}{ccccc}
+ & L_1 & L_2 & L_3 & L_4  \\
+\begin{block}{c(cccc)}
+  t_1 & \ell_1 \e_1 & \ell_2 \e_2 & 0           & 0 \\
+  t_2 & \ell_1 \e_1 &  0          & \ell_3 \e_3 & 0 \\
+  t_3 & 0           &  0          & 0           & \ell_4 \e_4 \\
+\end{block}
+\end{blockarray}
+ \]
+
+%% FIXME: double check this
+The phylogenetic variability corresponding to species 1 is $\ell_1 \e_1 + \ell_2 \e_2$, where $\ell_i = \sqrt{L_i}$, the square root of the branch length $L_i$ in figure \ref{fig:tree} and the $\ell_i$ are independent, homoscedastic Normal variates with zero mean and $\sigma^2$ variance (i.e. the variance for species 1 is $(\ell_1 \e_1 + \ell_2 \e_2)^2 = (\ell_1^2 + \ell_2^2)\sigma^2$, linear in branch length). 
+%% FIXME: see BB's cmt
 
 \subsubsection*{Constructing the species--branch random effects model matrix}
 
-The $\bS$ matrix is the matrix product of an $n \times b$ indicator matrix $\bS_{ind}$ of branch indices, and a branch length vector $\bell$.
+The $\bS$ matrix is the product of an $n \times b$ indicator matrix $\bS_{ind}$ of branch indices and a branch length vector $\bell$.
 
 \begin{align}
 \bS_{ind} = \begin{bmatrix}
@@ -273,23 +289,21 @@ The $\bS$ matrix is the matrix product of an $n \times b$ indicator matrix $\bS_
 \ell_2 \\
 \ell_3 \\
 \ell_4 
-\end{bmatrix}
+\end{bmatrix} .
 \label{eq:S}
-\end{align}.
+\end{align}
 $\bS_{ind}$ is a binary (indicator) matrix that describes whether a particular branch occurs in the history of a focal species. 
 $\bS \bS^T$ gives the variance-covariance matrix of the phylogeny. 
 
-The random-effect model matrix $\bZ$ can be decomposed into term-wise model matrix $\bZ_{i}$ as described in \citet{bates2015fitting}.
-Thus, the phylogenetic correlated random-effect matrix $\bZ^{C}_{i}$ is
+The random-effect model matrix $\bZ$ can be decomposed into term-wise model matrices $\bZ_{i}$ as described in \citet{bates2015fitting}.
+Analogous to the procedure described in \citet{bates2015fitting}, the phylogenetic correlated random-effect matrix $\bZ^{C}_{i}$ is
 
 \begin{equation}
-\bZ^{C}_{i} = (\bS^{T}_{i}\bJ^{T}_{i} \ast \bX^{T}_{i})^{T}, \label{eq:ZC}
+\bZ^{C}_{i} = (\bS^{T}\bJ^{T}_{i} \ast \bX^{T}_{i})^{T}, \label{eq:ZC}
 \end{equation}
-where $\ast$ is the Khatri-Rao product \citep{khatri1968solutions}, $\bS_{i}$ is the $m_{i} \times b_{i}$ species--branch matrix; $\bJ_{i}$ is the $n_i \times m_i$ indicator matrix of grouping factors; $X_{i}$ is the $n \times p_{i}$ raw random effects model matrix. 
+where $\ast$ is the Khatri-Rao product \citep{khatri1968solutions}, $\bS$ is the $m \times b$ species--branch matrix; $\bJ_{i}$ is the $n_i \times m$ indicator matrix of grouping factors; and $\bX_{i}$ is the $n \times p_{i}$ raw random effects model matrix. 
 
-
-\mli{move example to the supp}
-For example, using the phylogeny above (figure \ref{fig:tree}), if we begin with a raw model matrix,
+For example, using the phylogeny above (figure \ref{fig:tree}), if we begin with a raw model matrix corresponding to a random-slope model, 
 
 \begin{align}
 \bX = \begin{bmatrix}
@@ -302,8 +316,8 @@ then the term-wise phylogenetic random effects model matrix is,
 
 \begin{align}
 \bZ^{C}_{i} = (\bS^{T}_{adji}\bJ^{T}_{i} \ast \bX^{T}_{i})^{T} =
-\Bigg[
-\Bigg(
+\left[
+\left(
 \begin{bmatrix}
 \ell_{adj1} & \ell_{adj1}  & 0 \\
 \ell_{adj2} &  0  & 0 \\
@@ -315,19 +329,19 @@ then the term-wise phylogenetic random effects model matrix is,
 0 & 1  & 0 \\
 0 & 0  & 1  
 \end{bmatrix}
-\Bigg)
+\right)
 \ast
 \begin{bmatrix}
 1   & 1   & 1  \\ 
 t_1 & t_2 & t_3
 \end{bmatrix} 
-\Bigg]^T
+\right]^T
 \\
 = \begin{bmatrix}
 \ell_{adj1} & \ell_{adj1}t_1 & \ell_{adj2} & \ell_{adj2}t_1 & 0 & 0 & 0 & 0 \\
 \ell_{adj1} & \ell_{adj1}t_2 & 0 & 0 & \ell_{adj3} & \ell_{adj3}t_2 & 0 & 0 \\
 0 & 0 & 0 & 0 & 0 & 0 & \ell_{adj4} & \ell_{adj4}t_3
-\end{bmatrix}
+\end{bmatrix}.
 \end{align}
 
 
@@ -349,34 +363,38 @@ t_1 & t_2 & t_3
 
 \subsection{Simulation}
 
-We generated test data based on the simple mixed model formulation (\ref{eq:glmm1}, \ref{eq:glmm2}, \ref{eq:glmm3}, \ref{eq:glmm4} ) with a single response variable $\bY$ and a single predictor continuous variable $\bX$ for $n$ = 25, 50, and 100 species.
-For wider range of comparisons, we simulate one observation ($X_i,Y_i$) per species.
-For single-site model, the full simulation model is the following:
+We generated test data based on the random slopes mixed model formulation (\ref{eq:glmm1}, \ref{eq:glmm2}, \ref{eq:glmm3}, \ref{eq:glmm4} ) with a single response variable $\bY$ and a single predictor continuous variable $\bX$ for $n$ = 25, 50, and 100 species.
+For simplicity, the response variable $\bY$ is conditional normally distributed (i.e. gaussian distribution with an idenitiy link function) , which is a linear mixed effect model. 
+For the first set of simulation, we simulate one observation per species.
+% For wider range of comparisons, we simulate one observation ($X_i,Y_i$) per species.
+The full simulation model is the following:
 \begin{align}
 \bY & = (\beta_0 + b_{phy_{int}}) + (\beta_1 + b_{phy_{slope}}) X + e_{residual}  \label{eq:ss_sim}\\\
-(b_{phy_{int}}, b_{phy_{slope}}) & \sim \textrm{MVN} \Bigg( 0, \begin{bmatrix}
+(b_{phy_{int}}, b_{phy_{slope}}) & \sim \textrm{MVN} \left( 0, \begin{bmatrix}
 \sigma^2_{phy_{int}} & \sigma_{phy_{int},phy_{slope}} \\ 
 \sigma_{phy_{int},phy_{slope}} & \sigma^2_{phy_{slope}}
 \end{bmatrix} 
-\Bigg) \\ 
+\right) \\ 
 e_{residual} & \sim \textrm{MVN} ( 0 , \Sigma) .
 \end{align}
-The model contains two fixed effect parameters ($\beta_0$ and $\beta_1$), three random effect parameters (phylogenetic random intercept variance, phylogenetic random slope variance and covariance between phylogenetic random slope and intercept) and observation/residual variance.  
+The model contains two fixed effect parameters ($\beta_0$ and $\beta_1$), three random effect parameters (phylogenetic random intercept variance, phylogenetic random slope variance and covariance between phylogenetic random slope and intercept) and residual variance.  
+The covariance between phylognetic random intercept and slope measures the correlation of phylogenetic dependency variability of the size in effect and outcome.
+\mli{con't here!}
 Predictor and intercept level random effect of species are not applicable in this simulation setting with single observation per species because it will be confounded with the observational level variation (residuals).
 
-We extend the simulation model by adding multiple sites where each site has one observation per species. The multiple-site full model is the following: 
+We extend the simulation model by adding multiple groups where each group has one observation per species. The multiple-group full model is the following: 
 \begin{align}
-\bY & = (\beta_0 + b_{phy_{int}} + b_{sp_{int}} + b_{site}) + (\beta_1 + b_{phy_{slope}} + b_{sp_{slope}}) X + b_{sp:site} + e_{residual} \label{eq:ms_sim}\\
-(b_{phy_{int}}, b_{phy_{slope}}) & \sim \textrm{MVN} \Bigg( 0, \begin{bmatrix}
+\bY & = (\beta_0 + b_{phy_{int}} + b_{sp_{int}} + b_{group}) + (\beta_1 + b_{phy_{slope}} + b_{sp_{slope}}) X + b_{sp:group} + e_{residual} \label{eq:ms_sim}\\
+(b_{phy_{int}}, b_{phy_{slope}}) & \sim \textrm{MVN} \left( 0, \begin{bmatrix}
 \sigma^2_{phy_{int}} & \sigma_{phy_{int},phy_{slope}} \\ 
 \sigma_{phy_{int},phy_{slope}} & \sigma^2_{phy_{slope}}
 \end{bmatrix}
-\Bigg) \\
-(b_{sp_{int}}, b_{sp_{slope}}) & \sim \textrm{MVN} \Bigg( 0, \begin{bmatrix}
+\right) \\
+(b_{sp_{int}}, b_{sp_{slope}}) & \sim \textrm{MVN} \left( 0, \begin{bmatrix}
 \sigma^2_{sp_{int}} & \sigma_{sp_{int},sp_{slope}} \\ 
 \sigma_{sp_{int},sp_{slope}} & \sigma^2_{sp_{slope}}
 \end{bmatrix}
-\Bigg) \\
+\right) \\
 b_{site} & \sim \textrm{MVN} ( 0 , \Sigma_{site}) \\
 b_{sp:site} & \sim \textrm{MVN} (0, \textrm{Kron}(\bf{I}_{site}, \sigma^2_{phy})) \\
 e_{residual} & \sim \textrm{MVN} ( 0 , \Sigma)
