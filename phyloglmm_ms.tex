@@ -455,22 +455,28 @@ Multi-group &  &  & X & X & X & X \\ \hline
 %% STOP HERE, MLI will need to do everything below this comment. Everything above this comment is ready for BB to read.
 
 \subsection*{Simulation and evaluations}
-We simulated 100 phylogenetic trees for each sample size (25,50,100, 500) and incorporated with simulation parameters (illustrated in figure 2 and 5) to simulate responses via the simulation model (\ref{eq:ss_sim}, \ref{eq:ms_sim}).
-All model variants via different platforms were used to fit each realization.
+We simulated 100 phylogenetic trees for each sample size (n = 25,50,100, 500) and incorporated simulation parameters (illustrated in figure 2 and 5) to simulate responses from the simulation model (\ref{eq:ss_sim}, \ref{eq:ms_sim}).
+Each realization were fitted to all model variant using different platforms.
 Tables \ref{model_variant} shows the parameters that are estimable for each platform. 
-All model must pass its respective convergence test before evaluating goodness of fit. 
-For bayesian GLMM, we combined two convergence criteria to assess convergence: we required a value of the
-Gelman and Rubin statistic and an effective sample size (ESS) greater than 1000 for each replication. 
+We only evaluated the goodness of fit for model fits that passed the convergence tests implemented by the package.
+For Bayesian GLMM, we combined two criteria to assess convergence: we required a value of the Gelman and Rubin statistic less than 1.1 and an effective sample size (ESS) greater than 1000 the fixed effect parameters for each replication. 
 For each replication we sample two chains starting with 10000 iterations. 
-
-We used coverage to assess model fit.
+%% TODO MAKE SURE THIS IS CORRECT!
+We first evaluate our estimates by looking at the distribution of the estimated values -- this gives us an idea of bias and variationce (i.e. quality of the point estimate).
+Then we look at coverage, to assess quality of confidence intervals.
 Coverage refers to the frequency with which the computed confidence intervals include the true values of
 parameters.
 We used 90\% (Wald and profile) confidence intervals and quantile-based intervals (for bayesian GLMM)
 to evaluate coverage.
-We also compare computational speed between different platforms.
+We also compare computational speed between different platforms to evaluate the efficiency of the platforms and methods. 
 
 \section*{Results}
+
+We used our method and fitted the full model of the dune meadow data recently used with \pkg{pez} \citep{li2017canfun}. 
+\pkg{lme4} and \pkg{pez} give identical results for fix and random effect estimates, our code is approximately 120 times faster than \pkg{pez}. 
+Codes for fitting dune meadow analysis using \pkg{lme4} and \pkg{pez} are provided in the supplements. 
+
+\subsection{Single Group models simulations}
 
 \begin{center}
 \begin{figure}[h]
@@ -501,8 +507,6 @@ We also compare computational speed between different platforms.
 
 % \bmb{Need to think a little harder about the important points/order here (might be time to do the exercise where you take the results and boil them back down to short bullet points, in order to figure out whether you've said the important stuff, in the right order). Maybe lead by saying that all platforms give similar answers - to the extent that they are fitting the same statistical model (this might even be emphasized/explained above, in Methods). Am I correct in believing that phylolm=\pkg{lme4} but without intercept/slope correlation, and gls is additionally missing random slopes?}
 
-\bmb{add refs to figures \ldots}
-
 % \begin{itemize}
 % \item{full model provides good estimates (except for correlation)}
 % \item{reduced models try to fit with whatever parameters they have available (over-estimates the simulation parameters)}
@@ -514,17 +518,20 @@ We also compare computational speed between different platforms.
 % \item{lme4/tmb are fast, everything else is slow for multiple sites}
 % \end{itemize}
 
-The full single site model using phyloglmm (which matches the single simulation model that incorporates phylogenetic intercept, slope and correlation) provides good estimates for all parameters except the random correlation parameter ($\sigma_{phy_{int},phy_{slope}}$). 
-Fixed effect parameters ($\beta_0$ and $\beta_1$) estimates approaches nominal coverage as number of species increases for \pkg{lme4} and \pkg{glmmTMB} but not others.
+The full fitted model (which matches the simulation model that incorporates phylogenetic intercept, slope and correlation) provides estimates with low bias and variance for all parameters. 
+Estimates for fixed effect parameters ($\beta_0$ and $\beta_1$) approach nominal coverage as the number of species increases for \pkg{lme4} and \pkg{glmmTMB} but not for other packages. 
+\mli{we know why brms over covers}
+%% \mli{Is there a figure for this?....Ok, maybe We don't need it.}
 
-In general, models that cannot match the simulation model (PGLM and PGLS) will try to fit the data with the parameters available. 
-PGLM (which lacks the phylogenetic slope parameter) provides reasonable good estimates for phylogenetic intercept parameter ($\sigma_{phy_{int}}$) but overestimates the residual/observation standard deviation of the intercept ($\beta_0$) estimates slightly undercover the nominal coverage (95\% with 100 species) and have a bad coverage ($<$ 60\%) for the fixed slope parameter.
-PGLS, with only one parameter available, confounds all variations (phylogenetic intercept, slope and residual variation) into the single parameter (phylogenetic intercept), resulting in overestimating the phylogenetic intercept and overcovering for $\beta_0$, and undercovering for $\beta_1$.
+In general, models that are insufficiently flexible to match the true simulation model (PGLM and PGLS) will try to fit the data with the parameters available. 
+PGLM (which lacks the phylogenetic slope parameter) provides reasonably good estimates for phylogenetic intercept parameter ($\sigma_{\mathrm{phy_{int}}}$) but overestimates the residual standard deviation; the estimates for the intercept ($\beta_0$) are slightly conservative (90\% coverage of the 95\% CI with 100 species) and the fixed slope parameter ($\beta_1$) have poor coverage ($<$ 60\%).
+PGLS, with only one parameter available, confounds all variation (phylogenetic intercept, slope and residual variation) into the phylogenetic intercept parameter, resulting in overestimating the phylogenetic intercept and overcovering for $\beta_0$, and undercovering for $\beta_1$.
 
 % \bmb{(2) please define ``robustness'' -- usually means lack of sensitivity to model.  Are you talking about the variance of the estimates? I'd prefer not to use ``robust'' in a non-standard way if possible (2) what are small/medium/large? I see that $n=\{20,100,500\}$ and $m=\{1,20\}$, but not sure how these match up to ``small'', ``medium'', ``large''; is Figure 1 all $m=1$? Might be worth just labeling by $n=??$ rather than using small/medium/large}
 % It is unclear how different levels of phylogenetic signal are being confounded under the error free (without tip variation) assumption for the PGLS models.
 % \bmb{can we figure this out, even in an empirical/crude way??? it's tough to have results without knowing the true value they're aiming for ...}
 
+\subsection*{Multi-group model simulations}
 
 \begin{center}
 \begin{figure}[h]
@@ -550,25 +557,22 @@ PGLS, with only one parameter available, confounds all variations (phylogenetic 
 \end{center}
 
 
-Multiple site fits on the other hand, are much more similar across platforms (as the fitted and simulation models are more similar).
-Similar to the single site fits, \pkg{lme4} and \pkg{glmmTMB} which matches the simulation model provides good estimates for all parameters except for the random correlation parameter ($\sigma_{sp_{int,slope}}$).
-The lack of correlations in \pkg{pez} and \pkg{phyr} statistical models does not appear to have a large effect on its ability to estimate other parameters, whereas \pkg{pez} underestimates (lower estimates) many parameters.  
+Multi-group model fits on the other hand, are much more similar across platforms (only the more powerful subset of platforms can fit these models at all, and the fitting models are closer to the true simulation model).
+Similar to the single group fits, \pkg{lme4} and \pkg{glmmTMB} match the simulation model provides and good estimates for all parameters except the correlation ($\sigma_{\mathrm{sp_{int,slope}}}$).
+The lack of correlations in \pkg{pez} and \pkg{phyr}'s statistical models does not appear to have a large effect on the estimates of the remaining parameters in the model, whereas \pkg{pez} underestimates many parameters.  
 % \bmb{Can you identify the extreme cases in \pkg{lme4}'s estimate? Are these singular models? Would they be diagnosable? Can you say anything about when the assumption of independence of slope and intercept \textbf{would} be a problem? (If you can think of such a scenario, you could run sims for one such example - don't need to go into great detail, but being able to say that you confirmed that it's a problem in such-and-such a case would be important.)}
 % \mli{save it for random slope discussion}
 
-However, despite the similarities of parameter estimates across platforms for the multiple sites simulation fits, the efficiency (measured by computational speed) are different across platforms and sample size.
-For example, the median time for \pkg{lme4} to fit 50/100 species model takes $~$ 50/100 seconds versus $~$ 200/2000 seconds for \pkg{pez} and \pkg{phyr}. 
-Lastly, it takes $\sim$ 1000 seconds for lme4 to fit 500 species model; it was not practical for \pkg{pez} and \pkg{phyr} to fit 500 species for our study, where the computational speed did not scale linearly with sample size 25/50/100.
+Although the parameter estimates are similar across platforms for the multi-group simulation fits, computational efficiency varies enormously across platforms and sample size.
+For example, the new formulation is implemented in both \pkg{lme4} and \pkg{glmmTMB}, but \pkg{glmmTMB} is almost an order of magnitude faster than \pkg{lme4}.
+Comparing \pkg{glmmTMB} to \pkg{pez} and \pkg{phyr}, the median time for \pkg{glmmTMB} to fit 50 (100) species model takes $\approx$ 9 (20) versus $\approx$ 200 (2000) seconds for \pkg{pez} and \pkg{phyr}. 
+\pkg{glmmTMB} takes $\approx$ 125 seconds for lme4 to fit a 500-species model; it was not practical for \pkg{pez} and \pkg{phyr} to fit 500-species for our study, where the computational speed did not scale linearly with sample size 25/50/100.
 \pkg{glmmTMB} is almost an order of magnitude faster than \pkg{lme4}.
 
 % \bmb{Can you put a lower bound on \pkg{pez}'s computation time? How long did you take to give up? How does it scale? can you either figure out from first principles
 %   or (easier) do a brute-force series of increasing sample size and
 %   compute a log-log regression of time vs sample size to find the
 %   approximate power?}
-
-We used our method and fitted the full model of the dune meadow data recently used with \pkg{pez} \cite{li2017canfun}. 
-We have obtained identical results for fix and random effect estimates, our code is approximately 120 times faster than \pkg{pez}. 
-Codes for fitting dune meadow analysis using \pkg{lme4} and \pkg{pez} are provided in the supplements. 
 
 \newpage
 
@@ -577,15 +581,16 @@ Codes for fitting dune meadow analysis using \pkg{lme4} and \pkg{pez} are provid
 
 % \bmb{say something about the implications of this [e.g. good enough for getting an overall impression of phylog. whatever-it-is but not enough for detailed description/inference about the evolutionary process?] (or maybe that should be saved for the Discussion?)}
 
-The evolutionary model simulations presented in this paper are an oversimplification of real evolutionary processes in nature, but it is analogous to how researchers fit models to study complicated systems (as it is impossible to create a model to "match" the complexities of nature).
+The simulations presented in this paper are an oversimplification of the real evolutionary processes in nature, but they are no simpler than what researchers typically use.
+In fact, our simulations showed that even simple single predictor--response multi-species model can incorporate multiple levels of complexity (e.g. including random slopes, intercept-slope correlations, and the phylogenetic analog).
 We have fitted models using different platforms that best match the simulation models. 
-Models that cannot match the simulation (full) model are expected to underperform; it is important to understand the limitations and performance of these simpler models that are restricted by the commonly used methods available.
+Models that cannot match the simulation (full) model are expected to perform poorly; it is important to understand the limitations and performance of these simpler models that are restricted by the commonly used methods available.
 Using models that include some form of phylogenetic variation and residual variation is necessary to detect evolutionary process.
 Here are a few points researchers should think about when fitting phylogenetic regression models.
 
-\subsection{Process and residual (observation) variabilities and confoundings}
+\subsection{Process and observation variabilities and confoundings}
 
-\bmb{explain: classical scenario for PIC is when we have species-level data (i.e., species averages or ``typical'' values).  What do we do when we have multiple observations per species?  Why can't we just average? (cf. \cite{murtaugh2007simplicity}) with a nested, balanced design, averaging by group and doing 1-way ANOVA gets the same answer for fixed effects as LMMs). \textbf{answers}: (1) unbalanced data (can handle by weighting by $n$, equivalent to assuming homoscedasticity and using inverse-variance weights); (2) non-Gaussian responses (averaging doesn't make sense) [can we use offsets to handle this case? don't know]; (3) maybe for equivalent of randomized block designs? (4) when within-species variance is actually of interest}
+% \bmb{explain: classical scenario for PIC is when we have species-level data (i.e., species averages or ``typical'' values).  What do we do when we have multiple observations per species?  Why can't we just average? (cf. \cite{murtaugh2007simplicity}) with a nested, balanced design, averaging by group and doing 1-way ANOVA gets the same answer for fixed effects as LMMs). \textbf{answers}: (1) unbalanced data (can handle by weighting by $n$, equivalent to assuming homoscedasticity and using inverse-variance weights); (2) non-Gaussian responses (averaging doesn't make sense) [can we use offsets to handle this case? don't know]; (3) maybe for equivalent of randomized block designs? (4) when within-species variance is actually of interest}
 Process and observation errors are highly confounded in phylogenetic regression if it is not handled correctly. 
 For single measurement per species model, any method that can account for at least two sources of variation (one for the residual variance, and at least one for the process variation) will be sufficient to a first approximation (i.e. Pagel's $\lambda$, Blomberg's $K$).
 If multiple observations are allowed per species, then using methods such as Pagel's $\lambda$ can potentially incorrectly estimate the amount of phylogenetic process by substituting tip variation with residual variation. 

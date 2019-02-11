@@ -26,16 +26,16 @@ ssdat <- (ssdat_raw
 	%>% mutate(size = factor(size
 	      , levels=c("small","med","large","xlarge"), labels=c("25","50","100","500")
 			)
-			, platform = factor(platform, levels=c("gls", "phylolm","lme4", "brms"))
+			, platform = factor(platform, levels=c("gls", "phylolm","lme4", "brms", "glmmTMB"))
 		)
-	%>% left_join(.,par_df)
+	%>% left_join(.,sspar_df)
 	# %>% filter(platform != "brms")
 )
 
 
 gg_ss <- (ggplot(data=ssdat, aes(x=size, y=sd, fill=platform))
   + facet_wrap(~sdtype, scale="free_y")
-  + geom_violin(position=position_dodge(width=0.2),alpha=0.4)
+  + geom_violin(position=position_dodge(width=0.5),alpha=0.4)
   + geom_hline(aes(yintercept = y_int))
   # + scale_fill_manual(values=c("Dark Red","Dark Blue","Dark Green","Purple"))
   + scale_fill_brewer(palette = "Dark2")
@@ -51,6 +51,7 @@ gg_sstime <- (ggplot(data=ssdat, aes(x=size, y=time, fill=platform))
 	+ scale_y_log10()
 	+ ylab("Time (seconds)")
 	# + ggtitle("Single site time")
+  + theme_bw()
 )
 
 print(gg_sstime)
@@ -87,7 +88,7 @@ mspar_df <- data.frame(
 msdat <- (msdat_raw
 	%>% separate(model,c("platform", "sites", "size", "seed", "saveformat"),"[.]")
 	%>% select(-c(sites,seed,saveformat))
-	%>% filter(convergence != 1)
+	%>% filter((convergence != 1) | is.na(convergence))
 	%>% select(-convergence)
 	%>% gather(key=sdtype, value=sd, -c(platform,size,time,B0,B1))
 	%>% mutate(size = factor(size,
@@ -111,7 +112,7 @@ print(gg_ms
 
 gg_mstime <- (gg_sstime
 	%+% msdat
-	+ ggtitle("multiple site time")
+	# + ggtitle("multiple site time")
 )
 
 print(gg_mstime)
@@ -138,5 +139,33 @@ ms_coverage <- (msdat
                 %>% gather(key=fixed_parameter, value=coverage, -c(platform, size))
 )
 
-print(gg_mscoverage <- gg_sscoverage %+% ms_coverage)
+gg_mscoverage <- (ggplot(data=ms_coverage
+                         , aes(x=size, y=coverage, shape=fixed_parameter, colour=platform)
+)
++ facet_wrap(~platform, nrow = 1)
++ geom_point(size=4)
++ geom_hline(aes(yintercept=0.95))
+# + ggtitle("Single Site coverage")
++ annotate("rect", xmin=0, xmax=5
+           , ymin=0.95 - 2*sqrt(0.95*0.05/100)
+           , ymax=0.95 + 2*sqrt(0.95*0.05/100), alpha=0.2)
+)
 
+print(gg_mscoverage)
+
+aa <- readRDS("datadir/lme4_ms_small_profile.RDS")
+aa_filter <- (aa
+  %>% filter(convergence==0)
+  %>% mutate(platform = "lme4_profile"
+      , size = factor(25)
+      , B0=between(0,B0_lower,B0_upper)
+      , B1 = between(0, B1_lower, B1_upper)
+             )
+  %>% group_by(platform,size)
+  %>% summarise(B0_coverage=mean(B0,na.rm=TRUE)
+                ,B1_coverage = mean(B1,na.rm=TRUE)
+                )
+  %>% gather(key=fixed_parameter, value=coverage, -c(platform,size))
+)
+
+profile_coverage <- (gg_mscoverage %+% rbind(ms_coverage,aa_filter))
