@@ -108,18 +108,17 @@ msdat <- (msdat_raw
 
 gg_ms <- (gg_ss
 	%+% msdat
+	+ scale_color_manual(values=c("Gray","Purple","Dark Blue","Orange"))
+
 )
 
 print(gg_ms)
 
-print(gg_ms
-	%+% (msdat %>% filter(platform %in% c("lme4")))
-	+ ggtitle("TODO: cowplot y-int simulation parameter")
-)
-
 gg_mstime <- (gg_sstime
 	%+% msdat
 	# + ggtitle("multiple site time")
+	+ scale_color_manual(values=c("Gray","Purple","Dark Blue","Orange"))
+	
 )
 
 print(gg_mstime)
@@ -134,7 +133,6 @@ ms_coverage <- (msdat
                 %>% gather(key=fixed_parameter, value=coverage, -c(platform, size))
 )
 
-print(gg_mscoverage <- gg_sscoverage %+% ms_coverage)
 
 
 ms_coverage <- (msdat
@@ -158,7 +156,8 @@ gg_mscoverage <- (ggplot(data=ms_coverage
            , ymax=0.95 + 2*sqrt(0.95*0.05/100), alpha=0.2)
 )
 
-print(gg_mscoverage)
+print(gg_mscoverage 	+ scale_color_manual(values=c("Gray","Purple","Dark Blue","Orange"))
+)
 
 aa <- readRDS("datadir/lme4_ms_small_profile.RDS")
 aa_filter <- (aa
