@@ -152,7 +152,7 @@ collect_gls.Rout: collect_gls.R
 collect.Rout: collect.R
 	$(run-R)
 
-plot.Rout: ./datadir/collect.RDS plot.R
+plot.Rout: ./datadir/collect.RDS collect_brms.Rout plot.R
 	$(run-R)
 
 ssplot.Rout: ssplot.R
