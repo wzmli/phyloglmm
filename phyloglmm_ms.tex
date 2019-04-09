@@ -137,13 +137,14 @@ However, if each species' traits are observed more than once, possibly under dif
 %\mli{I think it is more like our simulation test. In Boettiger's example, it is treating sister taxa as different species. So it is using a phylogenetic tree of 8 species instead of 4.}
 Although many studies include multiple observations per species, phylogenetic analyses rarely take advantage of such observations to partition variability more finely.
 Indeed, many existing methods cannot accommodate multiple observations per species, instead requiring users to collapse the data by taking species averages.
+Figure \ref{fig:variation} illustrates a visual categorization of various forms of variation for three species. 
 %Despite having multiple observations per tip taxon (species), a typical part of observational or experimental design, but it is rarely seen: existing platforms are unable to fit multiple observations, or unbalanced design data, or both.
 % \bmb{OK, but we should be prepared to support this. Could we construct a table of existing approaches/platforms with their capabilities?}
 
 \begin{center}
 \begin{figure}[H]
   \includegraphics[scale=0.8]{./phylo_diagram.png}
-  \caption{Visual categorization of various forms of variation.}
+  \caption{Visual categorization of various forms of phylogenetic variation of three species. Top left shows pure noise (i.e. assuming a star phylogeny); top right accounts for phylogeny, but without noise; bottom left accounts both phylogeny and noise at the tip, and finally bottom right shows multiple observations (with noise) at the tips.}
 \label{fig:variation}
 \end{figure}
 \end{center}
@@ -173,7 +174,7 @@ Table \ref{table:model} provides a summary of model complexities, platforms and 
 \multirow{2}{*}{Bayesian GLMM}                                                                    & \multirow{2}{*}{Random effect}                                        & Balanced Design                                                              & \pkg{MCMCglmm}                                                                                       \\ \cline{3-4} 
                                                                                                   &                                                                       & Unrestricted                                                                 & \pkg{brms}                                                                                           \\ \hline
 \end{tabular}
-\caption{Model and platforms}
+\caption{List of phylogenetic generalized linear models and R packages.}
 \label{table:model}
 \end{table}
 
@@ -227,7 +228,7 @@ The typical GLMM has the form:
 \bY & \sim \mathbf{f}(\bmu) + \besp \label{eq:glmm1} \\
 \bmu & = \bX \bbeta + \bZ \bb  \label{eq:glmm2} \\
 \bb & \sim \textrm{MVN}(0, \bSigma(\theta)) \label{eq:glmm3} \\
-\besp & \sim \textrm{N}(0,\sigma^{2}_{\epsilon})
+\besp & \sim \textrm{N}(0,\sigma^{2}_{\epsilon}) \label{eq:glmm4}
 \end{align}
 where $\bZ$ is an $n \times m$ model matrix for the $n$ -- dimensional vector-valued $m$ predictor variables; $\bb$ (sometimes referred as the "G-side" effect) represents the conditional modes and assumed to be multivariate normally distributed with a variance-covariance matrix given by $\bSigma(\theta)$; $\besp$ (sometimes referred as "R" effect) is an $n \times 1$ vector of independent and normally distributed error terms with variance $\sigma_{\epsilon}^2$.
 Analogously, the phylogenetic regression given by (\ref{eq:gls1}) can be represented in the generalized mixed model framework with Gaussian responses by constraining $\bSigma(\theta) = \sigma^2 \bC$ and $\sigma^{2}_{\epsilon} = 0$.
@@ -453,12 +454,12 @@ Multi-group &  &  & X & X & X & X \\ \hline
 \begin{tabular}[c]{@{}c@{}}Phylo Intercept\\ Phylo Slope\\ Phylo Slope-intercept correlation\\ Phylo Species-group interaction\\ Species intercept\\ Species Slope \\ Species Slope-intercept correlation\\ Residual\end{tabular} &  &  & \begin{tabular}[c]{@{}c@{}}X\\ X\\ X\\ X\\ X\\ X\\ X\\ X\end{tabular} & \begin{tabular}[c]{@{}c@{}}X\\ X\\ \\ X\\ X\\ X\\ \\ X\end{tabular} & \begin{tabular}[c]{@{}c@{}}X\\ X\\ X\\ X\\ X\\ X\\ X\\ X\end{tabular} & \begin{tabular}[c]{@{}c@{}}X\\ X\\ X\\ \\ X\\ X\\ X\\ X\end{tabular} \\ \hline
 \end{tabular}%
 }
-\caption{Parameters}
+\caption{List of estimable parameters for each R package.}
 \label{table:platform}
 \end{table}
 
 \subsection*{Simulation and evaluations}
-We simulated 100 phylogenetic trees for each sample size (n = 25,50,100, 500) and incorporated simulation parameters (illustrated in figure 2 and 5) to simulate responses from the simulation model (\ref{eq:ss_sim}, \ref{eq:ms_sim}).
+We simulated 100 phylogenetic trees for each sample size (n = 25,50,100 and additional n = 500 for multi-group model) and incorporated simulation parameters (illustrated in Figure \ref{ssplot} and Figure \ref{msplot}) to simulate responses from the simulation model (\ref{eq:ss_sim}, \ref{eq:ms_sim}).
 Each realization were fitted to all model variant using different platforms.
 Tables \ref{table:platform} shows the parameters that are estimable for each platform. 
 We only evaluated the goodness of fit for model fits that passed the convergence tests implemented by the package.
@@ -482,7 +483,7 @@ Codes for fitting dune meadow analysis using \pkg{lme4} and \pkg{pez} are provid
 \begin{center}
 \begin{figure}[H]
   \includegraphics[scale=0.8,page=1]{./git_push/plot.Rout.pdf}
-  \caption{New}
+  \caption{Comparsion of single group model parameter estimates across different R packages in Table \ref{table:platform}. The horizontal line shows the true value of the parameters in the simulation model. Models capable of fitting all parameters (\pkg{lme4}, \pkg{brms} and \pkg{glmmTMB}) fit well for all parameters.} 
 \label{ssplot}
 \end{figure}
 \end{center}
@@ -491,8 +492,8 @@ Codes for fitting dune meadow analysis using \pkg{lme4} and \pkg{pez} are provid
 \begin{center}
 \begin{figure}[H]
   \includegraphics[scale=0.8,page=2]{./git_push/plot.Rout.pdf}
-  \caption{New}
-\label{ssplot}
+  \caption{Comparison of speed for all fitting packages variants: layout of the packages as in Figure \ref{ssplot}}
+\label{ssplot_speed}
 \end{figure}
 \end{center}
 
@@ -500,44 +501,26 @@ Codes for fitting dune meadow analysis using \pkg{lme4} and \pkg{pez} are provid
 \begin{center}
 \begin{figure}[H]
   \includegraphics[scale=0.8,page=3]{./git_push/plot.Rout.pdf}
-  \caption{New}
-\label{ssplot}
+  \caption{Comparison of coverage probablility for fixed effect parameters. Models matching the simulation model (\pkg{lme4}, \pkg{brms} and \pkg{glmmTMB}) have coverage near the nominal value of 0.95. The black line shows the nominal coverage, and the grey ribbon the 95\% binomial confidence interval based on 100 simulated fits.}
+\label{ssplot_coverage}
 \end{figure}
 \end{center}
 
-
-% \bmb{Need to think a little harder about the important points/order here (might be time to do the exercise where you take the results and boil them back down to short bullet points, in order to figure out whether you've said the important stuff, in the right order). Maybe lead by saying that all platforms give similar answers - to the extent that they are fitting the same statistical model (this might even be emphasized/explained above, in Methods). Am I correct in believing that phylolm=\pkg{lme4} but without intercept/slope correlation, and gls is additionally missing random slopes?}
-
-% \begin{itemize}
-% \item{full model provides good estimates (except for correlation)}
-% \item{reduced models try to fit with whatever parameters they have available (over-estimates the simulation parameters)}
-% \item{no slope vs slope}
-% \item{no correlation vs correlation}
-% \item{as size/data/number of species increase, the parameter estimates gets better}
-% \item{single site models are fast}
-% \item{estimates gets closer to simulation parameter as number of species increase}
-% \item{lme4/tmb are fast, everything else is slow for multiple sites}
-% \end{itemize}
-
-The full fitted model (which matches the simulation model that incorporates phylogenetic intercept, slope and correlation) provides estimates with low bias and variance for all parameters. 
-Estimates for fixed effect parameters ($\beta_0$ and $\beta_1$) approach nominal coverage as the number of species increases for \pkg{lme4} and \pkg{glmmTMB} but not for other packages. 
-\mli{we know why brms over covers}
+The full fitted model (which matches the simulation model that incorporates phylogenetic intercept, slope and correlation) provides estimates with low bias (the difference between the parameter estimates and true simulation parameters) and variance for all parameters. 
+Estimates for fixed effect parameters ($\beta_0$ and $\beta_1$) approach nominal coverage as the number of species increases for \pkg{lme4} and \pkg{glmmTMB} but not for other packages. \pkg{brms} have higher coverage than the nominal coverage at 95 \% because the prior distributions for the simulation parameters are cenetered at the true values.
 %% \mli{Is there a figure for this?....Ok, maybe We don't need it.}
 
 In general, models that are insufficiently flexible to match the true simulation model (PGLM and PGLS) will try to fit the data with the parameters available. 
 PGLM (which lacks the phylogenetic slope parameter) provides reasonably good estimates for phylogenetic intercept parameter ($\sigma_{\mathrm{phy_{int}}}$) but overestimates the residual standard deviation; the estimates for the intercept ($\beta_0$) are slightly conservative (90\% coverage of the 95\% CI with 100 species) and the fixed slope parameter ($\beta_1$) have poor coverage ($<$ 60\%).
 PGLS, with only one parameter available, confounds all variation (phylogenetic intercept, slope and residual variation) into the phylogenetic intercept parameter, resulting in overestimating the phylogenetic intercept and over-covering for $\beta_0$, and under-covering for $\beta_1$.
 
-% \bmb{(2) please define ``robustness'' -- usually means lack of sensitivity to model.  Are you talking about the variance of the estimates? I'd prefer not to use ``robust'' in a non-standard way if possible (2) what are small/medium/large? I see that $n=\{20,100,500\}$ and $m=\{1,20\}$, but not sure how these match up to ``small'', ``medium'', ``large''; is Figure 1 all $m=1$? Might be worth just labeling by $n=??$ rather than using small/medium/large}
-% It is unclear how different levels of phylogenetic signal are being confounded under the error free (without tip variation) assumption for the PGLS models.
-% \bmb{can we figure this out, even in an empirical/crude way??? it's tough to have results without knowing the true value they're aiming for ...}
-
 \subsection*{Multi-group model simulations}
 
 \begin{center}
 \begin{figure}[H]
   \includegraphics[scale=0.8,page=4]{./git_push/plot.Rout.pdf}
-  \caption{new}
+  \caption{Comparsion of multi group model parameter estimates across different R packages in Table 2. Annotations as in Figure \ref{ssplot}.}
+  \label{msplot}
 \end{figure}
 \end{center}
 
@@ -545,7 +528,8 @@ PGLS, with only one parameter available, confounds all variation (phylogenetic i
 \begin{center}
 \begin{figure}[H]
   \includegraphics[scale=0.8,page=5]{./git_push/plot.Rout.pdf}
-  \caption{new}
+  \caption{Comparsion of multi group model computational speed across different R packages in Table 2. Annotations as in Figure \ref{ssplot}.}
+  \label{msplot_time}
 \end{figure}
 \end{center}
 
@@ -553,7 +537,8 @@ PGLS, with only one parameter available, confounds all variation (phylogenetic i
 \begin{center}
 \begin{figure}[H]
   \includegraphics[scale=0.8,page=6]{./git_push/plot.Rout.pdf}
-  \caption{new}
+  \caption{Comparsion of multi group model coverage across different R packages in Table 2. Annotations as in Figure \ref{ssplot}.}
+  \label{msplot_coverage}
 \end{figure}
 \end{center}
 
