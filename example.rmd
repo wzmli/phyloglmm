@@ -7,21 +7,6 @@ output:
     mathjax: default
 ---
 
-```{r pkgs,message=FALSE, warning=FALSE}
-library(ape)
-library(lme4)
-library(Matrix)
-library(MCMCglmm)
-library(MASS) 
-library(pez)
-library(glmmTMB)
-library(dplyr)
-library(coda)
-library(lattice)
-library(broom)
-library(dotwhisker)
-```
-
 - The standard problem of *phylogenetic comparative methods* is to analyze relationships among data where the observations are gathered from nodes (usually tips) of a phylogenetic tree - for example, regression analyses of body temperature as a function of body size for animals within a clade
 - More generally, we can frame this in the usual GLMM way as
 $$
@@ -35,12 +20,13 @@ where the part that makes it specifically phylogenetic is that $\Sigma$ captures
 
 Various P(G)LMM (phylogenetic [generalized] linear mixed model] approaches have been proposed. Many depend on Pagel's lambda transformation, which gives the correlation matrix a particularly simple form (but has been [criticized](http://www.carlboettiger.info/2013/10/11/is-it-time-to-retire-pagels-lambda.html) ...)
 
-An alternative approach is to model the phylogenetic correlation as a *Gaussian process*. In particular, suppose that the evolutionary process is a Brownian motion (an almost certainly incorrect/oversimplified model of evolution, but one that many phylogenetic methods are built on). In that case, the phylogenetic variability of a particular observation can be written as the sum of the evolutionary changes that occurred on all of the branches in the phylogeny in its past. If we set up the $Z$ matrix appropriately, we can model everything with a sequence of *independent* errors, rather than having to do fancy things to impose a correlation structure on the random effects.
+An alternative approach is to model the phylogenetic correlation as a *Gaussian process* (GP). In particular, suppose that the evolutionary process is a Brownian motion (an almost certainly incorrect/oversimplified model of evolution, but one that many phylogenetic methods are built on). In that case, the phylogenetic variability of a particular observation can be written as the sum of the evolutionary changes that occurred on all of the branches in the phylogeny in its past. If we set up the $Z$ matrix appropriately, we can model everything with a sequence of *independent* errors, rather than having to do fancy things to impose a correlation structure on the random effects.
 
 ## Nuts and bolts: from a phylogeny to a $Z$ matrix for the GP
 
 ```{r setup}
 library(ape)
+library(Matrix)
 set.seed(101)
 r <- makeNodeLabel(rtree(4))
 plot(r,show.node.label=TRUE)
@@ -91,7 +77,8 @@ If we can build the corresponding $Z$ matrix, then we can insert it in
 the `lme4` modular model-fitting process (see `?modular`).
 
 Here's a (probably not very efficent) way to construct the Z matrix.
-(There must be a way to not walk the tree multiple times from every tip ...
+(There must be a way to not walk the tree multiple times from every tip ...) 
+
 
 ```{r phylo.to.Z}
 phylo.to.Z <- function(r,stand=FALSE){
@@ -108,9 +95,7 @@ phylo.to.Z <- function(r,stand=FALSE){
     }
   }
   V <- vcv(r)
-  # V <- V/max(V)
   sig <- exp(as.numeric(determinant(V)["modulus"])/ntip)
-  # sig <- det(V)^(1/ntip)
   Z <- t(sqrt(r$edge.length) * t(Zid))
   if(stand){Z <- t(sqrt(r$edge.length/sig) * t(Zid))}
   rownames(Z) <- r$tip.label
@@ -128,6 +113,21 @@ On the other hand, it only takes a few seconds to run for a 200-species phylogen
 
 "All" we need to do is (1) call `(g)lFormula`, with a formula that includes a `(1|phylo)` term, to build the basic (wrong) structure; (2) modify the `reTrms` component of the structure appropriately; (3) go through the rest of the modular procedure for building a (G)LMM.
 
+```{r pkgs,message=FALSE, warning=FALSE}
+library(ape)
+library(lme4)
+library(MCMCglmm)
+library(MASS) 
+library(pez)
+library(glmmTMB)
+library(dplyr)
+library(coda)
+library(lattice)
+library(broom)
+library(dotwhisker)
+```
+
+The phylo--to--Z function is already in the source code.
 ```{r phylocode}
 source("lme4_phylo_setup.R")
 ```

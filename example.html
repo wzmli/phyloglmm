@@ -120,23 +120,11 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Phylogenetic comparative methods in the lme4-verse</h1>
 <h4 class="author"><em>Michael Li and Ben Bolker</em></h4>
-<h4 class="date"><em>15:14 09 April 2019</em></h4>
+<h4 class="date"><em>18:10 09 April 2019</em></h4>
 
 </div>
 
 
-<pre class="r"><code>library(ape)
-library(lme4)
-library(Matrix)
-library(MCMCglmm)
-library(MASS) 
-library(pez)
-library(glmmTMB)
-library(dplyr)
-library(coda)
-library(lattice)
-library(broom)
-library(dotwhisker)</code></pre>
 <ul>
 <li>The standard problem of <em>phylogenetic comparative methods</em> is to analyze relationships among data where the observations are gathered from nodes (usually tips) of a phylogenetic tree - for example, regression analyses of body temperature as a function of body size for animals within a clade</li>
 <li>More generally, we can frame this in the usual GLMM way as <span class="math display">\[
@@ -148,10 +136,12 @@ b &amp; \sim \textrm{MVN}(0,\Sigma)
 \]</span> where the part that makes it specifically phylogenetic is that <span class="math inline">\(\Sigma\)</span> captures the <em>phylogenetic correlation</em>. The PC is the correlation among observations due to relatedness; recently diverged taxa have higher correlation than more anciently diverged taxa. In the extreme case of a <em>star phylogeny</em> (all taxa diverged from each other simultaneously at some point in the past) the phylogenetic correlation collapses to a diagonal matrix and we get back to the simple, uncorrelated regression.</li>
 </ul>
 <p>Various P(G)LMM (phylogenetic [generalized] linear mixed model] approaches have been proposed. Many depend on Pagel’s lambda transformation, which gives the correlation matrix a particularly simple form (but has been <a href="http://www.carlboettiger.info/2013/10/11/is-it-time-to-retire-pagels-lambda.html">criticized</a> …)</p>
-<p>An alternative approach is to model the phylogenetic correlation as a <em>Gaussian process</em>. In particular, suppose that the evolutionary process is a Brownian motion (an almost certainly incorrect/oversimplified model of evolution, but one that many phylogenetic methods are built on). In that case, the phylogenetic variability of a particular observation can be written as the sum of the evolutionary changes that occurred on all of the branches in the phylogeny in its past. If we set up the <span class="math inline">\(Z\)</span> matrix appropriately, we can model everything with a sequence of <em>independent</em> errors, rather than having to do fancy things to impose a correlation structure on the random effects.</p>
+<p>An alternative approach is to model the phylogenetic correlation as a <em>Gaussian process</em> (GP). In particular, suppose that the evolutionary process is a Brownian motion (an almost certainly incorrect/oversimplified model of evolution, but one that many phylogenetic methods are built on). In that case, the phylogenetic variability of a particular observation can be written as the sum of the evolutionary changes that occurred on all of the branches in the phylogeny in its past. If we set up the <span class="math inline">\(Z\)</span> matrix appropriately, we can model everything with a sequence of <em>independent</em> errors, rather than having to do fancy things to impose a correlation structure on the random effects.</p>
 <div id="nuts-and-bolts-from-a-phylogeny-to-a-z-matrix-for-the-gp" class="section level2">
 <h2>Nuts and bolts: from a phylogeny to a <span class="math inline">\(Z\)</span> matrix for the GP</h2>
-<pre class="r"><code>library(ape)
+<pre class="r"><code>library(ape)</code></pre>
+<pre><code>## Warning: package 'ape' was built under R version 3.4.4</code></pre>
+<pre class="r"><code>library(Matrix)
 set.seed(101)
 r &lt;- makeNodeLabel(rtree(4))
 plot(r,show.node.label=TRUE)</code></pre>
@@ -185,7 +175,7 @@ plot(r,show.node.label=TRUE)</code></pre>
 \end{pmatrix}
 \]</span> where <span class="math inline">\(\ell_i\)</span> is the length of the <span class="math inline">\(i^\textrm{th}\)</span> branch, so that the species effects are <span class="math inline">\(Z b\)</span>.</p>
 <p>If we can build the corresponding <span class="math inline">\(Z\)</span> matrix, then we can insert it in the <code>lme4</code> modular model-fitting process (see <code>?modular</code>).</p>
-<p>Here’s a (probably not very efficent) way to construct the Z matrix. (There must be a way to not walk the tree multiple times from every tip …</p>
+<p>Here’s a (probably not very efficent) way to construct the Z matrix. (There must be a way to not walk the tree multiple times from every tip …)</p>
 <pre class="r"><code>phylo.to.Z &lt;- function(r,stand=FALSE){
   ntip &lt;- length(r$tip.label)
   Zid &lt;- Matrix(0.0,ncol=length(r$edge.length),nrow=ntip)
@@ -200,9 +190,7 @@ plot(r,show.node.label=TRUE)</code></pre>
     }
   }
   V &lt;- vcv(r)
-  # V &lt;- V/max(V)
   sig &lt;- exp(as.numeric(determinant(V)[&quot;modulus&quot;])/ntip)
-  # sig &lt;- det(V)^(1/ntip)
   Z &lt;- t(sqrt(r$edge.length) * t(Zid))
   if(stand){Z &lt;- t(sqrt(r$edge.length/sig) * t(Zid))}
   rownames(Z) &lt;- r$tip.label
@@ -222,6 +210,18 @@ phylo.to.Z(r)</code></pre>
 <div id="constructing-a-gp-pglmm-with-lme4-machinery" class="section level2">
 <h2>constructing a GP PGLMM with lme4: machinery</h2>
 <p>“All” we need to do is (1) call <code>(g)lFormula</code>, with a formula that includes a <code>(1|phylo)</code> term, to build the basic (wrong) structure; (2) modify the <code>reTrms</code> component of the structure appropriately; (3) go through the rest of the modular procedure for building a (G)LMM.</p>
+<pre class="r"><code>library(ape)
+library(lme4)
+library(MCMCglmm)
+library(MASS) 
+library(pez)
+library(glmmTMB)
+library(dplyr)
+library(coda)
+library(lattice)
+library(broom)
+library(dotwhisker)</code></pre>
+<p>The phylo–to–Z function is already in the source code.</p>
 <pre class="r"><code>source(&quot;lme4_phylo_setup.R&quot;)</code></pre>
 </div>
 <div id="glmmtmb-fits-nuts-and-bolts" class="section level2">
@@ -246,7 +246,7 @@ phylo &lt;- read.nexus(&quot;data/phylo.nex&quot;)</code></pre>
 <p>Compute appropriate <span class="math inline">\(Z\)</span> matrix up front, to measure speed (also reusable in a few places below):</p>
 <pre class="r"><code>system.time(phyloZ &lt;- phylo.to.Z(phylo))</code></pre>
 <pre><code>##    user  system elapsed 
-##   1.339   0.030   1.388</code></pre>
+##   1.264   0.021   1.299</code></pre>
 </div>
 </div>
 <div id="result-comparison-with-gaussian-example-in-chapter-11" class="section level2">
