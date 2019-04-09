@@ -16,7 +16,7 @@ What follows is a simple example of how to simulate, and then analyse, the most 
 
 ## Simulate data
 
-```{r}
+```{r simdata}
 ### simulate phylogenetic tree
 
 library(ape)
@@ -25,7 +25,7 @@ seed <- 101
 set.seed(seed)
 
 # Basic parameters
-nspp <- 3
+nspp <- 1000
 
 # # fixed effects
 beta0 <- 0
@@ -95,17 +95,17 @@ print(dim(dat))
 
 - call this SBmat
 
-```{r}
+```{r phyloZ}
 
 library(Matrix)
 library(lme4)
 library(dplyr)
 
-source("phyloglmm_setup.R")
+source("lme4_phylo_setup.R")
 
 phyZ <- phylo.to.Z(phy)
 
-print(phyZ)
+# print(phyZ)
 
 ```
 
@@ -113,21 +113,16 @@ print(phyZ)
 
 - I kind of want to keep the orginal name (lmer and glmer).
 
-```{r}
+```{r fit}
 
-source("new_phylo_setup.R")
+dat2 <- (dat %>% mutate(obs = sp, sp = paste("t",sp,sep="")))
 
-dat <- (dat %>% mutate(obs = sp))
-
-## everything can be reduce down to formula,data, and a phy object
-
-fitmod <- phylo_lmm2(Y ~ X + (1 |sp) + (1 + X|sp)
-			, data=dat 
-			, phylonm = "sp" # wishy-washy
-			, phyloZ = phyZ # Maybe we just want the phy object and compute this internally
-			, nsp = nspp # make default check
-			, control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")  ## make default
-			, REML = FALSE # make default 
+fitmod <- phylo_lmm(Y ~ X + (1 + X|sp)
+			, data=dat2
+			, phylonm = "sp" 
+			, phyloZ = phyZ 
+			, control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")  
+			, REML = FALSE 
 )
 
 summary(fitmod)
