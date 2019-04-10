@@ -5,11 +5,13 @@ output:
   pdf_document: default
   mathjax: default
   html_document: null
+bibliography: phyloglmm.bib
+urlcolor: blue
 ---
 
-We will reproduce the examples in [chapter 11](http://www.mpcm-evolution.com/practice/online-practical-material-chapter-11/chapter-11-1-simple-model-mcmcglmm) of Garamszegi (ed.) using lme4 and glmmTMB. 
+We will reproduce the examples in [chapter 11](http://www.mpcm-evolution.com/practice/online-practical-material-chapter-11/chapter-11-1-simple-model-mcmcglmm) of @garamszegi2014modern using phylogenetic GLMMs based on `lme4` and `glmmTMB`. 
 
-To fit we need a random effect in the formula that includes a `(...|phylo)` term, to build the basic random effect structure multipled by the phyloZ matrix (see vignette for more details on phyloZ matrix).
+To fit we need a random effect in the formula that includes a `(...|phylo)` term, to build the basic random effect structure multiplied by the `phyloZ` matrix (see vignette for more details on the `phyloZ` matrix).
 
 ```{r pkgs,message=FALSE, warning=FALSE}
 library(ape)
@@ -19,7 +21,6 @@ library(MCMCglmm)
 library(MASS) 
 library(pez)
 library(glmmTMB)
-library(dplyr)
 library(coda)
 library(lattice)
 library(broom)
@@ -33,7 +34,7 @@ source("glmmTMB_phylo_setup.R")
 
 ### Get data
 
-From [chapter 11](http://www.mpcm-evolution.com/practice/online-practical-material-chapter-11/chapter-11-1-simple-model-mcmcglmm) of Garamszegi (ed.): data are [here](http://mpcm-evolution.com/OPM/Chapter11_OPM/data.zip)
+From [chapter 11](http://www.mpcm-evolution.com/practice/online-practical-material-chapter-11/chapter-11-1-simple-model-mcmcglmm) of @garamszegi2014modern: data are [here](http://mpcm-evolution.com/OPM/Chapter11_OPM/data.zip)
 
 ```{r getdat}
 if (!file.exists("data/phylo.nex")) {
@@ -44,7 +45,7 @@ if (!file.exists("data/phylo.nex")) {
     untar("OPM_ch11_data.zip")
     setwd("..")
 }
-phylo <- read.nexus("data/phylo.nex")
+phylo <- ape::read.nexus("data/phylo.nex")
 ```
 
 Compute appropriate $Z$ matrix up front, to measure speed (also
@@ -59,8 +60,9 @@ system.time(phyloZ <- phylo.to.Z(phylo))
 
 ```{r G_results}
 datG <- read.table("data/data_simple.txt",header=TRUE)
+## create observation-level grouping variable
 datG$obs <- factor(seq(nrow(datG)))
-datG <- datG %>% mutate(sp = phylo)
+datG$sp <- datG$phylo
 phylo_lmm_fit <- phylo_lmm(phen~cofactor+(1|sp)
   , data=datG
   , phylonm = "sp"
@@ -69,9 +71,7 @@ phylo_lmm_fit <- phylo_lmm(phen~cofactor+(1|sp)
   , REML = TRUE
   , control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
 )
-                          
 print(summary(phylo_lmm_fit))
-
 ```
 
 
@@ -122,3 +122,4 @@ summary(phylo_glmm_fit)
 
 ```
 
+## References
