@@ -74,6 +74,20 @@ phylo_lmm_fit <- phylo_lmm(phen~cofactor+(1|sp)
 print(summary(phylo_lmm_fit))
 ```
 
+Similarily, fitting using glmmTMB:
+
+```{r glmmTMB}
+glmmTMB_fit <- glmmTMBhacked(phen~cofactor+(1|sp)
+    , data=datG
+    , phyloZ=phyloZ
+    , phylonm = "sp"
+    , doFit=TRUE
+    , dispformula = ~1
+    # , control=glmmTMBControl(optCtrl=list(trace=1))
+    , REML = FALSE
+  ) 
+```
+
 
 ## Result comparison with Gaussian with repeated measures example in chapter 11
 
