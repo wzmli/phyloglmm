@@ -17,19 +17,17 @@ To fit we need a random effect in the formula that includes a `(...|phylo)` term
 library(ape)
 library(Matrix)
 library(lme4)
-library(MCMCglmm)
 library(MASS) 
-library(pez)
 library(glmmTMB)
 library(coda)
 library(lattice)
 library(broom)
-library(dotwhisker)
+library(dplyr)
 ```
 
 ```{r phylocode}
 source("lme4_phylo_setup.R")
-source("glmmTMB_phylo_setup.R")
+source("glmmTMBhacked.R")
 ```
 
 ### Get data
@@ -83,9 +81,9 @@ glmmTMB_fit <- glmmTMBhacked(phen~cofactor+(1|sp)
     , phylonm = "sp"
     , doFit=TRUE
     , dispformula = ~1
-    # , control=glmmTMBControl(optCtrl=list(trace=1))
     , REML = FALSE
   ) 
+print(summary(glmmTMB_fit))
 ```
 
 
@@ -112,8 +110,18 @@ phylo_lmm_fit <- phylo_lmm(phen~spec_mean_cf+within_spec_cf+(1|sp) + (1|animals)
              
 print(summary(phylo_lmm_fit))
 
-```
+glmmTMB_fit2 <- glmmTMBhacked(phen~spec_mean_cf+within_spec_cf+(1|sp) + (1|animals)
+    , data=datR
+    , phyloZ=phyloZ
+    , phylonm = "sp"
+    , doFit=TRUE
+    , dispformula = ~1
+    , REML = FALSE
+  ) 
+print(summary(glmmTMB_fit2))
 
+
+```
 
 ## Result comparison with non-Gaussian example in chapter 11
 
@@ -134,6 +142,18 @@ phylo_glmm_fit <- phylo_glmm(phen_pois~cofactor+(1|sp)+(1|obs)
 
 summary(phylo_glmm_fit)
 
+glmmTMB_fit3 <- glmmTMBhacked(phen_pois~cofactor+(1|sp)+(1|obs)
+    , data=dat
+    , family = poisson
+    , phyloZ=phyloZ
+    , phylonm = "sp"
+    , doFit=TRUE
+    , dispformula = ~1
+    , REML = FALSE
+  ) 
+print(summary(glmmTMB_fit3))
+
 ```
+
 
 ## References
