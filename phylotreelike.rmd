@@ -25,6 +25,7 @@ library(ape)
 library(ggplot2)
 library(dplyr)
 library(tidyr)
+library(mvtnorm)
 
 nspp <- 3
 ncomb <- 1e5
@@ -247,3 +248,45 @@ print(gg %+% filter(dat,sim<100)
 
 This gray ribbon-band is two standard deviation away from the center using the minimum variance from the phylogenetic variance matrix. 
 This looks good at first, but this is also the region with the highest probability evaluated at NVM(0,phylo_var).
+
+## Likelihood surface
+
+```{r likelihood surface, warning=FALSE, echo=FALSE, message=FALSE}
+
+pp <- expand.grid(t1 = seq(-10,10,length=31)
+  , t2 = seq(-10,10,length=31)    ## non-focal parameter
+  , t3 = seq(-3,3,length=9)
+)
+
+ll <- sapply(1:nrow(pp),function(x){mvtnorm::dmvnorm(pp[x,1:3], mean =c(0,0,0), sigma = Vphy, log = TRUE)})
+
+pp$ll <- ll
+gg0 <- (ggplot(pp,aes(t1,t2))
+    + facet_wrap(~t3,labeller=label_both)
+    + geom_raster()
+    + scale_fill_viridis_c()
+#     + scale_x_continuous(expand=c(0,0))
+#     + scale_y_continuous(expand=c(0,0))
+    + theme(panel.spacing=grid::unit(0,"lines"))
+)
+
+gg0L <- gg0+ geom_raster(aes(fill=ll))
+
+print(gg0L)
+
+
+squash <- function(vals, matchvals) {
+    sapply(vals,function(x) matchvals[which.min(abs(x-matchvals))])
+}
+
+dd_squash <- dd
+dd_squash$t3 <- squash(dd$t3,unique(pp$t3))
+samp_dd <- head(dd_squash,1000)
+samp_dd$ll <- sapply(1:nrow(samp_dd),function(x){mvtnorm::dmvnorm(samp_dd[x,1:3], mean =c(0,0,0), sigma = Vphy, log = TRUE)})
+
+print(gg0L 
+  + geom_point(data=samp_dd, aes(x=t1, y=t2),size=0.1)
+  + xlim(c(-10,10))
+  + ylim(c(-10,10))
+)
+```
