@@ -1,0 +1,249 @@
+---
+title: "How Tree-like are the data?"
+author: "Michael Li"
+date: "April 10, 2019"
+output: html_document
+---
+
+I am trying to finish the discussion of the phyloglmm paper and focus on writing about why we / ecologist care/ would want to do this.
+The terms "phylogenetic variation" or "phylogenetic signal" have always been confusing to me.
+The definition that is often used is "Phylogenetic signal is a measure of the statistical dependence among species' trait values due to their phylogenetic relationships". 
+After hearing Susan Holmes' talk, I really like how she phrased the question: "Are the data tree-like?"
+Instead of looking at the data and ask if they are tree-like or what kind of tree we can build from the observed "trait values/abundance and etc", I am interested in the question (for the sake of finishing phyloglmm): Given a known phylogenetic tree, what kind of data can we generate and it is obvious they look "tree-like"?
+
+I still find the definition vague and I often take it as: "species that are closely related have similar trait values", which is more or less true.
+However, the opposite of that statement might not be true.
+
+## Example
+
+Let's assume evolutionary process is a Brownian-motion process, which means that evolution of a trait evolve independently, following a standard Brownian-motion, along each branch of the phylogeny. The phylogenetic variability of a particular species can be written as the sum of the variances of evolutionary changes that occurred on all of the branches in its history. 
+
+Consider this phylogenetic tree:
+
+```{r crazy tree, echo=FALSE, message=FALSE}
+library(ape)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+
+nspp <- 3
+ncomb <- 1e5
+dist <- 1
+set.seed(101)
+phy <- rtree(n = nspp)
+phy$edge.length <- c(50,1,1,1)
+
+Vphy <- vcv(phy)
+
+plot(phy)
+
+```
+
+"Tree-like" data from this extreme example should be "very"easy to identify. 
+We expect t1 and t2 to look similar (as stated above) and t3 to look different than t1 and t2.
+
+Simulating one set of data that corresponds to this tree (this is what people usually have, a set of measurements for a bunch of species) look like this. All the examples here do not include observation error (we have observation error in the phyloglmm paper) for simplicity.
+
+```{r simdat, message=FALSE, echo=FALSE}
+
+Y_phy <- MASS::mvrnorm(n=ncomb
+  , mu=rep(0,each=nspp)
+  , Sigma=Vphy
+)
+
+dd <- data.frame(Y_phy, sim=1:ncomb)
+
+dd2 <- dd %>% gather(key = "tip", value = "obs", -sim)
+
+dist <- sqrt(min(diag(Vphy)))
+
+gg <- (ggplot(dd2, aes(x=tip, y=obs, color=tip,group=sim))
+  + geom_point()
+  + geom_line()
+  + theme_bw()
+  + scale_color_manual(values=c("black","red","blue"))
+  + ylab("observed measurements")
+)
+
+print(gg %+% filter(dd2,sim==2453))
+
+```
+
+Ok... maybe there is a bug in the code and MLi doesn't know what he is doing (very common), because it doesn't look like the tree. 
+Now let's look at 100 sets of observations from the same tree.
+
+```{r 50trees, echo=FALSE}
+print(gg %+% filter(dd2,sim<100))
+```
+
+Ok, that looks a lot better! The lines between t1 and t2 are more "horizontal" because we expect high correlation between them. the lines connected to t3 are all over the place because t3 have zero correlation with t1 and t2. 
+Going back to the definition, phylogenetic variability is the "potential" to look different from the ancestral node. 
+t3 has a very short branch, so it doesn't have large potential to look very different, whereas t1 and t2 have a long branch, can potentially look very different.
+
+```{r hacky half violion code, echo=FALSE}
+## flat violin
+
+"%||%" <- function(a, b) {
+  if (!is.null(a)) a else b
+}
+
+geom_flat_violin <- function(mapping = NULL, data = NULL, stat = "ydensity",
+                             position = "dodge", trim = TRUE, scale = "area",
+                             show.legend = NA, inherit.aes = TRUE, ...) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = stat,
+    geom = GeomFlatViolin,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      trim = trim,
+      scale = scale,
+      ...
+    )
+  )
+}
+
+GeomFlatViolin <-
+  ggproto("GeomFlatViolin", Geom,
+          setup_data = function(data, params) {
+            data$width <- data$width %||%
+              params$width %||% (resolution(data$x, FALSE) * 0.9)
+            
+            # ymin, ymax, xmin, and xmax define the bounding rectangle for each group
+            data %>%
+              group_by(group) %>%
+              mutate(ymin = min(y),
+                     ymax = max(y),
+                     xmin = x - width / 2,
+                     xmax = x)
+          },
+          
+          draw_group = function(data, panel_scales, coord) {
+            # Find the points for the line to go all the way around
+            data <- transform(data, 
+                              xmaxv = x,
+                              xminv = x + violinwidth * (xmin - x))
+            
+            # Make sure it's sorted properly to draw the outline
+            newdata <- rbind(plyr::arrange(transform(data, x = xminv), y),
+                             plyr::arrange(transform(data, x = xmaxv), -y))
+            
+            # Close the polygon: set first and last point the same
+            # Needed for coord_polar and such
+            newdata <- rbind(newdata, newdata[1,])
+            
+            ggplot2:::ggname("geom_flat_violin", GeomPolygon$draw_panel(newdata, panel_scales, coord))
+          },
+          
+          draw_key = draw_key_polygon,
+          
+          default_aes = aes(weight = 1, colour = "grey20", fill = "white", size = 0.5,
+                            alpha = NA, linetype = "solid"),
+          
+          required_aes = c("x", "y")
+  )
+
+```
+
+Drawing the potential sampling distributions side by side for each species look like this:
+
+```{r distribution, echo=FALSE}
+gg_distr <- (ggplot(dd2, aes(x=tip, y=obs, color=tip,group=tip))
+  + geom_flat_violin()
+  + theme_bw()
+  + scale_color_manual(values=c("black","red","blue"))
+
+)
+
+print(gg_distr)
+
+```
+
+## Star phylogeny
+
+Repeating the same thing for a star phylogeny:
+
+```{r star, echo=FALSE}
+phy$edge.length <- c(0,1,1,1)
+
+Vphy <- vcv(phy)
+
+plot(phy)
+
+dist <- sqrt(min(diag(Vphy)))
+
+stardat <- data.frame(obs = rnorm(ncomb*nspp)
+  , tip = rep(c("t1","t2","t3"),each=ncomb)
+  , sim = rep(1:ncomb,nspp)
+)
+
+print(gg %+% filter(stardat,sim<100))
+print(gg_distr %+% stardat)
+
+```
+
+## Random tree
+
+Repeating the same thing for a random tree.
+
+```{r random, echo=FALSE}
+phy <- rtree(n = nspp)
+
+Vphy <- vcv(phy)
+
+plot(phy)
+
+dist <- sqrt(min(diag(Vphy)))
+
+Y_phy <- MASS::mvrnorm(n=ncomb
+  , mu=rep(0,each=nspp)
+  , Sigma=Vphy
+)
+
+dd <- data.frame(Y_phy, sim=1:ncomb)
+
+dat <- dd %>% gather(key = "tip", value = "obs", -sim)
+
+
+print(gg %+% filter(dat,sim<100))
+print(gg_distr %+% dat)
+# 
+#   + annotate("rect", xmin=0, xmax=4
+#              , ymin=-2*dist
+#              , ymax=2*dist , alpha=0.2)
+
+```
+
+## Thoughts and tons of questions
+
+Going back to the question: "Are the data tree-like?" (I don't know) or "Does the data look like my tree?" (I don't know).
+We can see in the above examples, we can generate data that are *not* tree-like from the tree. 
+The danger is, these *non-tree-like* simulations look like noise and given we did not add observation error, it is almost (I think) impossible to disentangle "phylogenetic noise" vs observation error if observation errors are present. 
+
+So what proportion of measurements simulated from the "null/true tree" are "tree-like"?
+Another way to think about it is what proportion are "not tree-like"?
+A first guess is near the center.
+For example:
+
+```{r region, echo=FALSE}
+
+print(gg %+% filter(dd2,sim<100)
+  + annotate("rect", xmin=0, xmax=4
+             , ymin=-2*1
+             , ymax=2*1 , alpha=0.2)
+)
+
+print(gg %+% filter(dat,sim<100)
+  + annotate("rect", xmin=0, xmax=4
+             , ymin=-2*dist
+             , ymax=2*dist , alpha=0.2)
+)
+
+
+```
+
+This gray ribbon-band is two standard deviation away from the center using the minimum variance from the phylogenetic variance matrix. 
+This looks good at first, but this is also the region with the highest probability evaluated at NVM(0,phylo_var).
