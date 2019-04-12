@@ -457,7 +457,7 @@ for(i in 3:40){
 phy <- rtree(n = i)
 Vphy <- vcv(phy)
 
-Y_phy <- MASS::mvrnorm(n=1000
+Y_phy <- MASS::mvrnorm(n=10000
   , mu=rep(0,each=i)
   , Sigma=Vphy
 )
