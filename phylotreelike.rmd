@@ -8,11 +8,11 @@ output: html_document
 I am trying to finish the discussion of the phyloglmm paper and focus on writing about why we / ecologist care/ would want to do this.
 The terms "phylogenetic variation" or "phylogenetic signal" have always been confusing to me.
 The definition that is often used is "Phylogenetic signal is a measure of the statistical dependence among species' trait values due to their phylogenetic relationships". 
-After hearing Susan Holmes' talk, I really like how she phrased the question: "Are the data tree-like?"
-Instead of looking at the data and ask if they are tree-like or what kind of tree we can build from the observed "trait values/abundance and etc", I am interested in the question (for the sake of finishing phyloglmm): Given a known phylogenetic tree, what kind of data can we generate and it is obvious they look "tree-like"?
+After hearing Dr. Susan Holmes' talk, I really like how she phrased the question: "Are the data tree-like?"
+Instead of looking at the data and ask if they are tree-like or what kind of tree we can build from the observed "trait values/abundance and etc", I am interested in the question (for the sake of finishing phyloglmm): Given a known phylogenetic tree, what kind of data can we generate and is it obvious that they look "tree-like"?
 
-I still find the definition vague and I often take it as: "species that are closely related have similar trait values", which is more or less true.
-However, the opposite of that statement might not be true.
+I still find the definition vague and I often take it as: "species that are closely related have similar trait values", which is both true and not true to some degree. 
+
 
 ## Example
 
@@ -40,7 +40,7 @@ plot(phy)
 
 ```
 
-"Tree-like" data from this extreme example should be "very"easy to identify. 
+"Tree-like" data from this extreme example should be "very" easy to identify. 
 We expect t1 and t2 to look similar (as stated above) and t3 to look different than t1 and t2.
 
 Simulating one set of data that corresponds to this tree (this is what people usually have, a set of measurements for a bunch of species) look like this. All the examples here do not include observation error (we have observation error in the phyloglmm paper) for simplicity.
@@ -72,6 +72,7 @@ print(gg %+% filter(dd2,sim==2453))
 
 Ok... maybe there is a bug in the code and MLi doesn't know what he is doing (very common), because it doesn't look like the tree. 
 Now let's look at 100 sets of observations from the same tree.
+Note, each "line" represents a trait that is observed across species/tips.
 
 ```{r 50trees, echo=FALSE}
 print(gg %+% filter(dd2,sim<100))
@@ -249,19 +250,60 @@ print(gg %+% filter(dat,sim<100)
 This gray ribbon-band is two standard deviation away from the center using the minimum variance from the phylogenetic variance matrix. 
 This looks good at first, but this is also the region with the highest probability evaluated at NVM(0,phylo_var).
 
-## Likelihood surface
+## Likelihood surface approach
+
+Note: I am certain I am reinventing the wheel, but let just see how far I can go starting from the basics.
+
+Using the extreme tree presented above, given a set of observed trait (triplets, simulated from the tree), we can compute the likelihood of the given the variance of the phylogenetic tree.
+We need to decide on a null model/tree to compare it with. 
+The most logical null/tree is the tree that preserves the branch lengths (i.e. the diagonals remain the same) and assume there isn't any shared information (i.e. the off diagonals are all zero).
+The null tree looks like this:
+
+```{r null_tree, echo=FALSE}
+
+phy$edge.length <- c(0,51,51,1)
+
+plot(phy)
+Vnull <- vcv(phy)
+
+```
+
+The way to think about "phylogenetic signal" is the amount of correlation we see each pair of species (distance?). 
+The distribution plot above just shows the amount of change each species evolved compared to the ancestral node.
+Thus, the null tree will have the same species level trait distribution, but what we are interested in are the "crosses".
+
+Given a set of traits, we can now calculate the likelihood under the known/true tree (with the covariance) and the null tree (without the covariance).
+We can do a likelihood ratio test and compute the Chisq statistic.
 
 ```{r likelihood surface, warning=FALSE, echo=FALSE, message=FALSE}
 
-pp <- expand.grid(t1 = seq(-10,10,length=31)
-  , t2 = seq(-10,10,length=31)    ## non-focal parameter
+pp <- expand.grid(t1 = seq(-10,10,length=21)
+  , t2 = seq(-10,10,length=21)    ## non-focal parameter
   , t3 = seq(-3,3,length=9)
 )
 
 ll <- sapply(1:nrow(pp),function(x){mvtnorm::dmvnorm(pp[x,1:3], mean =c(0,0,0), sigma = Vphy, log = TRUE)})
 
 pp$ll <- ll
-gg0 <- (ggplot(pp,aes(t1,t2))
+
+Vnull <- diag(diag(Vphy))
+
+c <- qchisq(0.95,df=1)
+
+pp$null <- sapply(1:nrow(pp),function(x){mvtnorm::dmvnorm(pp[x,1:3], mean =c(0,0,0), sigma = Vnull, log = TRUE)})
+
+pp2 <- (pp
+  %>% rowwise()
+  %>% mutate(LR = ll-null
+             # , LRT = max(as.numeric(LR > log(c)),0.5)
+             , LRT = 2*LR > log(c)
+
+             )
+  # %>% arrange(LR)
+)
+
+
+gg0 <- (ggplot(pp2,aes(t1,t2))
     + facet_wrap(~t3,labeller=label_both)
     + geom_raster()
     + scale_fill_viridis_c()
@@ -270,23 +312,244 @@ gg0 <- (ggplot(pp,aes(t1,t2))
     + theme(panel.spacing=grid::unit(0,"lines"))
 )
 
-gg0L <- gg0+ geom_raster(aes(fill=ll))
-
+gg0L <- gg0+ geom_raster(aes(fill=ll)) + ggtitle("Likelihood surface of the true tree")
+gg0null <- gg0+ geom_raster(aes(fill=null)) + ggtitle("Likelihood surface of the null tree")
+gg0LR <- gg0 + geom_raster(aes(fill=LR)) + ggtitle("Chisq")
 print(gg0L)
-
+print(gg0null)
+print(gg0LR)
 
 squash <- function(vals, matchvals) {
     sapply(vals,function(x) matchvals[which.min(abs(x-matchvals))])
 }
 
-dd_squash <- dd
-dd_squash$t3 <- squash(dd$t3,unique(pp$t3))
-samp_dd <- head(dd_squash,1000)
-samp_dd$ll <- sapply(1:nrow(samp_dd),function(x){mvtnorm::dmvnorm(samp_dd[x,1:3], mean =c(0,0,0), sigma = Vphy, log = TRUE)})
-
-print(gg0L 
-  + geom_point(data=samp_dd, aes(x=t1, y=t2),size=0.1)
-  + xlim(c(-10,10))
-  + ylim(c(-10,10))
+print(gg0 
+  + geom_raster(aes(fill=LR,alpha=LRT)) + ggtitle("Tree-like data")
 )
+
+print(mean(pp2$LRT))
+
 ```
+
+Approximately 30\% of the traits are are "tree-like" by LRT.
+
+## More Data!
+
+Stats 101, can we see it more clearly if we have more data?
+There are two ways to increase data: 
+
+- increase the number of species 
+- observe more traits (more lines)
+
+### Increase more species
+
+Before I simulate a larger tree, I just want to test the less extreme trees.
+
+```{r likelihood surface new tree, warning=FALSE, echo=FALSE, message=FALSE, cache=TRUE}
+
+phy <- rtree(n = nspp)
+plot(phy)
+Vphy <- vcv(phy)
+
+pp <- expand.grid(t1 = seq(-10,10,length=9)
+  , t2 = seq(-10,10,length=9)    ## non-focal parameter
+  , t3 = seq(-10,10,length=9)
+)
+
+ll <- sapply(1:nrow(pp),function(x){mvtnorm::dmvnorm(pp[x,1:3], mean =c(0,0,0), sigma = Vphy, log = TRUE)})
+
+pp$ll <- ll
+
+Vnull <- diag(diag(Vphy))
+
+c <- qchisq(0.95,df=1)
+
+pp$null <- sapply(1:nrow(pp),function(x){mvtnorm::dmvnorm(pp[x,1:3], mean =c(0,0,0), sigma = Vnull, log = TRUE)})
+
+pp2 <- (pp
+  %>% rowwise()
+  %>% mutate(LR = ll-null
+             # , LRT = max(as.numeric(LR > log(c)),0.5)
+             , LRT = 2*LR > log(c)
+
+             )
+  # %>% arrange(LR)
+)
+
+
+gg0 <- (ggplot(pp2,aes(t1,t2))
+    + facet_wrap(~t3,labeller=label_both)
+    + geom_raster()
+    + scale_fill_viridis_c()
+#     + scale_x_continuous(expand=c(0,0))
+#     + scale_y_continuous(expand=c(0,0))
+    + theme(panel.spacing=grid::unit(0,"lines"))
+)
+
+gg0L <- gg0+ geom_raster(aes(fill=ll)) + ggtitle("Likelihood surface of the true tree")
+gg0null <- gg0+ geom_raster(aes(fill=null)) + ggtitle("Likelihood surface of the null tree")
+gg0LR <- gg0 + geom_raster(aes(fill=LR)) + ggtitle("Chisq")
+print(gg0L)
+print(gg0null)
+print(gg0LR)
+
+squash <- function(vals, matchvals) {
+    sapply(vals,function(x) matchvals[which.min(abs(x-matchvals))])
+}
+
+print(gg0 
+  + geom_raster(aes(fill=LR,alpha=LRT)) + ggtitle("Tree-like data")
+)
+
+print(mean(pp2$LRT))
+
+```
+
+Note: Maybe the extreme examples are not good?
+
+```{r more species, warning=FALSE, echo=FALSE, message=FALSE,cache=TRUE}
+
+ddprop <- data.frame(nspp=3:6, prop=NA)
+ddprop$prop[1] <- mean(pp2$LRT)
+rep_pp <- pp
+for(i in 4:6){
+phy <- rtree(n = i)
+Vphy <- vcv(phy)
+
+temp_dimension <- expand.grid(rep(1,nrow(rep_pp)),new=seq(-10,10,length=9))
+rep_pp <- rbind(rep_pp,rep_pp,rep_pp,rep_pp,rep_pp,rep_pp,rep_pp,rep_pp,rep_pp)
+newgrid <- cbind(rep_pp,temp_dimension[,"new"])
+colnames(newgrid)[i] <- paste("t",i,sep="_")
+
+newgrid$ll <- sapply(1:nrow(newgrid),function(x){mvtnorm::dmvnorm(newgrid[x,1:i], mean =rep(0,i), sigma = Vphy, log = TRUE)})
+c <- qchisq(0.95,df=i-2)
+
+Vnull <- diag(diag(vcv(phy)))
+
+newgrid$null <- sapply(1:nrow(newgrid),function(x){mvtnorm::dmvnorm(newgrid[x,1:i], mean =rep(0,i), sigma = Vnull, log = TRUE)})
+
+c <- qchisq(0.95,df=i-2)
+
+newgrid2 <- (newgrid
+  %>% rowwise()
+  %>% mutate(LR = ll-null
+             # , LRT = max(as.numeric(LR > log(c)),0.5)
+             , LRT = 2*LR > log(c)
+             )
+  # %>% arrange(LR)
+)
+
+
+ddprop$prop[i-2] <- mean(newgrid2$LRT)
+print(i)
+rep_pp <- newgrid2[,1:i]
+}
+
+print(ddprop)
+```
+
+Brute forcing the grid is not a good idea and very inefficient. Can we get away with just sampling the tree?
+
+```{r, sampling, echo=FALSE,cache=TRUE}
+ddprop <- data.frame(nspp=3:40, prop=NA)
+rep_pp <- pp
+for(i in 3:40){
+phy <- rtree(n = i)
+Vphy <- vcv(phy)
+
+Y_phy <- MASS::mvrnorm(n=1000
+  , mu=rep(0,each=i)
+  , Sigma=Vphy
+)
+
+dd <- data.frame(Y_phy)
+
+dd$ll <- sapply(1:nrow(dd),function(x){mvtnorm::dmvnorm(dd[x,1:i], mean =rep(0,i), sigma = Vphy, log = TRUE)})
+
+c <- qchisq(0.95,df=i-2)
+
+Vnull <- diag(diag(vcv(phy)))
+
+dd$null <- sapply(1:nrow(dd),function(x){mvtnorm::dmvnorm(dd[x,1:i], mean =rep(0,i), sigma = Vnull, log = TRUE)})
+
+c <- 1.96
+
+dd2 <- (dd
+  %>% rowwise()
+  %>% mutate(LR = ll-null
+             # , LRT = max(as.numeric(LR > log(c)),0.5)
+             , LRT = LR > log(c)
+             )
+  # %>% arrange(LR)
+)
+
+
+ddprop$prop[i-2] <- mean(dd2$LRT)
+}
+
+plot(ddprop)
+
+```
+
+Wow, it is surprising how fast it levels off.
+
+## Increasing number of traits
+
+The other way to increase data is to collect different types of traits.
+
+```{r increasing traits, echo=FALSE,cache=TRUE}
+
+phy <- rtree(n = 3)
+Vphy <- vcv(phy)
+
+Y_phy <- MASS::mvrnorm(n=1000
+  , mu=rep(0,each=3)
+  , Sigma=Vphy
+)
+
+dd <- data.frame(Y_phy,line=1:nrow(Y_phy))
+
+dd$ll <- sapply(1:nrow(dd),function(x){mvtnorm::dmvnorm(dd[x,1:3], mean =rep(0,3), sigma = Vphy, log = TRUE)})
+
+Vnull <- diag(diag(vcv(phy)))
+
+dd$null <- sapply(1:nrow(dd),function(x){mvtnorm::dmvnorm(dd[x,1:3], mean =rep(0,3), sigma = Vnull, log = TRUE)})
+
+c <- 1.96
+
+dd2 <- (dd
+  %>% mutate(LR = ll-null # line log ratio
+       , sumLL = cumsum(ll)
+       , sumnull = cumsum(null)
+  )
+  %>% rowwise()
+  %>% mutate(LRT = LR > log(c)
+      , sumLR = sumLL - sumnull
+      , sumLRT = sumLR > log(c)
+      )
+  # %>% arrange(LR)
+)
+
+ddsort <- (dd
+  %>% mutate(LR = ll-null) # line log ratio
+  %>% arrange(LR)
+  %>% mutate(sumLL = cumsum(ll)
+       , sumnull = cumsum(null)
+  )
+  %>% rowwise()
+  %>% mutate(LRT = LR > log(c)
+      , sumLR = sumLL - sumnull
+      , sumLRT = sumLR > log(c)
+      )
+  # %>% arrange(LR)
+)
+
+plot(dd2$line,dd2$LRT)
+plot(dd2$line,dd2$sumLRT)
+
+plot(ddsort$LRT)
+plot(ddsort$sumLRT)
+
+```
+
+I think I got a good idea now.
