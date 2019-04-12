@@ -269,16 +269,17 @@ Vnull <- vcv(phy)
 ```
 
 The way to think about "phylogenetic signal" is the amount of correlation we see each pair of species (distance?). 
-The distribution plot above just shows the amount of change each species evolved compared to the ancestral node.
-Thus, the null tree will have the same species level trait distribution, but what we are interested in are the "crosses".
+The distribution plot above just shows the amount of change each species evolve compared to the ancestral node.
+Thus, the null tree will have the same species level trait distribution, but what we are interested in are the correlation (crosses).
 
 Given a set of traits, we can now calculate the likelihood under the known/true tree (with the covariance) and the null tree (without the covariance).
 We can do a likelihood ratio test and compute the Chisq statistic.
+TODO: What is the "right" statistic? I am using Chisq for the easy examples and using Z when I am lazy. 
 
-```{r likelihood surface, warning=FALSE, echo=FALSE, message=FALSE}
+```{r likelihood surface, warning=FALSE, echo=FALSE, message=FALSE, cache=TRUE}
 
-pp <- expand.grid(t1 = seq(-10,10,length=21)
-  , t2 = seq(-10,10,length=21)    ## non-focal parameter
+pp <- expand.grid(t1 = seq(-10,10,length=51)
+  , t2 = seq(-10,10,length=51)    ## non-focal parameter
   , t3 = seq(-3,3,length=9)
 )
 
@@ -335,7 +336,7 @@ Approximately 30\% of the traits are are "tree-like" by LRT.
 
 ## More Data!
 
-Stats 101, can we see it more clearly if we have more data?
+Statistics 101, can we see it more clearly if we have more data?
 There are two ways to increase data: 
 
 - increase the number of species 
@@ -351,9 +352,9 @@ phy <- rtree(n = nspp)
 plot(phy)
 Vphy <- vcv(phy)
 
-pp <- expand.grid(t1 = seq(-10,10,length=9)
-  , t2 = seq(-10,10,length=9)    ## non-focal parameter
-  , t3 = seq(-10,10,length=9)
+pp <- expand.grid(t1 = seq(-10,10,length=25)
+  , t2 = seq(-10,10,length=25)    ## non-focal parameter
+  , t3 = seq(-10,10,length=25)
 )
 
 ll <- sapply(1:nrow(pp),function(x){mvtnorm::dmvnorm(pp[x,1:3], mean =c(0,0,0), sigma = Vphy, log = TRUE)})
@@ -405,50 +406,13 @@ print(mean(pp2$LRT))
 
 ```
 
-Note: Maybe the extreme examples are not good?
+Note: Maybe the extreme examples are not good? 
+We still see a large area in the likelihood surface that aren't tree-like.
 
-```{r more species, warning=FALSE, echo=FALSE, message=FALSE,cache=TRUE}
+Brute forcing the grid is not a good idea and very inefficient when we increase the dimension. 
+The grid itself is not a good representation of the sampling distribution anyway, thus when calculating the proportion of tree-like, it decreases as we increase the number of species.
 
-ddprop <- data.frame(nspp=3:6, prop=NA)
-ddprop$prop[1] <- mean(pp2$LRT)
-rep_pp <- pp
-for(i in 4:6){
-phy <- rtree(n = i)
-Vphy <- vcv(phy)
-
-temp_dimension <- expand.grid(rep(1,nrow(rep_pp)),new=seq(-10,10,length=9))
-rep_pp <- rbind(rep_pp,rep_pp,rep_pp,rep_pp,rep_pp,rep_pp,rep_pp,rep_pp,rep_pp)
-newgrid <- cbind(rep_pp,temp_dimension[,"new"])
-colnames(newgrid)[i] <- paste("t",i,sep="_")
-
-newgrid$ll <- sapply(1:nrow(newgrid),function(x){mvtnorm::dmvnorm(newgrid[x,1:i], mean =rep(0,i), sigma = Vphy, log = TRUE)})
-c <- qchisq(0.95,df=i-2)
-
-Vnull <- diag(diag(vcv(phy)))
-
-newgrid$null <- sapply(1:nrow(newgrid),function(x){mvtnorm::dmvnorm(newgrid[x,1:i], mean =rep(0,i), sigma = Vnull, log = TRUE)})
-
-c <- qchisq(0.95,df=i-2)
-
-newgrid2 <- (newgrid
-  %>% rowwise()
-  %>% mutate(LR = ll-null
-             # , LRT = max(as.numeric(LR > log(c)),0.5)
-             , LRT = 2*LR > log(c)
-             )
-  # %>% arrange(LR)
-)
-
-
-ddprop$prop[i-2] <- mean(newgrid2$LRT)
-print(i)
-rep_pp <- newgrid2[,1:i]
-}
-
-print(ddprop)
-```
-
-Brute forcing the grid is not a good idea and very inefficient. Can we get away with just sampling the tree?
+Can we get away with just sampling traits from the tree?
 
 ```{r, sampling, echo=FALSE,cache=TRUE}
 ddprop <- data.frame(nspp=3:40, prop=NA)
@@ -491,13 +455,14 @@ plot(ddprop)
 
 ```
 
-Wow, it is surprising how fast it levels off.
+Here I sample 10,000 points from the n-dimension space using a MVN with the phylogenetic variance. 
+It is surprising how fast it levels off.
 
 ## Increasing number of traits
 
 The other way to increase data is to collect different types of traits.
 
-```{r increasing traits, echo=FALSE,cache=TRUE}
+```{r increasing traits, echo=FALSE,cache=TRUE,eval=FALSE}
 
 phy <- rtree(n = 3)
 Vphy <- vcv(phy)
@@ -552,4 +517,14 @@ plot(ddsort$sumLRT)
 
 ```
 
-I think I got a good idea now.
+
+Here, I simulate 1000 sets of traits (lines) and did the LRT for each line. 
+The first plot is consistent with the result before we see a small proportion of tree-like data.
+In order to "increase" more data, I computated did the likelihood ratio test given we saw multiple sets of traits.
+We can easily do this by adding the log likelihood for each set of traits under the NVM under the true tree and null tree and do the corresponding LRT. 
+Note: Order does matter! We need a random order!
+
+We can see that if we combine multiple traits, it increases our chance to detect if the data are tree-like via LRT.
+
+Just a exteme example, what if we combine a bunch of non-tree-like traits? 
+By ordering the 
