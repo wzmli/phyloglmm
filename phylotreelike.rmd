@@ -406,13 +406,13 @@ print(mean(pp2$LRT))
 
 ```
 
-Note: Maybe the extreme examples are not good? 
+Note: Maybe the extreme examples are not good?
 We still see a large area in the likelihood surface that aren't tree-like.
 
 Brute forcing the grid is not a good idea and very inefficient when we increase the dimension. 
 The grid itself is not a good representation of the sampling distribution anyway, thus when calculating the proportion of tree-like, it decreases as we increase the number of species.
 
-Can we get away with just sampling traits from the tree?
+Can we get away with just sampling traits from the tree? (Yes!)
 
 ```{r, sampling, echo=FALSE,cache=TRUE}
 ddprop <- data.frame(nspp=3:40, prop=NA)
@@ -455,14 +455,30 @@ plot(ddprop)
 
 ```
 
+
+```{r ggprop, echo=FALSE}
+
+ggprop <- (ggplot(ddprop, aes(x=nspp,y=prop))
+  + geom_point()
+  + geom_line()
+  + theme_bw()
+  + ylab("Proportion of Tree-like traits")
+  + xlab("Number of species")
+)
+
+print(ggprop)
+
+```
+
 Here I sample 10,000 points from the n-dimension space using a MVN with the phylogenetic variance. 
 It is surprising how fast it levels off.
+TODO: Maybe add confidence interval bands.
 
 ## Increasing number of traits
 
 The other way to increase data is to collect different types of traits.
 
-```{r increasing traits, echo=FALSE,cache=TRUE,eval=FALSE}
+```{r increasing traits, echo=FALSE,cache=TRUE,warning=FALSE}
 
 phy <- rtree(n = 3)
 Vphy <- vcv(phy)
@@ -509,7 +525,41 @@ ddsort <- (dd
   # %>% arrange(LR)
 )
 
-plot(dd2$line,dd2$LRT)
+# plot(dd2$line,dd2$LRT)
+
+gg1 <- (ggplot(dd2, aes(x=line, y=LRT))
+  + geom_point()
+  + theme_bw()
+  + ylab("Tree like")
+  + xlab("Trait")
+)
+
+print(gg1)
+
+dd3 <- dd2 %>% gather(key = "tip", value = "obs", -c(line,ll,null,LR,sumLL,sumnull,LRT,sumLR,sumLRT))
+
+dist <- sqrt(min(diag(Vphy)))
+
+gg2 <- (ggplot(data=(dd3 %>% filter(line<50)), aes(x=tip, y=obs, color=tip,group=line,alpha=LRT))
+  + geom_point()
+  + geom_line()
+  + theme_bw()
+  + scale_color_manual(values=c("black","red","blue"))
+  + ylab("observed measurements")
+)
+
+print(gg2)
+
+gg3 <- (ggplot(data=(dd3 %>% filter(line<15)), aes(x=tip, y=obs, color=tip,group=line,alpha=sumLRT))
+  + geom_point()
+  + geom_line()
+  + theme_bw()
+  + scale_color_manual(values=c("black","red","blue"))
+  + ylab("observed measurements")
+)
+
+print(gg3)
+
 plot(dd2$line,dd2$sumLRT)
 
 plot(ddsort$LRT)
@@ -526,5 +576,4 @@ Note: Order does matter! We need a random order!
 
 We can see that if we combine multiple traits, it increases our chance to detect if the data are tree-like via LRT.
 
-Just a exteme example, what if we combine a bunch of non-tree-like traits? 
-By ordering the 
+Just a exteme example, what if we combine a bunch of non-tree-like traits?
