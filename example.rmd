@@ -27,7 +27,7 @@ library(dplyr)
 
 ```{r phylocode}
 source("lme4_phylo_setup.R")
-source("glmmTMBhacked.R")
+source("glmmTMB_phylo_setup.R")
 ```
 
 ### Get data
@@ -75,7 +75,7 @@ print(summary(phylo_lmm_fit))
 Similarily, fitting using glmmTMB:
 
 ```{r glmmTMB}
-glmmTMB_fit <- glmmTMBhacked(phen~cofactor+(1|sp)
+glmmTMB_fit <- glmmTMBphylo(phen~cofactor+(1|sp)
     , data=datG
     , phyloZ=phyloZ
     , phylonm = "sp"
@@ -110,7 +110,7 @@ phylo_lmm_fit <- phylo_lmm(phen~spec_mean_cf+within_spec_cf+(1|sp) + (1|animals)
              
 print(summary(phylo_lmm_fit))
 
-glmmTMB_fit2 <- glmmTMBhacked(phen~spec_mean_cf+within_spec_cf+(1|sp) + (1|animals)
+glmmTMB_fit2 <- glmmTMBphylo(phen~spec_mean_cf+within_spec_cf+(1|sp) + (1|animals)
     , data=datR
     , phyloZ=phyloZ
     , phylonm = "sp"
@@ -142,7 +142,7 @@ phylo_glmm_fit <- phylo_glmm(phen_pois~cofactor+(1|sp)+(1|obs)
 
 summary(phylo_glmm_fit)
 
-glmmTMB_fit3 <- glmmTMBhacked(phen_pois~cofactor+(1|sp)+(1|obs)
+glmmTMB_fit3 <- glmmTMBphylo(phen_pois~cofactor+(1|sp)+(1|obs)
     , data=dat
     , family = poisson
     , phyloZ=phyloZ
