@@ -415,13 +415,13 @@ The grid itself is not a good representation of the sampling distribution anyway
 Can we get away with just sampling traits from the tree? (Yes!)
 
 ```{r, sampling, echo=FALSE,cache=TRUE}
-ddprop <- data.frame(nspp=3:40, prop=NA)
+ddprop <- data.frame(nspp=3:100, prop=NA)
 rep_pp <- pp
-for(i in 3:40){
+for(i in 3:100){
 phy <- rtree(n = i)
 Vphy <- vcv(phy)
 
-Y_phy <- MASS::mvrnorm(n=10000
+Y_phy <- MASS::mvrnorm(n=2000
   , mu=rep(0,each=i)
   , Sigma=Vphy
 )
@@ -436,17 +436,14 @@ Vnull <- diag(diag(vcv(phy)))
 
 dd$null <- sapply(1:nrow(dd),function(x){mvtnorm::dmvnorm(dd[x,1:i], mean =rep(0,i), sigma = Vnull, log = TRUE)})
 
-c <- 1.96
-
 dd2 <- (dd
   %>% rowwise()
   %>% mutate(LR = ll-null
              # , LRT = max(as.numeric(LR > log(c)),0.5)
-             , LRT = LR > log(c)
+             , LRT = abs(LR) > c/2
              )
   # %>% arrange(LR)
 )
-
 
 ddprop$prop[i-2] <- mean(dd2$LRT)
 }
@@ -496,7 +493,7 @@ Vnull <- diag(diag(vcv(phy)))
 
 dd$null <- sapply(1:nrow(dd),function(x){mvtnorm::dmvnorm(dd[x,1:3], mean =rep(0,3), sigma = Vnull, log = TRUE)})
 
-c <- 1.96
+c <- qchisq(0.95,df=3-2)
 
 dd2 <- (dd
   %>% mutate(LR = ll-null # line log ratio
@@ -504,9 +501,9 @@ dd2 <- (dd
        , sumnull = cumsum(null)
   )
   %>% rowwise()
-  %>% mutate(LRT = LR > log(c)
+  %>% mutate(LRT = abs(LR) > c/2
       , sumLR = sumLL - sumnull
-      , sumLRT = sumLR > log(c)
+      , sumLRT = sumLR > c/2
       )
   # %>% arrange(LR)
 )
@@ -518,9 +515,9 @@ ddsort <- (dd
        , sumnull = cumsum(null)
   )
   %>% rowwise()
-  %>% mutate(LRT = LR > log(c)
+  %>% mutate(LRT = LR > c/2
       , sumLR = sumLL - sumnull
-      , sumLRT = sumLR > log(c)
+      , sumLRT = sumLR > c/2
       )
   # %>% arrange(LR)
 )
