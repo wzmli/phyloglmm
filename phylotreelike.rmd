@@ -415,11 +415,14 @@ The grid itself is not a good representation of the sampling distribution anyway
 Can we get away with just sampling traits from the tree? (Yes!)
 
 ```{r, sampling, echo=FALSE,cache=TRUE}
-ddprop <- data.frame(nspp=3:100, prop=NA)
+ddprop <- data.frame(nspp=3:50, cortest=NA, nulltest=NA, startest=NA)
 rep_pp <- pp
-for(i in 3:100){
+for(i in 3:50){
 phy <- rtree(n = i)
 Vphy <- vcv(phy)
+
+wrong_tree <- rtree(n = i)
+wrongVphy <- vcv(wrong_tree)
 
 Y_phy <- MASS::mvrnorm(n=2000
   , mu=rep(0,each=i)
@@ -430,32 +433,51 @@ dd <- data.frame(Y_phy)
 
 dd$ll <- sapply(1:nrow(dd),function(x){mvtnorm::dmvnorm(dd[x,1:i], mean =rep(0,i), sigma = Vphy, log = TRUE)})
 
+dd$wll <- sapply(1:nrow(dd),function(x){mvtnorm::dmvnorm(dd[x,1:i], mean =rep(0,i), sigma = wrongVphy, log = TRUE)})
+
 c <- qchisq(0.95,df=i-2)
 
 Vnull <- diag(diag(vcv(phy)))
 
 dd$null <- sapply(1:nrow(dd),function(x){mvtnorm::dmvnorm(dd[x,1:i], mean =rep(0,i), sigma = Vnull, log = TRUE)})
+dd$null2 <- sapply(1:nrow(dd),function(x){logLik(lm(unlist(dd[x,1:i])~-1))})
+
 
 dd2 <- (dd
   %>% rowwise()
   %>% mutate(LR = ll-null
              # , LRT = max(as.numeric(LR > log(c)),0.5)
-             , LRT = abs(LR) > c/2
+             , LR2 = ll-null2
+             , LR3 = null-null2
+             , LRT = ll > null # abs(LR) > c/2
+             , LRT1 = ll > wll
+             , LRT2 = ll > null2 # abs(LR2) > (qchisq(0.95,df=(2*i-1))/2)
+             , LRT3 = null > null2 # abs(LR3) > (qchisq(0.95,df=(i-1))/2)
+             , LRT4 = wll > null
+             , LRT5 = wll > null2
              )
   # %>% arrange(LR)
 )
 
-ddprop$prop[i-2] <- mean(dd2$LRT)
+ddprop$tree_cor[i-2] <- mean(dd2$LRT)
+ddprop$wrong_tree[i-2] <- mean(dd2$LRT1)
+ddprop$tree_test[i-2] <- mean(dd2$LRT2)
+ddprop$star_test[i-2] <- mean(dd2$LRT3)
+ddprop$wrongtree_cor[i-2] <- mean(dd2$LRT4)
+ddprop$wrongtree_test[i-2] <- mean(dd2$LRT5)
 }
-
-plot(ddprop)
 
 ```
 
 
 ```{r ggprop, echo=FALSE}
 
-ggprop <- (ggplot(ddprop, aes(x=nspp,y=prop))
+ddprop2 <- (ddprop
+  %>% gather(key="LRT", value="proportion", -nspp)
+  %>% na.omit()
+)
+
+ggprop <- (ggplot(ddprop2, aes(x=nspp,y=proportion,color=LRT))
   + geom_point()
   + geom_line()
   + theme_bw()
