@@ -104,10 +104,10 @@
 
 Ever-increasing data collection capabilities (e.g. genomic sequencing, telemetry studies of animal behaviour, or environmental remote sensing), in combination with large-scale synthetic data bases of species occurrence and phenotypic traits, are making larger volumes of biological data available over an ever-wider taxonomic range.
 Researchers use these data to fit complex models describing species occurrence and traits.
-In particular, phylogenetic comparative analysis (PCA) using phylogenetic (eco-evolutionary) regression \citep{hansen2012interpreting} is a powerful technique to explore relationships among species traits or distributions.
+In particular, phylogenetic comparative methods (PCM) using phylogenetic (eco-evolutionary) regression \citep{hansen2012interpreting} is a powerful technique to explore relationships among species traits or distributions.
 % \bmb{might be interesting to do some bibliometry, although absolutely not necessary --- i.e. how do numbers of citations of (whatever) increase relative to the overall size of the eco/evo literature? \ldots}
-Given a known phylogenetic tree, PCAs explore the relationships among species traits or distributions while taking the underlying evolutionary relationships of the species into account; they can be used to control statistically for phylogenetic relationships, to quantify the phylogenetic signals (a measure of dependence among species responses due to their phylogenetic relationships) in trait distributions, or both.
-Unlike standard statistical models, where all of the predictor variables of interest (for example, species traits and environmental factors) are directly observable,  PCAs use phylogenetic relationships to estimate the amount of unobserved process of trait evolution (i.e how ``tree-like" are the observed data given the phylogenetic tree) \citep{felsenstein1985phylogenies, butler2004phylogenetic}. 
+Given a known phylogenetic tree, PCMs explore the relationships among species traits or distributions while taking the underlying evolutionary relationships of the species into account; they can be used to control statistically for phylogenetic relationships, to quantify the phylogenetic signals (a measure of dependence among species responses due to their phylogenetic relationships) in trait distributions, or both.
+Unlike standard statistical models, where all of the predictor variables of interest (for example, species traits and environmental factors) are directly observable,  PCMs use phylogenetic relationships to estimate the amount of unobserved process of trait evolution \citep{felsenstein1985phylogenies, butler2004phylogenetic}. 
 % While evolutionary relationships are biologically important and interesting, they often get neglected in applications and multi-species analyses \citep{bunnefeld2012island, santamaria2012evolution}. 
 Ecologists have used phylogenetic relationships in multi-species models \citep{garland1992procedures, freckleton2002phylogenetic, ord2010adaptation, davies2013phylogenetic}; and more recently becoming increasingly popular, they have begun to integrate evolutionary knowledge in applied ecological studies addressing biodiversity conservation and the effects of climate change \citep{winter2013phylogenetic, santamaria2012evolution, lankau2011incorporating, lavergne2010biodiversity, mace2008evolutionary}.
 While a wide range of tools is available for comparative analyses, existing procedures may be either insufficiently flexible or too computationally demanding when analyzing large volumes of data.
@@ -123,28 +123,16 @@ In such cases, researchers must find ways to simplify their analyses: for exampl
 In this paper, we propose an alternative method for flexibly and efficiently modeling phylogenetic relationships via mixed effect models through random effects. 
 This method allow researchers to easily incorporate various complexities without sacrificing speed.
 
-\subsection*{How ``tree-like" are the data?}
+\subsection*{Challenges in modeling phylogenetic process in multispecies data}
 
 Multispecies data sets are often very challenging to model using basic statistical frameworks due to the complexity and non-normality data. 
-Most researchers typically use basic regression based methods such as generalized-linear models (GLMs) models and suffocated ecologist would use generalized-linear mixed effect models \citep{bolker2009generalized} to control for different levels of variation.
-Most of the basic statistical techniques assume species are independent, and indentically distributed (if species are not accounted for in the model), which are false from a evolutionary perspective.
-However, traits 
-
-
-
-\subsection*{Challenges in modelling evolutionary process}
-
-\mli{this part doesn't make sense. Going back to the tree-like example, we can generate two test: cor vs no cor and tip vs noise}
-
-There are two general challenges in linking the evolutionary process to a phylogenetic comparative statistical framework.
-% Phylogenetic signal : the magnitude of phylogenetic correlation
-The first challenge is to identify and separate phylogenetic signals from other sources of variation present in the data \citep{blomberg2003testing}.  
-% \bmb{prev sentence doesn't seem be quite the right lead-in to the rest of the paragraph? You go on to talk about the tip-variation/residual-variation confounding issue. Maybe replace with something talking more specifically about resolving tip variation?}
-The classic phylogenetic regression uses a statistical model that is equivalent to assuming that phylogenetic correlation in the residuals from a regression between two species-level traits arises because the residual variation in the trait that is the dependent variable evolves along the branches of the phylogeny according to a Brownian-motion evolutionary model. 
+Most researchers typically use basic regression based methods such as generalized-linear models (GLMs) and suffocated ecologist would use generalized-linear mixed effect models \citep{bolker2009generalized} to control for different levels of variation.
+Most of the basic statistical techniques assume species are independent, which are false from a evolutionary perspective.
+The classic phylogenetic regression uses a statistical model that is equivalent to assuming that phylogenetic correlation in the residuals from a regression between two species-level traits arises because the residual variation in the trait that is the dependent variable evolves along the branches of the phylogeny according to a Brownian-motion evolutionary model \citep{felsenstein1985phylogenies}. 
 If the residuals are normally distributed and observed without any additional error or within-species variation, Felsenstein's method of phylogenetically independent contrasts (PICs) \citep{felsenstein1985phylogenies, nicolakakis2000forebrain} is sufficient to account for the phylogenetic correlation.
 More recent approaches -- including phylogenetic generalized linear mixed models (PGLMM) \citep{ives2011generalized}, Pagel's $\lambda$ \citep{pagel1999inferring}, and Blomberg's $K$ \citep{blomberg2003testing} --- build upon PICs by considering different (non-Normal) response distributions and by accounting for additional complexities in the evolutionary process. 
-In particular, they can partition residual variation into (1) uncorrelated, or independent, residual variation (observation error or tip variation) and (2) phylogenetic signal  (biological/evolutionary process error) \citep{hansen2012interpreting}.
-However, if each species' traits are observed more than once, possibly under different conditions, we can potentially distinguish third level of variation; in this case, phylogenetic signal and tip variation are now both part of the evolutionary process error (which we will call intercept-level variation) while the among species residual error is associated with among observations variation within each species.
+In particular, these methods can partition residual variation into two components: (1) uncorrelated, or independent, residual variation (observation error or tip variation) and (2) phylogenetic signal  (biological/evolutionary process error) \citep{hansen2012interpreting}.
+However, if each species' traits are observed more than once, possibly under different conditions, we can potentially distinguish third level of variation; in this case, phylogenetic signal and tip variation are now both part of the evolutionary process error (which we will call tip variation as intercept-level variation) while the among species residual error is associated with among observations variation within each species.
 %\bmb{This is a good point, well expressed. Does PGLMM lump tip variation and within-species variation, or is this primarily an issue with Blomberg/Pagel? Thinking about Boettiger's critique \cite{boettiger2013is} (don't know if it's been peer-reviewed, we could ask him), which might be resolved if we think explicitly about within-species variation \ldots
 %\mli{I think it is more like our simulation test. In Boettiger's example, it is treating sister taxa as different species. So it is using a phylogenetic tree of 8 species instead of 4.}
 Although many studies include multiple observations per species, phylogenetic analyses rarely take advantage of such observations to partition variability more finely.
@@ -161,10 +149,9 @@ Figure \ref{fig:variation} illustrates a visual categorization of various forms 
 \end{figure}
 \end{center}
 
-%% FIXME: second sentence
-The second challenge is flexibly modeling phylogenetic relations across different levels of complexity.
-Classic PCA usually examines the response (trait or distribution) to vary according to the phylogenetic relationship across species, but it is plausible the changes in effect (or levels) of the predictor variables 
-may vary according to the phylogenetic relationship across species as well.
+Classic PCMs usually examines the response (trait or distribution) to vary according to the phylogenetic relationship across species, but it is plausible the changes in effect (or levels) of the predictor variables may vary according to the phylogenetic relationship across species as well.
+Suppose we have exmained a collection of species that came from two groups, and wish to know whether their brain size (Y) is proportional to their body size (X) (Felsenstein's example \citep{felsenstein1985phylogenies}) using mixed-effect model. 
+It is plausible that one group is simply larger than the other (random intercepts) with similar ratio, or alternatively, one group having a larger ratio (random slopes). 
 %\bmb{maybe we can focus on random slopes here? Need to point out that example studies below are \emph{exceptions} to the general assumption of random intercepts only (how did they manage to do their inference?)}
 Several recent studies have incorporated phylogenetic signals beyond species level and looked at species response to phylogenetic signals with changes in environmental factors.
 For example, \cite{nowakowski2018phylogenetic} considered phylogenetically correlated slopes in response to habitat conversion when studying the abundance of amphibian species using a Bayesian implementation of phylogenetic GLMM, while \cite{li2017canfun} considered phylogenetically correlated species nested within sites for plant abundance via phylogenetic GLMM approach. 
@@ -191,7 +178,7 @@ Table \ref{table:model} provides a summary of model complexities, platforms and 
 \end{table}
 
 In this paper, we will propose an alternative formulation of phylogenetic generalized linear mixed models that is mathematically equivalent to previous approaches, but more flexible.
-Our new formulation can be incorporated in any framework that allows for random effect without the need to implement special correlation structures by incorporating phylogenetic structures as part of the mean model. 
+Our new formulation can be incorporated in any framework that allows for random effect (such as random intercepts, slopes, and interactions) without the need to implement special correlation structures by incorporating phylogenetic structures as part of the mean model. 
 %% can be incorporated relatively easily into any mixed-model platform that allows new random-effects design matrices to be specified, and can be easily extended along with the features of mixed model such as multiple observational designs, phylogenetic random-slopes models, and multiple (nested or crossed) random effects.
 We will compare our technique coded in R package \pkg{lme4} and \pkg{glmmTMB} with existing R packages (i.e. \pkg{nlme} \citep{pinheiro2014r}, \pkg{phylolm} \citep{ho2014phylolm}, \pkg{pez} \citep{pearse2015pez} \pkg{phyr} (Li et al, unpublished), \pkg{MCMCglmm} \citep{hadfield2010mcmc}, and \pkg{brms} \citep{burkner2016brms}) fitting models to data from simulated model that incorporates phylogenetic signal from both predictors and tips/species, as well as residual variation.
 As well as being flexible, we also expect that our approach will be fast, because \pkg{lme4} and \pkg{glmmTMB} use efficient approaches. 
@@ -213,7 +200,7 @@ As well as being flexible, we also expect that our approach will be fast, becaus
 
 \subsection*{Phylogenetic regression}
 
-We begin by describing the classic PCA in a linear regression setting.
+We begin by describing the classic PCM in a linear regression setting.
 Consider a simple linear regression model of observable trait $\bY$ as a function of some predictors $\bX$. 
 The standard phylogenetic regression can be formulated as
 
@@ -233,7 +220,7 @@ The PC matrix is inferred from the topology of the evolutionary tree by quantify
 %\mli{Why? Data type, interactions, random effects, etc... Need to really explain random effects here. Alternatively, we can drop this line and write this...}
 
 \subsection*{Phylogenetic generalized linear mixed model}
-Alternatively, one can use the generalized linear mixed effects modelling (GLMM) framework \citep{lynch1991methods}.
+Alternatively, one can use the generalized linear mixed effects modeling (GLMM) framework \citep{lynch1991methods}.
 The generalized linear mixed effect model is an extension of the classic regression model, a kind of hierarchical linear model that can flexibly incorporate more than one kind of variability through random effects and for non-Gaussian responses.
 The typical GLMM has the form:
 \begin{align}
@@ -245,12 +232,12 @@ The typical GLMM has the form:
 where $\bZ$ is an $n \times m$ model matrix for the $n$ -- dimensional vector-valued $m$ predictor variables; $\bb$ (sometimes referred as the "G-side" effect) represents the conditional modes and assumed to be multivariate normally distributed with a variance-covariance matrix given by $\bSigma(\theta)$; $\besp$ (sometimes referred as "R" effect) is an $n \times 1$ vector of independent and normally distributed error terms with variance $\sigma_{\epsilon}^2$.
 Analogously, the phylogenetic regression given by (\ref{eq:gls1}) can be represented in the generalized mixed model framework with Gaussian responses by constraining $\bSigma(\theta) = \sigma^2 \bC$ and $\sigma^{2}_{\epsilon} = 0$.
 
-There are several advantages in modelling phylogenetic correlated traits in the mixed model framework.
+There are several advantages in modeling phylogenetic correlated traits in the mixed model framework.
 First, random intercepts can allow the response trait to vary across groups/levels within grouping predictors (e.g. patch, site, experiment, and etc). 
 Second, it can also allow the response (trait or distribution) to vary according to the phylogenetic relationships across species (i.e. similar species will have similar responses), and between species (tip variation).
 The third type of variation that is often neglected or rarely considered are random slopes.
 Random slopes can allow fixed effects (size of the effect in continuous predictor variables) to vary for each species. 
-Analogous to modelling the response dependency via phylogenetic relationship among species, phylogenetic random slopes can allow fixed effects to account for the phylogenetic relations (i.e. similar species will have similar size of the effects on the response than distinct pairs).
+Analogous to modeling the response dependency via phylogenetic relationship among species, phylogenetic random slopes can allow fixed effects to account for the phylogenetic relations (i.e. similar species will have similar size of the effects on the response than distinct pairs).
 
 
 % \bmb{worth including the \pkg{MCMCglmm}/\pkg{brms} inverse-VCV formulation here? And/or contacting Eric Pedersen to find out about his Markov Random Field phylog. stuff in GAM?}
@@ -280,7 +267,7 @@ For example, for the phylogeny in figure \ref{fig:tree}, the corresponding $\bS$
 %% FIXME: need top/side labels
 \begin{center}
 \begin{figure}[H]
-  \includegraphics[scale=0.8,page=1]{./git_push/tree.pdf}
+  \includegraphics[scale=0.8,page=1]{./figure/phylotree.png}
   \caption{Three species phylogenetic tree.}
 \label{fig:tree}
 \end{figure}
@@ -431,8 +418,8 @@ b_{\mathrm{sp:group}} & \sim \textrm{MVN} (0, \bf{I}_{\mathrm{group}} \otimes \s
 \end{align}
 where $\otimes$ is the Kronecker product.
 
-The multi-group full simulation model has five additional random effects (predictor and intercept level random effect of species variance and their covariance, random intercept of site and random intercept of species-site interaction) compared to the single--group full model.
-Predictor and intercept level random effect of species are now applicable in the multi-site model setting because there are multiple (one in each group) observations per species, thus there exist some form of variation at the species level.
+The multi-group full simulation model has five additional random effects (predictor and intercept level random effect of species variance and their covariance, random intercept of group and random intercept of species-group interaction) compared to the single--group full model.
+Predictor and intercept level random effect of species are now applicable in the multi-group model setting because there are multiple (one in each group) observations per species, thus there exist some form of variation at the species level.
 Random intercept of species--group interactions describes whether the species within a group are more closely related on average than occurring by chance; which is equivalent to phylogenetic attraction as described in \cite{helmus2007separating}. 
 
 \subsection*{Platforms}
@@ -452,7 +439,7 @@ Neither PGLS nor PGLM can handle multiple observations within a species or rando
 One of the few packages that currently fit phylogenetic correlations to predictor level variation is \pkg{pez} (and very recently \pkg{phyr}), which can handle adding additional uncorrelated random slopes and interactions with intercept.
 Lastly, Bayesian phylogenetic GLMM using Markov chain Monte Carlo (MCMC) are available and can handle all of the cases described above. 
 However, MCMC is often computationally expensive for GLMMs compared to platforms using deterministic optimization.
-\pkg{MCMCglmm} \citep{hadfield2010general} is the most commonly used Bayesian phylogenetic GLMM, but we will instead use \pkg{brms}, which uses a more computationally efficient MCMC technique called Hamiltonian Monte Carlo (HMC) \citep{duane1987hybrid} algorithm \citep{li2018fitting}.
+\pkg{MCMCglmm} \citep{hadfield2010general} is the most commonly used Bayesian phylogenetic GLMM, but we will instead use \pkg{brms}, which uses a more computationally efficient MCMC technique called Hamiltonian Monte Carlo (HMC) algorithm \citep{duane1987hybrid}.
  
 % Table \mli{ref something} provides the statistically equivalent fitting capabilities of common/existing phylogenetic methods.
 \begin{table}[]
@@ -486,7 +473,8 @@ We also compare computational speed between different platforms to evaluate the 
 
 \section*{Results}
 
-We used our method and fitted the full model of the dune meadow data recently used with \pkg{pez} \citep{li2017canfun}. 
+We used our method to reproduce the examples in [chapter 11] of \cite{garamszegi2014modern} using phylogenetic GLMMs based on `lme4` and `glmmTMB` (for more details see example in \cite{michael_li_2019_2639887}).
+We also used our method and fitted the full model of the dune meadow data recently used with \pkg{pez} \citep{li2017canfun}. 
 \pkg{lme4} and \pkg{pez} give identical results for fix and random effect estimates, our code is approximately 120 times faster than \pkg{pez}. 
 Codes for fitting dune meadow analysis using \pkg{lme4} and \pkg{pez} are provided in the supplements. 
 
@@ -578,35 +566,41 @@ Comparing \pkg{glmmTMB} to \pkg{pez} and \pkg{phyr}, the median time for \pkg{gl
 % \bmb{say something about the implications of this [e.g. good enough for getting an overall impression of phylog. whatever-it-is but not enough for detailed description/inference about the evolutionary process?] (or maybe that should be saved for the Discussion?)}
 
 The simulations presented in this paper are an oversimplification of the real evolutionary processes in nature, but they are no simpler than what researchers typically use.
-In fact, our results showed that even simple single predictor--response multi-species model can incorporate multiple levels of complexity (e.g. including random slopes, intercept-slope correlations, and the phylogenetic analog) and fitting 
-
+In fact, our results showed that even simple single predictor--response multi-species model can incorporate multiple levels of complexity (e.g. including random slopes, intercept-slope correlations, and the phylogenetic analog) and fitting simpler variations can lead to wrong unreliable estimates of the fixed effects, which is typically the main point of interest.
 
 We have fitted models using different platforms that best match the simulation models. 
 Models that cannot match the simulation (full) model are expected to perform poorly; it is important to understand the limitations and performance of these simpler models that are restricted by the commonly used methods available.
-Using models that include some form of phylogenetic variation and residual variation is necessary to detect evolutionary process.
+Using models that include some form of phylogenetic variation and residual variation is necessary to detect and account for correlations between species via evolutionary processes.
 Here are a few points researchers should think about when fitting phylogenetic regression models.
 
-\subsection{Process and observation variability and confounding}
+\subsection*{Process and observation variability and confounding}
 
 % \bmb{explain: classical scenario for PIC is when we have species-level data (i.e., species averages or ``typical'' values).  What do we do when we have multiple observations per species?  Why can't we just average? (cf. \cite{murtaugh2007simplicity}) with a nested, balanced design, averaging by group and doing 1-way ANOVA gets the same answer for fixed effects as LMMs). \textbf{answers}: (1) unbalanced data (can handle by weighting by $n$, equivalent to assuming homoscedasticity and using inverse-variance weights); (2) non-Gaussian responses (averaging doesn't make sense) [can we use offsets to handle this case? don't know]; (3) maybe for equivalent of randomized block designs? (4) when within-species variance is actually of interest}
 Process and observation errors are highly confounded in phylogenetic regression if it is not handled correctly. 
 For single measurement per species model, any method that can account for at least two sources of variation (one for the residual variance, and at least one for the process variation) will be sufficient to a first approximation (i.e. Pagel's $\lambda$, Blomberg's $K$).
-If multiple observations are allowed per species, then using methods such as Pagel's $\lambda$ can potentially incorrectly estimate the amount of phylogenetic process by substituting tip variation with residual variation. 
-However, one can summarize multiple measurements to a single measurement (for example, mean or median) per species to avoid confounding residual and tip variations.
+If multiple observations are allowed per species, then using methods such as Pagel's $\lambda$ can potentially incorrectly estimate the amount of phylogenetic process by substituting tip variation with residual variation, which is equilvent to Felsenstein's ``worst case".
+There are a few ways to deal with this case.
+For balanced data one can summarize multiple observations to a single measurement (for example, mean or median) per species to avoid confounding residual and tip variations.
+For unbalanced data, one can handle by weighting by number of observations per species, which is equivalent to assuming homoscedasticity using inverse-variance weights. 
+Alternatively, when within-species variance is actually of interest, accounting for within-species variance (i.e. adding species-level random effect in our example) can automatically handle multiple observations per species.
 
-\subsection{Random Slopes}
+\subsection*{Random effects}
 
-\bmb{I think you need a lot more here; what does a random slopes model mean? You have one sentence that says ``people should be thinking about random slopes''. Then you talk about correlation (which is a much more subtle/less important issue, I think).}
-In classic GLMM (without phylogenetic relationships), random slopes models are not always appropriate, but they are relevant over a wider range of scenarios than people are currently thinking about \cite{schielzeth2008conclusions, cleasby2015quantifying,ord2010adaptation}.
+% \bmb{I think you need a lot more here; what does a random slopes model mean? You have one sentence that says ``people should be thinking about random slopes''. Then you talk about correlation (which is a much more subtle/less important issue, I think).}
+
+In classic GLMM, random effects are often used to handle group (or individual) level variations by allowing for group effects. 
+Random intercepts are often the ``go-to" method to handle these effects because it is controlling the group effects in the reponses level (i.e. the interest is the expected value of the response when all predictors are zero/unpresent) by allowing different intercepts.
+Alternatively, random effects can be in more complicated forms such as random slopes (i.e. allow fixed effects to vary for each group), and they are much harder to interpret and think about in practice.
+Random slopes models are not always appropriate, but they are relevant over a wider range of scenarios than people are currently thinking about \cite{schielzeth2008conclusions, cleasby2015quantifying,ord2010adaptation}.
 Neglecting random slopes can lead to erroneous fixed effect estimates \citep{schielzeth2008conclusions} (parameters of interest) as shown in the simulations above. 
-When analyzing relationships among species between traits and environmental variables, it is entirely plausible that change in effect of predictor variables have on traits are changing in a phylogenetically correlated way.
-In fact, it is easier to interpret random slopes in the evolutionary process context (i.e, are size of different species phylogenetically correlated, or growth rate through time of different species phylogenetically correlated?)
-It may be easier to simplify the phylogenetic relationships (at the random slopes level) and think about the random-slopes model in a strictly hierarchical setting (i.e., estimating different slopes for each family, or taxon \citep{bunnefeld2012island}) - the PGLMM collapses to a standard random-slopes model. 
+When analyzing relationships among species between traits, it is entirely plausible that change in effect of predictor variables have on traits are changing with respect to different grouping of species or even in phylogenetically correlated way (phylogenetic random slopes).
+Nevertheless, it is hard to account for all forms of complexities and decide if phylogenetic random intercepts are more approriate than random slopes, or including both of them in the model.
+It may be easier to be conservative to include both of them but simplify the phylogenetic relationships (at the random slopes level) and think about the random-slopes model in a strictly hierarchical setting (i.e., estimating different slopes for each family, or taxon \citep{bunnefeld2012island}) - the PGLMM collapses to a standard random-slopes model. 
 Users should be aware of two important questions when fitting random-slope models: How much data do we need in order to practically estimate the random slopes? and Are we making a mistake by ignoring random slopes \citep{schielzeth2008conclusions}? 
 % However, in the PGLMM context, as long as there's variation in the predictor among tips, there will be variation among taxa at some level, so random-slopes models will (almost always) be \emph{theoretically} identifiable.
 
 
-\subsection{Extension and alternatives}
+\subsection*{Extension and alternatives}
 
 Our analysis covers the classical phylogenetic comparative methods (i.e. phylogenetic least squares, linear and mixed models).
 Even within the scope there is additional room for exploration we neglected, such as exploring phylogenetic multivariate response models, non-BM evolution processes (such as Ornstein-Uhlenbeck (OU) process which accounts for both selection and drift processes \cite{butler2004phylogenetic}), Bayesian approaches \cite{hadfield2010general}.
@@ -616,7 +610,7 @@ However, in principle just like GLMM and most statistically models, users should
 More importantly, this implementation in \pkg{lme4} allows users to fit phylogenetic mixed models to the fullest ( that other frequentist platforms lack of (i.e. large data, unbalanced species observations, complex random effects) and explore new ideas.
 
 
-\section{Conclusion}
+\section*{Conclusion}
 
 We have presented a simple approach to fit phylogenetic mixed models that is both more efficient and statistically equivalent approach and comparison of classical PCM to simulated data. 
 First, this new approach is magnitudes faster compared to existing phylogenetic mixed models without losing robustness/accuracy and can easily combined with any statistically mixed model framework. 
@@ -624,7 +618,7 @@ Last and most importantly, it is more flexible in fitting large phylogenies, lar
 
 \newpage
 
-\section{Supplements -- translation}
+\section*{Supplements -- translation}
 
 $1 \mid Sp_{phylo}$, $0 + X_{E} \mid Sp_{phylo}$ and $X_{E} \mid Sp_{phylo}$ means phylogenetically related have similar response,   
 
