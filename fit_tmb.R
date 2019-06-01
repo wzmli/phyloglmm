@@ -21,7 +21,7 @@ if(numsite == "ss"){
     , phylonm = c("sp", "sp:site")
     , doFit=TRUE
     , dispformula = ~1
-    # , control=glmmTMBControl(optCtrl=list(trace=1))
+    , control=glmmTMBControl(optCtrl=list(trace=1,iter.max=1e4,eval.max=1e4))
     , REML = FALSE
   ) 
 }
@@ -56,7 +56,7 @@ print(summary(hackedmod))
 glmmTMB_list <- list(hackedmod, glmmTMBtime)
 
 
-saveRDS(glmmTMB_list, file=paste("datadir/glmmTMB",numsite,size,tree_seed,"rds",sep="."))
+saveRDS(glmmTMB_list, file=paste("datadir/glmmTMB/glmmTMB",numsite,size,tree_seed,"rds",sep="."))
 
 #rdnosave()
 
