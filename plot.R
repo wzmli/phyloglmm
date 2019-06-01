@@ -21,7 +21,7 @@ sspar_df <- data.frame(
 
 ssdat <- (ssdat_raw
 	%>% separate(model,c("platform", "sites", "size", "seed","saveformat"), "[.]")
-	%>% select(time, platform, size, seed, resid, phylo_int, phylo_X, phylo_cor, B0, B1)
+	%>% dplyr:::select(time, platform, size, seed, resid, phylo_int, phylo_X, phylo_cor, B0, B1)
 	%>% gather(key = sdtype, value = sd, -c(platform, size, seed, time, B0, B1))
 	%>% mutate(size = factor(size
 	      , levels=c("small","med","large","xlarge"), labels=c("25","50","100","500")

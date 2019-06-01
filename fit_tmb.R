@@ -15,13 +15,14 @@ dat <- (dat
 
 if(numsite == "ss"){
   hackedmod <- glmmTMBhacked(Y ~ X  
-    + (1 + X| sp) 
+    # + (1|sp) + (0 + X| sp) 
+    + (1 + X|sp)
     , data=dat
     , phyloZ = phyZ
     , phylonm = c("sp", "sp:site")
     , doFit=TRUE
-    , dispformula = ~1
-    , control=glmmTMBControl(optCtrl=list(trace=1,iter.max=1e4,eval.max=1e4))
+    # , dispformula = ~1
+    , control=glmmTMBControl(optCtrl=list(trace=1,iter.max=1e5,eval.max=1e5))
     , REML = FALSE
   ) 
 }
@@ -55,6 +56,9 @@ print(summary(hackedmod))
 
 glmmTMB_list <- list(hackedmod, glmmTMBtime)
 
+
+print(summary(hackedmod))
+print(hackedmod$fit$convergence)
 
 saveRDS(glmmTMB_list, file=paste("datadir/glmmTMB/glmmTMB",numsite,size,tree_seed,"rds",sep="."))
 
