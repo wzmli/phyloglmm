@@ -61,12 +61,12 @@ lme4ss_results <- function(tt){
     covmat <- as.data.frame(lme4::VarCorr(lme4_obj[[1]]))
     lme4ss_df[i,"resid"] <- (covmat 
       %>% filter(grp=="Residual") 
-      %>% select(sdcor) 
+      %>% dplyr:::select(sdcor) 
       %>% as.numeric()
     )
     lme4ss_df[i, "phylo_X"] <- (covmat 
       %>% filter((grp=="sp") & (var1 =="X")) 
-      %>% select(sdcor) 
+      %>% dplyr:::select(sdcor) 
       %>% as.numeric()
     )
     lme4ss_df[i, "phylo_int"] <- (covmat 
@@ -74,7 +74,7 @@ lme4ss_results <- function(tt){
         & (var1 == "(Intercept)")
         & (is.na(var2))
         ) 
-      %>% select(sdcor) 
+      %>% dplyr:::select(sdcor) 
       %>% as.numeric()
     )
     lme4ss_df[i,"phylo_cor"] <- (covmat 
@@ -82,7 +82,7 @@ lme4ss_results <- function(tt){
         & (var1 == "(Intercept)")
         & (var2 == "X")
         ) 
-      %>% select(sdcor) 
+      %>% dplyr:::select(sdcor) 
       %>% as.numeric()
     )
     B0 <- coef(summary(lme4_obj[[1]]))["(Intercept)","Estimate"]
@@ -106,14 +106,14 @@ lme4ss_data <- lme4ss_results(lme4ss_res)
 glmmTMB_path <- "./datadir/glmmTMB/"
 glmmTMBss_res <- list.files(path = glmmTMB_path, pattern = "ss")
 glmmTMBss_results <- function(tt){
-  glmmTMBss_df <- data.frame(resid = numeric(300)
-    , phylo_X = numeric(300)
-    , phylo_int = numeric(300)
-    , phylo_cor = numeric(300)
-    , B0 = numeric(300)
-    , B1 = numeric(300)
-    , model = numeric(300)
-    , time = numeric(300)
+  glmmTMBss_df <- data.frame(resid = numeric(length(tt))
+    , phylo_X = NA
+    , phylo_int = NA
+    , phylo_cor = NA
+    , B0 = NA
+    , B1 = NA
+    , model = NA
+    , time = NA
     , convergence = NA
   )
   for(i in 1:length(tt)){
@@ -131,11 +131,13 @@ glmmTMBss_results <- function(tt){
     glmmTMBss_df[i,"B1"] <- as.numeric(between(0, B1-1.96*B1se, B1+1.96*B1se))
     glmmTMBss_df[i,"model"] <- tt[i]
     glmmTMBss_df[i,"time"] <- glmmTMB_obj[[2]][[1]]
+    glmmTMBss_df[i,"convergence"] <- glmmTMB_obj[[1]]$fit$convergence
   }
   return(glmmTMBss_df)
 }
 
 glmmTMBss_data <- glmmTMBss_results(glmmTMBss_res)
+# glmmTMBss_data <- glmmTMBss_data %>% filter(convergence == 0)
 ### collect brms ----
 
 brms_path <- "./datadir/brms/"
@@ -237,12 +239,12 @@ lme4ms_results <- function(tt){
 	  covmat <- as.data.frame(lme4::VarCorr(lme4_obj[[1]]))
 	  lme4ms_df[i,"resid"] <- (covmat 
       %>% filter(grp=="Residual") 
-	    %>% select(sdcor) 
+	    %>% dplyr:::select(sdcor) 
 	    %>% as.numeric()
 	  )
 	  lme4ms_df[i, "phylo_X"] <- (covmat 
 	    %>% filter((grp=="sp") & (var1 =="X")) 
-	    %>% select(sdcor) 
+	    %>% dplyr:::select(sdcor) 
 	    %>% as.numeric()
 	  )
 	  lme4ms_df[i, "phylo_int"] <- (covmat 
@@ -250,7 +252,7 @@ lme4ms_results <- function(tt){
 	      & (var1 == "(Intercept)")
 	      & (is.na(var2))
 	      ) 
-	    %>% select(sdcor) 
+	    %>% dplyr:::select(sdcor) 
 	    %>% as.numeric()
 	  )
 	  lme4ms_df[i,"phylo_cor"] <- (covmat 
@@ -258,17 +260,17 @@ lme4ms_results <- function(tt){
 	      & (var1 == "(Intercept)")
 	      & (var2 == "X")
 	      ) 
-	    %>% select(sdcor) 
+	    %>% dplyr:::select(sdcor) 
 	    %>% as.numeric()
 	  )
 	  lme4ms_df[i,"phylo_interaction"] <- (covmat
 	    %>% filter((grp=="sp:site"))
-	    %>% select(sdcor)
+	    %>% dplyr:::select(sdcor)
 	    %>% as.numeric()
 	  )
 	  lme4ms_df[i, "species_X"] <- (covmat 
 	    %>% filter((grp=="obs") & (var1 =="X"))
-	    %>% select(sdcor)
+	    %>% dplyr:::select(sdcor)
 	    %>% as.numeric()
 	  )
 	  lme4ms_df[i, "species_int"] <- (covmat 
@@ -276,7 +278,7 @@ lme4ms_results <- function(tt){
 	      & (var1 == "(Intercept)")
 	      & (is.na(var2))
 	      ) 
-	    %>% select(sdcor) 
+	    %>% dplyr:::select(sdcor) 
 	    %>% as.numeric()
 	  )
 	  lme4ms_df[i,"species_cor"] <- (covmat 
@@ -284,12 +286,12 @@ lme4ms_results <- function(tt){
 	      & (var1 == "(Intercept)")
 	      & (var2 == "X")
 	      ) 
-	    %>% select(sdcor) 
+	    %>% dplyr:::select(sdcor) 
 	    %>% as.numeric()
 	  )
 	  lme4ms_df[i,"site_int"] <- (covmat 
 	    %>% filter(grp=="site")
-	    %>% select(sdcor) 
+	    %>% dplyr:::select(sdcor) 
 	    %>% as.numeric()
 	  )
 	  B0 <- coef(summary(lme4_obj[[1]]))["(Intercept)","Estimate"]

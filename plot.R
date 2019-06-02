@@ -21,7 +21,7 @@ sspar_df <- data.frame(
 
 ssdat <- (ssdat_raw
 	%>% separate(model,c("platform", "sites", "size", "seed","saveformat"), "[.]")
-	%>% select(time, platform, size, seed, resid, phylo_int, phylo_X, phylo_cor, B0, B1)
+	%>% dplyr:::select(time, platform, size, seed, resid, phylo_int, phylo_X, phylo_cor, B0, B1)
 	%>% gather(key = sdtype, value = sd, -c(platform, size, seed, time, B0, B1))
 	%>% mutate(size = factor(size
 	      , levels=c("small","med","large","xlarge"), labels=c("25","50","100","500")
@@ -94,9 +94,9 @@ mspar_df <- data.frame(
 
 msdat <- (msdat_raw
 	%>% separate(model,c("platform", "sites", "size", "seed", "saveformat"),"[.]")
-	%>% select(-c(sites,seed,saveformat))
+	%>% dplyr:::select(-c(sites,seed,saveformat))
 	%>% filter((convergence != 1) | is.na(convergence))
-	%>% select(-convergence)
+	%>% dplyr:::select(-convergence)
 	%>% gather(key=sdtype, value=sd, -c(platform,size,time,B0,B1))
 	%>% mutate(size = factor(size,
 			levels=c("small","med","large","xlarge"), labels=c("25","50","100","500")

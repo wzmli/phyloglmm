@@ -16,7 +16,7 @@ Vphy <- vcv(phy)
 # Generate environmental site variable and standardize it
 X <- rnorm(n=nspp,sd=Xsd)
 
-sd.B0=1
+sd.B0=2
 sd.B1=3
 
 cormat <- matrix(c(1,rho.B01,rho.B01,1),2,2)
@@ -35,7 +35,9 @@ b.all <- MASS::mvrnorm(n=1
 b0 <- b.all[1:nspp] 
 b1 <- b.all[(nspp+1):(2*nspp)]
 
-mu <- exp(b0+b1*X)
+res <- rnorm(length(b0),mean=0,sd=1)
+
+mu <- exp(b0+b1*X + res)
 
 print(summary(mu))
 
