@@ -8,6 +8,7 @@ library(brms)
 library(tidyr)
 library(phylolm)
 library(phyr)
+library(glmmTMB)
 
 #### Collect gls results ----
 
@@ -219,19 +220,19 @@ ssdat <- rbind(gls_data, phylolm_data, lme4ss_data, glmmTMBss_data)#, brmsss_dat
 lme4_path <- "./datadir/lme4/"
 lme4ms_res <- list.files(path = lme4_path, pattern = "ms")
 lme4ms_results <- function(tt){
-	lme4ms_df <- data.frame(resid = numeric(468)
-		, phylo_X = numeric(468)
-		, phylo_int = numeric(468)
-		, phylo_cor = numeric(468)
-		, phylo_interaction = numeric(468)
-		, species_X = numeric(468)
-		, species_int = numeric(468)
-		, species_cor = numeric(468)
-		, site_int = numeric(468)
-		, B0 = numeric(468)
-		, B1 = numeric(468)
-		, model = numeric(468)
-		, time = numeric(468)
+	lme4ms_df <- data.frame(resid = numeric(length(tt))
+		, phylo_X = NA
+		, phylo_int = NA
+		, phylo_cor = NA
+		, phylo_interaction = NA
+		, species_X = NA
+		, species_int = NA
+		, species_cor = NA
+		, site_int = NA
+		, B0 = NA
+		, B1 = NA
+		, model = NA
+		, time = NA
 		, convergence = NA
 		)
 	for(i in 1:length(tt)){
@@ -402,19 +403,19 @@ phyr_data <- phyr_results(phyr_res)
 glmmTMB_path <- "./datadir/glmmTMB/"
 glmmTMB_res <- list.files(path = glmmTMB_path, pattern = "ms")
 glmmTMBms_results <- function(tt){
-  glmmTMBms_df <- data.frame(resid = numeric(400)
-    , phylo_X = numeric(400)
-    , phylo_int = numeric(400)
-    , phylo_cor = numeric(400)
-    , phylo_interaction = numeric(400)
-    , species_X = numeric(400)
-    , species_int = numeric(400)
-    , species_cor = numeric(400)
-    , site_int = numeric(400)
-    , B0 = numeric(400)
-    , B1 = numeric(400)
-    , model = numeric(400)
-    , time = numeric(400)
+  glmmTMBms_df <- data.frame(resid = length(tt)
+    , phylo_X = NA
+    , phylo_int = NA
+    , phylo_cor = NA
+    , phylo_interaction = NA
+    , species_X = NA
+    , species_int = NA
+    , species_cor = NA
+    , site_int = NA
+    , B0 = NA
+    , B1 = NA
+    , model = NA
+    , time = NA
     , convergence = NA
   )
   for(i in 1:length(tt)){
@@ -438,6 +439,8 @@ glmmTMBms_results <- function(tt){
     glmmTMBms_df[i,"B1"] <- as.numeric(between(0, B1-1.96*B1se, B1+1.96*B1se))
     glmmTMBms_df[i,"model"] <- tt[i]
     glmmTMBms_df[i,"time"] <- glmmTMB_obj[[2]][[1]]
+    glmmTMBms_df[i,"convergence"] <- glmmTMB_obj[[1]]$fit$convergence
+    
   }
   return(glmmTMBms_df)
 }

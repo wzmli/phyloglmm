@@ -46,7 +46,7 @@ if(numsite == "ms"){
   , phylonm = c("sp", "sp:site")
   , doFit=TRUE
   , dispformula = ~1
-  , control=glmmTMBControl(optCtrl=list(trace=1))
+  , control=glmmTMBControl(optCtrl=list(trace=1,iter.max=1e4,eval.max=1e4))
   , REML = FALSE
   ) 
 }
