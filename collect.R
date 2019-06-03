@@ -313,19 +313,19 @@ lme4ms_data <- lme4ms_results(lme4ms_res)
 pez_path <- "./datadir/pez/"
 pez_res <- list.files(path = pez_path)
 pez_results <- function(tt){
-  pez_df <- data.frame(resid = numeric(227)
-    , phylo_X = numeric(227)
-    , phylo_int = numeric(227)
+  pez_df <- data.frame(resid = numeric(length(tt))
+    , phylo_X = NA
+    , phylo_int = NA
     , phylo_cor = NA
-    , phylo_interaction = numeric(227)
-    , species_X = numeric(227)
-    , species_int = numeric(227)
+    , phylo_interaction = NA
+    , species_X = NA
+    , species_int = NA
     , species_cor = NA
-    , site_int = numeric(227)
-    , B0 = numeric(227)
-    , B1 = numeric(227)
-    , model = numeric(227)
-    , time = numeric(227)
+    , site_int = NA
+    , B0 = NA
+    , B1 = NA
+    , model = NA
+    , time = NA
     , convergence = NA
   )
   for(i in 1:length(tt)){
@@ -357,19 +357,19 @@ pez_data <- pez_results(pez_res)
 phyr_path <- "./datadir/phyr/"
 phyr_res <- list.files(path = phyr_path)
 phyr_results <- function(tt){
-  phyr_df <- data.frame(resid = numeric(210)
-                       , phylo_X = numeric(210)
-                       , phylo_int = numeric(210)
+  phyr_df <- data.frame(resid = numeric(length(tt))
+                       , phylo_X = NA
+                       , phylo_int = NA
                        , phylo_cor = NA
-                       , phylo_interaction = numeric(210)
-                       , species_X = numeric(210)
-                       , species_int = numeric(210)
+                       , phylo_interaction = NA
+                       , species_X = NA
+                       , species_int = NA
                        , species_cor = NA
-                       , site_int = numeric(210)
-                       , B0 = numeric(210)
-                       , B1 = numeric(210)
-                       , model = numeric(210)
-                       , time = numeric(210)
+                       , site_int = NA
+                       , B0 = NA
+                       , B1 = NA
+                       , model = NA
+                       , time = NA
                        , convergence = NA
   )
   for(i in 1:length(tt)){
