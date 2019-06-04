@@ -207,7 +207,7 @@ mkBlist <- function (x, frloc, phylonm,phyloZ, drop.unused.levels = TRUE)
     # sm <- t(sm)
     }
     # bmat <- kronecker(kronecker(diag(lkr),phyloZ),diag(rkr))
-    bmat <- kronecker(diag(lkr),phyloZ)
+    bmat <- kronecker(phyloZ,diag(lkr))
  #   if(nrow(sm) == nspp*nsite){
   #    sm <- t(sm[ff,])
   #  }

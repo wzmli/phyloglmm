@@ -108,7 +108,7 @@ fit.glmmTMB.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R glmmT
 	$(run-R)
 
 fit.lme4.ss.large.2.Rout: fit_tmb.R
-fit.glmmTMB.ms.small.2.Rout: fit_tmb.R
+fit.glmmTMB.ms.large.62.Rout: fit_tmb.R
 fit.glmmTMB.ss.xlarge.2.Rout: fit_tmb.R
 
 ### pez can only fit multiple sites
@@ -130,7 +130,7 @@ fit.phyr.ms.small.1.Rout: fit_phyr.R
 
 fit.pez.ms.small.1.Rout: fit_pez.R
 
-fit.lme4.ms.small.1.Rout: phyloglmm.R
+fit.lme4.ms.small.2.Rout: phyloglmm.R
 
 compare.pez.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R compare_pez.R
 	$(run-R)

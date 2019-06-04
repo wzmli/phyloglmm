@@ -156,22 +156,22 @@ gg_mscoverage <- (ggplot(data=ms_coverage
            , ymax=0.95 + 2*sqrt(0.95*0.05/100), alpha=0.2)
 )
 
-print(gg_mscoverage 	+ scale_color_manual(values=c("Gray","Purple","Dark Blue","Orange"))
+print(mscoverage<- gg_mscoverage 	+ scale_color_manual(values=c("Gray","Purple","Dark Blue","Orange"))
 )
 
-aa <- readRDS("datadir/lme4_ms_small_profile.RDS")
-aa_filter <- (aa
-  %>% filter(convergence==0)
-  %>% mutate(platform = "lme4_profile"
-      , size = factor(25)
-      , B0=between(0,B0_lower,B0_upper)
-      , B1 = between(0, B1_lower, B1_upper)
-             )
-  %>% group_by(platform,size)
-  %>% summarise(B0_coverage=mean(B0,na.rm=TRUE)
-                ,B1_coverage = mean(B1,na.rm=TRUE)
-                )
-  %>% gather(key=fixed_parameter, value=coverage, -c(platform,size))
-)
-
-profile_coverage <- (gg_mscoverage %+% rbind(ms_coverage,aa_filter))
+# aa <- readRDS("datadir/lme4_ms_small_profile.RDS")
+# aa_filter <- (aa
+#   %>% filter(convergence==0)
+#   %>% mutate(platform = "lme4_profile"
+#       , size = factor(25)
+#       , B0=between(0,B0_lower,B0_upper)
+#       , B1 = between(0, B1_lower, B1_upper)
+#              )
+#   %>% group_by(platform,size)
+#   %>% summarise(B0_coverage=mean(B0,na.rm=TRUE)
+#                 ,B1_coverage = mean(B1,na.rm=TRUE)
+#                 )
+#   %>% gather(key=fixed_parameter, value=coverage, -c(platform,size))
+# )
+# 
+# profile_coverage <- (gg_mscoverage %+% rbind(ms_coverage,aa_filter))
