@@ -495,7 +495,7 @@ Codes for fitting dune meadow analysis using \pkg{lme4} and \pkg{pez} are provid
 
 \begin{center}
 \begin{figure}[H]
-  \includegraphics[scale=1]{./figure/sstime.png}
+  \includegraphics[scale=0.8]{./figure/sstime.pdf}
   \caption{Comparison of speed for all fitting packages variants: layout of the packages as in Figure \ref{ssplot}}
 \label{ssplot_speed}
 \end{figure}
@@ -504,7 +504,7 @@ Codes for fitting dune meadow analysis using \pkg{lme4} and \pkg{pez} are provid
 
 \begin{center}
 \begin{figure}[H]
-  \includegraphics[scale=1]{./figure/sscoverage.png}
+  \includegraphics[scale=0.8]{./figure/sscoverage.pdf}
   \caption{Comparison of coverage probablility for fixed effect parameters. Models matching the simulation model (\pkg{lme4}, \pkg{brms} and \pkg{glmmTMB}) have coverage near the nominal value of 0.95. The black line shows the nominal coverage, and the grey ribbon the 95\% binomial confidence interval based on 100 simulated fits.}
 \label{ssplot_coverage}
 \end{figure}
@@ -531,7 +531,7 @@ PGLS, with only one parameter available, confounds all variation (phylogenetic i
 
 \begin{center}
 \begin{figure}[H]
-  \includegraphics[scale=1]{./figure/mstime.png}
+  \includegraphics[scale=0.8]{./figure/mstime.pdf}
   \caption{Comparison of multi-group model computational speed across different R packages in Table 2. Annotations as in Figure \ref{ssplot}.}
   \label{msplot_time}
 \end{figure}
@@ -540,7 +540,7 @@ PGLS, with only one parameter available, confounds all variation (phylogenetic i
 
 \begin{center}
 \begin{figure}[H]
-  \includegraphics[scale=1]{./figure/mscoverage.png}
+  \includegraphics[scale=0.8]{./figure/mscoverage.pdf}
   \caption{Comparison of multi-group model coverage across different R packages in Table 2. Annotations as in Figure \ref{ssplot}.}
   \label{msplot_coverage}
 \end{figure}
@@ -549,7 +549,7 @@ PGLS, with only one parameter available, confounds all variation (phylogenetic i
 
 Multi-group model fits on the other hand, are much more similar across platforms (only the more powerful subset of platforms can fit these models at all, and the fitting models are closer to the true simulation model).
 Similar to the single group fits, \pkg{lme4} and \pkg{glmmTMB} match the simulation model provides good estimates for all parameters except the correlation ($\sigma_{\mathrm{sp_{int,slope}}}$) for small number of species (i.e. n = 25 and 50).
-The lack of correlations in \pkg{pez} and \pkg{phyr}'s statistical models does not appear to have a large effect on the estimates of the remaining parameters in the model, whereas \pkg{pez} underestimates many parameters (Figure 6).
+The lack of correlations in \pkg{pez} and \pkg{phyr}'s statistical models does not appear to have a large effect on the estimates of the remaining parameters in the model, whereas \pkg{pez} and \pkg{phyr} underestimates many parameters (Figure \ref{msplot}).
 
 Although the parameter estimates are similar across platforms for the multi-group simulation fits, computational efficiency varies enormously across platforms and sample size.
 For example, the new formulation is implemented in both \pkg{lme4} and \pkg{glmmTMB}, but \pkg{glmmTMB} is almost an order of magnitude faster than \pkg{lme4}.
