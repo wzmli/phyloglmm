@@ -231,7 +231,7 @@ The PC matrix is inferred from the topology of the evolutionary tree by quantify
 
 \subsection*{Phylogenetic generalized linear mixed model}
 Alternatively, one can use the generalized linear mixed effects modeling (GLMM) framework \citep{lynch1991methods}.
-The generalized linear mixed effect model is an extension of the classic regression model, a kind of hierarchical linear model that can flexibly incorporate more than one kind of variability through random effects and for non-Gaussian responses.
+The generalized linear mixed effect model is an extension of the classic regression model, a kind of hierarchical linear model that can flexibly incorporate more than one kind of variability through random effects and allows for non-Gaussian responses.
 The typical GLMM has the form:
 \begin{equation}
 \begin{aligned}
@@ -301,7 +301,7 @@ For example, for the phylogeny in figure \ref{fig:tree}, the corresponding $\bS$
   \e_3 \\
   \e_4 \\
 \end{blockarray}
- \]
+\]
 % \begin{pmatrix}
 % \e_1 \\
 % \e_2 \\
@@ -318,7 +318,7 @@ The phylogenetic variability corresponding to species 1 is $\ell_1 \e_1 + \ell_2
 
 The $\bS$ matrix is the product of an $n \times b$ indicator matrix $\bS_{ind}$ of branch indices and a vector $\bell$ of square roots of branch lengths:
 
-\begin{align}
+\[
 \bS_{ind} = \begin{bmatrix}
 1 & 1 & 0 & 0 \\ 
 1 & 0 & 1 & 0 \\ 
@@ -331,8 +331,7 @@ The $\bS$ matrix is the product of an $n \times b$ indicator matrix $\bS_{ind}$ 
 \ell_3 \\
 \ell_4 
 \end{bmatrix} .
-\label{eq:S}
-\end{align}
+\]
 $\bS_{ind}$ is a binary (indicator) matrix that describes whether a particular branch occurs in the history of a focal species. 
 $\bS \bS^T$ gives the variance-covariance matrix of the phylogeny. 
 
@@ -346,16 +345,16 @@ where $\ast$ is the Khatri-Rao product \citep{khatri1968solutions};, $\bS$ is th
 
 For example, using the phylogeny above (figure \ref{fig:tree}), if we begin with a raw model matrix corresponding to a random-slope model, 
 
-\begin{align}
+\[
 \bX = \begin{bmatrix}
 1 & t_1  \\ 
 1 & t_2  \\ 
 1 & t_3 
 \end{bmatrix} 
-\end{align}
+\]
 then the term-wise phylogenetic random effects model matrix is,
 
-\begin{align}
+\[
 \bZ^{C}_{i} = (\bS^{\top}\bJ^{\top}_{i} \ast \bX^{\top}_{i})^{\top} =
 \left[
 \left(
@@ -383,7 +382,7 @@ t_1 & t_2 & t_3
 \ell_{1} & \ell_{1}t_2 & 0 & 0 & \ell_{3} & \ell_{3}t_2 & 0 & 0 \\
 0 & 0 & 0 & 0 & 0 & 0 & \ell_{4} & \ell_{4}t_3
 \end{bmatrix}.
-\end{align}
+\]
 
 
 % 
@@ -405,35 +404,38 @@ t_1 & t_2 & t_3
 \subsection*{Simulation}
 \subsubsection*{Single group model}
 
-We generated test data based on the random slopes mixed model formulation (\ref{eq:glmm}) with a single response variable $\bY$ and a single continuous predictor variable $\bX$ ($\bX$ is a $n \times 2$ matrix) for $n$ = 25, 50, and 100 species.
-For simplicity, the response variable $\bY$ is conditionally normally distributed (i.e. Gaussian distribution with an identity link function) , corresponding to a linear mixed effect model. 
-For the first set of simulation, we simulate one observation per species.
+We generated test data based on the random slopes mixed model formulation (\ref{eq:glmm}) with a single response variable $\bY$ and a single continuous predictor variable $\bm{t}$ for $n$ = 25, 50, and 100 species.
+For simplicity, the response variable $\bY$ is conditionally normally distributed (i.e. $\bm{D}$ is a Gaussian distribution and $g$ is the identity link function) , corresponding to a linear mixed effect model. 
+For the first set of simulations, we simulate one observation per species.
 % For wider range of comparisons, we simulate one observation ($X_i,Y_i$) per species.
 Thus, the full simulation model is as follows:
-%%% CONT HERE, DO I WANT TO KEEP THE SAME NAMING?
-\begin{align}
-\bY & = (\beta_0 + b_{\mathrm{phy_{int}}}) + (\beta_1 + b_{\mathrm{phy_{slope}}}) X + \besp  \label{eq:ss_sim}\\\
+\begin{equation}
+\begin{aligned}
+\bY & = (\beta_0 + b_{\mathrm{phy_{int}}}) + (\beta_1 + b_{\mathrm{phy_{slope}}}) \bm{t} + \besp \\\
 (b_{\mathrm{phy_{int}}}, b_{\mathrm{phy_{slope}}}) & \sim \textrm{MVN} \left( 0, \begin{bmatrix}
-\sigma^2_{\mathrm{phy_{int}}} & \sigma_{\mathrm{phy_{int},phy_{slope}}} \\ 
-\sigma_{\mathrm{phy_{int},phy_{slope}}} & \sigma^2_{\mathrm{phy_{slope}}}
+\Sigma_{\mathrm{phy_{int}}} & \Sigma_{\mathrm{phy_{int},phy_{slope}}} \\ 
+\Sigma_{\mathrm{phy_{int},phy_{slope}}} & \Sigma_{\mathrm{phy_{slope}}}
 \end{bmatrix} 
 \right) \\ 
 \besp & \sim \textrm{N} ( 0 , \sigma_{\epsilon}^2) .
-\end{align}
-The model contains two fixed effect parameters ($\beta_0$ and $\beta_1$), three random effect parameters (phylogenetic random intercept variance, phylogenetic random slope variance and covariance between phylogenetic random slope and intercept) and residual variance.  
-The covariance between phylogenetic random intercept and slope measures the correlation of phylogenetic dependency variability of the size in effect and outcome (i.e. if the correlation is positive, this represents similar species have similiar relative intercept and slope).
-Predictor and intercept level random effect of species are not applicable in this simulation setting because there is no variation at the species level (i.e. single observation per species).
+\label{eq:single_glmm}
+\end{aligned}
+\end{equation}
+The model contains two fixed effect parameters ($\beta_0$ and $\beta_1$), three random effect parameters (phylogenetic random intercept variance $\Sigma_{\mathrm{phy}_{int}}$, phylogenetic random slope variance $\Sigma_{\mathrm{phy}_{slope}}$ and covariance between phylogenetic random slope and intercept $\Sigma_{\mathrm{phy_{int},phy_{slope}}}$) and residual variance ($\sigma_{\epsilon}^2$).  
+The covariance between phylogenetic random intercept and slope measures the correlation of phylogenetic dependency variability in regression effect ($b_{\mathrm{phy_{slope}}}$) and response ($b_{\mathrm{phy_{int}}}$); i.e. if a positive correlation indicates that similar species have similiar relative intercepts and slopes.
+Predictor-level and intercept-level random effects of species are not applicable in this simulation setting because there is no variation at the species level (i.e. there is only a single observation per species).
 
 \subsubsection*{Multi-group model}
 
 We extend the simulation model by adding multiple groups where each group has one observation per species. 
-The multi-group model is a generalization of multiple-site models used in the community ecology literature to model phylogenetic attraction (phylogenetically related species are more likely to occur in the same community). 
-The multi-group full model is the following: 
-\begin{align}
-\bY & = (\beta_0 + b_{\mathrm{phy_{int}}} + b_{\mathrm{sp_{int}}} + b_{\mathrm{group}}) + (\beta_1 + b_{\mathrm{phy_{slope}}} + b_{\mathrm{sp_{slope}}}) X + b_{\mathrm{sp:group}} + \besp \label{eq:ms_sim}\\
+The multi-group model is a generalization of multiple-site models used in community ecology to model phylogenetic attraction (measuing the tendency of phylogenetically related species to occur in the same community). 
+The multi-group full model is as follows: 
+\begin{equation}
+\begin{aligned}
+\bY & = (\beta_0 + b_{\mathrm{phy_{int}}} + b_{\mathrm{sp_{int}}} + b_{\mathrm{group}}) + (\beta_1 + b_{\mathrm{phy_{slope}}} + b_{\mathrm{sp_{slope}}}) \bm{t} + b_{\mathrm{sp:group}} + \besp \\
 (b_{\mathrm{phy_{int}}}, b_{\mathrm{phy_{slope}}}) & \sim \textrm{MVN} \left( 0, \begin{bmatrix}
 \Sigma_{\mathrm{phy_{int}}} & \Sigma_{\mathrm{phy_{int},phy_{slope}}} \\ 
-\Sigma_{\mathrm{phy_{int},phy_{slope}}} & \Sigma^2_{\mathrm{phy_{slope}}}
+\Sigma_{\mathrm{phy_{int},phy_{slope}}} & \Sigma_{\mathrm{phy_{slope}}}
 \end{bmatrix}
 \right) \\
 (b_{\mathrm{sp_{int}}}, b_{\mathrm{sp_{slope}}}) & \sim \textrm{MVN} \left( 0, \begin{bmatrix}
@@ -444,16 +446,18 @@ The multi-group full model is the following:
 b_{\mathrm{group}} & \sim \textrm{MVN} ( 0 , \Sigma_{\mathrm{group}}) \\
 b_{\mathrm{sp:group}} & \sim \textrm{MVN} (0, \mathrm{I}_{\mathrm{group}} \otimes \Sigma_{phy}) \\
 \besp & \sim \textrm{N} ( 0 , \sigma_{\epsilon}^2),
-\end{align}
-where $\otimes$ is the Kronecker product.
+\label{eq:multiple_glmm}
+\end{aligned}
+\end{equation}
+where $\textrm{I}_{\textrm{group}}$ is a indicator matrix of groups; and $\otimes$ is the Kronecker product.
 
-The multi-group full simulation model has five additional random effects (predictor and intercept level random effect of species variance and their covariance, random intercept of group and random intercept of species-group interaction) compared to the single--group full model.
-Predictor and intercept level random effect of species are now applicable in the multi-group model setting because there are multiple observations per species, thus there exist some form of variation at the species level.
-Random intercept of species--group interactions describes whether the species within a group are more similar on average than occurring by chance, equivalent to phylogenetic attraction as described in \cite{helmus2007separating}. 
+The multi-group full simulation model has five additional random effects (predictor-level ($\sigma^2_{\mathrm{sp_{slope}}}$) and intercept-level ($\sigma^2_{\mathrm{sp_{int}}}$) random effect of species variance and their covariance ($\sigma_{\mathrm{sp_{int},sp_{slope}}}$), random intercept of group ($b_{\mathrm{group}}$)and random intercept of species-group interaction ($b_{\mathrm{sp:group}}$)) compared to the single--group full model.
+Predictor-level and intercept-level random effects of species are applicable in the multi-group model setting because there are multiple observations per species, thus we can quantify variation within-species distinct from residual variation.
+Random intercept of species--group interactions describes whether the species within a group are more similar on average than expected by chance, equivalent to phylogenetic attraction \citep{helmus2007separating}. 
 
 \subsection*{Platforms}
 
-Our algorithmic approach is general and could be implemented in a wide range of computational platforms that support independent latent variables as random effects in generalized linear mixed model. 
+Our algorithmic approach is general and could be implemented in a wide range of computational platforms that support independent latent variables as random effects in a generalized linear mixed model. 
 We implemented our approach using the R packages \pkg{lme4} \citep{bates2015fitting} and \pkg{glmmTMB} \citep{brooks2017glmmTMB}.
 We compare our approach with five other R packages that can fit phylogenetic comparative models: \pkg{nlme} \citep{pinheiro2014r}, \pkg{phylolm} \citep{ho2014phylolm}, \pkg{pez} \citep{pearse2015pez}, and \pkg{brms} \citep{burkner2016brms}.
 % \bmb{I think nlme can do other evolutionary models as well? May not be worth mentioning ...}
@@ -461,14 +465,14 @@ We compare our approach with five other R packages that can fit phylogenetic com
 % grep("\\.",apropos("^cor[A-Z]",ignore.case=FALSE),
 % invert=TRUE,value=TRUE)
 % \end{verbatim}
-Phylogenetic generalized least squares (PGLS) (\code{gls} in \pkg{nlme}) is one of the most widely used techniques in phylogenetic comparative analysis; it fits a linear model where the covariance structure between species assumes a Brownian-motion evolutionary process (or other evolutionary process) on the tree instead of treating the residual variation as independent and identically distributed. 
-Phylogenetic generalized linear models (PGLM) (\code{phyloglm} in \pkg{phylolm}) are a slightly more flexible variation of PGLS that can allow observational residuals and non-Gaussian response variables.
-Both packages can model other evolutionary processes and different correlation structures (i.e. Pagel's $\lambda$, Blomberg's $K$ etc.), but we restrict our PGLS fits to the simple BM correlation. 
-Neither PGLS nor PGLM can handle multiple observations within a species or random slopes.
-One of the few packages that currently fit phylogenetic correlations to predictor level variation is \pkg{pez} (and very recently \pkg{phyr}), which can handle adding additional uncorrelated random slopes and interactions with intercept.
+Phylogenetic generalized least squares (PGLS) (\code{gls} in \pkg{nlme}) is one of the most widely used techniques in phylogenetic comparative analysis; it fits a linear model where the covariance structure between species assumes a evolutionary process on the tree typically Brownian-motion, but other processes can be used instead of treating the residual variation as independent.
+Phylogenetic generalized linear models (PGLM) (\code{phyloglm} in \pkg{phylolm}) are a slightly more flexible variation of PGLS that can allow for both phylogenetic and residual variation, and non-Gaussian response variables.
+Both \code{gls} and \code{phylolm} can model other evolutionary processes and different correlation structures (e.g. Pagel's $\lambda$ or Blomberg's $K$), but we restrict our PGLS fits to the simple BM correlation. 
+Neither PGLS nor PGLM can handle random slopes or multiple observations within a species.
+One of the few packages that currently fit phylogenetic correlations to predictor level variation is \pkg{pez} (and very recently \pkg{phyr}), which can handle additional random slopes ($\Sigma_{\mathrm{phy_{slope}}}$) and random intercept of species-group interactions ($b_{\mathrm{sp:group}}$) but cannot handle phylogenetic random slope-intercept covariance ($\Sigma_{\mathrm{phy_{int},phy_{slope}}}$).
 Lastly, Bayesian phylogenetic GLMMs using Markov chain Monte Carlo (MCMC) can handle all of the cases described above. 
 However, MCMC is often computationally expensive for GLMMs compared to platforms using deterministic optimization.
-\pkg{MCMCglmm} \citep{hadfield2010general} is the most commonly used Bayesian phylogenetic GLMM, but we will instead use \pkg{brms}, which uses a more computationally efficient MCMC technique called Hamiltonian Monte Carlo (HMC) algorithm \citep{duane1987hybrid}.
+\pkg{MCMCglmm} \citep{hadfield2010general} is the most widely used Bayesian phylogenetic GLMM, but we will instead use \pkg{brms}, which uses a more computationally efficient MCMC technique called Hamiltonian Monte Carlo (HMC)\citep{duane1987hybrid}.
  
 % Table \mli{ref something} provides the statistically equivalent fitting capabilities of common/existing phylogenetic methods.
 \begin{table}[]
@@ -487,19 +491,21 @@ Multi-group &  &  & X & X & X & X & X \\ \hline
 \end{table}
 
 \subsection*{Simulation and evaluations}
-We simulated 100 phylogenetic trees for each sample size (n = 25, 50, 100 and additional n = 500 for multi-group model) and incorporated simulation parameters (illustrated in Figure \ref{ssplot} and Figure \ref{msplot}) to simulate responses from the simulation model.
-Each realization was fitted to all model variant using different platforms.
+We simulated 100 phylogenetic trees for each sample size (n = 25, 50, 100 and an additional n = 500 for the multi-group model) to simulate responses from the simulation model (\ref{eq:single_glmm}, \ref{eq:multiple_glmm}). Simulation parameters are illustrated in Figure \ref{ssplot} and Figure \ref{msplot}.
+Each realization was fitted to all model variants using a range of different platforms.
 Table \ref{table:platform} shows the parameters that are estimable for each platform. 
 We only evaluated the goodness of fit for model fits that passed the convergence tests implemented by the package.
-For Bayesian GLMM, we combined two criteria to assess convergence: we required a value of the Gelman and Rubin statistic less than 1.1 and an effective sample size (ESS) greater than 1000 for the fixed effect parameters ($\beta_{0} \ \textrm{and} \ \beta_{1}$) for each replication. 
+For Bayesian GLMM, to assess convergence we required a value of the Gelman-Rubin statistic less than the recommended threshold 1.1. We included another convergence criteria (due to the recent critique of the Gelman-Rubin recommended threshold \citep{vats2018revisiting}) of effective sample size (ESS) greater than 1000 for the fixed effect parameters ($\beta_{0} \ \textrm{and} \ \beta_{1}$) for each replication \citep{vehtari2019rank}. 
 For each replication we sample two chains starting with 10000 iterations. 
 %% TODO MAKE SURE THIS IS CORRECT!
-We first evaluate our estimates by looking at the distribution of the estimated values (maximum likelihood estimates for non-Bayesian platforms and posterior medians for Bayesian platforms -- this gives us an idea of bias and variation (i.e. quality of the point estimate).
-Then we look at frequentist coverage, to assess quality of confidence intervals.
+We first evaluate our estimates by looking at the distribution of the estimated values (maximum likelihood estimates for non-Bayesian platforms and posterior medians for Bayesian platforms) to quantify bias and variance (i.e. quality of the point estimate).
+We then examine at frequentist coverage, to assess the quality of the confidence intervals.
 Coverage refers to the frequency with which the computed confidence intervals include the true values of parameters.
-We used 90\% (Wald and profile) confidence intervals and quantile-based intervals (for Bayesian GLMM) to evaluate coverage.
+We used 95\% (Wald and profile) confidence intervals for deterministic methods and quantile-based intervals (for Bayesian GLMM) to evaluate coverage.
 We also compare computational speed between different platforms to evaluate the efficiency of the platforms and methods. 
 
+
+%% CONT HERE, taking a break
 \section*{Results}
 
 We used our method to reproduce the examples in [chapter 11] of \cite{garamszegi2014modern} using phylogenetic GLMMs based on ``lme4'' and ``glmmTMB'' (for more details see example in \cite{michael_li_2019_2639887}).
