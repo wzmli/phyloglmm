@@ -548,7 +548,7 @@ Estimates for fixed effect parameters ($\beta_0$ and $\beta_1$) approach nominal
 %% \mli{Is there a figure for this?....Ok, maybe We don't need it.}
 
 In general, models that are insufficiently flexible to match the true simulation model (PGLM and PGLS) will try to fit the data with the parameters available. 
-PGLM (which lacks the phylogenetic slope parameter) provides reasonably good estimates for the phylogenetic intercept standard deviation parameter ($\sigma_{\mathrm{phy_{int}}}$) but overestimates the residual standard deviation; the estimates for the intercept ($\beta_0$) are slightly conservative (90\% coverage of the 95\% CI with 100 species) and the fixed slope parameter ($\beta_1$) has poor coverage ($<$ 60\%).
+PGLM (which lacks the phylogenetic slope parameter) provides reasonably good estimates for the phylogenetic intercept standard deviation parameter ($\sigma_{\mathrm{phy_{int}}}$) but overestimates the residual standard deviation; the estimates for the intercept ($\beta_0$) are slightly overconfident (the coverage $\approx$ 90\% with 100 species) and the fixed slope parameter ($\beta_1$) has poor coverage ($<$ 60\%).
 PGLS, with only one parameter available, confounds all variation (phylogenetic intercept, slope and residual variation) into the phylogenetic intercept parameter, resulting in overestimating the phylogenetic intercept and over-covering for $\beta_0$, and under-covering for $\beta_1$.
 
 \subsection*{Multi-group model simulations}
