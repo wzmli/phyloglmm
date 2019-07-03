@@ -76,8 +76,8 @@ ss_coverage <- (ssdat
 		, B1_coverage = mean(B1, na.rm=TRUE)
 		)
 	%>% gather(key=fixed_parameter, value=coverage, -c(Platform, size))
-	%>% mutate(Parameter = factor(fixed_parameter, labels=c(expression(italic("b")[0])
-	                                                        , expression(italic("b")[1])
+	%>% mutate(Parameter = factor(fixed_parameter, labels=c(expression(beta[0])
+	                                                        , expression(beta[1])
 	                                                        ))
 	)
 )
@@ -87,14 +87,17 @@ gg_sscoverage <- (ggplot(data=ss_coverage
 	)
 	+ facet_wrap(~Platform, nrow = 1)
 	+ geom_point(size=4)
-	+ scale_shape_discrete("Parameters",labels=c(expression(italic("b")[0])
-	                              , expression(italic("b")[1])))
+	+ scale_shape_discrete("Parameters",labels=c(expression(beta[0])
+	                              , expression(beta[1])))
 	+ geom_hline(aes(yintercept=0.95))
 	# + ggtitle("Single Site coverage")
 	+ scale_color_manual(values=c("Black","Red","Dark Blue","Dark Green","Orange"))
 	+ annotate("rect", xmin=0, xmax=4
 	           , ymin=0.95 - 2*sqrt(0.95*0.05/100)
 	           , ymax=0.95 + 2*sqrt(0.95*0.05/100), alpha=0.2)
+  + theme(panel.spacing = unit(0,'lines'))
+	+ xlab("Number of Species")
+	+ ylab("Coverage")
 )
 
 print(gg_sscoverage)
@@ -112,12 +115,26 @@ msdat <- (msdat_raw
 	%>% filter((convergence != 1) | is.na(convergence))
 	%>% dplyr:::select(-convergence)
 	%>% gather(key=sdtype, value=sd, -c(platform,size,time,B0,B1))
+	%>% filter(sd <20)
+	%>% left_join(.,mspar_df)
 	%>% mutate(size = factor(size,
 			levels=c("small","med","large","xlarge"), labels=c("25","50","100","500")
 			)
-			, platform = factor(platform, levels=c("pez","phyr","lme4", "glmmTMB"))
+			, Platform = factor(platform, levels=c("pez","phyr","lme4", "glmmTMB"))
+			, sdtype = factor(sdtype, levels=c("phylo_int","phylo_cor","phylo_X"
+			                                   , "species_int", "species_cor", "species_X"
+			                                   , "phylo_interaction", "site_int", "resid")
+			                  , labels=c(expression(paste(Sigma[phy[int]]))
+			                             , expression(paste(Sigma[phy[int-slope]]))
+			                             , expression(paste(Sigma[phy[slope]]))
+			                             , expression(paste(sigma[sp[int]]))
+			                             , expression(paste(sigma[sp[int-slope]]))
+			                             , expression(paste(sigma[sp[slope]]))
+			                             , expression(paste(Sigma[phy[sp:site]]))
+			                             , expression(paste(sigma[site]))
+			                             , expression(sigma[epsilon]))
+			)
 		)
-	%>% right_join(.,mspar_df)
 )
 
 gg_ms <- (gg_ss
@@ -137,55 +154,33 @@ gg_mstime <- (gg_sstime
 
 print(gg_mstime)
 
-
-
-ms_coverage <- (msdat
-  %>% group_by(platform, size)
-                %>% summarise(B0_coverage = mean(B0, na.rm=TRUE)
-                              , B1_coverage = mean(B1, na.rm=TRUE)
-                )
-                %>% gather(key=fixed_parameter, value=coverage, -c(platform, size))
-)
-
-
-
 ms_coverage <- (msdat
                 %>% filter(!(sd %in% c(-1,1)))
-                %>% group_by(platform, size)
+                %>% group_by(Platform, size)
                 %>% summarise(B0_coverage = mean(B0, na.rm=TRUE)
                               , B1_coverage = mean(B1, na.rm=TRUE)
                 )
-                %>% gather(key=fixed_parameter, value=coverage, -c(platform, size))
+                %>% gather(key=fixed_parameter, value=coverage, -c(Platform, size))
+                %>% mutate(Parameter = factor(fixed_parameter, labels=c(expression(beta[0])
+                                                                        , expression(beta[1])
+                ))
+                )
 )
 
 gg_mscoverage <- (ggplot(data=ms_coverage
-                         , aes(x=size, y=coverage, shape=fixed_parameter, colour=platform)
+                         , aes(x=size, y=coverage, shape=Parameter, colour=Platform)
 )
-+ facet_wrap(~platform, nrow = 1)
++ facet_wrap(~Platform, nrow = 1)
 + geom_point(size=4)
 + geom_hline(aes(yintercept=0.95))
++ scale_shape_discrete("Parameters",labels=c(expression(beta[0])
+                                             , expression(beta[1])))
 # + ggtitle("Single Site coverage")
 + annotate("rect", xmin=0, xmax=5
            , ymin=0.95 - 2*sqrt(0.95*0.05/100)
            , ymax=0.95 + 2*sqrt(0.95*0.05/100), alpha=0.2)
++ theme(panel.spacing = unit(0,'lines'))
 )
 
 print(mscoverage<- gg_mscoverage 	+ scale_color_manual(values=c("Gray","Purple","Dark Blue","Orange"))
 )
-
-# aa <- readRDS("datadir/lme4_ms_small_profile.RDS")
-# aa_filter <- (aa
-#   %>% filter(convergence==0)
-#   %>% mutate(platform = "lme4_profile"
-#       , size = factor(25)
-#       , B0=between(0,B0_lower,B0_upper)
-#       , B1 = between(0, B1_lower, B1_upper)
-#              )
-#   %>% group_by(platform,size)
-#   %>% summarise(B0_coverage=mean(B0,na.rm=TRUE)
-#                 ,B1_coverage = mean(B1,na.rm=TRUE)
-#                 )
-#   %>% gather(key=fixed_parameter, value=coverage, -c(platform,size))
-# )
-# 
-# profile_coverage <- (gg_mscoverage %+% rbind(ms_coverage,aa_filter))
