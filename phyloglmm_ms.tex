@@ -413,15 +413,15 @@ Thus, the full simulation model is as follows:
 \begin{aligned}
 \bY & = (\beta_0 + b_{\mathrm{phy_{int}}}) + (\beta_1 + b_{\mathrm{phy_{slope}}}) \bm{t} + \besp \\\
 (b_{\mathrm{phy_{int}}}, b_{\mathrm{phy_{slope}}}) & \sim \textrm{MVN} \left( 0, \begin{bmatrix}
-\Sigma_{\mathrm{phy_{int}}} & \Sigma_{\mathrm{phy_{int},phy_{slope}}} \\ 
-\Sigma_{\mathrm{phy_{int},phy_{slope}}} & \Sigma_{\mathrm{phy_{slope}}}
+\Sigma^2_{\mathrm{phy_{int}}} & \Sigma_{\mathrm{phy_{int-slope}}} \\ 
+\Sigma_{\mathrm{phy_{int-slope}}} & \Sigma^2_{\mathrm{phy_{slope}}}
 \end{bmatrix} 
 \right) \\ 
 \besp & \sim \textrm{N} ( 0 , \sigma_{\epsilon}^2) .
 \label{eq:single_glmm}
 \end{aligned}
 \end{equation}
-The model contains two fixed effect parameters ($\beta_0$ and $\beta_1$), three random effect parameters (phylogenetic random intercept variance $\Sigma_{\mathrm{phy}_{int}}$, phylogenetic random slope variance $\Sigma_{\mathrm{phy}_{slope}}$ and covariance between phylogenetic random slope and intercept $\Sigma_{\mathrm{phy_{int},phy_{slope}}}$) and residual variance ($\sigma_{\epsilon}^2$).  
+The model contains two fixed effect parameters ($\beta_0$ and $\beta_1$), three random effect parameters (phylogenetic random intercept variance $\Sigma^2_{\mathrm{phy}_{int}}$, phylogenetic random slope variance $\Sigma^2_{\mathrm{phy}_{slope}}$ and covariance between phylogenetic random slope and intercept $\Sigma_{\mathrm{phy_{int-slope}}}$) and residual variance ($\sigma_{\epsilon}^2$).  
 The covariance between phylogenetic random intercept and slope measures the correlation of phylogenetic dependency variability in regression effect ($b_{\mathrm{phy_{slope}}}$) and response ($b_{\mathrm{phy_{int}}}$); i.e. if a positive correlation indicates that similar species have similiar relative intercepts and slopes.
 Predictor-level and intercept-level random effects of species are not applicable in this simulation setting because there is no variation at the species level (i.e. there is only a single observation per species).
 
@@ -434,24 +434,24 @@ The multi-group full model is as follows:
 \begin{aligned}
 \bY & = (\beta_0 + b_{\mathrm{phy_{int}}} + b_{\mathrm{sp_{int}}} + b_{\mathrm{group}}) + (\beta_1 + b_{\mathrm{phy_{slope}}} + b_{\mathrm{sp_{slope}}}) \bm{t} + b_{\mathrm{sp:group}} + \besp \\
 (b_{\mathrm{phy_{int}}}, b_{\mathrm{phy_{slope}}}) & \sim \textrm{MVN} \left( 0, \begin{bmatrix}
-\Sigma_{\mathrm{phy_{int}}} & \Sigma_{\mathrm{phy_{int},phy_{slope}}} \\ 
-\Sigma_{\mathrm{phy_{int},phy_{slope}}} & \Sigma_{\mathrm{phy_{slope}}}
+\Sigma^2_{\mathrm{phy_{int}}} & \Sigma_{\mathrm{phy_{int-slope}}} \\ 
+\Sigma_{\mathrm{phy_{int-slope}}} & \Sigma^2_{\mathrm{phy_{slope}}}
 \end{bmatrix}
 \right) \\
 (b_{\mathrm{sp_{int}}}, b_{\mathrm{sp_{slope}}}) & \sim \textrm{MVN} \left( 0, \begin{bmatrix}
-\sigma^2_{\mathrm{sp_{int}}} & \sigma_{\mathrm{sp_{int},sp_{slope}}} \\ 
-\sigma_{\mathrm{sp_{int},sp_{slope}}} & \sigma^2_{\mathrm{sp_{slope}}}
+\sigma^2_{\mathrm{sp_{int}}} & \sigma_{\mathrm{sp_{int-slope}}} \\ 
+\sigma_{\mathrm{sp_{int-slope}}} & \sigma^2_{\mathrm{sp_{slope}}}
 \end{bmatrix}
 \right) \\
-b_{\mathrm{group}} & \sim \textrm{MVN} ( 0 , \Sigma_{\mathrm{group}}) \\
-b_{\mathrm{sp:group}} & \sim \textrm{MVN} (0, \mathrm{I}_{\mathrm{group}} \otimes \Sigma_{phy}) \\
+b_{\mathrm{group}} & \sim \textrm{MVN} ( 0 , \Sigma^2_{\mathrm{group}}) \\
+b_{\mathrm{sp:group}} & \sim \textrm{MVN} (0, \mathrm{I}_{\mathrm{group}} \otimes \Sigma^2_{phy}) \\
 \besp & \sim \textrm{N} ( 0 , \sigma_{\epsilon}^2),
 \label{eq:multiple_glmm}
 \end{aligned}
 \end{equation}
 where $\textrm{I}_{\textrm{group}}$ is a indicator matrix of groups; and $\otimes$ is the Kronecker product.
 
-The multi-group full simulation model has five additional random effects (predictor-level ($\sigma^2_{\mathrm{sp_{slope}}}$) and intercept-level ($\sigma^2_{\mathrm{sp_{int}}}$) random effect of species variance and their covariance ($\sigma_{\mathrm{sp_{int},sp_{slope}}}$), random intercept of group ($b_{\mathrm{group}}$)and random intercept of species-group interaction ($b_{\mathrm{sp:group}}$)) compared to the single--group full model.
+The multi-group full simulation model has five additional random effects (predictor-level ($\sigma^2_{\mathrm{sp_{slope}}}$) and intercept-level ($\sigma^2_{\mathrm{sp_{int}}}$) random effect of species variance and their covariance ($\sigma_{\mathrm{sp_{int-slope}}}$), random intercept of group ($b_{\mathrm{group}}$)and random intercept of species-group interaction ($b_{\mathrm{sp:group}}$)) compared to the single--group full model.
 Predictor-level and intercept-level random effects of species are applicable in the multi-group model setting because there are multiple observations per species, thus we can quantify variation within-species distinct from residual variation.
 Random intercept of species--group interactions describes whether the species within a group are more similar on average than expected by chance, equivalent to phylogenetic attraction \citep{helmus2007separating}. 
 
@@ -469,7 +469,7 @@ Phylogenetic generalized least squares (PGLS) (\code{gls} in \pkg{nlme}) is one 
 Phylogenetic generalized linear models (PGLM) (\code{phyloglm} in \pkg{phylolm}) are a slightly more flexible variation of PGLS that can allow for both phylogenetic and residual variation, and non-Gaussian response variables.
 Both \code{gls} and \code{phylolm} can model other evolutionary processes and different correlation structures (e.g. Pagel's $\lambda$ or Blomberg's $K$), but we restrict our PGLS fits to the simple BM correlation. 
 Neither PGLS nor PGLM can handle random slopes or multiple observations within a species.
-One of the few packages that currently fit phylogenetic correlations to predictor level variation is \pkg{pez} (and very recently \pkg{phyr}), which can handle additional random slopes ($\Sigma_{\mathrm{phy_{slope}}}$) and random intercept of species-group interactions ($b_{\mathrm{sp:group}}$) but cannot handle phylogenetic random slope-intercept covariance ($\Sigma_{\mathrm{phy_{int},phy_{slope}}}$).
+One of the few packages that currently fit phylogenetic correlations to predictor level variation is \pkg{pez} (and very recently \pkg{phyr}), which can handle additional random slopes ($\Sigma^2_{\mathrm{phy_{slope}}}$) and random intercept of species-group interactions ($b_{\mathrm{sp:group}}$) but cannot handle phylogenetic random slope-intercept covariance ($\Sigma_{\mathrm{phy_{int-slope}}}$).
 Lastly, Bayesian phylogenetic GLMMs using Markov chain Monte Carlo (MCMC) can handle all of the cases described above. 
 However, MCMC is often computationally expensive for GLMMs compared to platforms using deterministic optimization.
 \pkg{MCMCglmm} \citep{hadfield2010general} is the most widely used Bayesian phylogenetic GLMM, but we will instead use \pkg{brms}, which uses a more computationally efficient MCMC technique called Hamiltonian Monte Carlo (HMC)\citep{duane1987hybrid}.
@@ -508,10 +508,10 @@ We also compare computational speed between different platforms to evaluate the 
 %% CONT HERE, taking a break
 \section*{Results}
 
-We used our method to reproduce the examples in [chapter 11] of \cite{garamszegi2014modern} using phylogenetic GLMMs based on ``lme4'' and ``glmmTMB'' (for more details see example in \cite{michael_li_2019_2639887}).
+We used our method to reproduce the examples in chapter 11 of \cite{garamszegi2014modern} using phylogenetic GLMMs based on ``lme4'' and ``glmmTMB'' (for more details see example in supplement).
 We also used our method and fitted the full model of the dune meadow data recently used with \pkg{pez} \citep{li2017canfun}. 
-\pkg{lme4} and \pkg{pez} give identical results for fixed and random effect estimates, our code is approximately 120 times faster than \pkg{pez}. 
-Codes for fitting dune meadow analysis using \pkg{lme4} and \pkg{pez} are provided in the supplements. 
+\pkg{lme4} and \pkg{pez} give identical results for fixed and random effect estimates, but our code runs approximately 120 times faster than \pkg{pez}. 
+Codes for analyzing the dune meadow data using \pkg{lme4} and \pkg{pez} are provided in the supplements. 
 
 \subsection*{Single Group model simulations}
 
@@ -579,7 +579,7 @@ PGLS, with only one parameter available, confounds all variation (phylogenetic i
 
 
 Multi-group model fits on the other hand, are much more similar across platforms (only the more powerful subset of platforms can fit these models at all, and the fitting models are closer to the true simulation model).
-Similar to the single group fits, \pkg{lme4} and \pkg{glmmTMB} match the simulation model provides good estimates for all parameters except the correlation ($\sigma_{\mathrm{sp_{int,slope}}}$) for small number of species (i.e. n = 25 and 50).
+Similar to the single group fits, \pkg{lme4} and \pkg{glmmTMB} match the simulation model provides good estimates for all parameters except the correlation ($\sigma_{\mathrm{sp_{int-slope}}}$) for small number of species (i.e. n = 25 and 50).
 The lack of correlations in \pkg{pez} and \pkg{phyr}'s statistical models does not appear to have a large effect on the estimates of the remaining parameters in the model, whereas \pkg{pez} and \pkg{phyr} underestimates many parameters (Figure \ref{msplot}).
 
 Although the parameter estimates are similar across platforms for the multi-group simulation fits, computational efficiency varies enormously across platforms and sample size.
