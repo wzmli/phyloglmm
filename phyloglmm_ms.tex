@@ -493,7 +493,7 @@ Multi-group &  &  & X & X & X & X & X \\ \hline
 \end{table}
 
 \subsection*{Simulation and evaluations}
-We simulated 100 phylogenetic trees for each sample size (n = 25, 50, 100 and an additional n = 500 for the multi-group model) to simulate responses from the simulation model (\ref{eq:single_glmm}, \ref{eq:multiple_glmm}). Simulation parameters are illustrated in Figure \ref{ssplot} and Figure \ref{msplot}.
+We simulated 100 phylogenetic trees for each sample size (n = 25, 50, 100 and an additional n = 500 for the multi-group model) to simulate responses from the simulation model (\ref{eq:single_glmm}, \ref{eq:multiple_glmm}). All simulation parameters are illustrated with the results in Figure \ref{ssplot} and Figure \ref{msplot}. Correlation $\rho$ is used in place of covariances in the simulations.
 Each realization was fitted to all model variants using a range of different platforms.
 Table \ref{table:platform} shows the parameters that are estimable for each platform. 
 We only evaluated the goodness of fit for model fits that passed the convergence tests implemented by the package.
@@ -564,7 +564,7 @@ PGLS, with only one parameter available, confounds all variation (phylogenetic i
 
 \begin{center}
 \begin{figure}[H]
-  \includegraphics[scale=0.7]{./figure/mstime.pdf}
+  \includegraphics[scale=0.8]{./figure/mstime.pdf}
   \caption{Comparison of multi-group model computational speed across different R packages in Table 2. Annotations as in Figure \ref{ssplot}.}
   \label{msplot_time}
 \end{figure}
@@ -602,27 +602,28 @@ Comparing \pkg{glmmTMB} to \pkg{pez} and \pkg{phyr}, the median time for \pkg{gl
 
 % \bmb{say something about the implications of this [e.g. good enough for getting an overall impression of phylog. whatever-it-is but not enough for detailed description/inference about the evolutionary process?] (or maybe that should be saved for the Discussion?)}
 
-The simulations presented in this paper are an oversimplification of evolutionary processes in nature, but they are no simpler than what researchers typically use.
+The simulations presented in this paper are an oversimplification of evolutionary processes in nature, but they are at least as complex as the models that researchers typically use.
 In fact, our results showed that even simple single predictor--response multi-species model can incorporate multiple levels of complexity.  
 Fitting simpler variations can lead to unreliable estimates of the fixed effects, which are typically the quantities of interest.
 
 We have fitted models using different platforms that best match the simulation models. 
-Models that cannot match the simulation (full) model perform poorly; it is important to understand the limitations and performance of these simpler models that are restricted by the commonly used methods available.
+Models that cannot match the full simulation model perform poorly; it is important to understand the limitations and performance of these simpler models that are restricted by the commonly used methods.
 Using models that include some form of phylogenetic variation and residual variation is necessary to detect and account for correlations between species via evolutionary processes.
-Here are a few points researchers should think about when fitting phylogenetic regression models.
 
 \subsection*{Incorporating different levels of variation}
 
 % \bmb{I think you need a lot more here; what does a random slopes model mean? You have one sentence that says ``people should be thinking about random slopes''. Then you talk about correlation (which is a much more subtle/less important issue, I think).}
 
-In classic GLMM, random effects are often use to handle group (or individual) level variation by allowing for group effects. 
-In the simplest experimental design with continuous reponse observations in different levels of a discrete grouping variable, where the response may vary according to different level of the grouping variable, fitting random intercepts are often the ``go-to'' method to handle these variations.
+In classic GLMMs, random effects are used to handle group (or individual) level variation by allowing for group effects. 
+In the simplest experimental design with continuous response observations in different levels of a discrete grouping variable, where the response may vary among levels of the grouping variable, fitting random intercepts are the ``go-to'' method to handle this variation.
 The random intercept model controls the group effect in the response level by allowing different intercepts for each level of the grouping variable.
-However, random effects can be in more complicated forms as the experimental design increases (i.e observing more variables).  
+However, random effects can take more complicated forms as the experimental design becomes more complex.  
 For example, imagine observing another continuous explanatory variable in the experimental design above, where the relationship of the response and the new explanatory variable may vary according to the grouping variable.
-In this case, fitting a random slopes model is most appropriate to handle this type of variation by allowing different slopes (relationship between continuous variables) for each level of the goruping variable.
-Random slopes models are much harder to think about in practice and require sufficient amount of data, but they are relevant over a wider range of scenarios than people are currently thinking about \cite{schielzeth2008conclusions, cleasby2015quantifying,ord2010adaptation}.
-Neglecting random slopes can lead to biased fixed effect estimates with poor coverage and type I errors \citep{schielzeth2008conclusions} (parameters of interest) as shown in the simulations above.
+A random slopes model, which allows different slopes (relationship between continuous variables) for each level of the grouping variable is most appropriate to handle this type of variation.
+Random slopes models require appropriate observation or experimental designs (multiple measurements of traits and responses within each evolutionary group), and often requre more data overall for reliable estimates, but they are relevant over a wide range of scenarios \citep{schielzeth2008conclusions, cleasby2015quantifying,ord2010adaptation}.
+Neglecting random slopes can lead to biased fixed effect estimates with poor coverage and type I errors \citep{schielzeth2008conclusions} as shown in the simulations above.
+
+%% CONT HERE
 
 When analyzing relationships among species between traits, it is entirely plausible that change in effect of predictor variables have on traits are changing with respect to different grouping of species or even in phylogenetically correlated way (phylogenetic random slopes).
 Nevertheless, it is hard to account for all forms of complexities and decide if phylogenetic random effects are more approriate than simple grouping random effects, or including all of them in the model.
