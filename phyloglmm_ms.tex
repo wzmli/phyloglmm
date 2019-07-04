@@ -445,7 +445,7 @@ The multi-group full model is as follows:
 \sigma_{\mathrm{sp_{int-slope}}} & \sigma^2_{\mathrm{sp_{slope}}}
 \end{bmatrix}
 \right) \\
-b_{\mathrm{group}} & \sim \textrm{MVN} ( 0 , \Sigma^2_{\mathrm{group}}) \\
+b_{\mathrm{group}} & \sim \textrm{MVN} ( 0 , \sigma^2_{\mathrm{group}}) \\
 b_{\mathrm{sp:group}} & \sim \textrm{MVN} (0, \mathrm{I}_{\mathrm{group}} \otimes \Sigma^2_{phy}) \\
 \besp & \sim \textrm{N} ( 0 , \sigma_{\epsilon}^2),
 \label{eq:multiple_glmm}
@@ -453,7 +453,7 @@ b_{\mathrm{sp:group}} & \sim \textrm{MVN} (0, \mathrm{I}_{\mathrm{group}} \otime
 \end{equation}
 where $\textrm{I}_{\textrm{group}}$ is a indicator matrix of groups; and $\otimes$ is the Kronecker product.
 
-The multi-group full simulation model has five additional random effects (predictor-level ($\sigma^2_{\mathrm{sp_{slope}}}$) and intercept-level ($\sigma^2_{\mathrm{sp_{int}}}$) random effect of species variance and their covariance ($\sigma_{\mathrm{sp_{int-slope}}}$), random intercept of group ($b_{\mathrm{group}}$)and random intercept of species-group interaction ($b_{\mathrm{sp:group}}$)) compared to the single--group full model.
+The multi-group full simulation model has five additional random effects (predictor-level ($\sigma^2_{\mathrm{sp_{slope}}}$) and intercept-level ($\sigma^2_{\mathrm{sp_{int}}}$) random effect of species variance and their covariance ($\sigma_{\mathrm{sp_{int-slope}}}$), random intercept of group ($b_{\mathrm{group}}$) and random intercept of species-group interaction ($b_{\mathrm{sp:group}}$)) compared to the single--group full model.
 Predictor-level and intercept-level random effects of species are applicable in the multi-group model setting because there are multiple observations per species, thus we can quantify variation within-species distinct from residual variation.
 Random intercept of species--group interactions describes whether the species within a group are more similar on average than expected by chance, equivalent to phylogenetic attraction \citep{helmus2007separating}. 
 
@@ -519,7 +519,7 @@ Codes for analyzing the dune meadow data using \pkg{lme4} and \pkg{pez} are prov
 
 \begin{center}
 \begin{figure}[H]
-  \includegraphics[scale=0.8,page=1]{./git_push/plot.Rout.pdf}
+  \includegraphics[scale=0.7,page=1]{./figure/ssplot.pdf}
   \caption{Comparison of single group model parameter estimates across different R packages in Table \ref{table:platform}. The horizontal line shows the true value of the parameters in the simulation model. Models capable of fitting all parameters (\pkg{lme4}, \pkg{brms} and \pkg{glmmTMB}) fit well for all parameters.} 
 \label{ssplot}
 \end{figure}
@@ -528,7 +528,7 @@ Codes for analyzing the dune meadow data using \pkg{lme4} and \pkg{pez} are prov
 
 \begin{center}
 \begin{figure}[H]
-  \includegraphics[scale=0.8]{./figure/sstime.pdf}
+  \includegraphics[scale=0.7]{./figure/sstime.pdf}
   \caption{Comparison of speed for all fitting packages variants: layout of the packages as in Figure \ref{ssplot}}
 \label{ssplot_speed}
 \end{figure}
@@ -537,7 +537,7 @@ Codes for analyzing the dune meadow data using \pkg{lme4} and \pkg{pez} are prov
 
 \begin{center}
 \begin{figure}[H]
-  \includegraphics[scale=0.8]{./figure/sscoverage.pdf}
+  \includegraphics[scale=0.7]{./figure/sscoverage.pdf}
   \caption{Comparison of coverage probablility for fixed effect parameters. Models matching the simulation model (\pkg{lme4}, \pkg{brms} and \pkg{glmmTMB}) have coverage near the nominal value of 0.95. The black line shows the nominal coverage, and the grey ribbon the 95\% binomial confidence interval based on 100 simulated fits.}
 \label{ssplot_coverage}
 \end{figure}
@@ -555,7 +555,7 @@ PGLS, with only one parameter available, confounds all variation (phylogenetic i
 
 \begin{center}
 \begin{figure}[H]
-  \includegraphics[scale=0.8,page=4]{./git_push/plot.Rout.pdf}
+  \includegraphics[scale=0.7,page=1]{./figure/msplot.pdf}
   \caption{Comparison of multi-group model parameter estimates across different R packages in Table 2. Annotations as in Figure \ref{ssplot}.}
   \label{msplot}
 \end{figure}
@@ -564,7 +564,7 @@ PGLS, with only one parameter available, confounds all variation (phylogenetic i
 
 \begin{center}
 \begin{figure}[H]
-  \includegraphics[scale=0.8]{./figure/mstime.pdf}
+  \includegraphics[scale=0.7]{./figure/mstime.pdf}
   \caption{Comparison of multi-group model computational speed across different R packages in Table 2. Annotations as in Figure \ref{ssplot}.}
   \label{msplot_time}
 \end{figure}
