@@ -506,8 +506,6 @@ Coverage refers to the frequency with which the computed confidence intervals in
 We used 95\% (Wald and profile) confidence intervals for deterministic methods and quantile-based intervals (for Bayesian GLMM) to evaluate coverage.
 We also compare computational speed between different platforms to evaluate the efficiency of the platforms and methods. 
 
-
-%% CONT HERE, taking a break
 \section*{Results}
 
 We used our method to reproduce the examples in chapter 11 of \cite{garamszegi2014modern} using phylogenetic GLMMs based on ``lme4'' and ``glmmTMB'' (for more details see example in supplement).
@@ -602,13 +600,21 @@ Comparing \pkg{glmmTMB} to \pkg{pez} and \pkg{phyr}, the median time for \pkg{gl
 
 % \bmb{say something about the implications of this [e.g. good enough for getting an overall impression of phylog. whatever-it-is but not enough for detailed description/inference about the evolutionary process?] (or maybe that should be saved for the Discussion?)}
 
-The simulations presented in this paper are an oversimplification of evolutionary processes in nature, but they are at least as complex as the models that researchers typically use.
-Our results showed that even simple single predictor--response multi-species model could incorporate multiple levels of complexity.  
-Fitting simpler variations can lead to unreliable estimates of the fixed effects, which are typically the quantities of interest.
-
 We have fitted models using different platforms that best match the simulation models. 
 Models that cannot match the full simulation model perform poorly; it is important to understand the limitations and performance of these simpler models that are restricted by the commonly used methods.
 Using models that include some form of phylogenetic variation and residual variation is necessary to detect and account for correlations between species via evolutionary processes.
+
+The simulations presented in this paper are an oversimplification of evolutionary processes in nature, but they are at least as complex as the models that researchers typically use.
+Even a simple single predictor--response multi-species model like the one presented above could incorporate multiple levels of complexity.
+In theory, as long as there are a large amount of data and computational power to estimate model parameters (e.g., fixed and random effects), models that can incorporate a variety level of complexity always be better in capturing the system. 
+However, it is rarely the case in real applications where ecologist and evolutionary biologist are constrained one way or another. 
+As always, users should be aware of the constraints of the amount of data they have relative to the complexity of the model they want to fit (i.e., What should we do when we don't have enough data?)
+and find the right balance of complexity and data \citep{baayen2008mixed}.
+Being overly conservative by fitting simple models can lead to unreliable estimates of the fixed effects, which are typically the quantities of interest.
+In contrast, being too ambitious can lead to overfitting where the data are unable to support. 
+However, random-effect models (random-slopes models in particular) are almost always theoretically justified, but a given set of data may be insufficient to fit the correct model. 
+In this case, overfitting the data with a maximal model may be better off than underfitting with a simpler model that have fewer data constraints \citep{barr2013random}.
+Another possibility is to use Bayesian approaches with appropriate prior assumptions to aid convergence \citep{hadfield2010mcmc}.
 
 \subsection*{Incorporating different levels of variation}
 
@@ -647,7 +653,6 @@ We have presented the range of classical phylogenetic comparative methods (i.e. 
 Even within this scope, there is additional room for exploration we neglected, such as phylogenetic multivariate response models; non-Brownian evolutionary processes such as the Ornstein-Uhlenbeck (OU) model which accounts for both selection and drift processes \citep{butler2004phylogenetic}); Bayesian approaches \citep{hadfield2010general}; and variable-rate model, where evolutionary parameters vary across the phylogeny.
 However, the simple approach we developed here offers an efficient way to handle phylogenetic comparative analysis for a wide range of univariate, Brownian-motion evolutionary models. 
 This approach can in principle be combined flexibly with the state of the art phylogenetic mixed models using any platforms that supports independent latent variables such as Stan.
-As always, users should be aware of the constraints of the amount of data they have relative to the complexity of the model they want to fit (i.e. What should we do when we don't have enough data? Should we use a complex model and overfit \citep{barr2013random}, the right balance of complexity and data \citep{baayen2008mixed}, singular fits or possibility of Bayesian approaches \citep{hadfield2010mcmc}).
 More importantly, this implementation in \pkg{lme4} and \pkg{glmmTMB} allows users to fit phylogenetic mixed models to the fullest (large data, unbalanced species observations, complex random effects) and explore new ideas.
 
 
