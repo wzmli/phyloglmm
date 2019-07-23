@@ -3,7 +3,7 @@
 set.seed(tree_seed)
 
 
-seed <- 0122
+# seed <- 0122
 
 nrep <- 1 ## only lme4 can do number reps atm
 

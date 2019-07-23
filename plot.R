@@ -5,10 +5,11 @@ library(ggplot2)
 library(tidyr)
 library(grid)
 theme_set(theme_bw())
-zmargin <- theme(panel.margin=grid::unit(0,"lines"))
+zmargin <- theme(panel.spacing=grid::unit(0,"lines"))
 
 data_list <- readRDS("./datadir/collect.RDS")
-ssdat_raw <- rbind(data_list[[1]],brmsss_data)
+brmsdat <- readRDS("./datadir/brms_dat.RDS")
+ssdat_raw <- rbind(data_list[[1]],brmsdat)
 msdat_raw <- data_list[[2]]
 
 tree_seed = 1
