@@ -3,7 +3,7 @@ library(ggplot2)
 library(tidyr)
 library(grid)
 theme_set(theme_bw())
-zmargin <- theme(panel.margin=grid::unit(0,"lines"))
+zmargin <- theme(panel.spacing=grid::unit(0,"lines"))
 
 data_list <- readRDS("./datadir/result_list.RDS")
 
@@ -33,9 +33,9 @@ gls_results <- function(tt){
 }
 
 gls_full_data <- (bind_rows(gls_results(gls_res))
-  %>% select(-c(Phylogenetic))
-  %>% separate(model,c("platform","size","type"),"_")
-  %>% mutate(type = "Correlated Slope"
+    %>% select(-c(Phylogenetic))
+    %>% separate(model,c("platform","size","type"),"_")
+    %>% mutate(type = "Correlated Slope"
   , sdtype = "Phylogenetic Signal"
   , size = factor(size,levels=c("small","med","large"),labels=c("Small", "Medium", "Large"))
   )

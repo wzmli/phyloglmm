@@ -152,11 +152,15 @@ publisher={Wiley Online Library}
   year={2014}
 }
 
-@misc{ho2014phylolm,
-  title={Phylolm: phylogenetic linear regression. R package version 2.1},
-  author={Ho, LST and Ann{\'e}, C},
-  year={2014}
-}
+@article{ho2014phylolm,
+    author = {Lam Si Tung Ho and Cecile Ané},
+    title = {A linear-time algorithm for {Gaussian} and non-{Gaussian} trait evolution models},
+    year = {2014},
+    journal = {Systematic Biology},
+    volume = {63},
+    pages = {397-408},
+  }
+
 
 @article{pearse2015pez,
   title={Pez: Phylogenetics for the environmental sciences},
@@ -181,8 +185,8 @@ publisher={Wiley Online Library}
 }
 
 @article{hadfield2010mcmc,
-  title={MCMC methods for multi-response generalized linear mixed models: the MCMCglmm R package},
-  author={Hadfield, Jarrod D and others},
+  title={{MCMC} methods for multi-response generalized linear mixed models: the {MCMCglmm} {R} package},
+  author={Hadfield, Jarrod D},
   journal={Journal of Statistical Software},
   volume={33},
   number={2},
@@ -298,11 +302,16 @@ publisher={Wiley Online Library}
   publisher={Wiley Online Library}
 }
 
-@article{burkner2016brms,
-  title={Brms: Bayesian regression models using stan},
-  author={B{\"u}rkner, Paul-Christian},
-  journal={R package version 0.10. 0},
-  year={2016}
+@Article{burkner2018brms,
+  title = {Advanced {Bayesian} Multilevel Modeling with the {R} Package {brms}},
+  author = {Paul-Christian Bürkner},
+  journal = {The R Journal},
+  year = {2018},
+  volume = {10},
+  number = {1},
+  pages = {395--411},
+  doi = {10.32614/RJ-2018-017},
+  encoding = {UTF-8},
 }
 
 @article{schielzeth2008conclusions,
@@ -436,7 +445,7 @@ publisher={Wiley Online Library}
 }
 
 @article{nicolakakis2000forebrain,
-  title={Forebrain size and innovation rate in European birds: feeding, nesting and confounding variables},
+  title={Forebrain size and innovation rate in {European} birds: feeding, nesting and confounding variables},
   author={Nicolakakis, Nektaria and Lefebvre, Louis},
   journal={Behaviour},
   volume={137},
@@ -530,9 +539,9 @@ publisher={Wiley Online Library}
   }
   
 @article{duane1987hybrid,
-  title={Hybrid monte carlo},
+  title={Hybrid {Monte} {Carlo}},
   author={Duane, Simon and Kennedy, Anthony D and Pendleton, Brian J and Roweth, Duncan},
-  journal={Physics letters B},
+  journal={Physics Letters B},
   volume={195},
   number={2},
   pages={216--222},
@@ -541,7 +550,7 @@ publisher={Wiley Online Library}
 }
 
 @article{li2018fitting,
-  title={Fitting mechanistic epidemic models to data: a comparison of simple Markov chain Monte Carlo approaches},
+  title={Fitting mechanistic epidemic models to data: a comparison of simple {Markov} chain {Monte} {Carlo} approaches},
   author={Li, Michael and Dushoff, Jonathan and Bolker, Benjamin M},
   journal={Statistical methods in medical research},
   volume={27},
@@ -597,15 +606,31 @@ publisher={Wiley Online Library}
 }
 
 @article{vehtari2019rank,
-  title={Rank-normalization, folding, and localization: An improved R for assessing convergence of MCMC},
+  title={Rank-normalization, folding, and localization: An improved {R} for assessing convergence of {MCMC}},
   author={Vehtari, Aki and Gelman, Andrew and Simpson, Daniel and Carpenter, Bob and B{\"u}rkner, Paul-Christian},
   journal={arXiv preprint arXiv:1903.08008},
   year={2019}
 }
 
 @article{vats2018revisiting,
-  title={Revisiting the Gelman-Rubin Diagnostic},
+  title={Revisiting the {Gelman-Rubin} Diagnostic},
   author={Vats, Dootika and Knudson, Christina},
   journal={arXiv preprint arXiv:1812.09384},
   year={2018}
+}
+
+
+@article{roberts_cross-validation_2016,
+	title = {Cross-validation strategies for data with temporal, spatial, hierarchical, or phylogenetic structure},
+	issn = {1600-0587},
+	url = {http://onlinelibrary.wiley.com/doi/10.1111/ecog.02881/abstract},
+	doi = {10.1111/ecog.02881},
+	abstract = {Ecological data often show temporal, spatial, hierarchical (random effects), or phylogenetic structure. Modern statistical approaches are increasingly accounting for such dependencies. However, when performing cross-validation, these structures are regularly ignored, resulting in serious underestimation of predictive error. One cause for the poor performance of uncorrected (random) cross-validation, noted often by modellers, are dependence structures in the data that persist as dependence structures in model residuals, violating the assumption of independence. Even more concerning, because often overlooked, is that structured data also provides ample opportunity for overfitting with non-causal predictors. This problem can persist even if remedies such as autoregressive models, generalized least squares, or mixed models are used. Block cross-validation, where data are split strategically rather than randomly, can address these issues. However, the blocking strategy must be carefully considered. Blocking in space, time, random effects or phylogenetic distance, while accounting for dependencies in the data, may also unwittingly induce extrapolations by restricting the ranges or combinations of predictor variables available for model training, thus overestimating interpolation errors. On the other hand, deliberate blocking in predictor space may also improve error estimates when extrapolation is the modelling goal. Here, we review the ecological literature on non-random and blocked cross-validation approaches. We also provide a series of simulations and case studies, in which we show that, for all instances tested, block cross-validation is nearly universally more appropriate than random cross-validation if the goal is predicting to new data or predictor space, or for selecting causal predictors. We recommend that block cross-validation be used wherever dependence structures exist in a dataset, even if no correlation structure is visible in the fitted model residuals, or if the fitted models account for such correlations. This article is protected by copyright. All rights reserved.},
+	language = {en},
+	urldate = {2016-12-15},
+	journal = {Ecography},
+	author = {Roberts, David R. and Bahn, Volker and Ciuti, Simone and Boyce, Mark S. and Elith, Jane and Guillera-Arroita, Gurutzeta and Hauenstein, Severin and Lahoz-Monfort, José J. and Schröder, Boris and Thuiller, Wilfried and Warton, David I. and Wintle, Brendan A. and Hartig, Florian and Dormann, Carsten F.},
+	month = dec,
+	year = {2016},
+	keywords = {resource selection functions, species distribution models, Autocorrelation, extrapolation, evaluation, independence}
 }

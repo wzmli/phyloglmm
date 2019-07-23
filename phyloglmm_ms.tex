@@ -57,6 +57,8 @@
 \newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
 
 \usepackage{alltt}
+%% hard to sort by year automatically ...
+%% https://tex.stackexchange.com/questions/377449/sorting-citations-and-bibliography-using-natbib-and-plainnat?rq=1
 \usepackage[sort]{natbib}
 \usepackage{blkarray}
 \usepackage{bm}
@@ -127,13 +129,13 @@ This method allows researchers to easily incorporate various complexities withou
 \subsection*{Challenges in modeling phylogenetic process}
 
 % come back to complexity
-Most researchers use regression-based methods such as generalized linear models (GLMs) (a regression approach that allows for the non-normality of the data); sophisticated ecologist would use generalized-linear mixed effect models \citep{bolker2009generalized} to control for different levels of variation.
+Most researchers use regression-based methods such as generalized linear models (GLMs) or generalized-linear mixed effect models \citep[GLMMs:][]{bolker2009generalized} to control for different levels of variation.
 However, standard statistical techniques assume species respond independently, which is typically false in evolutionary settings.
-The classic phylogenetic regression uses a statistical model in which phylogenetic correlation in the residuals from a regression between two species-level traits arises because the residual variation in the trait that is the dependent variable evolves along the branches of the phylogeny according to a Brownian-motion evolutionary model \citep{felsenstein1985phylogenies}. 
-If the residuals are normally distributed and observed without any additional error or within-species variation, Felsenstein's method of phylogenetically independent contrasts (PICs) \citep{felsenstein1985phylogenies, nicolakakis2000forebrain} is sufficient to account for the phylogenetic correlation.
-More recent approaches -- including phylogenetic generalized linear mixed models (PGLMM) \citep{ives2011generalized}, heritability $h^2$ \citep{housworth2004phylogenetic}, Pagel's $\lambda$ \citep{pagel1999inferring}, and Blomberg's $K$ \citep{blomberg2003testing} --- build upon PICs by considering different (non-Normal) response distributions and by accounting for different evolutionary processes. 
+Classic phylogenetic regression uses a statistical model in which phylogenetic correlation in the residuals from a regression between two species-level traits arises because the residual variation in the dependent-variable trait evolves along the branches of the phylogeny according to a Brownian-motion evolutionary model \citep{felsenstein1985phylogenies}. 
+If the residuals are normally distributed and observed without any additional error or within-species variation, Felsenstein's method of phylogenetically independent contrasts  \citep[PICS:][]{felsenstein1985phylogenies, nicolakakis2000forebrain} is sufficient to account for the phylogenetic correlation.
+More recent approaches -- including phylogenetic generalized linear mixed models (PGLMM) \citep{ives2011generalized, housworth2004phylogenetic}, Pagel's $\lambda$ \citep{pagel1999inferring}, and Blomberg's $K$ \citep{blomberg2003testing} --- build upon PICs by considering different (non-Normal) response distributions and by accounting for different evolutionary processes. 
 In particular, these methods partition residual variation into two components: (1) uncorrelated, or independent, residual variation (observation error or tip variation) and (2) phylogenetic signal  (biological/evolutionary process error) \citep{hansen2012interpreting, housworth2004phylogenetic}.
-However, if each species' traits are observed more than once, possibly under different conditions, we can potentially distinguish a third level of variation; in this case, phylogenetic variation and tip variation are now both part of the evolutionary process error (which we will call tip variation or intercept-level variation) while the among species residual variation is associated with among observation variation within each species.
+If each species' traits are observed more than once, possibly under different conditions, we can potentially distinguish a third level of variation; in this case, phylogenetic variation and tip variation are now both part of the evolutionary process error (which we will call tip variation or intercept-level variation) while the among species residual variation is associated with among observation variation within each species.
 %\bmb{This is a good point, well expressed. Does PGLMM lump tip variation and within-species variation, or is this primarily an issue with Blomberg/Pagel? Thinking about Boettiger's critique \cite{boettiger2013is} (don't know if it's been peer-reviewed, we could ask him), which might be resolved if we think explicitly about within-species variation \ldots
 %\mli{I think it is more like our simulation test. In Boettiger's example, it is treating sister taxa as different species. So it is using a phylogenetic tree of 8 species instead of 4.}
 Although many studies include multiple observations per species, phylogenetic analyses rarely take advantage of such observations to partition variability more finely.
@@ -152,13 +154,13 @@ Indeed, many existing methods are restricted to single observations per species,
 % \end{figure}
 % \end{center}
 
-Classic PCMs usually examine the response (trait or distribution) to evolve according to the phylogenetic relationship across species, but the effects (or levels) of the predictor variables may evolve according to the phylogenetic relationship across species as well.
+Classic PCMs usually allow the response (trait or distribution) to evolve according to the phylogenetic relationship across species, but the effects (or levels) of the predictor variables may evolve according to the phylogenetic relationship across species as well.
 Suppose we have examined a collection of species that came from two groups, and wish to know whether their brain size (Y) is proportional to their body size (X) (Felsenstein's (1985) example using a mixed-effect model. 
 Taxonomic groups with similar body sizes may vary in overall brain size (random intercepts), or taxonomic groups may vary in the relationship between brain and body size (random slopes). 
 %\bmb{maybe we can focus on random slopes here? Need to point out that example studies below are \emph{exceptions} to the general assumption of random intercepts only (how did they manage to do their inference?)}
-Several recent studies have incorporated phylogenetic variations in different ways and looked at species response to phylogenetic variations with changes in environmental factors.
-For example, \cite{nowakowski2018phylogenetic} considered phylogenetically correlated slopes in response to habitat conversion when studying the abundance of amphibian species using a Bayesian implementation of phylogenetic GLMM, while \cite{li2017canfun} considered phylogenetically correlated species nested within sites when modeling plant abundance via a phylogenetic GLMM approach. 
-The tools available for extending phylogenetic relationships to predictor variables (or predictor level variation) in a standard frequentist framework are relatively inflexible; thus, many computationally sophisticated biologists have turned to more flexible Bayesian approaches, despite their computational burden \citep{hadfield2010mcmc, burkner2016brms}.
+Several recent studies have incorporated phylogenetic variation in different ways and looked at species response to phylogenetic variation with changes in environmental factors.
+For example, \cite{nowakowski2018phylogenetic} considered phylogenetically correlated slopes in response to habitat conversion when studying the abundance of amphibian species using a Bayesian phylogenetic GLMM, while \cite{li2017canfun} considered phylogenetically correlated species nested within sites when modeling plant abundance via a phylogenetic GLMM approach. 
+The tools available for extending phylogenetic relationships to predictor variables (or predictor level variation) in a standard frequentist framework are relatively inflexible; thus, many computationally sophisticated biologists have turned to more flexible Bayesian approaches, despite their computational burden \citep{hadfield2010mcmc, burkner2018brms}.
 Table \ref{table:model} summarises types of platforms, data constraints, and provides model complexities for phylogenetic comparative analysis.
 
 \newcommand{\pkg}[1]{{\tt #1}}
@@ -185,7 +187,7 @@ Table \ref{table:model} summarises types of platforms, data constraints, and pro
 In this paper, we will propose an alternative formulation of phylogenetic generalized linear mixed models that is mathematically equivalent to previous approaches, but more flexible.
 Our new formulation can be incorporated in any framework that allows for random effects (such as random intercepts, slopes, and interactions) without the need to implement special correlation structures, by incorporating phylogenetic structures as part of the mean model. 
 %% can be incorporated relatively easily into any mixed-model platform that allows new random-effects design matrices to be specified, and can be easily extended along with the features of mixed model such as multiple observational designs, phylogenetic random-slopes models, and multiple (nested or crossed) random effects.
-We will compare our technique coded in R packages \pkg{lme4} and \pkg{glmmTMB} with existing R packages (i.e. \pkg{nlme} \citep{pinheiro2014r}, \pkg{phylolm} \citep{ho2014phylolm}, \pkg{pez} \citep{pearse2015pez} \pkg{phyr} (Li et al, unpublished), \pkg{MCMCglmm} \citep{hadfield2010mcmc}, and \pkg{brms} \citep{burkner2016brms}), fitting models to data from simulated model that incorporates phylogenetic variation from both predictors and tips/species as well as residual variation.
+We will compare our technique coded in R packages \pkg{lme4} and \pkg{glmmTMB} with existing R packages (i.e. \pkg{nlme} \citep{pinheiro2014r}, \pkg{phylolm} \citep{ho2014phylolm}, \pkg{pez} \citep{pearse2015pez} \pkg{phyr} (Li et al, unpublished), \pkg{MCMCglmm} \citep{hadfield2010mcmc}, and \pkg{brms} \citep{burkner2018brms}), fitting models to data from simulated model that incorporates phylogenetic variation from both predictors and tips/species as well as residual variation.
 % We expect that our approach will be fast as well as flexible, because \pkg{lme4} and \pkg{glmmTMB} use efficient approaches. 
 %% TODO LAST LINE SEE PAGE 5
 
@@ -231,27 +233,27 @@ The PC matrix is inferred from the topology of the evolutionary tree by quantify
 
 \subsection*{Phylogenetic generalized linear mixed model}
 Alternatively, one can use the generalized linear mixed effects modeling (GLMM) framework \citep{lynch1991methods}.
-The generalized linear mixed effect model is an extension of the classic regression model, a kind of hierarchical linear model that can flexibly incorporate more than one type of variability through random effects and allows for non-Gaussian responses.
+The generalized linear mixed effect model is an extension of the classic regression model, a hierarchical linear model that  allows for non-Gaussian responses and uses random effects to flexibly incorporate multiple types of variability.
 The typical GLMM has the form:
+\newcommand{\dist}{{\cal D}}
 \begin{equation}
 \begin{aligned}
-\bY & = \bm{D}(g^{-1}(\bmu), \phi) \\
+\bY & = \dist(g^{-1}(\bmu), \phi) \\
 \bmu & = \bX \bbeta + \bZ \bb  \\
 \bb & \sim \textrm{MVN}(0, \bSigma(\theta))  \\
 \label{eq:glmm}
 \end{aligned}
 \end{equation}
-where $\bZ$ is an $n \times m$ model matrix for the $n$-dimensional vector-valued $m$ predictor variables; $\bb$ (sometimes referred as the ``G-side" effect) representing the conditional modes, is assumed to be multivariate normally distributed with a variance-covariance matrix given by $\bSigma(\theta)$ and $\phi$ is a scale parameter for the conditional distribution $\bm{D}$.
+where $\bZ$ is an $n \times m$ model matrix for the $n$-dimensional vector-valued $m$ predictor variables; $\bb$ (sometimes referred to as the ``G-side" effect) representing the conditional modes, is assumed to be multivariate normally distributed with a variance-covariance matrix given by $\bSigma(\theta)$; and $\phi$ is a scale parameter for the conditional distribution $\dist$.
 % ; $\besp$ (sometimes referred as "R" effect) is an $n \times 1$ vector of independent and normally distributed error terms with variance $\sigma_{\epsilon}^2$.
 % Analogously, the phylogenetic regression given by (\ref{eq:gls1}) can be represented in the generalized mixed model framework with Gaussian responses by constraining $\bSigma(\theta) = \sigma^2 \bC$ and $\sigma^{2}_{\epsilon} = 0$.
 
 There are several ways to incorporate random variation in the mixed model framework.
-First, random intercepts can allow the response trait to vary across groups within grouping variables (e.g., patches, sites, or experiments). 
-Second, random intercepts can also allow the response (trait or distribution) to vary between species (tip variation) or phylogenetically across species (i.e., species that are closely related tend to have similar responses).
-The third type of variation that is often neglected or rarely considered is random slopes.
-Random slopes can allow fixed effects (the relationship between predictors and responses) to vary for each group. 
-Analogous to modeling correlations among responses via phylogenetic relationship among species, phylogenetic random slopes can allow the relationship between predictors and responses to vary between species in a phylogenetically correlated way (i.e., similar species will have similar predictor--response relationships).
-
+First, random intercepts can allow the response trait to vary independently across groups other than species (e.g., patches, sites, or experiments). 
+Second, random intercepts can also allow the response (trait or distribution) to vary either independently among species (which we call ``tip variation'' since species represent the tips of the phylogenetic tree) or among species in a phylogenetically correlated way (i.e., species that are closely related tend to have similar responses).
+The third type of variation that is often neglected is random slopes.
+Random slopes allow fixed effects (the relationship between predictors and responses) to vary among groups.
+Analogous to phylogenetically correlated variation in intercepts, phylogenetic random slopes can allow the relationship between predictors and responses to vary between species in a phylogenetically correlated way (i.e., similar species will have similar predictor--response relationships).
 
 % \bmb{worth including the \pkg{MCMCglmm}/\pkg{brms} inverse-VCV formulation here? And/or contacting Eric Pedersen to find out about his Markov Random Field phylog. stuff in GAM?}
 % \mli{inverse VCV for BLUP? an alternative way to find the inverse of the vcv(phy)}
@@ -341,7 +343,7 @@ Analogous to the procedure described in \citet{bates2015fitting}, the phylogenet
 \begin{equation}
 \bZ^{C}_{i} = (\bS^{\top}\bJ^{\top}_{i} \ast \bX^{\top}_{i})^{\top}, \label{eq:ZC}
 \end{equation}
-where $\ast$ is the Khatri-Rao product \citep{khatri1968solutions};, $\bS$ is the $m \times b$ species--branch matrix; $\bJ_{i}$ is the $n_i \times m$ indicator matrix of grouping factors; and $\bX_{i}$ is the $n \times p_{i}$ raw random-effects model matrix. 
+where $\ast$ is the Khatri-Rao product \citep{khatri1968solutions}; $\bS$ is the $m \times b$ species--branch matrix; $\bJ_{i}$ is the $n_i \times m$ indicator matrix of grouping factors; and $\bX_{i}$ is the $n \times p_{i}$ raw random-effects model matrix. 
 
 For example, using the phylogeny above (figure \ref{fig:tree}), if we begin with a raw model matrix corresponding to a random-slope model, 
 
@@ -454,14 +456,14 @@ b_{\mathrm{sp:group}} & \sim \textrm{MVN} (0, \mathrm{I}_{\mathrm{group}} \otime
 where $\textrm{I}_{\textrm{group}}$ is a indicator matrix of groups; and $\otimes$ is the Kronecker product.
 
 The multi-group full simulation model has five additional random effects (predictor-level ($\sigma^2_{\mathrm{sp_{slope}}}$) and intercept-level ($\sigma^2_{\mathrm{sp_{int}}}$) random effect of species variance and their covariance ($\sigma_{\mathrm{sp_{int-slope}}}$), random intercept of group ($b_{\mathrm{group}}$) and random intercept of species-group interaction ($b_{\mathrm{sp:group}}$)) compared to the single--group full model.
-Predictor-level and intercept-level random effects of species are applicable in the multi-group model setting because there are multiple observations per species, thus we can quantify variation within-species distinct from residual variation.
-Random intercept of species--group interactions describes whether the species within a group are more similar on average than expected by chance, equivalent to phylogenetic attraction \citep{helmus2007separating}. 
+Predictor-level and intercept-level random effects of species are applicable in the multi-group model setting because there are multiple observations per species; thus we can quantify variation among species as distinct from residual variation.
+Variance in the intercept of species--group interactions ($b_{\mathrm{sp:group}}$) describes whether the species within a group are more similar on average than expected by chance \bmb{clarify? have more similar responses?}, equivalent to phylogenetic attraction \citep{helmus2007separating}. 
 
 \subsection*{Platforms}
 
 Our algorithmic approach is general and could be implemented in a wide range of computational platforms that support independent latent variables as random effects in a generalized linear mixed model. 
 We implemented our approach using the R packages \pkg{lme4} \citep{bates2015fitting} and \pkg{glmmTMB} \citep{brooks2017glmmTMB}.
-We compare our approach with five other R packages that can fit phylogenetic comparative models: \pkg{nlme} \citep{pinheiro2014r}, \pkg{phylolm} \citep{ho2014phylolm}, \pkg{pez} \citep{pearse2015pez}, and \pkg{brms} \citep{burkner2016brms}.
+We compare our approach with five other R packages that can fit phylogenetic comparative models: \pkg{nlme} \citep{pinheiro2014r}, \pkg{phylolm} \citep{ho2014phylolm}, \pkg{pez} \citep{pearse2015pez}, and \pkg{brms} \citep{burkner2018brms}.
 % \bmb{I think nlme can do other evolutionary models as well? May not be worth mentioning ...}
 % \begin{verbatim}
 % grep("\\.",apropos("^cor[A-Z]",ignore.case=FALSE),
@@ -497,14 +499,15 @@ We simulated 100 phylogenetic trees for each sample size (n = 25, 50, 100 and an
 Each realization was fitted to all model variants using a range of different platforms.
 Table \ref{table:platform} shows the parameters that are estimable for each platform. 
 We only evaluated the goodness of fit for model fits that passed the convergence tests implemented by the package.
-For Bayesian GLMM, to assess convergence, we require values of the Gelman-Rubin statistic less than the recommended threshold 1.1. We included another convergence criteria (due to the recent critique of the Gelman-Rubin recommended threshold \citep{vats2018revisiting}) of effective sample size (ESS) greater than 1000 for the fixed effect parameters ($\beta_{0} \ \textrm{and} \ \beta_{1}$) for each replication \citep{vehtari2019rank}. 
+For Bayesian GLMM, to assess convergence, we require values of the Gelman-Rubin statistic less than the recommended threshold 1.1. Based on recent critique of typical Gelman-Rubin thresholds \citep{vats2018revisiting}), we included another convergence criterion of effective sample size (ESS) greater than 1000 for the fixed effect parameters ($\beta_{0}$ and $\beta_{1}$) for each replication \citep{vehtari2019rank}. 
 For each replication, we sample two chains starting with 10000 iterations. 
 %% TODO MAKE SURE THIS IS CORRECT!
 We first evaluate our estimates by looking at the distribution of the estimated values (maximum likelihood estimates for non-Bayesian platforms and posterior medians for Bayesian platforms) to quantify bias and variance (i.e., quality of the point estimate).
-We then examine at frequentist coverage, to assess the quality of the confidence intervals.
+We then compute frequentist coverage to assess the quality of the confidence intervals.
 Coverage refers to the frequency with which the computed confidence intervals include the true values of parameters.
 We used 95\% (Wald and profile) confidence intervals for deterministic methods and quantile-based intervals (for Bayesian GLMM) to evaluate coverage.
-We also compare computational speed between different platforms to evaluate the efficiency of the platforms and methods. 
+\bmb{clarify: did you use profile if available, otherwise Wald? You don't give any more detail in your coverage plots. [How different were Wald and profile for these results, or did you not compare them?]}
+We also compare computational speed between different platforms to evaluate the efficiency of different platforms and methods. 
 
 \section*{Results}
 
@@ -518,7 +521,8 @@ Codes for analyzing the dune meadow data using \pkg{lme4} and \pkg{pez} are prov
 \begin{center}
 \begin{figure}[H]
   \includegraphics[scale=0.7,page=1]{./figure/ssplot.pdf}
-  \caption{Comparison of single group model parameter estimates across different R packages in Table \ref{table:platform}. The horizontal line shows the true value of the parameters in the simulation model. Models capable of fitting all parameters (\pkg{lme4}, \pkg{brms} and \pkg{glmmTMB}) fit well for all parameters.} 
+  \caption{Comparison of single group model parameter estimates across different R packages in Table \ref{table:platform}. Total simulations $N=100$ for each category. The horizontal line shows the true value of the parameters in the simulation model. Models capable of fitting all parameters (\pkg{lme4}, \pkg{brms} and \pkg{glmmTMB}) fit well for all parameters. \bmb{consider tweaking aspect ratio (slightly wider?) Consider including n=25, n=50, n=100 in x-axis tick labels (I don't have all the output data so can't rebuild figs myself ...)}
+  }
 \label{ssplot}
 \end{figure}
 \end{center}
@@ -527,7 +531,9 @@ Codes for analyzing the dune meadow data using \pkg{lme4} and \pkg{pez} are prov
 \begin{center}
 \begin{figure}[H]
   \includegraphics[scale=0.7]{./figure/sstime.pdf}
-  \caption{Comparison of speed for all fitting packages variants: layout of the packages as in Figure \ref{ssplot}}
+  \caption{Comparison of speed for all fitting platforms: layout of the packages as in Figure \ref{ssplot} \bmb{violins? Consider tweaking y-axis labels (0.1, 10, 1000) (maybe tweak \code{scipen}, or specify tick pos/labels manually). Maybe reverse legend order \code{ guides(fill = guide\_legend(reverse = TRUE))}: \url{https://www.datanovia.com/en/blog/ggplot-legend-title-position-and-labels/} to match order in plot 
+    }
+  }
 \label{ssplot_speed}
 \end{figure}
 \end{center}
@@ -536,14 +542,14 @@ Codes for analyzing the dune meadow data using \pkg{lme4} and \pkg{pez} are prov
 \begin{center}
 \begin{figure}[H]
   \includegraphics[scale=0.7]{./figure/sscoverage.pdf}
-  \caption{Comparison of coverage probablility for fixed effect parameters. Models matching the simulation model (\pkg{lme4}, \pkg{brms} and \pkg{glmmTMB}) have coverage near the nominal value of 0.95. The black line shows the nominal coverage, and the grey ribbon the 95\% binomial confidence interval based on 100 simulated fits.}
+  \caption{Comparison of coverage probablility for fixed effect parameters. Models matching the simulation model (\pkg{lme4}, \pkg{brms} and \pkg{glmmTMB}) have coverage near the nominal value of 0.95. The black line shows the nominal coverage, and the grey ribbon the 95\% binomial confidence interval based on 100 simulated fits. \bmb{really picky, but maybe change grid lines or ribbon colour slightly so they're not confusable (maybe use blue ribbon with alpha=0.1?)}
+  }
 \label{ssplot_coverage}
 \end{figure}
 \end{center}
 
 The full fitted model (which matches the simulation model that incorporates phylogenetic intercept, slope, and correlation) provides estimates with low bias (average difference between the estimated parameters and the true simulation parameters) for all parameters. 
-Estimates for fixed effect parameters ($\beta_0$ and $\beta_1$) approach nominal coverage as the number of species increases for \pkg{lme4} and \pkg{glmmTMB} but not for other packages. \pkg{brms} has higher than nominal coverage (i.e., its confidence intervals are overly conservative) because the prior distributions for the simulation parameters are centered at the true values (see \citet{li2018fitting} for more details of biased coverage).
-%% \mli{Is there a figure for this?....Ok, maybe We don't need it.}
+Estimates for fixed effect parameters ($\beta_0$ and $\beta_1$) approach nominal coverage as the number of species increases for \pkg{lme4} and \pkg{glmmTMB} but not for other packages. \pkg{brms} has higher than nominal coverage (i.e., its confidence intervals are overly conservative) because the prior distributions for the simulation parameters are centered at the true values (\citet{li2018fitting} discuss the interaction of informative priors and Bayesian calibration).
 
 In general, models that are insufficiently flexible to match the true simulation model (PGLM and PGLS) will try to fit the data with the parameters available. 
 PGLM (which lacks the phylogenetic slope parameter) provides reasonably good estimates for the phylogenetic intercept standard deviation parameter ($\sigma_{\mathrm{phy_{int}}}$) but overestimates the residual standard deviation; the estimates for the intercept ($\beta_0$) are slightly overconfident (the coverage $\approx$ 90\% with 100 species) and the fixed slope parameter ($\beta_1$) has poor coverage ($<$ 60\%).
@@ -554,7 +560,9 @@ PGLS, with only one parameter available, confounds all variation (phylogenetic i
 \begin{center}
 \begin{figure}[H]
   \includegraphics[scale=0.7,page=1]{./figure/msplot.pdf}
-  \caption{Comparison of multi-group model parameter estimates across different R packages in Table 2. Annotations as in Figure \ref{ssplot}.}
+  \caption{Comparison of multi-group model parameter estimates across different R packages in Table 2. Annotations as in Figure \ref{ssplot}.
+    \bmb{need to work harder to match up colours across plots - colours corresponding to specific platforms are different in different plots because different subsets are included (use \code{scale\_colour\_manual} appropriately)}
+  }
   \label{msplot}
 \end{figure}
 \end{center}
@@ -579,13 +587,13 @@ PGLS, with only one parameter available, confounds all variation (phylogenetic i
 
 
 In contrast, the multi-group model fits are much more similar across platforms (only the more powerful platforms can fit these models at all, and the fitting models are closer to the true simulation model).
-Similar to the single group fits, \pkg{lme4} and \pkg{glmmTMB} match the simulation model well and provide good estimates for all parameters except the correlation ($\sigma_{\mathrm{sp_{int-slope}}}$) for small numbers of species (i.e. n = 25 and 50).
+Similar to the single-group fits, \pkg{lme4} and \pkg{glmmTMB} match the simulation model well and provide good estimates for all parameters except the correlation ($\sigma_{\mathrm{sp_{int-slope}}}$) for small numbers of species (i.e. n = 25 and 50).
 The lack of correlations in \pkg{pez} and \pkg{phyr}'s statistical models do not appear to have a large effect on the estimates of the remaining parameters in the model but underestimates the residual standard deviation (Figure \ref{msplot}).
 
 Although the parameter estimates are similar across platforms for the multi-group simulation fits, computational efficiency varies enormously across platforms and sample size.
 For example, the new formulation is implemented in both \pkg{lme4} and \pkg{glmmTMB}, but \pkg{glmmTMB} is almost an order of magnitude faster than \pkg{lme4} for the cases studied here.
 Comparing \pkg{glmmTMB} to \pkg{pez} and \pkg{phyr}, the median time for \pkg{glmmTMB} to fit 50 species model is $\approx$ 9 versus $\approx$ 200 seconds for \pkg{pez} and \pkg{phyr} respectively. 
-\pkg{glmmTMB} takes $\approx$ 125 seconds to fit a 500-species model; it was not practical for \pkg{pez} and \pkg{phyr} to fit 500-species simulation for our study, where the computational speed scaled faster than linearly with sample size.
+\pkg{glmmTMB} takes $\approx$ 125 seconds to fit a 500-species model; it was not practical for us to fit 500-species models with \pkg{pez} and \pkg{phyr}, because computational speed scaled faster than linearly with sample size.
 \pkg{glmmTMB} is almost an order of magnitude faster than \pkg{lme4}.
 
 % \bmb{Can you put a lower bound on \pkg{pez}'s computation time? How long did you take to give up? How does it scale? can you either figure out from first principles
@@ -600,21 +608,25 @@ Comparing \pkg{glmmTMB} to \pkg{pez} and \pkg{phyr}, the median time for \pkg{gl
 
 % \bmb{say something about the implications of this [e.g. good enough for getting an overall impression of phylog. whatever-it-is but not enough for detailed description/inference about the evolutionary process?] (or maybe that should be saved for the Discussion?)}
 
-We have fitted models using different platforms that best match the simulation models. 
-Models that cannot match the full simulation model perform poorly; it is important to understand the limitations and performance of these simpler models that are restricted by the commonly used methods.
-Using models that include some form of phylogenetic variation and residual variation is necessary to detect and account for correlations between species via evolutionary processes.
+We have simulated relatively complex models containing phylogenetic variation in both intercepts and slopes, as well as within-species variation that is quantifiable because we allow multiple observations per species.
+These models are intrinsically more complex than some simple platforms for phylogenetic regression can handle, which may seem unfair; nevertheless, our models are certainly \emph{less} complex than evolutionary processes occurring in nature.
+Our results show that models that cannot match the full ``simulation world'' perform poorly even for the parameters they do measure; it is important to understand the limitations of these simpler, commonly used methods.
 
-The simulations presented in this paper are an oversimplification of evolutionary processes in nature, but they are at least as complex as the models that researchers typically use.
-Even a simple single predictor--response multi-species model like the one presented above could incorporate multiple levels of complexity.
-In theory, as long as there are a large amount of data and computational power to estimate model parameters (e.g., fixed and random effects), models that can incorporate a variety level of complexity always be better in capturing the system. 
-However, it is rarely the case in real applications where ecologist and evolutionary biologist are constrained one way or another. 
-As always, users should be aware of the constraints of the amount of data they have relative to the complexity of the model they want to fit (i.e., What should we do when we don't have enough data?)
-and find the right balance of complexity and data \citep{baayen2008mixed}.
-Being overly conservative by fitting simple models can lead to unreliable estimates of the fixed effects, which are typically the quantities of interest.
-In contrast, being too ambitious can lead to overfitting where the data are unable to support. 
-However, random-effect models (random-slopes models in particular) are almost always theoretically justified, but a given set of data may be insufficient to fit the correct model. 
-In this case, overfitting the data with a maximal model may be better off than underfitting with a simpler model that have fewer data constraints \citep{barr2013random}.
-Another possibility is to use Bayesian approaches with appropriate prior assumptions to aid convergence \citep{hadfield2010mcmc}.
+Even our relatively simple models can incorporate many layers of complexity --- e.g. multiple spatial grouping variables as well as correlated phylogenetic variation in the effects of several different traits and environmental variables on a focal trait.
+In theory, as long as we have enough data and enough computational power, models that can incorporate more of the complexity will always describe a biological system better.
+However, real applications are almost always data-constrained.
+Deciding on a practically appropriate level of model complexity for a given
+problem and data set is an
+open and difficult general problem in statistical modeling, not just
+in phylogenetic studies.
+Should one use simple models that may be overly conservative or
+risk overfitting by using more ambitious models?
+How can one appropriately use the data themselves
+to choose model complexity \cite{roberts_cross-validation_2016}?
+What are the relative costs and benefits of using a step-down procedure
+starting from the most complex possible model \citep{barr2013random},
+choosing simpler models \emph{a priori} \citep{baayen2008mixed},
+or using Bayesian approaches with regularizing priors \citep{hadfield2010mcmc}?
 
 \subsection*{Incorporating different levels of variation}
 
