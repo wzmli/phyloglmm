@@ -4,14 +4,14 @@ library(dplyr)
 brms_path <- "./datadir/brms/"
 brmsss_res <- list.files(path = brms_path, pattern = "ss")
 brmsss_results <- function(tt){
-  brms_df <- data.frame(resid = numeric(200)
-                        , phylo_X = numeric(200)
-                        , phylo_int = numeric(200)
-                        , phylo_cor = numeric(200)
-                        , B0 = numeric(200)
-                        , B1 = numeric(200)
-                        , model = numeric(200)
-                        , time = numeric(200)
+  brms_df <- data.frame(resid = length(tt)
+                        , phylo_X = NA
+                        , phylo_int = NA
+                        , phylo_cor = NA
+                        , B0 = NA
+                        , B1 = NA
+                        , model = NA
+                        , time = NA
                         , convergence = NA
   )
   for(i in 1:length(tt)){
