@@ -7,7 +7,8 @@ library(grid)
 theme_set(theme_bw())
 zmargin <- theme(panel.spacing=grid::unit(0,"lines"))
 
-data_list <- readRDS("./datadir/collect.RDS")
+# data_list <- readRDS("./datadir/collect.RDS")
+load("git_push/plot.RData")
 brmsdat <- readRDS("./datadir/brms_dat.RDS")
 ssdat_raw <- rbind(data_list[[1]],brmsdat)
 msdat_raw <- data_list[[2]]
@@ -140,7 +141,7 @@ msdat <- (msdat_raw
 
 gg_ms <- (gg_ss
 	%+% msdat
-	+ scale_color_manual(values=c("Gray","Purple","Dark Blue","Orange"))
+	+ scale_color_manual(values=c("Gray","Purple","Dark Blue","Dark Green"))
 
 )
 
@@ -149,7 +150,7 @@ print(gg_ms)
 gg_mstime <- (gg_sstime
 	%+% msdat
 	# + ggtitle("multiple site time")
-	+ scale_color_manual(values=c("Gray","Purple","Dark Blue","Orange"))
+	+ scale_color_manual(values=c("Gray","Purple","Dark Blue","Dark Green"))
 	
 )
 
@@ -183,5 +184,5 @@ gg_mscoverage <- (ggplot(data=ms_coverage
 + theme(panel.spacing = unit(0,'lines'))
 )
 
-print(mscoverage<- gg_mscoverage 	+ scale_color_manual(values=c("Gray","Purple","Dark Blue","Orange"))
+print(mscoverage<- gg_mscoverage 	+ scale_color_manual(values=c("Gray","Purple","Dark Blue","Dark Green"))
 )
