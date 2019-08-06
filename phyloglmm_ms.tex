@@ -80,6 +80,8 @@
 
 \providecommand{\keywords}[1]{\textbf{\textit{Keywords:}} #1}
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+ \vspace{-8ex}
+  \date{}
 \begin{document}
 \newcommand{\dbic}{\ensuremath \Delta \textrm{BIC}}
 
@@ -92,6 +94,12 @@
 \newcommand{\mli}[1]{{\color{red} ML: #1}}
 
 \newcommand{\add}[1]{{\color{blue} ADD: #1}}
+
+\pagenumbering{gobble}
+
+% \renewcommand{\bmb}[1]{\relax}
+% \renewcommand{\mli}[1]{\relax}
+
 
 
 %\SweaveOpts{concordance=TRUE}
@@ -457,7 +465,7 @@ where $\textrm{I}_{\textrm{group}}$ is a indicator matrix of groups; and $\otime
 
 The multi-group full simulation model has five additional random effects (predictor-level ($\sigma^2_{\mathrm{sp_{slope}}}$) and intercept-level ($\sigma^2_{\mathrm{sp_{int}}}$) random effect of species variance and their covariance ($\sigma_{\mathrm{sp_{int-slope}}}$), random intercept of group ($b_{\mathrm{group}}$) and random intercept of species-group interaction ($b_{\mathrm{sp:group}}$)) compared to the single--group full model.
 Predictor-level and intercept-level random effects of species are applicable in the multi-group model setting because there are multiple observations per species; thus we can quantify variation among species as distinct from residual variation.
-Variance in the intercept of species--group interactions ($b_{\mathrm{sp:group}}$) describes whether the species within a group are more similar on average than expected by chance \bmb{clarify? have more similar responses?}, equivalent to phylogenetic attraction \citep{helmus2007separating}. 
+Variance in the intercept of species--group interactions ($b_{\mathrm{sp:group}}$) describes whether the species within a group have more similar responses on average than expected by chance, equivalent to phylogenetic attraction \citep{helmus2007separating}. 
 
 \subsection*{Platforms}
 
@@ -505,8 +513,8 @@ For each replication, we sample two chains starting with 10000 iterations.
 We first evaluate our estimates by looking at the distribution of the estimated values (maximum likelihood estimates for non-Bayesian platforms and posterior medians for Bayesian platforms) to quantify bias and variance (i.e., quality of the point estimate).
 We then compute frequentist coverage to assess the quality of the confidence intervals.
 Coverage refers to the frequency with which the computed confidence intervals include the true values of parameters.
-We used 95\% (Wald and profile) confidence intervals for deterministic methods and quantile-based intervals (for Bayesian GLMM) to evaluate coverage.
-\bmb{clarify: did you use profile if available, otherwise Wald? You don't give any more detail in your coverage plots. [How different were Wald and profile for these results, or did you not compare them?]}
+We used 95\% Wald confidence intervals for deterministic methods and quantile-based intervals (for Bayesian GLMM) to evaluate coverage.
+% \bmb{clarify: did you use profile if available, otherwise Wald? You don't give any more detail in your coverage plots. [How different were Wald and profile for these results, or did you not compare them?]}
 We also compare computational speed between different platforms to evaluate the efficiency of different platforms and methods. 
 
 \section*{Results}
@@ -521,8 +529,9 @@ Codes for analyzing the dune meadow data using \pkg{lme4} and \pkg{pez} are prov
 \begin{center}
 \begin{figure}[H]
   \includegraphics[scale=0.7,page=1]{./figure/ssplot.pdf}
-  \caption{Comparison of single group model parameter estimates across different R packages in Table \ref{table:platform}. Total simulations $N=100$ for each category. The horizontal line shows the true value of the parameters in the simulation model. Models capable of fitting all parameters (\pkg{lme4}, \pkg{brms} and \pkg{glmmTMB}) fit well for all parameters. \bmb{consider tweaking aspect ratio (slightly wider?) Consider including n=25, n=50, n=100 in x-axis tick labels (I don't have all the output data so can't rebuild figs myself ...)}
-  }
+  \caption{Comparison of single group model parameter estimates across different R packages in Table \ref{table:platform}. Total simulations $N=100$ for each category. The horizontal line shows the true value of the parameters in the simulation model. Models capable of fitting all parameters (\pkg{lme4}, \pkg{brms} and \pkg{glmmTMB}) fit well for all parameters. 
+%\bmb{consider tweaking aspect ratio (slightly wider?) Consider including n=25, n=50, n=100 in x-axis tick labels (I don't have all the output data so can't rebuild figs myself ...)
+}
 \label{ssplot}
 \end{figure}
 \end{center}
@@ -531,9 +540,7 @@ Codes for analyzing the dune meadow data using \pkg{lme4} and \pkg{pez} are prov
 \begin{center}
 \begin{figure}[H]
   \includegraphics[scale=0.7]{./figure/sstime.pdf}
-  \caption{Comparison of speed for all fitting platforms: layout of the packages as in Figure \ref{ssplot} \bmb{violins? Consider tweaking y-axis labels (0.1, 10, 1000) (maybe tweak \code{scipen}, or specify tick pos/labels manually). Maybe reverse legend order \code{ guides(fill = guide\_legend(reverse = TRUE))}: \url{https://www.datanovia.com/en/blog/ggplot-legend-title-position-and-labels/} to match order in plot 
-    }
-  }
+  \caption{Comparison of speed for all fitting platforms: layout of the packages as in Figure \ref{ssplot}}
 \label{ssplot_speed}
 \end{figure}
 \end{center}
@@ -542,7 +549,8 @@ Codes for analyzing the dune meadow data using \pkg{lme4} and \pkg{pez} are prov
 \begin{center}
 \begin{figure}[H]
   \includegraphics[scale=0.7]{./figure/sscoverage.pdf}
-  \caption{Comparison of coverage probablility for fixed effect parameters. Models matching the simulation model (\pkg{lme4}, \pkg{brms} and \pkg{glmmTMB}) have coverage near the nominal value of 0.95. The black line shows the nominal coverage, and the grey ribbon the 95\% binomial confidence interval based on 100 simulated fits. \bmb{really picky, but maybe change grid lines or ribbon colour slightly so they're not confusable (maybe use blue ribbon with alpha=0.1?)}
+  \caption{Comparison of coverage probablility for fixed effect parameters. Models matching the simulation model (\pkg{lme4}, \pkg{brms} and \pkg{glmmTMB}) have coverage near the nominal value of 0.95. The black line shows the nominal coverage, and the grey ribbon the 95\% binomial confidence interval based on 100 simulated fits. 
+%  \bmb{really picky, but maybe change grid lines or ribbon colour slightly so they're not confusable (maybe use blue ribbon with alpha=0.1?)}
   }
 \label{ssplot_coverage}
 \end{figure}
@@ -561,7 +569,7 @@ PGLS, with only one parameter available, confounds all variation (phylogenetic i
 \begin{figure}[H]
   \includegraphics[scale=0.7,page=1]{./figure/msplot.pdf}
   \caption{Comparison of multi-group model parameter estimates across different R packages in Table 2. Annotations as in Figure \ref{ssplot}.
-    \bmb{need to work harder to match up colours across plots - colours corresponding to specific platforms are different in different plots because different subsets are included (use \code{scale\_colour\_manual} appropriately)}
+%    \bmb{need to work harder to match up colours across plots - colours corresponding to specific platforms are different in different plots because different subsets are included (use \code{scale\_colour\_manual} appropriately)}
   }
   \label{msplot}
 \end{figure}
@@ -674,52 +682,52 @@ More importantly, this implementation in \pkg{lme4} and \pkg{glmmTMB} allows use
 % Our approach is orders of magnitud faster than existing phylogenetic mixed models and it can easily combined with any statistical mixed model framework. 
 % It is more flexible in fitting large phylogenies, large volumes of data, unbalanced data sets, and complex random effects such as slope correlations.
 
-\newpage
-
-\section*{Supplements -- translation}
-
-$1 \mid Sp_{phylo}$, $0 + X_{E} \mid Sp_{phylo}$ and $X_{E} \mid Sp_{phylo}$ means phylogenetically related have similar response,   
-
-\begin{tabularx}{\textwidth}{|l|X|X|}
-\hline
-Formula & Statistics & Biology \\
-\hline
-$1 \mid Sp$ &
-random species intercept; variation within species in mean response across all factors &
-variation of how species respond \\
-\hline
-
-$0 + X_{E} \mid Sp$ &
-random slope of environment factor within species; variation in coefficient within species for the environmental factor &
-variation of how species respond to the same environmental factor \\
-\hline
-
-$1 + X_{E} \mid Sp$ &
-random slope of environmental factor within species with correlated intercept; variation in coefficient within species for the environmental factor with correlated mean response across all other factors &
-variation of how species respond in the same environmental factors and the correlation of the variation of how they respond in general \\
-\hline
-
-$1 \mid Site:Sp $ &
-random variation in intercept among species within sites &
-variation of how species respond within sites \\
-\hline
-
-$1 | Sp_{Phylo} $ &
-variation among species in mean response across all factors demonstrate phylogenetic signal &
-phylogenetically related species respond similarly \\
-\hline
-
-$0 + X_{E} \mid Sp_{Phylo}$ &
-variation among species for environmental factors demonstrate phylogenetic signal &
-phylogenetically related species respond similar (share common response) to the same environmental factor \\
-\hline
-\end{tabularx}
-            
-            
-            
-            
-            
-                                                              
+% \newpage
+% 
+% \section*{Supplements -- translation}
+% 
+% $1 \mid Sp_{phylo}$, $0 + X_{E} \mid Sp_{phylo}$ and $X_{E} \mid Sp_{phylo}$ means phylogenetically related have similar response,   
+% 
+% \begin{tabularx}{\textwidth}{|l|X|X|}
+% \hline
+% Formula & Statistics & Biology \\
+% \hline
+% $1 \mid Sp$ &
+% random species intercept; variation within species in mean response across all factors &
+% variation of how species respond \\
+% \hline
+% 
+% $0 + X_{E} \mid Sp$ &
+% random slope of environment factor within species; variation in coefficient within species for the environmental factor &
+% variation of how species respond to the same environmental factor \\
+% \hline
+% 
+% $1 + X_{E} \mid Sp$ &
+% random slope of environmental factor within species with correlated intercept; variation in coefficient within species for the environmental factor with correlated mean response across all other factors &
+% variation of how species respond in the same environmental factors and the correlation of the variation of how they respond in general \\
+% \hline
+% 
+% $1 \mid Site:Sp $ &
+% random variation in intercept among species within sites &
+% variation of how species respond within sites \\
+% \hline
+% 
+% $1 | Sp_{Phylo} $ &
+% variation among species in mean response across all factors demonstrate phylogenetic signal &
+% phylogenetically related species respond similarly \\
+% \hline
+% 
+% $0 + X_{E} \mid Sp_{Phylo}$ &
+% variation among species for environmental factors demonstrate phylogenetic signal &
+% phylogenetically related species respond similar (share common response) to the same environmental factor \\
+% \hline
+% \end{tabularx}
+%             
+%             
+%             
+%             
+%             
+%                                                               
 
 
 \bibliography{phyloglmm}

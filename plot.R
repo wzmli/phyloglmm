@@ -4,6 +4,7 @@ library(dplyr)
 library(ggplot2)
 library(tidyr)
 library(grid)
+library(scales)
 theme_set(theme_bw())
 zmargin <- theme(panel.spacing=grid::unit(0,"lines"))
 
@@ -62,7 +63,9 @@ gg_sstime <- (ggplot(data=ssdat, aes(x=size, y=time, col=Platform))
 	# + geom_violin(position=position_dodge(width=0.2),alpha=0.4)
 	+ geom_boxplot(outlier.colour = NULL, varwidth=TRUE)
 	# + scale_fill_brewer(palette = "Dark2")
-	+ scale_y_log10()
+	+ scale_y_log10(breaks = trans_breaks("log10", function(x) 10^x)
+	    , labels = trans_format("log10", math_format(10^.x))
+	  )
 	+ scale_color_manual(values=c("Black","Red","Dark Blue","Dark Green","Orange"))
 	
 	+ ylab("Time (seconds)")
@@ -96,7 +99,8 @@ gg_sscoverage <- (ggplot(data=ss_coverage
 	+ scale_color_manual(values=c("Black","Red","Dark Blue","Dark Green","Orange"))
 	+ annotate("rect", xmin=0, xmax=4
 	           , ymin=0.95 - 2*sqrt(0.95*0.05/100)
-	           , ymax=0.95 + 2*sqrt(0.95*0.05/100), alpha=0.2)
+	           , ymax=0.95 + 2*sqrt(0.95*0.05/100), alpha=0.1
+	           , fill="blue")
   + theme(panel.spacing = unit(0,'lines'))
 	+ xlab("Number of Species")
 	+ ylab("Coverage")
@@ -180,7 +184,7 @@ gg_mscoverage <- (ggplot(data=ms_coverage
 # + ggtitle("Single Site coverage")
 + annotate("rect", xmin=0, xmax=5
            , ymin=0.95 - 2*sqrt(0.95*0.05/100)
-           , ymax=0.95 + 2*sqrt(0.95*0.05/100), alpha=0.2)
+           , ymax=0.95 + 2*sqrt(0.95*0.05/100), alpha=0.1, fill="blue")
 + theme(panel.spacing = unit(0,'lines'))
 )
 
