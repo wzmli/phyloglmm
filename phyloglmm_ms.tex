@@ -10,6 +10,7 @@
 \usepackage{xspace}
 \usepackage[top=1in, bottom=1in, left=1.25in, right=1.25in]{geometry}
 \usepackage{pdfpages}
+\usepackage{lineno}
 %% maxwidth is the original width if it is less than linewidth
 %% otherwise use linewidth (to make sure the graphics do not exceed the margin)
 \makeatletter
@@ -21,6 +22,9 @@
   \fi
 }
 \makeatother
+
+
+\linenumbers
 
 \definecolor{commentcol}{rgb}{0.345, 0.345, 0.945}
 \newcommand{\comment}[1]{\textcolor{commentcol}{[[#1]]}}%
@@ -89,13 +93,19 @@
 \newcommand{\bmbhide}[1]{}
 \newcommand{\bmb}[1]{{\color{blue} BB: #1}}
 
-\newcommand{\fref}[1]{Figure~\ref{fig:#1}}
+
+\renewcommand{\figurename}{Fig.}
 
 \newcommand{\mli}[1]{{\color{red} ML: #1}}
 
 \newcommand{\add}[1]{{\color{blue} ADD: #1}}
 
-\pagenumbering{gobble}
+
+\newcommand{\pkg}[1]{{\tt #1}}
+\newcommand{\code}[1]{{\tt #1}}
+
+
+% \pagenumbering{gobble}
 
 % \renewcommand{\bmb}[1]{\relax}
 % \renewcommand{\mli}[1]{\relax}
@@ -104,12 +114,45 @@
 
 %\SweaveOpts{concordance=TRUE}
 %\SweaveOpts{concordance=TRUE}
-\maketitle
+% \maketitle
+
+\begin{center}
+{\Large
+\textbf\newline{Reformulating phylogenetic mixed models to improve flexibility and speed} % Please use "sentence case" for title and headings (capitalize only the first word in a title (or heading), the first word in a subtitle (or subheading), and any proper nouns).
+}
+% Insert author names, affiliations and corresponding author email (do not include titles, positions, or degrees).
+\\
+\vspace{2pt}
+Michael Li\textsuperscript{1*} and Benjamin M. Bolker\textsuperscript{1,2,3}
+\\
+\vspace{2pt}
+* Corresponding author: Michael Li; lim88@mcmaster.ca
+\end{center}
+\vspace{5pt}
+\textbf{1} Department of Biology, McMaster University, Hamilton, Ontario, Canada
+\\
+\textbf{2} Department of Mathematics and Statistics, McMaster University, Hamilton, Ontario, Canada
+\\
+\textbf{3} Institute for Infectious Diseases Research, McMaster University, Hamilton, Ontario, Canada
+\\
+\bigskip
+
+\section*{Abstract}
+
+\begin{enumerate}
+\item{Phylogenetic comparative methods (PCM) using phylogenetic (eco-evolutionary) regression is a powerful technique to explore relationships among species traits or abundance distributions. However, existing procedures may be either insufficiently flexible or too computationally demanding when analyzing large volumes of data.}
+\item{We propose an alternative formulation of phylogenetic generalized linear mixed models that is mathematically equivalent to previous approaches, but more flexible and computationally efficient. We have implemented this formulation in two R statistical packages (\pkg{lme4} and \pkg{glmmTMB}).}
+\item{Our reformulation of phylogenetic generalized linear mixed model is orders of magnitude faster than existing phylogenetic mixed models.}
+\item{This approach can, in principle, be combined flexibly with any platforms that support independent latent variables.
+More importantly, this implementation in \pkg{lme4} and \pkg{glmmTMB} allows users to fit phylogenetic mixed models to the fullest (large data, unbalanced species observations, complex random effects) and explore new ideas.}
+\end{enumerate}
+
+
+
+\keywords{phylogenetic comparative methods, phylogenetic correlation, phyloglmm, species--branch matrix}
+
 
 \doublespacing
-
-\keywords{phyloglmm, species--branch matrix, phylogenetic correlation, phylogenetic comparative methods}
-
 
 \section*{Introduction}
 
@@ -171,8 +214,7 @@ For example, \cite{nowakowski2018phylogenetic} considered phylogenetically corre
 The tools available for extending phylogenetic relationships to predictor variables (or predictor level variation) in a standard frequentist framework are relatively inflexible; thus, many computationally sophisticated biologists have turned to more flexible Bayesian approaches, despite their computational burden \citep{hadfield2010mcmc, burkner2018brms}.
 Table \ref{table:model} summarises types of platforms, data constraints, and provides model complexities for phylogenetic comparative analysis.
 
-\newcommand{\pkg}[1]{{\tt #1}}
-\newcommand{\code}[1]{{\tt #1}}
+
 
 %% FIXME: chart looks ugly
 \begin{table}[]
@@ -674,6 +716,15 @@ Even within this scope, there is additional room for exploration we neglected, s
 However, the simple approach we developed here offers an efficient way to handle phylogenetic comparative analysis for a wide range of univariate, Brownian-motion evolutionary models. 
 This approach can in principle be combined flexibly with any platforms that supports independent latent variables such as Stan.
 More importantly, this implementation in \pkg{lme4} and \pkg{glmmTMB} allows users to fit phylogenetic mixed models to the fullest (large data, unbalanced species observations, complex random effects) and explore new ideas.
+
+\section*{Authors’ contributions}
+
+ML and BMB conceived the ideas and designed methodology; ML and BMB implimented the code in \pkg{lme4} and \pkg{glmmTMB}; ML ran all simulations; ML and BMB analysed the results; ML wrote the first draft of the manuscript. All authors contributed critically to the drafts and gave final approval for publication.
+
+\section*{Data Availability}
+
+All codes are available at DOI:10.5281/zenodo.2639887.
+
 
 
 % \section*{Conclusion}
