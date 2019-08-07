@@ -21,6 +21,8 @@ include sub.mk
 
 ms.pdf: main.tex phyloglmm_ms.tex
 	pdflatex phyloglmm_ms
+	bibtex phyloglmm_ms
+	pdflatex phyloglmm_ms
 
 
 Makefile:
