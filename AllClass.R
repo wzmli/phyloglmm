@@ -86,7 +86,7 @@ merPredD <-
                         X <<- as(X, "matrix")
                         Zt <<- as(Zt, "dgCMatrix")
                         Lambdat <<- as(Lambdat, "dgCMatrix")
-                        # Lind <<- as.integer(Lind)
+                        Lind <<- as.integer(Lind)
                         thfun <<- as.function(thfun)
                         theta <<- as.numeric(theta)
                         N <- nrow(X)

@@ -1,50 +1,87 @@
-### Fitting phyloglmm with TMB
+## setting parameters 
+
+tree_seed <- 820
+set.seed(tree_seed)
+
+nrep <- 1 
+nspp <- 500
+
+# residual sd (set to zero for binary data)
+sd.resid <- 2
+Xsd <- 0
+
+# # fixed effects
+beta0 <- 0
+beta1 <- 0
+
+# magnitude of phylogenetic random effects
+physd.B0 <- 4
+physd.B1 <- 0
+phyrho.B01 <- 0
+
+## species level random effects 
+sd.B0 <- 0
+sd.B1 <- 0
+rho.B01 <- 0
+
+source('simulate_tree.R', echo=TRUE)
+## lme4 code to set up random effect matrix
+source('new_phylo_setup.R', echo=TRUE)
+source('glmmTMBhacked.R', echo=TRUE)
 
 library(dplyr)
 library(glmmTMB)
 library(lme4)
 library(Matrix)
-t1 <- proc.time()
 
-system.time(phyZ <- phylo.to.Z(phy,stand=FALSE))
+phyZ_time <- system.time(phyZ <- phylo.to.Z(phy,stand=FALSE))
 
 dat <- (dat
         %>% mutate(obs = sp
         )
 )	
 
-t1 <- system.time(mod1 <- glmmTMBhacked(Y ~ X  
-                             # + (1|sp) + (0 + X| sp) 
-                             + (1 | sp)
-                             # + (0 + X |sp)
-                      # + (0 + X |sp)
-                             , data=dat
-                             , phyloZ = phyZ
-                             , phylonm = c("sp", "sp:site")
-                             , doFit=TRUE
-                             # , dispformula = ~1
-                             , control=glmmTMBControl(optCtrl=list(trace=1,iter.max=1e5,eval.max=1e5))
-                             , REML = FALSE
-                             , lambhack=FALSE
+regressor_time <- system.time(
+  regressor_mod <- glmmTMBhacked(Y ~ X  
+    + (1 | sp)
+    # + (0 + X |sp)
+    , data=dat
+    , phyloZ = phyZ
+    , phylonm = c("sp", "sp:site")
+    , doFit=TRUE
+    , control=glmmTMBControl(optCtrl=list(trace=1,iter.max=1e5,eval.max=1e5))
+    , REML = FALSE
+    , lambhack=FALSE ## Lambda switch 
+    ) 
+)
+
+chol_time <- system.time(cholphyt <- t(chol(phyZ %*% t(phyZ))))
+
+corr_time <- system.time(
+  corr_mod <- glmmTMBhacked(Y ~ X  
+    + (1 | obs)
+    # + (0 + X |obs)
+    , data=dat
+    , phyloZ = cholphyt
+    , phylonm = c("sp", "sp:site")
+    , doFit=TRUE
+    , control=glmmTMBControl(optCtrl=list(trace=1,iter.max=1e5,eval.max=1e5))
+    , REML = FALSE
+    , lambhack=TRUE
   ) 
 )
-mod1
 
-# debug(mkTMBStruchacked)
-cholphyt <- t(chol(phyZ %*% t(phyZ)))
-t2 <- system.time(mod2 <- glmmTMBhacked(Y ~ X  
-                      # + (1|sp) + (0 + X| sp) 
-                      + (1 | obs)
-                      # + (0 + X |obs)
-                      # + (0 + X | obs)
-                      , data=dat
-                      , phyloZ = cholphyt
-                      , phylonm = c("sp", "sp:site")
-                      , doFit=TRUE
-                      # , dispformula = ~1
-                      , control=glmmTMBControl(optCtrl=list(trace=1,iter.max=1e5,eval.max=1e5))
-                      , REML = FALSE
-                      , lambhack=TRUE
-) 
+print(VarCorr(regressor_mod))
+print(VarCorr(corr_mod))
+
+support_time <- c(phyZ_time[3],chol_time[3])
+fit_time <- c(regressor_time[3],corr_time[3])
+
+sumtable <- data.frame(method=c("regressor","correlation")
+                      , support = c("phyloZ", "cholesky")
+                      , support_time
+                      , fit_time
+                      , total_time = support_time + fit_time
 )
-mod2
+
+print(sumtable)
