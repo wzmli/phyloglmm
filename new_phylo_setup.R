@@ -37,7 +37,7 @@ phylo_lmm <- function(formula,data,phylo,phylonm=NULL,phyloZ=NULL,control,REML,d
 }
 
 lFormula <- function (formula, data = NULL, REML = TRUE, subset, weights, 
-          na.action, offset, contrasts = NULL, control = lmerControl(),phylonm,phyloZ, lambhack,
+          na.action, offset, contrasts = NULL, control = lmerControl(),phylonm,phyloZ, lambhack=FALSE,
           ...) 
 {
   control <- control$checkControl
@@ -328,7 +328,7 @@ Lambdathack <- function(phyloZ){
   lambdat <- t(chol(covmat))## cormat
   indexing <- lambdat
   indexing[which(indexing != 0)] <- 1
-  newLind <- rep(1,1) # rep(1, length(which(indexing != 0)))
+  newLind <-  rep(1, length(which(indexing != 0)))
   hh <- list()
   thfun <- local({
     template <- lambdat

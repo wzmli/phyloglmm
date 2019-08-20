@@ -1,6 +1,6 @@
 glmmTMBhacked <- function (formula, data = NULL, family = gaussian(), ziformula = ~0, 
                            dispformula = ~1, weights = NULL, offset = NULL, contrasts = NULL, phyloZ = NULL, 
-                           phylonm = NULL,
+                           phylonm = NULL, lambhack=NULL,
                            na.action = na.fail, se = TRUE, verbose = FALSE, doFit = TRUE, 
                            control = glmmTMBControl(), REML = FALSE) 
 {
@@ -90,7 +90,7 @@ glmmTMBhacked <- function (formula, data = NULL, family = gaussian(), ziformula 
   TMBStruc <- mkTMBStruchacked(formula, ziformula, dispformula, combForm, 
                                mf, fr, yobs = y, respCol, weights, contrasts = contrasts, 
                                family = family, se = se, call = call, verbose = verbose, 
-                               REML = REML, phylonm=phylonm, phyloZ=phyloZ)
+                               REML = REML, phylonm=phylonm, phyloZ=phyloZ, lambhack = lambhack)
   TMBStruc$control <- lapply(control, eval, envir = TMBStruc)
   if (!doFit) 
     return(TMBStruc)
@@ -100,7 +100,7 @@ glmmTMBhacked <- function (formula, data = NULL, family = gaussian(), ziformula 
 
 mkTMBStruchacked <- function (formula, ziformula, dispformula, combForm, mf, fr, 
                               yobs, respCol, weights, contrasts=contrasts, size = NULL, family, se = NULL, phyloZ = phyloZ, 
-                              phylonm=phylonm,
+                              phylonm=phylonm,lambhack=lambhack,
                               call = NULL, verbose = NULL, ziPredictCode = "corrected", 
                               doPredict = 0, whichPredict = integer(0), REML = FALSE) 
 {
@@ -137,7 +137,7 @@ mkTMBStruchacked <- function (formula, ziformula, dispformula, combForm, mf, fr,
     dispformula[] <- ~0
   }
   condList <- glmmTMB:::getXReTrms(formula, mf, fr, contrasts = contrasts)
-  condListhacked <- getXReTrmshacked(formula, mf, fr, contrasts = contrasts, phylonm = phylonm, phyloZ = phyloZ)
+  condListhacked <- getXReTrmshacked(formula, mf, fr, contrasts = contrasts, phylonm = phylonm, phyloZ = phyloZ, lambhack=lambhack)
   ziList <- glmmTMB:::getXReTrms(ziformula, mf, fr, contrasts = contrasts)
   dispList <- glmmTMB:::getXReTrms(dispformula, mf, fr, ranOK = FALSE, 
                                    type = "dispersion", contrasts = contrasts)
@@ -221,6 +221,11 @@ mkTMBStruchacked <- function (formula, ziformula, dispformula, combForm, mf, fr,
   condList$Z <- t(condListhacked$reTrms$Zt)
   data.tmb$Z <- t(condListhacked$reTrms$Zt)
   parameters$b <- rep(0,ncol(data.tmb$Z))
+  if(lambhack){
+    condList$Z <- t(chol(phyloZ %*% t(phyloZ))) %*% t(condListhacked$reTrms$Zt)
+    data.tmb$Z <- condList$Z
+    # parameters$b <- rep(0, length(data.tmb$Z != 0))
+  }
   dispformula <- dispformula.orig
   return(lme4:::namedList(data.tmb, parameters, mapArg, randomArg, 
                           grpVar, condList, ziList, dispList, condReStruc, ziReStruc, 
@@ -230,7 +235,7 @@ mkTMBStruchacked <- function (formula, ziformula, dispformula, combForm, mf, fr,
 }
 
 getXReTrmshacked <- function (formula, mf, fr, ranOK = TRUE, type = "", contrasts, phyloZ = phyloZ, 
-                              phylonm = phylonm) 
+                              phylonm = phylonm, lambhack = lambhack) 
 {
   fixedform <- formula
   glmmTMB:::RHSForm(fixedform) <- nobars(glmmTMB:::RHSForm(fixedform))
@@ -266,7 +271,7 @@ getXReTrmshacked <- function (formula, mf, fr, ranOK = TRUE, type = "", contrast
       stop("no random effects allowed in ", type, " term")
     glmmTMB:::RHSForm(ranform) <- lme4:::subbars(glmmTMB:::RHSForm(glmmTMB:::reOnly(formula)))
     mf$formula <- ranform
-    reTrms <- mkReTrms(lme4:::findbars(glmmTMB:::RHSForm(formula)), fr,phylonm,phyloZ)
+    reTrms <- mkReTrms(lme4:::findbars(glmmTMB:::RHSForm(formula)), fr,phylonm,phyloZ,lambhack)
     ss <- splitForm(formula)
     ss <- unlist(ss$reTrmClasses)
     Z <- t(reTrms$Zt)
