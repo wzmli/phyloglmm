@@ -78,9 +78,6 @@ corr_time <- system.time(
   ) 
 )
 
-print(VarCorr(regressor_mod))
-print(VarCorr(corr_mod))
-
 support_time <- c(phyZ_time[3],chol_time[3])
 fit_time <- c(regressor_time[3],corr_time[3])
 
@@ -90,5 +87,8 @@ sumtable <- data.frame(method=c("regressor","correlation")
                       , fit_time
                       , total_time = support_time + fit_time
 )
+
+print(VarCorr(regressor_mod))
+print(VarCorr(corr_mod))
 
 print(sumtable)
