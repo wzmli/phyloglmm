@@ -3,12 +3,15 @@
 tree_seed <- 820
 set.seed(tree_seed)
 
+nsite <- 1
 nrep <- 1 
 nspp <- 500
 
 # residual sd (set to zero for binary data)
+sd.site <- 0
 sd.resid <- 2
 Xsd <- 0
+sd.interaction <- 0.000001
 
 # # fixed effects
 beta0 <- 0
@@ -36,6 +39,10 @@ library(Matrix)
 
 phyZ_time <- system.time(phyZ <- phylo.to.Z(phy,stand=FALSE))
 
+
+## create a copy of species index
+## regressor method looks for (...|sp) and changes the random effects according to phyloZ
+## correlation method constructs the random effect Z and if ``lambhack==TRUE'' it will get multiplied by chol(Sigma)
 dat <- (dat
         %>% mutate(obs = sp
         )
