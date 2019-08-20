@@ -222,7 +222,8 @@ mkTMBStruchacked <- function (formula, ziformula, dispformula, combForm, mf, fr,
   data.tmb$Z <- t(condListhacked$reTrms$Zt)
   parameters$b <- rep(0,ncol(data.tmb$Z))
   if(lambhack){
-    condList$Z <- t(chol(phyloZ %*% t(phyloZ))) %*% t(condListhacked$reTrms$Zt)
+    # condList$Z <- t(condListhacked$reTrms$Zt %*% chol(phyloZ %*% t(phyloZ)))
+    condList$Z <- phyloZ
     data.tmb$Z <- condList$Z
     # parameters$b <- rep(0, length(data.tmb$Z != 0))
   }
