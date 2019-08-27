@@ -33,10 +33,27 @@ source('new_phylo_setup.R', echo=TRUE)
 source('glmmTMBhacked.R', echo=TRUE)
 
 library(dplyr)
+library(purrr)
 library(glmmTMB)
 library(lme4)
 library(Matrix)
 
+## help("image-methods")
+sparsity <-  function(m) {
+    tot_filled <- length(m@i)
+    tot_dim <- prod(m@Dim)
+    return(c(n_elem=tot_filled,size=tot_dim,sparsity=tot_filled/tot_dim))
+}
+
+ii <- function(m,ylab="species\n(=observation)",...) {
+    s <- sparsity(m)
+    image(m,
+          sub=sprintf("n: %d; size: %d; sparsity: %1.3f",
+                      s[1],s[2],s[3]),
+          ...)
+}
+
+## construct branch matrix ( ~ 4 seconds)
 phyZ_time <- system.time(phyZ <- phylo.to.Z(phy,stand=FALSE))
 
 
@@ -61,8 +78,11 @@ regressor_time <- system.time(
     , lambhack=FALSE ## Lambda switch 
     ) 
 )
+ii(phyZ,xlab="branch")
 
 chol_time <- system.time(cholphyt <- t(chol(phyZ %*% t(phyZ))))
+str(cholphyt)
+ii(cholphyt,xlab="species")
 
 corr_time <- system.time(
   corr_mod <- glmmTMBhacked(Y ~ X  
