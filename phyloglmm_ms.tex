@@ -137,6 +137,123 @@ Michael Li\textsuperscript{1*} and Benjamin M. Bolker\textsuperscript{1,2,3}
 \\
 \bigskip
 
+\section*{JD's Comments}
+
+Sharpen opening framing somehow. Clarify the basic idea of
+taxonomic-based investigations. Intro could have two or three
+paragraphs, and could start by explaining either PCM or phylogenetic
+regression.
+
+Work on topic sentences. For example, the first paragraph
+in the Challenges section has absolutely the wrong topic sentence.
+Think of a paragraph as a unit of your story: you need more paragraphs
+in many places. This can be achieved with paragraph breaks and some
+sentence-shuffling.
+
+I frankly think you could make a lot of progress if you look at every
+section and ask: what are my paragraphs, and what should be their
+topic sentences?
+
+Clarify the hierarchical structure of the document. It's not
+completely clear whether or not challenges is nested under
+introduction or is the same level.
+
+In either case, some of the stuff in challenges should be postponed to
+methods. Everything pre methods should be aimed at getting across a
+high-level message of what this paper is adding.
+
+Challenges needs to be less detailed, and more clear about the
+fundamental relationship between methods. You say your method is not
+mathematically equivalent the other methods, which sort of implies
+that they're all mathematically equivalent to each other. But this
+last fact will come as a surprise or even a confusion to the reader.
+
+You should develop a clear point of view on the relationship between
+PCM and phylogenetic regression. Sometimes it seems like the former is
+broader than the ladder, and sometimes you seem to use them as
+synonyms. It kind of seems to me like you could  talk much less about
+PCM, I guess this is mostly a paper about phylogenetic regression. Or
+maybe it's a paper about "phylogenetic linear models", and we should
+just introduce this term?
+It kind of seems like methods needs an introductory paragraph before
+you jump into the details. I don't usually do that, but this is a
+pretty complicated method section.
+
+You need to say how the glmm approach relates conceptually to the
+simple phylogenetic regression above it.
+
+Be consistent about your transpose notation.
+
+The text around (3) is quite deep. It is not clear to me what you mean
+by term-wise. You have not explained what you mean by grouping
+factors.And the J Matrix, which apparently doesn't even need to be
+square, is just an identity Matrix. There's probably a way to present
+this that would lead to better intuition.
+
+
+Can you say a little more about the intuition or mechanism behind
+Khatri-Rao? KR seems to work on partitioned matrices, but I don't
+see clearly how these matrices are partitioned.
+
+The text around (5) should have less words and strive to be more
+explanatory. You can rely more on the equation.
+
+Be consistent with the exposition of simulation models. Groups are not
+well explained, and you suddenly talk under multi-group about one
+observation per species -- presumably that was true for the previous
+model?
+
+(6) is too clunky. Is there a way to simplify the notation for MVNs?
+Or just for the expandend covariance matrices, I guess.
+
+Platforms is a single huge ¶ where the topic s. is actually tangential
+(could literally be removed). See if you can get clear ideas across
+and rely more on the table.
+
+"We simulated 100 phylogenetic trees … to simulate responses …" Does
+anything after the first ellipsis carry information? What are the
+cites supporting?
+
+"Correlation $\rho$ is used in place of covariances" -- what does this mean?
+
+"Each realization was fitted to all model variants using a range of
+different platforms." Unnecessarily vague, tighten up here.
+
+Be careful with the word "identical". If pez is really identical, can
+you explain briefly why and maybe say "and therefore is not shown"? Is
+that why pez doesn't appear in F2?
+
+It should be more clear to the reader when you are using your method
+and when you are using older methods. Is F2 all implementations of the
+new method? Say so.
+
+F3. What is meant by layout of the packages?
+
+brms coverage is very high in F4. Are you using the right Bayesian method?
+
+In F2 maybe use dashed boxplots for the first two and explain why.
+Also, refer to the last three in the same order in the caption as the
+legend.
+
+I finally see from T2 that pez and phyr apparently "can't" do the
+single group. This should be briefly explained somewhere salient in
+text.
+
+F5 and 6 captions are switched. Also, they shouldn't both refer to F2.
+Not clear that the speed one should refer to anything, since nothing
+obvious seems to be explained about the speed (nor necessarily
+needed).
+
+F6. Why is pez fuzzed out? Does this relate to my identicality questions?
+
+F7. This "annotations" thing is actually getting annoying. Are the
+captions just unfinished?
+
+Yeah, I'm a stop now. You can take these comments for what they're
+worth, but I don't want to see this Chapter again until you've done
+all of the macro-editing of the Results section (figures in the right
+order, an attempt at captions, figure references correct).
+
 \section*{Abstract}
 
 \begin{enumerate}
