@@ -228,7 +228,6 @@ retest.Rout: retest.R
 
 ## This ¶ can be deleted once makestuff is set up
 msrepo = https://github.com/dushoff
-makestuff/Makefile: makestuff
 makestuff:
 	git submodule add -b master $(msrepo)/makestuff
 
@@ -247,6 +246,7 @@ Makefile: makestuff/Makefile
 
 makestuff/%.mk: makestuff/Makefile ;
 makestuff/Makefile:
+	$(MAKE) makestuff
 	git submodule update -i
 
 -include makestuff/os.mk
