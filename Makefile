@@ -1,17 +1,14 @@
-### testing phylog in lme4-verse
+## This is phyloglmm, a project directory with a makestuff _submodule_
+## makestuff/makemod.Makefile
 
-### Hooks 
 current: target
 -include target.mk
 
+# -include makestuff/perl.def
 
-##################################################################
+######################################################################
 
-# make files and directories
-
-Sources = Makefile .gitignore README.md sub.mk LICENSE.md 
-include sub.mk
-# include $(ms)/perl.def
+# Content
 
 # ms.tex
 # main.tex
@@ -24,8 +21,9 @@ ms.pdf: main.tex phyloglmm_ms.tex
 	bibtex phyloglmm_ms
 	pdflatex phyloglmm_ms
 
+##################################################################
 
-Makefile:
+Sources += $(wildcard *.R)
 
 ### debug Morgan's example
 
@@ -36,9 +34,6 @@ debug.Rout: phyloglmm_setup.Rout ./debug_examp/worked_example_phylolmm.rds ./deb
 #2, parameters.R
 #3, phyloglmm_setup.R
 
-##################################################################
-
-Sources += $(wildcard *.R)
 
 ######################################################################
 
@@ -229,19 +224,32 @@ newsim.Rout: newsim.R
 retest.Rout: retest.R
 	$(run-R)
 
+######################################################################
+
+## This ¶ can be deleted once makestuff is set up
+msrepo = https://github.com/dushoff
+makestuff/Makefile: makestuff
+makestuff:
+	git submodule add -b master $(msrepo)/makestuff
+
+######################################################################
+
+### Content
+
+######################################################################
+
 ### Makestuff
 
-clean:
-	rm .*.RData *.Rout *.wrapR.r *.Rlog *.wrapR.rout .*.wrapR.rout .*.Rout.pdf .*.Rlog
+Sources += Makefile makestuff
 
-## Change this name to download a new version of the makestuff directory
-# Makefile: start.makestuff
+ms = makestuff
+Makefile: makestuff/Makefile
 
--include $(ms)/git.mk
--include $(ms)/visual.mk
--include $(ms)/pandoc.mk
+makestuff/%.mk: makestuff/Makefile ;
+makestuff/Makefile:
+	git submodule update -i
 
--include $(ms)/wrapR.mk
--include $(ms)/flextex.mk
-
-
+-include makestuff/os.mk
+-include makestuff/git.mk
+-include makestuff/visual.mk
+-include makestuff/projdir.mk
