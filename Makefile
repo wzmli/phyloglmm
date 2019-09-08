@@ -16,10 +16,15 @@ current: target
 # todo.md
 # journal.md
 
+## Mike rule
 ms.pdf: main.tex phyloglmm_ms.tex
 	pdflatex phyloglmm_ms
 	bibtex phyloglmm_ms
 	pdflatex phyloglmm_ms
+
+## JD rule
+Sources += main.tex phyloglmm_ms.tex
+phyloglmm_ms.pdf: main.tex phyloglmm_ms.tex
 
 ##################################################################
 
@@ -253,3 +258,4 @@ makestuff/Makefile:
 -include makestuff/git.mk
 -include makestuff/visual.mk
 -include makestuff/projdir.mk
+-include makestuff/texdeps.mk
