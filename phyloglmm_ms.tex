@@ -298,7 +298,7 @@ The typical GLMM has the form:
 \end{aligned}
 \end{equation}
 where $\bZ$ is an $n \times m$ model matrix for the $n$-dimensional vector-valued $m$ predictor variables; $\bb$ (sometimes referred to as the ``G-side" effect) representing the conditional modes, is assumed to be multivariate normally distributed with a variance-covariance matrix given by $\bSigma(\theta)$; and $\phi$ is a scale parameter for the conditional distribution $\dist$.
-When $\dist$ is Gaussian, $g$ is the identity function, (\ref{eq:glmm}) reduces to (\ref{eq:gls}).
+When $\dist$ is Gaussian and $g$ is the identity function, (\ref{eq:glmm}) reduces to (\ref{eq:gls}).
 % ; $\besp$ (sometimes referred as "R" effect) is an $n \times 1$ vector of independent and normally distributed error terms with variance $\sigma_{\epsilon}^2$.
 % Analogously, the phylogenetic regression given by (\ref{eq:gls1}) can be represented in the generalized mixed model framework with Gaussian responses by constraining $\bSigma(\theta) = \sigma^2 \bC$ and $\sigma^{2}_{\epsilon} = 0$.
 
@@ -683,7 +683,7 @@ or using Bayesian approaches with regularizing priors \citep{hadfield2010mcmc}?
 
 % \bmb{I think you need a lot more here; what does a random slopes model mean? You have one sentence that says ``people should be thinking about random slopes''. Then you talk about correlation (which is a much more subtle/less important issue, I think).}
 
-In classic GLMMs, random effects are used to handle group (or individual) level variation by allowing for group effects. 
+In classic GLMMs, random effects are used to handle group (or individual) level variation. 
 In the simplest experimental design with continuous response observations in different levels of a discrete grouping variable, where the response may vary among levels of the grouping variable, fitting random intercepts are the ``go-to'' method to handle this variation.
 The random intercept model controls the group effect in the response level by allowing different intercepts for each level of the grouping variable.
 However, random effects can take more complicated forms as the experimental design becomes more complex.  
@@ -693,11 +693,10 @@ Random slopes models require appropriate observational or experimental designs (
 Neglecting random slopes can lead to biased fixed effect estimates with inadequate coverage and type I errors \citep{schielzeth2008conclusions} as shown in the simulations above.
 
 % When analyzing relationships among species between traits, it is entirely plausible that change in the effect of predictor variables have on traits are changing with respect to different grouping of species or even in a phylogenetically correlated way (phylogenetic random slopes).
-Nevertheless, it is hard to account for all forms of complexities and decide if phylogenetic random effects are more appropriate than simple grouping random effects, or including all of them in the model.
-However, the model complexity depends on the experimental design and whether there are enough data to estimate these different levels of variation.
-Some of these variations can be highly confounded in phylogenetic regression if it is not handled correctly or if there are not enough data.
-For example, for experimental designs with single measurement per species, any method that can account for at least two sources of variation, such as Pagel's $\lambda$ (where one parameter quantifies phylogenetic variation and quantifies for the residual variation) will be sufficient. 
-However, if multiple observations are available per species, then using methods such as Pagel's $\lambda$ may confound tip variation with residual variation.
+Nevertheless, it is hard to account for all forms of complexities and decide if when it is best to use phylogenetic random effects, simple grouping, or both. 
+Optimal model complexity depends on experimental design and whether the data provides enough signal to estimate these different levels of variation, which can be strongly confounded.
+For example, for experimental designs with single measurement per species, any method that can account for at least two sources of variation, such as Pagel's $\lambda$ will be sufficient. 
+However, if multiple observations are available per species, then these simple methods may confound tip variation with residual variation.
 In this case, multiple observations can summarized to a single measurement (for example, weighted-mean) per species to avoid confounding residual and tip variation.
 This is equivalent to assuming homoscedasticity using inverse-variance weights for unbalanced datasets. 
 Alternatively, when the within-species variance is actually of interest, accounting for within-species variation (i.e., adding species-level random effects in our example) can automatically handle multiple observations per species.
@@ -708,7 +707,6 @@ Another simplifying alternative is to be conservative to include both phylogenet
 However, this collapses phylogenetic structures to a standard random-slopes model. 
 Users should be aware of two essential questions when fitting random-slope models: How much data do we need in order to practically estimate the random slopes? Are we making a mistake by ignoring random slopes \citep{schielzeth2008conclusions}? 
 % However, in the PGLMM context, as long as there's variation in the predictor among tips, there will be variation among taxa at some level, so random-slopes models will (almost always) be \emph{theoretically} identifiable.
-
 
 \subsection*{Extension and alternatives}
 
