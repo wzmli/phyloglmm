@@ -710,21 +710,19 @@ Users should be aware of two essential questions when fitting random-slope model
 
 \subsection*{Extension and alternatives}
 
-We have presented the range of classical phylogenetic comparative methods (i.e. phylogenetic least squares, linear and mixed models) to fit models that incorporates different levels of phylogenetic variation.
-Even within this scope, there is additional room for exploration we neglected, such as phylogenetic multivariate response models; non-Brownian evolutionary processes such as the Ornstein-Uhlenbeck (OU) model which accounts for both selection and drift processes \citep{butler2004phylogenetic}); Bayesian approaches \citep{hadfield2010general}; and variable-rate model, where evolutionary parameters vary across the phylogeny.
+We have presented a range of classical phylogenetic comparative methods (i.e. phylogenetic least squares, linear and mixed models) to fit models that incorporate different levels of phylogenetic variation.
+Even within this scope, there is additional room for exploration, such as phylogenetic multivariate response models; non-Brownian evolutionary processes such as the Ornstein-Uhlenbeck (OU) model which accounts for both selection and drift processes \citep{butler2004phylogenetic}); Bayesian approaches \citep{hadfield2010general}; and variable-rate model, where evolutionary parameters vary across the phylogeny.
 However, the simple approach we developed here offers an efficient way to handle phylogenetic comparative analysis for a wide range of univariate, Brownian-motion evolutionary models. 
 This approach can in principle be combined flexibly with any platforms that supports independent latent variables such as Stan.
 More importantly, this implementation in \pkg{lme4} and \pkg{glmmTMB} allows users to fit phylogenetic mixed models to the fullest (large data, unbalanced species observations, complex random effects) and explore new ideas.
 
 \section*{Authors’ contributions}
 
-ML and BMB conceived the ideas and designed methodology; ML and BMB implimented the code in \pkg{lme4} and \pkg{glmmTMB}; ML ran all simulations; ML and BMB analysed the results; ML wrote the first draft of the manuscript. All authors contributed critically to the drafts and gave final approval for publication.
+ML and BMB conceived the ideas and designed methodology; ML and BMB implemented the code in \pkg{lme4} and \pkg{glmmTMB}; ML ran all simulations; ML and BMB analysed the results; ML wrote the first draft of the manuscript. All authors contributed critically to the drafts and gave final approval for publication.
 
 \section*{Data Availability}
 
 All codes are available at DOI:10.5281/zenodo.2639887.
-
-
 
 % \section*{Conclusion}
 % 
