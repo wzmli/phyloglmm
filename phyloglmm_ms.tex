@@ -546,7 +546,7 @@ Multi-group &  &  & X & X & X & X & X \\ \hline
 
 \subsection*{Simulation and evaluations}
 
-We simulated 100 phylogenetic trees for each sample size (n = 25, 50, 100 and an additional n = 500 for the multi-group model) to and then modeld responses on each tree using (\ref{eq:single_glmm}, \ref{eq:multiple_glmm}). Each realization was fitted using all model variants. 
+We simulated 100 phylogenetic trees for each sample size (n = 25, 50, 100 and an additional n = 500 for the multi-group model) to and then modelled responses on each tree using (\ref{eq:single_glmm}, \ref{eq:multiple_glmm}). Each realization was fitted using all model variants. 
 All simulation parameters are shown in Figure \ref{ssplot} and Figure \ref{msplot}. 
 Correlation $\rho$ is used in place of covariances in the simulations.
 Table \ref{table:platform} shows the parameters that are estimable for each platform. 
@@ -585,7 +585,7 @@ Codes for analyzing the dune meadow data using \pkg{lme4} and \pkg{pez} are prov
 \begin{center}
 \begin{figure}[H]
   \includegraphics[scale=0.7]{./figure/sstime.pdf}
-  \caption{Comparison of speed for all fitting platforms.}
+  \caption{Comparison of single-group model computational speed.}
 \label{ssplot_speed}
 \end{figure}
 \end{center}
@@ -594,7 +594,7 @@ Codes for analyzing the dune meadow data using \pkg{lme4} and \pkg{pez} are prov
 \begin{center}
 \begin{figure}[H]
   \includegraphics[scale=0.7]{./figure/sscoverage.pdf}
-  \caption{Comparison of coverage probablility for fixed effect parameters. Models matching the simulation model (\pkg{lme4}, \pkg{brms} and \pkg{glmmTMB}) have coverage near the nominal value of 0.95. The black line shows the nominal coverage, and the grey ribbon the 95\% binomial confidence interval based on 100 simulated fits. 
+  \caption{Comparison of coverage probablility for fixed effect parameters. Models matching the simulation model (\pkg{lme4}, \pkg{glmmTMB} and pkg{brms}) have coverage near the nominal value of 0.95. The black line shows the nominal coverage, and the blue ribbon the 95\% binomial confidence interval based on 100 simulated fits. 
 %  \bmb{really picky, but maybe change grid lines or ribbon colour slightly so they're not confusable (maybe use blue ribbon with alpha=0.1?)}
   }
 \label{ssplot_coverage}
@@ -632,7 +632,7 @@ PGLS, with only one parameter available, confounds all variation (phylogenetic i
 
 \begin{center}
 \begin{figure}[H]
-  \includegraphics[scale=0.7]{./figure/mscoverage.pdf}
+  \includegraphics[scale=0.5]{./figure/mscoverage.pdf}
   \caption{Comparison of multi-group model coverage.}
   \label{msplot_coverage}
 \end{figure}
