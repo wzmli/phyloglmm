@@ -327,7 +327,7 @@ Analogous to phylogenetically correlated variation in intercepts, phylogenetic r
 \newcommand{\bell}{{\boldsymbol \ell}}
 \newcommand{\e}{{ \epsilon}}
 
-Suppose that the evolution follows a Brownian-motion process, i.e., continuous traits evolve independently, following a standard Brownian-motion, along each branch of the phylogeny.
+Suppose that the evolution follows a Brownian-motion process, i.e., continuous traits evolve independently, following an unbiased, continuous-time random walk, along each branch of the phylogeny.
 In this case, the phylogenetic variability of a particular species can be written as the sum of the variances of evolutionary changes that occurred on all of the branches in its history. 
 Thus, modeling the evolutionary history of each species with a sequence of independent errors with species--branch matrix $\bS$ is equivalent to imposing a correlation $\bC$.
 For example, for the phylogeny in figure \ref{fig:tree}, the corresponding $\bS$ takes the form:
@@ -545,12 +545,13 @@ Multi-group &  &  & X & X & X & X & X \\ \hline
 \end{table}
 
 \subsection*{Simulation and evaluations}
-We simulated 100 phylogenetic trees for each sample size (n = 25, 50, 100 and an additional n = 500 for the multi-group model) to simulate responses from the simulation model (\ref{eq:single_glmm}, \ref{eq:multiple_glmm}) and each realization was fitted to all model variants. 
-All simulation parameters are illustrated with the results in Figure \ref{ssplot} and Figure \ref{msplot}. 
+
+We simulated 100 phylogenetic trees for each sample size (n = 25, 50, 100 and an additional n = 500 for the multi-group model) to and then modeld responses on each tree using (\ref{eq:single_glmm}, \ref{eq:multiple_glmm}). Each realization was fitted using all model variants. 
+All simulation parameters are shown in Figure \ref{ssplot} and Figure \ref{msplot}. 
 Correlation $\rho$ is used in place of covariances in the simulations.
 Table \ref{table:platform} shows the parameters that are estimable for each platform. 
 We only evaluated the goodness of fit for model fits that passed the convergence tests implemented by the package.
-For Bayesian GLMM, we included only realizations where we require values of the Gelman-Rubin statistic less than the recommended threshold 1.1. Based on a recent critique of typical Gelman-Rubin thresholds \citep{vats2018revisiting}), we included another convergence criterion of effective sample size (ESS) greater than 1000 for the fixed effect parameters ($\beta_{0}$ and $\beta_{1}$) for each replication \citep{vehtari2019rank}. 
+For Bayesian GLMM, we included only realizations where we require values of the Gelman-Rubin statistic less than the recommended threshold 1.1. Based on recent concerns about Gelman-Rubin thresholds \citep{vats2018revisiting}), we included the additional convergence criterion of effective sample size (ESS) $>1000$ for the fixed effect parameters ($\beta_{0}$ and $\beta_{1}$) for each replication \citep{vehtari2019rank}. 
 For each replication, we sample two chains starting with 10000 iterations. 
 %% TODO MAKE SURE THIS IS CORRECT!
 We first evaluate our estimates by looking at the distribution of the estimated values (maximum likelihood estimates for non-Bayesian platforms and posterior medians for Bayesian platforms) to quantify bias and variance (i.e., quality of the point estimate).
@@ -574,6 +575,7 @@ Codes for analyzing the dune meadow data using \pkg{lme4} and \pkg{pez} are prov
   \includegraphics[scale=0.7,page=1]{./figure/ssplot.pdf}
   \caption{Comparison of single group model parameter estimates across different R packages in Table \ref{table:platform}. Total simulations $N=100$ for each category. The horizontal line shows the true value of the parameters in the simulation model. Models capable of fitting all parameters (\pkg{lme4},  \pkg{glmmTMB}, and \pkg{brms}) fit well for all parameters. 
 %\bmb{consider tweaking aspect ratio (slightly wider?) Consider including n=25, n=50, n=100 in x-axis tick labels (I don't have all the output data so can't rebuild figs myself ...)
+%\jd{Use dashed lines (or some other gg signifier) for the insufficient approaches}
 }
 \label{ssplot}
 \end{figure}
@@ -630,7 +632,7 @@ PGLS, with only one parameter available, confounds all variation (phylogenetic i
 
 \begin{center}
 \begin{figure}[H]
-  \includegraphics[scale=0.8]{./figure/mscoverage.pdf}
+  \includegraphics[scale=0.7]{./figure/mscoverage.pdf}
   \caption{Comparison of multi-group model coverage.}
   \label{msplot_coverage}
 \end{figure}
