@@ -143,9 +143,8 @@ Michael Li\textsuperscript{1*} and Benjamin M. Bolker\textsuperscript{1,2,3}
 \begin{enumerate}
 \item{Phylogenetic comparative methods (PCM) using phylogenetic regression are a powerful technique to explore relationships among related groups of species traits. However, existing procedures may be either insufficiently flexible or too computationally demanding when analyzing large volumes of data.}
 \item{We propose an alternative formulation of phylogenetic generalized linear mixed models that is mathematically equivalent to previous approaches, but is more flexible in practice. We have implemented this formulation in two R statistical packages (\pkg{lme4} and \pkg{glmmTMB}).}
-\item{Our reformulation of phylogenetic generalized linear mixed models is much more computationally efficient; it is orders of magnitude faster than existing methods for fitting phylogenetic mixed models.}
-\item{Our approach can, in principle, be implemented on any PCM platform.}
-\item{This implementation in \pkg{lme4} and \pkg{glmmTMB} allows users to fit phylogenetic mixed models to a broad range of previously difficult cases (e.g., large data, unbalanced species observations, complex random effects) and explore new ideas.}
+\item{Our reformulation of phylogenetic generalized linear mixed models is computationally efficient, operating orders of magnitude faster than existing methods for fitting phylogenetic mixed models.}
+\item{Our approach can, in principle, be implemented in any platform for generalized mixed models. Our implementation in \pkg{lme4} and \pkg{glmmTMB} allows users to fit phylogenetic mixed models to a broad range of previously difficult cases (e.g., large data, unbalanced observational designs, complex random effects).}
 \end{enumerate}
 
 
@@ -176,7 +175,7 @@ In such cases, researchers typically search for ways to simplify their analyses:
 % \citep{felsenstein1985phylogenies, li2017statistical}.
 % \bmb{What precise ``issues'' do you have in mind? Don't think we need to state them here, but we should know. Based on your comments, I can guess that (1) by using random slopes across taxa, Bunnefeld 2012 is neglecting more subtle variation due to differential relatedness? (2) not sure whether taking taxon-level means (Ord 2010) is actually a problem. Ignores some variation,
 % but it might be ignorable (cf. Murtaugh 2007 ``Simplicity and complexity in ecological data analysis'')}
-In this paper, we propose an alternative method for flexibly and efficiently modeling phylogenetic relationships by extending exisiting software for fitting mixed effect models. 
+In this paper, we propose an alternative method for flexibly and efficiently modeling phylogenetic relationships by extending existing software for fitting mixed effect models. 
 This method allows researchers to easily incorporate evolutionary and statistical complexities without sacrificing speed.
 
 \subsection*{Challenges in modeling phylogenetic processes}
@@ -214,7 +213,7 @@ However, species within taxonomic groups with similar body sizes may vary in ove
 Several recent studies have incorporated phylogenetic variation in different ways and looked at species response to phylogenetic variation with changes in environmental factors.
 For example, \cite{nowakowski2018phylogenetic} considered phylogenetically correlated slopes in response to habitat conversion when studying the abundance of amphibian species using a Bayesian phylogenetic GLMM, while \cite{li2017canfun} considered phylogenetically correlated species nested within sites when modeling plant abundance via a phylogenetic GLMM approach. 
 The tools available for extending phylogenetic relationships to predictor variables (or predictor level variation) in a standard frequentist framework are relatively inflexible; thus, many biologist needing to fit random-slopes model have usually turned to more flexible Bayesian approaches, despite their additional computational burden \citep{hadfield2010mcmc, burkner2018brms}.
-Table \ref{table:model} summarises types of platforms, data constraints, and provides model complexities for phylogenetic comparative analysis.
+Table \ref{table:model} summarizes types of platforms, data constraints, and provides model complexities for phylogenetic comparative analysis.
 
 %% FIXME: chart looks ugly
 \begin{table}[]
@@ -594,7 +593,7 @@ Codes for analyzing the dune meadow data using \pkg{lme4} and \pkg{pez} are prov
 \begin{center}
 \begin{figure}[H]
   \includegraphics[scale=0.7]{./figure/sscoverage.pdf}
-  \caption{Comparison of coverage probablility for fixed effect parameters. Models matching the simulation model (\pkg{lme4}, \pkg{glmmTMB} and pkg{brms}) have coverage near the nominal value of 0.95. The black line shows the nominal coverage, and the blue ribbon the 95\% binomial confidence interval based on 100 simulated fits. 
+  \caption{Comparison of coverage probability for fixed effect parameters. Models matching the simulation model (\pkg{lme4}, \pkg{glmmTMB} and pkg{brms}) have coverage near the nominal value of 0.95. The black line shows the nominal coverage, and the blue ribbon the 95\% binomial confidence interval based on 100 simulated fits. 
 %  \bmb{really picky, but maybe change grid lines or ribbon colour slightly so they're not confusable (maybe use blue ribbon with alpha=0.1?)}
   }
 \label{ssplot_coverage}
@@ -718,7 +717,7 @@ More importantly, this implementation in \pkg{lme4} and \pkg{glmmTMB} allows use
 
 \section*{Authors’ contributions}
 
-ML and BMB conceived the ideas and designed methodology; ML and BMB implemented the code in \pkg{lme4} and \pkg{glmmTMB}; ML ran all simulations; ML and BMB analysed the results; ML wrote the first draft of the manuscript. All authors contributed critically to the drafts and gave final approval for publication.
+ML and BMB conceived the ideas and designed methodology; ML and BMB implemented the code in \pkg{lme4} and \pkg{glmmTMB}; ML ran all simulations; ML and BMB analyzed the results; ML wrote the first draft of the manuscript. All authors contributed critically to the drafts and gave final approval for publication.
 
 \section*{Data Availability}
 
