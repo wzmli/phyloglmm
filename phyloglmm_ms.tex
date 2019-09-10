@@ -160,7 +160,7 @@ Given a known phylogenetic tree, PCMs explore the relationships among species tr
 
 Ever-increasing data collection capabilities (e.g., genomic sequencing, telemetry studies of animal behaviour, or environmental remote sensing), in combination with large-scale synthetic databases of species occurrence and phenotypic traits, are making larger volumes of biological data available over an ever-wider taxonomic range.
 Researchers use these data to fit complex models describing species occurrence and traits.
-For example, ecologists have used phylogenetic relationships in multi-species models \citep{garland1992procedures, freckleton2002phylogenetic, ord2010adaptation, davies2013phylogenetic}; more recently they have begun to integrate an evolutionary framework in to applied ecological studies addressing biodiversity conservation and the effects of climate change \citep{winter2013phylogenetic, santamaria2012evolution, lankau2011incorporating, lavergne2010biodiversity, mace2008evolutionary}.
+For example, ecologists have used phylogenetic relationships in multi-species models \citep{garland1992procedures, freckleton2002phylogenetic, ord2010adaptation, davies2013phylogenetic}; more recently they have begun to integrate evolutionary considerations in applied ecological studies addressing biodiversity conservation and the effects of climate change \citep{winter2013phylogenetic, santamaria2012evolution, lankau2011incorporating, lavergne2010biodiversity, mace2008evolutionary}.
 % \bmb{might be interesting to do some bibliometry, although absolutely not necessary --- i.e. how do numbers of citations of (whatever) increase relative to the overall size of the eco/evo literature? \ldots}
 
 Unlike standard regression-based statistical models, where all of the predictor variables of interest (for example, species traits and environmental factors) are directly observable,  PCMs using phylogenetic regression use phylogenetic relationships to estimate the unobserved process of trait evolution \citep{felsenstein1985phylogenies, butler2004phylogenetic, hansen2012interpreting}. 
@@ -205,7 +205,7 @@ Indeed, many existing methods are restricted to single observations per species,
 % \end{figure}
 % \end{center}
 
-Classic phylogenetic regressions usually allow the response (trait or distribution) to evolve according to the phylogenetic relationship across species, but the effects (or levels) of the predictor variables may evolve according to the phylogenetic relationship across species as well.
+Classic phylogenetic regressions usually allow the response (trait or distribution) to evolve according to the phylogenetic relationship across species, but the effects of the predictor variables may evolve according to the phylogenetic relationship across species as well.
 Suppose we have examined a collection of species that came from two groups, and wish to know whether their brain size (Y) is proportional to their body size (X) (Felsenstein's (1985) example using a mixed-effect model. 
 Standard phylogenetic regressions allow for phylogenetic correlations in the intercept of the relationship between body and brain size. 
 However, species within taxonomic groups with similar body sizes may vary in overall brain size, or taxonomic groups may vary in the relationship between brain and body size. 
@@ -262,7 +262,7 @@ We then fit the test data from these simulations using our approach implemented 
 \subsection*{Phylogenetic regression}
 
 We begin by describing the classic phylogenetic regression in a linear regression setting.
-Consider a simple linear regression model of observable trait $\bY$ as a function of some predictors encoded in a model matrix $\bX$. 
+Consider a simple linear regression model of observable trait $\bY$ as a function of some predictors encoded in a model matrix $\bX$, where each species is measured exactly once. 
 The standard phylogenetic regression can be formulated as
 
 %\bmb{boldface matrices/vectors i.e. $\bX \bbeta$? or not worth the trouble? How about $\bmu=\bX \bbeta$; $\bY \sim \textrm{MVN}(\bmu,\sigma^2 \bC)$ for greater generality? (OK, I see that you move in this direction later.  But I'm not sure it's worth the detour of using two different notations? even if you are going to extend to include fixed effects, $Z$, etc. later ...}:
@@ -297,7 +297,7 @@ The typical GLMM has the form:
 \end{aligned}
 \end{equation}
 where $\bZ$ is an $n \times m$ model matrix for the $n$-dimensional vector-valued $m$ predictor variables; $\bb$ (sometimes referred to as the ``G-side" effect) representing the conditional modes, is assumed to be multivariate normally distributed with a variance-covariance matrix given by $\bSigma(\theta)$; and $\phi$ is a scale parameter for the conditional distribution $\dist$.
-When $\dist$ is Gaussian and $g$ is the identity function, (\ref{eq:glmm}) reduces to (\ref{eq:gls}).
+When $\dist$ is Gaussian, $g$ is the identity function, $\bZ$ is the identity matrix, and $\bSigma(\theta)=\sigma^2\bC$, (\ref{eq:glmm}) reduces to (\ref{eq:gls}).
 % ; $\besp$ (sometimes referred as "R" effect) is an $n \times 1$ vector of independent and normally distributed error terms with variance $\sigma_{\epsilon}^2$.
 % Analogously, the phylogenetic regression given by (\ref{eq:gls1}) can be represented in the generalized mixed model framework with Gaussian responses by constraining $\bSigma(\theta) = \sigma^2 \bC$ and $\sigma^{2}_{\epsilon} = 0$.
 
