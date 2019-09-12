@@ -190,3 +190,4 @@ gg_mscoverage <- (ggplot(data=ms_coverage
 
 print(mscoverage<- gg_mscoverage 	+ scale_color_manual(values=c("Gray","Purple","Dark Blue","Dark Green"))
 )
+

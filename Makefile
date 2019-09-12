@@ -16,10 +16,15 @@ current: target
 # todo.md
 # journal.md
 
+## Mike rules
 ms.pdf: main.tex phyloglmm_ms.tex
 	pdflatex phyloglmm_ms
 	bibtex phyloglmm_ms
 	pdflatex phyloglmm_ms
+
+## JD rule
+Sources += main.tex phyloglmm_ms.tex
+phyloglmm_ms.pdf: main.tex phyloglmm_ms.tex
 
 ##################################################################
 
@@ -226,17 +231,6 @@ retest.Rout: retest.R
 
 ######################################################################
 
-## This ¶ can be deleted once makestuff is set up
-msrepo = https://github.com/dushoff
-makestuff:
-	git submodule add -b master $(msrepo)/makestuff
-
-######################################################################
-
-### Content
-
-######################################################################
-
 ### Makestuff
 
 Sources += Makefile makestuff
@@ -244,12 +238,11 @@ Sources += Makefile makestuff
 ms = makestuff
 Makefile: makestuff/Makefile
 
-makestuff/%.mk: makestuff/Makefile ;
 makestuff/Makefile:
-	$(MAKE) makestuff
 	git submodule update -i
 
 -include makestuff/os.mk
 -include makestuff/git.mk
 -include makestuff/visual.mk
 -include makestuff/projdir.mk
+-include makestuff/texdeps.mk
