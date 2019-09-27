@@ -233,28 +233,6 @@ retest.Rout: retest.R
 
 ### Makestuff
 
--include makestuff/os.mk
--include makestuff/git.mk
--include makestuff/visual.mk
--include makestuff/projdir.mk
--include makestuff/texdeps.mk
-
-current: target
--include target.mk
-
-# include makestuff/perl.def
-
-######################################################################
-
-# Content
-
-vim_session:
-	bash -cl "vmt"
-
-######################################################################
-
-### Makestuff
-
 Sources += Makefile
 
 Ignore += makestuff
@@ -268,3 +246,4 @@ makestuff/Makefile:
 -include makestuff/git.mk
 -include makestuff/visual.mk
 -include makestuff/projdir.mk
+-include makestuff/texdeps.mk
