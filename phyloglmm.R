@@ -27,7 +27,6 @@ if(numsite == "ss"){
 		, phylo = phy
 		, phyloZ=phyZ
 		, control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
-		, lambhack = FALSE
 		, REML = FALSE
 	)
 }

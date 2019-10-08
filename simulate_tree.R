@@ -45,14 +45,21 @@ sdvec <- c(sd.B0, sd.B1)
 varmat <- sdvec %*% t(sdvec)
 covmat <- varmat * cormat
 
-bSigma <- kronecker(covmat, diag(nspp))
+bSigma <- kronecker(covmat,diag(nspp))
 
-b <- MASS::mvrnorm(n=1
-	, mu=rep(c(beta0, beta1), each = nspp)
-	, Sigma = bSigma)
+# b <- MASS::mvrnorm(n=1
+# 	, mu=rep(c(beta0, beta1), each = nspp)
+# 	, Sigma = bSigma)
+# 
+# Y.re <- rep(head(b, nspp), each = nsite*nrep)
+# X.re <- rep(tail(b, nspp), each = nsite*nrep)*X
 
-Y.re <- rep(head(b, nspp), each = nsite*nrep)
-X.re <- rep(tail(b, nspp), each = nsite*nrep)*X
+b <- MASS::mvrnorm(n=nspp
+                   , mu=c(beta0, beta1)
+                   , Sigma = covmat)
+
+Y.re <- rep(b[,1],each=nsite*nrep)
+X.re <- rep(b[,2],each= nsite*nrep)*X
 
 # Generate random sites and phylogenetic species-site interaction
 
