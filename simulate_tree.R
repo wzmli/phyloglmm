@@ -25,6 +25,8 @@ phycovmat <- phyvarmat * phycormat
 
 
 phySigma <- kronecker(phycovmat,Vphy)
+# phySigma <- kronecker(Vphy,phycovmat)
+
 
 b_phy <- MASS::mvrnorm(n=1
 	, mu=rep(c(beta0,beta1),each=nspp)
@@ -62,7 +64,9 @@ interaction_sdvec <- rep(sd.interaction, nsite)
 interaction_varmat <- interaction_sdvec %*% t(interaction_sdvec)
 interaction_covmat <- interaction_varmat * Diagonal(nsite)
 
-interactionSigma <- kronecker(interaction_covmat, Vphy)
+# interactionSigma <- kronecker(interaction_covmat, Vphy)
+interactionSigma <- kronecker(Vphy,interaction_covmat)
+
 
 interaction_Cholesky <- Cholesky(interactionSigma)
 

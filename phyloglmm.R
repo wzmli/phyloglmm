@@ -9,9 +9,12 @@ library(dplyr)
 t1 <- proc.time()
 
 phyZ <- phylo.to.Z(phy,stand=FALSE)
+phyZ <- phyZ[order(rownames(phyZ)),]
 
 dat <- (dat
 	%>% mutate(obs = sp)
+	%>% ungroup()
+	%>% arrange(sp)
 )	
 
 #debug(phylo_lmm)
@@ -23,8 +26,8 @@ if(numsite == "ss"){
 		, phylonm = c("sp","site:sp")
 		, phylo = phy
 		, phyloZ=phyZ
-		, control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore"
-		)
+		, control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
+		, lambhack = FALSE
 		, REML = FALSE
 	)
 }

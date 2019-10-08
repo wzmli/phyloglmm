@@ -98,7 +98,7 @@ fit.lme4pez.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R lme4p
 	$(run-R)
 
 fit.lme4.ss.xlarge.2.Rout: phyloglmm.R
-fit.lme4.ms.xlarge.12.Rout: phyloglmm.R
+fit.lme4.ms.large.12.Rout: phyloglmm.R
 fit.lme4.ms.small.1.Rout:
 fit.lme4.ms.xlarge.1.Rout: phyloglmm.R
 ### tmb
@@ -109,7 +109,7 @@ lme4_profile.Rout: lme4_profile.R
 fit.glmmTMB.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R glmmTMBhacked.R fit_tmb.R
 	$(run-R)
 
-fit.lme4.ss.large.2.Rout: fit_tmb.R
+fit.lme4.ms.large.2.Rout: fit_tmb.R
 fit.glmmTMB.ms.large.62.Rout: fit_tmb.R
 fit.glmmTMB.ss.xlarge.2.Rout: fit_tmb.R
 
@@ -247,3 +247,4 @@ makestuff/Makefile:
 -include makestuff/visual.mk
 -include makestuff/projdir.mk
 -include makestuff/texdeps.mk
+-include makestuff/wrapR.mk
