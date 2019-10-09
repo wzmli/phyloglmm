@@ -24,7 +24,7 @@ phyvarmat <- physdvec %*% t(physdvec)
 phycovmat <- phyvarmat * phycormat
 
 
-phySigma <- kronecker(phycovmat,Vphy)
+phySigma <- kronecker(phycovmat,Vphy)  ## phylo blocks
 # phySigma <- kronecker(Vphy,phycovmat)
 
 
@@ -80,7 +80,7 @@ interaction_Cholesky <- Cholesky(interactionSigma)
 b_interaction <- sparseMVN::rmvn.sparse(n=1
 	, mu=rep(beta0, each = nsite*nspp)
 	, CH = interaction_Cholesky
-	, prec = FALSE # use covariance_Choloesky when F
+	, prec = FALSE # use covariance_Cholesky when F
 )
 
 # Generate observation error
@@ -96,7 +96,12 @@ dat <- (dat_nointeraction
 	%>% mutate(sp = factor(sp, levels = rownames(Vphy))
 		, obs = sp
 		)
-	%>% arrange(site)
+	%>% group_by(sp,site)
+	%>% mutate(rep=seq(n()))
+	%>% ungroup()
+	## this is the order we want if we kronecker(Vphy,interaction_covmat) above:
+	##  if we kronecker(interaction_covmat,Vphy) then it should be (site,rep,species) (???)
+	%>% arrange(sp,rep,site)
 	%>% mutate(sp_site = rep(b_interaction, each = nrep)
 		, new_y = Y + sp_site
 		)
