@@ -12,8 +12,8 @@ set.seed(tree_seed)
 
 # source("parameters.R")
 # nspp <- 10
-# nsite <- 2
-nrep <- 10
+# nsite <- 5
+# nrep <- 1
 phy <- rtree(n = nspp)
 
 Vphy <- vcv(phy)
@@ -100,7 +100,7 @@ interaction_index <- as.numeric(factor(b_interaction)) - 1
 
 Y.e <- rnorm(nspp*nsite*nrep, sd = sd.resid)
 
-Y <- Y.phy + Y.re + X.phy + X.re + Y.site + Y.e
+Y <- Y.e #+ Y.site #+ Y.phy + Y.re + X.phy + X.re
 
 dat_nointeraction <- data.frame(sp = rep(rownames(Vphy), each = nrep*nsite)
 	, phy_index
@@ -121,9 +121,9 @@ dat <- (dat_nointeraction
 	##  if we kronecker(interaction_covmat,Vphy) then it should be (site,rep,species) (???)
 	## Pez is wrong! 
 	## rep pez mistake by screwing up the order (sp,rep,site) != kron(diag,Vphy)
-	# %>% arrange(sp,rep,site)
-	%>% arrange(site,sp,rep)
-	%>% mutate(sp_site = rep(b_interaction, each = nrep)
+	%>% arrange(sp,rep,site)
+	# %>% arrange(site,sp,rep)
+	%>% mutate(sp_site = rep(b_interaction, each=nrep)
 		, new_y = Y + sp_site
 		, interactionindex = rep(interaction_index, each = nrep)
 		)
