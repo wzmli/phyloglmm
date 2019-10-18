@@ -13,7 +13,7 @@ set.seed(tree_seed)
 # source("parameters.R")
 # nspp <- 10
 # nsite <- 2
-# nrep <- 10
+nrep <- 10
 phy <- rtree(n = nspp)
 
 Vphy <- vcv(phy)
@@ -120,9 +120,9 @@ dat <- (dat_nointeraction
 	## this is the order we want if we kronecker(Vphy,interaction_covmat) above:
 	##  if we kronecker(interaction_covmat,Vphy) then it should be (site,rep,species) (???)
 	## Pez is wrong! 
-	## rep pez mistake by screwing up the order
-	%>% arrange(sp,rep,site)
-	# %>% arrange(site,sp,rep)
+	## rep pez mistake by screwing up the order (sp,rep,site) != kron(diag,Vphy)
+	# %>% arrange(sp,rep,site)
+	%>% arrange(site,sp,rep)
 	%>% mutate(sp_site = rep(b_interaction, each = nrep)
 		, new_y = Y + sp_site
 		, interactionindex = rep(interaction_index, each = nrep)
