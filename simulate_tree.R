@@ -6,8 +6,14 @@ library(sparseMVN)
 library(Matrix)
 library(dplyr)
 ## library(MASS)  ## for mvrnorm() ## don't load so we don't screw up dplyr::select()
+
+# tree_seed <- 101
 set.seed(tree_seed)
 
+# source("parameters.R")
+# nspp <- 10
+# nsite <- 5
+# # nrep <- 1
 phy <- rtree(n = nspp)
 
 Vphy <- vcv(phy)
@@ -34,6 +40,7 @@ b_phy <- MASS::mvrnorm(n=1
 )
 
 Y.phy <- rep(head(b_phy, nspp), each = nrep*nsite) 
+phy_index <- 10000*(as.numeric(factor(Y.phy)) - 1)
 X.phy <- rep(tail(b_phy, nspp), each = nrep*nsite)*X
 
 
@@ -56,14 +63,17 @@ bSigma <- kronecker(covmat,diag(nspp))
 
 b <- MASS::mvrnorm(n=nspp
                    , mu=c(beta0, beta1)
-                   , Sigma = covmat)
+                   , Sigma = covmat
+                   , empirical = TRUE)
 
 Y.re <- rep(b[,1],each=nsite*nrep)
+beta_index <- 1000*(as.numeric(factor(Y.re)) - 1)
 X.re <- rep(b[,2],each= nsite*nrep)*X
 
 # Generate random sites and phylogenetic species-site interaction
 
 site <- rep(1:nsite, nspp*nrep)
+site_index <- 100*(as.numeric(factor(site)) - 1)
 b_site <- rnorm(n=nsite, mean=beta0, sd = sd.site)
 Y.site <- rep(b_site, nspp*nrep)
 
@@ -71,9 +81,10 @@ interaction_sdvec <- rep(sd.interaction, nsite)
 interaction_varmat <- interaction_sdvec %*% t(interaction_sdvec)
 interaction_covmat <- interaction_varmat * Diagonal(nsite)
 
-# interactionSigma <- kronecker(interaction_covmat, Vphy)
-interactionSigma <- kronecker(Vphy,interaction_covmat)
+interactionSigma <- kronecker(interaction_covmat, Vphy)
+# interactionSigma <- kronecker(Vphy,interaction_covmat)
 
+image(interactionSigma)
 
 interaction_Cholesky <- Cholesky(interactionSigma)
 
@@ -83,6 +94,8 @@ b_interaction <- sparseMVN::rmvn.sparse(n=1
 	, prec = FALSE # use covariance_Cholesky when F
 )
 
+interaction_index <- as.numeric(factor(b_interaction)) - 1
+
 # Generate observation error
 
 Y.e <- rnorm(nspp*nsite*nrep, sd = sd.resid)
@@ -90,13 +103,18 @@ Y.e <- rnorm(nspp*nsite*nrep, sd = sd.resid)
 Y <- Y.phy + Y.re + X.phy + X.re + Y.site + Y.e
 
 dat_nointeraction <- data.frame(sp = rep(rownames(Vphy), each = nrep*nsite)
-	,Y, X, site)
+	, phy_index
+	, Y
+	, X
+	, site
+	, site_index)
 
 dat <- (dat_nointeraction
 	%>% mutate(sp = factor(sp, levels = rownames(Vphy))
 		, obs = sp
 		)
 	%>% group_by(sp,site)
+	# %>% group_by(site,sp)
 	%>% mutate(rep=seq(n()))
 	%>% ungroup()
 	## this is the order we want if we kronecker(Vphy,interaction_covmat) above:
@@ -104,7 +122,10 @@ dat <- (dat_nointeraction
 	%>% arrange(sp,rep,site)
 	%>% mutate(sp_site = rep(b_interaction, each = nrep)
 		, new_y = Y + sp_site
+		, interactionindex = rep(interaction_index, each = nrep)
 		)
+	%>% rowwise()
+	%>% mutate(index = sum(interactionindex,site_index,phy_index))
 )
 
 
