@@ -74,3 +74,22 @@ print(lme4time_1)
 print(summary(lme4fit_1))
 
 print(peztime_1/lme4time_1)
+
+
+peztime_1 <- system.time(
+  pezfit_1 <-  communityPGLMM(formula = "Y ~ 1 + log.sla + annual"
+                              , data = dat
+                              , family = "gaussian"
+                              , sp = dat$sp
+                              , site = dat$site
+                              , random.effects = list(#re.sp.phy
+                                                      # , re.sp
+                                                      re.nested.phy
+                                                      # , re.sla
+                                                      # , re.site
+                              )
+                              , REML = F
+                              , verbose = F
+                              # , s2.init = c(1.5, rep(0.01, 4))
+  )
+)

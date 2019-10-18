@@ -40,7 +40,9 @@ b_phy <- MASS::mvrnorm(n=1
 )
 
 Y.phy <- rep(head(b_phy, nspp), each = nrep*nsite) 
-phy_index <- 10000*(as.numeric(factor(Y.phy)) - 1)
+## phy_index <- 10000*(as.numeric(factor(Y.phy)) - 1)
+phy_index <- 1000000*(as.numeric(factor(rep(seq(nspp), each=nrep*nsite))) - 1)
+
 X.phy <- rep(tail(b_phy, nspp), each = nrep*nsite)*X
 
 
@@ -73,7 +75,7 @@ X.re <- rep(b[,2],each= nsite*nrep)*X
 # Generate random sites and phylogenetic species-site interaction
 
 site <- rep(1:nsite, nspp*nrep)
-site_index <- 100*(as.numeric(factor(site)) - 1)
+site_index <- 10000*(as.numeric(factor(site)) - 1)
 b_site <- rnorm(n=nsite, mean=beta0, sd = sd.site)
 Y.site <- rep(b_site, nspp*nrep)
 
@@ -84,7 +86,7 @@ interaction_covmat <- interaction_varmat * Diagonal(nsite)
 interactionSigma <- kronecker(interaction_covmat, Vphy)
 # interactionSigma <- kronecker(Vphy,interaction_covmat)
 
-image(interactionSigma)
+image(Matrix(interactionSigma))
 
 interaction_Cholesky <- Cholesky(interactionSigma)
 
@@ -94,7 +96,8 @@ b_interaction <- sparseMVN::rmvn.sparse(n=1
 	, prec = FALSE # use covariance_Cholesky when F
 )
 
-interaction_index <- as.numeric(factor(b_interaction)) - 1
+## interaction_index <- as.numeric(factor(b_interaction)) - 1
+interaction_index <- as.numeric(interaction(phy_index,site_index))-1
 
 # Generate observation error
 
@@ -115,7 +118,7 @@ dat <- (dat_nointeraction
 		)
 	# %>% group_by(sp,site)
 	%>% group_by(site,sp)
-	%>% mutate(rep=seq(n()))
+	%>% mutate(rep=seq(nrep))
 	%>% ungroup()
 	## this is the order we want if we kronecker(Vphy,interaction_covmat) above:
 	##  if we kronecker(interaction_covmat,Vphy) then it should be (site,rep,species) (???)
@@ -127,8 +130,7 @@ dat <- (dat_nointeraction
 		, new_y = Y + sp_site
 		, interactionindex = rep(interaction_index, each = nrep)
 		)
-	%>% rowwise()
-	%>% mutate(index = sum(interactionindex,site_index,phy_index))
+	%>% mutate(index = interactionindex+site_index+phy_index)
 )
 
 
