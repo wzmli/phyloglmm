@@ -198,17 +198,17 @@ mkBlist <- function (x, frloc, phylonm,phyloZ, drop.unused.levels = TRUE)
     lkr <- 1
     rkr <- 1
     if(nrep > 1){
-      if(strsplit(as.character(x[[3]]),":")[[2]] == phylonm[1]){
+      if(strsplit(as.character(x[[3]]),":")[[3]] %in% phylonm){
         lkr <- nrep
       }
-      if(strsplit(as.character(x[[3]]),":")[[2]] == phylonm[2]){
+      if(strsplit(as.character(x[[3]]),":")[[2]] %in% phylonm){
         rkr <- nrep
       }
     # sm <- t(sm)
     }
     # bmat <- kronecker(kronecker(diag(rkr),phyloZ),diag(lkr))
     # bmat <- kronecker(phyloZ,diag(lkr))
-    bmat <- kronecker(diag(lkr),phyloZ)
+    bmat <- kronecker(kronecker(diag(lkr),phyloZ),diag(rkr))
  #   if(nrow(sm) == nspp*nsite){
   #    sm <- t(sm[ff,])
   #  }

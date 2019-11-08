@@ -24,7 +24,8 @@ lme4fit <- phylo_lmm(new_y ~ X
                      # + (1 + X | sp)
                      # + (1 + X | obs)
                      # + (1 | site)
-                     + (1 | sp:site)
+                     # + (1 | sp:site)
+                     + (1 | site:sp)
                      , data=dat
                      , phylonm = c("sp","sp:site")
                      , phylo = phy

@@ -139,4 +139,10 @@ dat <- (dat_nointeraction
 
 
 
+Y.e <- rnorm(nspp*nsite*nrep, sd = sd.resid)
+Y_arranged <- Y.e + rep(c(b_interaction),each=nrep)
+dd2 <- (dat_nointeraction
+  %>% arrange(site)
+  %>% mutate(y2 = Y_arranged)
+)
 
