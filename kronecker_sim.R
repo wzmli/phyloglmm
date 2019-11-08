@@ -22,7 +22,6 @@ interaction_varmat <- tcrossprod(interaction_sdvec)
 interaction_covmat <- interaction_varmat * Diagonal(ngroup)
 
 interactionSigma <- kronecker(interaction_covmat, diag(nid))
-# interactionSigma <- kronecker(diag(nid),interaction_covmat)
 
 image(Matrix(interactionSigma))
 
@@ -40,21 +39,19 @@ b_interaction <- sparseMVN::rmvn.sparse(n=1
 
 noise <- rnorm(ngroup*nid*nrep,sd=res_sd)
 
-
-
 Y <- noise + rep(c(b_interaction),each=nrep)
 dd <- data.frame(id,groups,y=Y+y_group,check=id+groups)
-dd2 <- dd %>% arrange(groups) %>% mutate(y2 = Y + y_group)
+dd2 <- dd %>% arrange(groups) %>% mutate(y2 = Y + y_group,y3=Y)
 
-ff <- lmer(y~(1|groups)  +(1|groups:id)
+ff <- lmer(y3~(1|groups:id)
   , control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
-  , data=dd
+  , data=dd2
 )
 
 
-ff2 <- lmer(y~(1|groups)  +(1|id:groups)
+ff2 <- lmer(y3~(1|id:groups)
            , control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
-           , data=dd
+           , data=dd2
 )
 
 ff3 <- lmer(y2~(1|groups)  +(1|groups:id)
@@ -72,3 +69,11 @@ summary(ff)
 summary(ff2)
 summary(ff3)
 summary(ff4)
+
+
+## We have to arrange by groups
+interaction_covmat <- interaction_varmat * Matrix(diag(1:5))
+interactionSigma <- kronecker(interaction_covmat, diag(nid))
+
+
+
