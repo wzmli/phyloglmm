@@ -228,6 +228,12 @@ newsim.Rout: newsim.R
 retest.Rout: retest.R
 	$(run-R)
 
+kronecker_sim.Rout: kronecker_sim.R
+	$(run-R)
+
+kronecker_fit.Rout: Kronecker_fit.R
+	$(run-R)
+
 ######################################################################
 
 ### Makestuff

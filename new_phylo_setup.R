@@ -24,8 +24,8 @@ phylo.to.Z <- function(r,stand=FALSE){
   return(Z)                                  
 }
 
-phylo_lmm <- function(formula,data,phylo,phylonm=NULL,phyloZ=NULL,control,REML,doFit){
-  lmod <- lFormula(formula=formula,data = data,control=control, REML=REML,phylonm=phylonm, phyloZ=phyloZ)
+phylo_lmm <- function(formula,data,phylo,phylonm=NULL,phyloZ=NULL,control,REML,doFit,...){
+  lmod <- lFormula(formula=formula,data = data,control=control, REML=REML,phylonm=phylonm, phyloZ=phyloZ,...)
   devfun <- do.call(mkLmerDevfun, lmod)
   opt <- optimizeLmer(devfun,control=control$optCtrl)
   mkMerMod(environment(devfun), opt, lmod$reTrms, fr = lmod$fr)
