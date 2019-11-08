@@ -198,10 +198,10 @@ mkBlist <- function (x, frloc, phylonm,phyloZ, drop.unused.levels = TRUE)
     lkr <- 1
     rkr <- 1
     if(nrep > 1){
-      if(strsplit(as.character(x[[3]]),":")[[3]] %in% phylonm){
+      if(strsplit(as.character(x[[3]]),":")[[3]] == phylonm[1]){
         lkr <- nrep
       }
-      if(strsplit(as.character(x[[3]]),":")[[2]] %in% phylonm){
+      if(strsplit(as.character(x[[3]]),":")[[2]] == phylonm[1]){
         rkr <- nrep
       }
     # sm <- t(sm)

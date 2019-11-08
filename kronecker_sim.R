@@ -6,6 +6,7 @@ set.seed <- 1001
 ngroup <- 5
 nid <- 9
 nrep <- 80
+nrep <- 1
 
 id <- rep(1:nid,each=ngroup*nrep)*10
 groups <- rep(1:ngroup,nid*nrep)
@@ -76,4 +77,4 @@ interaction_covmat <- interaction_varmat * Matrix(diag(1:5))
 interactionSigma <- kronecker(interaction_covmat, diag(nid))
 
 
-
+image(interactionSigma)
