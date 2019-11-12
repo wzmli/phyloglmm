@@ -13,7 +13,7 @@ set.seed(tree_seed)
 # source("parameters.R")
 # nspp <- 10
 # nsite <- 5
-# nrep <- 1
+# nrep <- 10
 phy <- rtree(n = nspp)
 
 Vphy <- vcv(phy)
@@ -143,6 +143,6 @@ Y.e <- rnorm(nspp*nsite*nrep, sd = sd.resid)
 Y_arranged <- Y.e + rep(c(b_interaction),each=nrep)
 dd2 <- (dat_nointeraction
   %>% arrange(site)
-  %>% mutate(y2 = Y_arranged)
+  %>% mutate(new_y = Y_arranged)
 )
 
