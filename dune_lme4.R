@@ -25,8 +25,8 @@ phy <- get_phylo(veg.long = dune.veg2
 	, trans = "log"
 )
 
-phyZ <- phylo.to.Z(phy,stand=TRUE)
-#phyZ <- phyZ[order(rownames(phyZ)),]
+phyZ <- phylo.to.Z(phy,stand = TRUE)
+phyZ <- phyZ[order(rownames(phyZ)),]
 
 dat <- (dat
   %>% rowwise()
@@ -45,7 +45,7 @@ lme4time_1 <- system.time(
 		   + (0 + log.sla | site)
 		  + (1|site) 
 		, data=dat
-		, phylonm = c("sp","site")
+		, phylonm = c("sp","sp:site")
 		, phyloZ=phyZ
 		, control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
 		, REML = FALSE
@@ -75,9 +75,9 @@ peztime_1 <- system.time(
    , site = dat$site
    , random.effects = list(re.sp.phy
    , re.sp
-     , re.nested.phy
-      ,re.sla
-      ,re.site
+      , re.nested.phy
+      , re.sla
+      , re.site
      )
    , REML = F
    , verbose = F

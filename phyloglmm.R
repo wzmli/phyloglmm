@@ -9,10 +9,52 @@ library(dplyr)
 t1 <- proc.time()
 
 phyZ <- phylo.to.Z(phy,stand=FALSE)
+phyZ <- phyZ[order(rownames(phyZ)),]
 
 dat <- (dat
 	%>% mutate(obs = sp)
+	%>% ungroup()
+	%>% arrange(sp)
 )	
+
+
+lme4fit <- phylo_lmm(new_y ~ X
+                     #	 	+ (1 | sp)
+                     #		+ (1 | obs)
+                     # + (1 + X | sp)
+                     # + (1 + X | obs)
+                     # + (1 | site)
+                     # + (1 | sp:site)
+                     + (1 | site:sp)
+                     , data=dd2
+                     , phylonm = c("sp","sp:site")
+                     , phylo = phy
+                     , phyloZ=phyZ
+                     , control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
+                     , REML = FALSE
+)
+
+print(summary(lme4fit))
+
+lme4fit2 <- phylo_lmm(new_y ~ X
+                     #	 	+ (1 | sp)
+                     #		+ (1 | obs)
+                     # + (1 + X | sp)
+                     # + (1 + X | obs)
+                     # + (1 | site)
+                     + (1 | sp:site)
+                     # + (1 | site:sp)
+                     , data=dd2
+                     , phylonm = c("sp","sp:site")
+                     , phylo = phy
+                     , phyloZ=phyZ
+                     , control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
+                     , REML = FALSE
+)
+
+print(summary(lme4fit2))
+
+quit()
 
 #debug(phylo_lmm)
 #debug(modify_phylo_retrms)
@@ -23,8 +65,7 @@ if(numsite == "ss"){
 		, phylonm = c("sp","site:sp")
 		, phylo = phy
 		, phyloZ=phyZ
-		, control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore"
-		)
+		, control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
 		, REML = FALSE
 	)
 }
@@ -74,3 +115,6 @@ saveRDS(lme4_list, file=paste("datadir/lme4/lme4",numsite,size,tree_seed,"rds",s
 # ss <- summary(MCMCglmm_fit)
 # print(ss)
 #rdnosave()
+
+
+

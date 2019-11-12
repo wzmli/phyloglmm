@@ -24,20 +24,15 @@ phylo.to.Z <- function(r,stand=FALSE){
   return(Z)                                  
 }
 
-phylo_lmm <- function(formula,data,phylo,phylonm=NULL,phyloZ=NULL,control,REML,doFit,lambhack=NULL){
-  lmod <- lFormula(formula=formula,data = data,control=control, REML=REML,phylonm=phylonm, phyloZ=phyloZ,lambhack=lambhack)
-  if(!lambhack){
-  devfun <- do.call(lme4:::mkLmerDevfun, lmod)
-  }
-  if(lambhack){
-    devfun <- do.call(mkLmerDevfun, lmod)
-  }
+phylo_lmm <- function(formula,data,phylo,phylonm=NULL,phyloZ=NULL,control,REML,doFit,...){
+  lmod <- lFormula(formula=formula,data = data,control=control, REML=REML,phylonm=phylonm, phyloZ=phyloZ,...)
+  devfun <- do.call(mkLmerDevfun, lmod)
   opt <- optimizeLmer(devfun,control=control$optCtrl)
   mkMerMod(environment(devfun), opt, lmod$reTrms, fr = lmod$fr)
 }
 
 lFormula <- function (formula, data = NULL, REML = TRUE, subset, weights, 
-          na.action, offset, contrasts = NULL, control = lmerControl(),phylonm,phyloZ, lambhack=FALSE,
+          na.action, offset, contrasts = NULL, control = lmerControl(),phylonm,phyloZ,
           ...) 
 {
   control <- control$checkControl
@@ -76,7 +71,7 @@ lFormula <- function (formula, data = NULL, REML = TRUE, subset, weights,
   attr(fr, "formula") <- formula
   attr(fr, "offset") <- mf$offset
   n <- nrow(fr)
-  reTrms <- mkReTrms(findbars(lme4:::RHSForm(formula)), fr, phylonm, phyloZ, lambhack)
+  reTrms <- mkReTrms(findbars(lme4:::RHSForm(formula)), fr, phylonm, phyloZ)
   wmsgNlev <- lme4:::checkNlevels(reTrms$flist, n = n, control)
   wmsgZdims <- lme4:::checkZdims(reTrms$Ztlist, n = n, control, allow.n = FALSE)
   if (anyNA(reTrms$Zt)) {
@@ -108,7 +103,7 @@ lFormula <- function (formula, data = NULL, REML = TRUE, subset, weights,
 }
 
 
-mkReTrms <- function(bars, fr, phylonm,phyloZ,lambhack,drop.unused.levels = TRUE){
+mkReTrms <- function(bars, fr, phylonm,phyloZ,drop.unused.levels = TRUE){
   if (!length(bars)) 
     stop("No random effects terms specified in formula", 
          call. = FALSE)
@@ -169,14 +164,6 @@ mkReTrms <- function(bars, fr, phylonm,phyloZ,lambhack,drop.unused.levels = TRUE
   ll$flist <- fl
   ll$cnms <- cnms
   ll$Ztlist <- Ztlist
-  
-  if(lambhack){
-    hh <- Lambdathack(phyloZ=phyZ)
-    ll$Lambdat <- hh$Lambdat
-    ll$Lind <- hh$Lind
-    ll$theta <- hh$theta
-    ll$thfun <- hh$thfun
-  }
   ll
 }
 
@@ -211,16 +198,17 @@ mkBlist <- function (x, frloc, phylonm,phyloZ, drop.unused.levels = TRUE)
     lkr <- 1
     rkr <- 1
     if(nrep > 1){
-      if(strsplit(as.character(x[[3]]),":")[[2]] == phylonm[1]){
+      if(strsplit(as.character(x[[3]]),":")[[3]] == phylonm[1]){
         lkr <- nrep
       }
-      if(strsplit(as.character(x[[3]]),":")[[2]] == phylonm[2]){
+      if(strsplit(as.character(x[[3]]),":")[[2]] == phylonm[1]){
         rkr <- nrep
       }
     # sm <- t(sm)
     }
-    # bmat <- kronecker(kronecker(diag(lkr),phyloZ),diag(rkr))
-    bmat <- kronecker(phyloZ,diag(lkr))
+    # bmat <- kronecker(kronecker(diag(rkr),phyloZ),diag(lkr))
+    # bmat <- kronecker(phyloZ,diag(lkr))
+    bmat <- kronecker(kronecker(diag(lkr),phyloZ),diag(rkr))
  #   if(nrow(sm) == nspp*nsite){
   #    sm <- t(sm[ff,])
   #  }
@@ -291,7 +279,7 @@ glFormula <- function (formula, data = NULL, family = gaussian, subset, weights,
     attr(fr, "start") <- start$fixef
   }
   n <- nrow(fr)
-  reTrms <- mkReTrms(findbars(lme4:::RHSForm(formula)), fr,phylonm, phyloZ,lambhack)
+  reTrms <- mkReTrms(findbars(lme4:::RHSForm(formula)), fr,phylonm, phyloZ)
   wmsgNlev <- lme4:::checkNlevels(reTrms$flist, n = n, control, allow.n = TRUE)
   wmsgZdims <- lme4:::checkZdims(reTrms$Ztlist, n = n, control, allow.n = TRUE)
   wmsgZrank <- lme4:::checkZrank(reTrms$Zt, n = n, control, nonSmall = 1e+06, 
@@ -319,68 +307,3 @@ glFormula <- function (formula, data = NULL, family = gaussian, subset, weights,
        wmsgs = c(Nlev = wmsgNlev, Zdims = wmsgZdims, Zrank = wmsgZrank))
 }
 
-
-############# new stuff
-
-Lambdathack <- function(phyloZ){
-  covmat <- phyloZ %*% t(phyloZ)
-  # cormat <- cov2cor(covmat)
-  lambdat <- t(chol(covmat))## cormat
-  indexing <- lambdat
-  indexing[which(indexing != 0)] <- 1
-  newLind <-  rep(1, length(which(indexing != 0)))
-  hh <- list()
-  thfun <- local({
-    template <- lambdat
-    function(theta){theta*template@x}
-  })
-  hh$Lambdat <- indexing
-  hh$Lambdat <- lambdat
-  hh$thfun <- thfun
-  hh$theta <- 1
-  hh$lower <- 0
-  hh$upper <- Inf
-  hh$Lind <- newLind
-  # hh$theta <- 1
-  return(hh)
-}
-
-mkLmerDevfun <- function (fr, X, reTrms, phyloZ, REML = TRUE, start = NULL, verbose = 0, 
-          control = lmerControl(), ...) 
-{
-  p <- ncol(X)
-  # tempLambda <- t(chol(phyloZ %*% t(phyloZ)))
-  rho <- new.env(parent = parent.env(environment()))
-  # rho$pp <- do.call(lme4:::merPredD$new, c(reTrms[c("Zt", "theta", 
-  #                                            "Lambdat", "Lind")], n = nrow(X), list(X = X)))
-  rho$pp <- do.call(merPredD$new, c(reTrms[c("Zt", "theta", 
-                                                    "Lambdat", "Lind","thfun")], n = nrow(X), list(X = X)))
-  # thfun <- function(theta){theta*tempLambda}
-  # rho$pp$Lambdat <- thfun(rho$pp$theta)
-  REMLpass <- if (REML) 
-    p
-  else 0L
-  rho$resp <- if (missing(fr)) 
-    mkRespMod(REML = REMLpass, ...)
-  else mkRespMod(fr, REML = REMLpass)
-  pp <- resp <- NULL
-  rho$lmer_Deviance <- lme4:::lmer_Deviance
-  devfun <- function(theta) .Call(lme4:::lmer_Deviance, pp$ptr(), 
-                                  resp$ptr(), pp$thfun(as.double(theta)))
-  environment(devfun) <- rho
-  if (is.null(start) && all(reTrms$cnms == "(Intercept)") && 
-      length(reTrms$flist) == length(reTrms$lower) && !is.null(y <- model.response(fr))) {
-    v <- sapply(reTrms$flist, function(f) var(ave(y, f)))
-    v.e <- var(y) - sum(v)
-    if (!is.na(v.e) && v.e > 0) {
-      v.rel <- v/v.e
-      if (all(v.rel >= reTrms$lower^2)) 
-        rho$pp$setTheta(sqrt(v.rel))
-        rho$pp$updateLambda(rho$pp$theta,rho$pp$Lambdat)
-    }
-  }
-  if (length(rho$resp$y) > 0) 
-    devfun(rho$pp$theta)
-  rho$lower <- reTrms$lower
-  devfun
-}

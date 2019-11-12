@@ -1,5 +1,5 @@
-## This is phyloglmm, a project directory with a makestuff _submodule_
-## makestuff/makemod.Makefile
+## This is phyloglmm, a resting screens project directory
+## makestuff/project.Makefile
 
 current: target
 -include target.mk
@@ -98,7 +98,7 @@ fit.lme4pez.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R lme4p
 	$(run-R)
 
 fit.lme4.ss.xlarge.2.Rout: phyloglmm.R
-fit.lme4.ms.xlarge.12.Rout: phyloglmm.R
+fit.lme4.ms.large.12.Rout: phyloglmm.R
 fit.lme4.ms.small.1.Rout:
 fit.lme4.ms.xlarge.1.Rout: phyloglmm.R
 ### tmb
@@ -109,7 +109,6 @@ lme4_profile.Rout: lme4_profile.R
 fit.glmmTMB.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R glmmTMBhacked.R fit_tmb.R
 	$(run-R)
 
-fit.lme4.ss.large.2.Rout: fit_tmb.R
 fit.glmmTMB.ms.large.62.Rout: fit_tmb.R
 fit.glmmTMB.ss.xlarge.2.Rout: fit_tmb.R
 
@@ -229,20 +228,28 @@ newsim.Rout: newsim.R
 retest.Rout: retest.R
 	$(run-R)
 
+kronecker_sim.Rout: kronecker_sim.R
+	$(run-R)
+
+kronecker_fit.Rout: Kronecker_fit.R
+	$(run-R)
+
 ######################################################################
 
 ### Makestuff
 
-Sources += Makefile makestuff
+Sources += Makefile
 
-ms = makestuff
+Ignore += makestuff
+msrepo = https://github.com/dushoff
 Makefile: makestuff/Makefile
-
 makestuff/Makefile:
-	git submodule update -i
+	git clone $(msrepo)/makestuff
+	ls $@
 
 -include makestuff/os.mk
 -include makestuff/git.mk
 -include makestuff/visual.mk
 -include makestuff/projdir.mk
 -include makestuff/texdeps.mk
+-include makestuff/wrapR.mk
