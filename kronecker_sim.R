@@ -30,8 +30,8 @@ group_df <- data.frame(group = as.character(1:ngroup)
   , y_group = rnorm(ngroup,mean=0,sd=group_sd)
 )
 
-quadform <- function(sd_vec,cormat){
-  sd_vec %*% cormat %*% sd_vec
+quadform <- function(sd_mat,cormat){
+  sd_mat %*% cormat %*% sd_mat
 }
 
 ## Interaction random effects

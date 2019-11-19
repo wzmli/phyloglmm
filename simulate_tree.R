@@ -7,6 +7,10 @@ library(Matrix)
 library(dplyr)
 ## library(MASS)  ## for mvrnorm() ## don't load so we don't screw up dplyr::select()
 
+quadform <- function(sd_mat,cormat){
+  sd_mat %*% cormat %*% sd_mat
+}
+
 # tree_seed <- 101
 set.seed(tree_seed)
 
@@ -18,70 +22,68 @@ phy <- rtree(n = nspp)
 
 Vphy <- vcv(phy)
 
-# Generate environmental site variable
+# Generate data frame 
 
-X <- rnorm(n=nspp*nsite*nrep, sd=Xsd)
+interactions <- interaction(1:nsite,1:nspp)
 
-# Generate phylogenetic intercept and slope
+indexdat <- (data.frame(ints = levels(interactions))
+       %>% rowwise()
+       %>% mutate(ints = as.character(ints)
+                  , site = unlist(strsplit(ints,"[.]"))[1]
+                  , sp = unlist(strsplit(ints,"[.]"))[2]
+       )  
+)
+
+# Species frame: 
+## Generate phylogenetic intercept and slope
 
 phycormat <- matrix(c(1,phyrho.B01,phyrho.B01,1),2,2)
-physdvec <- c(physd.B0,physd.B1)
-phyvarmat <- physdvec %*% t(physdvec)
-phycovmat <- phyvarmat * phycormat
-
+physdmat <- diag(c(physd.B0,physd.B1))
+phycovmat <- quadform(physdmat,phycormat)
 
 phySigma <- kronecker(phycovmat,Vphy)  ## phylo blocks
 # phySigma <- kronecker(Vphy,phycovmat)
-
 
 b_phy <- MASS::mvrnorm(n=1
 	, mu=rep(c(beta0,beta1),each=nspp)
 	, Sigma=phySigma
 )
 
-Y.phy <- rep(head(b_phy, nspp), each = nrep*nsite) 
-## phy_index <- 10000*(as.numeric(factor(Y.phy)) - 1)
-phy_index <- 1000000*(as.numeric(factor(rep(seq(nspp), each=nrep*nsite))) - 1)
-
-X.phy <- rep(tail(b_phy, nspp), each = nrep*nsite)*X
-
 
 # Generate random intercept and slope
 
 cormat <- matrix(c(1, rho.B01, rho.B01, 1), 2, 2)
 
-sdvec <- c(sd.B0, sd.B1)
-varmat <- sdvec %*% t(sdvec)
-covmat <- varmat * cormat
+sdmat <- diag(c(sd.B0, sd.B1))
+covmat <- quadform(sdmat,cormat)
 
 bSigma <- kronecker(covmat,diag(nspp))
-
-# b <- MASS::mvrnorm(n=1
-# 	, mu=rep(c(beta0, beta1), each = nspp)
-# 	, Sigma = bSigma)
-# 
-# Y.re <- rep(head(b, nspp), each = nsite*nrep)
-# X.re <- rep(tail(b, nspp), each = nsite*nrep)*X
 
 b <- MASS::mvrnorm(n=nspp
                    , mu=c(beta0, beta1)
                    , Sigma = covmat
                    , empirical = TRUE)
 
-Y.re <- rep(b[,1],each=nsite*nrep)
-beta_index <- 1000*(as.numeric(factor(Y.re)) - 1)
-X.re <- rep(b[,2],each= nsite*nrep)*X
+spdat <- data.frame(sp = as.character(1:nspp)
+  , b0_phy = head(b_phy,nspp) 
+  , b1_phy = tail(b_phy,nspp)
+  , b0 = b[,1]
+  , b1 = b[,2]
+  , tipname = rownames(Vphy)
+)
+
+
+# Site data frame
+
+sitedat <- data.frame(site=as.character(1:nsite)
+  , b_site = rnorm(n=nsite,mean=beta0,sd=sd.site)
+)
 
 # Generate random sites and phylogenetic species-site interaction
 
-site <- rep(1:nsite, nspp*nrep)
-site_index <- 10000*(as.numeric(factor(site)) - 1)
-b_site <- rnorm(n=nsite, mean=beta0, sd = sd.site)
-Y.site <- rep(b_site, nspp*nrep)
-
-interaction_sdvec <- rep(sd.interaction, nsite)
-interaction_varmat <- interaction_sdvec %*% t(interaction_sdvec)
-interaction_covmat <- interaction_varmat * Diagonal(nsite)
+interaction_sdmat <- diag(rep(sd.interaction, nsite))
+if(nsite == 1){interaction_sdmat <- matrix(sd.interaction,nrow=1)}
+interaction_covmat <- quadform(interaction_sdmat,Diagonal(nsite))
 
 interactionSigma <- kronecker(interaction_covmat, Vphy)
 # interactionSigma <- kronecker(Vphy,interaction_covmat)
@@ -96,53 +98,20 @@ b_interaction <- sparseMVN::rmvn.sparse(n=1
 	, prec = FALSE # use covariance_Cholesky when F
 )
 
-## interaction_index <- as.numeric(factor(b_interaction)) - 1
-interaction_index <- as.numeric(interaction(phy_index,site_index))-1
-
-# Generate observation error
-
-Y.e <- rnorm(nspp*nsite*nrep, sd = sd.resid)
-
-Y <- Y.e #+ Y.site #+ Y.phy + Y.re + X.phy + X.re
-
-dat_nointeraction <- data.frame(sp = rep(rownames(Vphy), each = nrep*nsite)
-	, phy_index
-	, Y
-	, X
-	, site
-	, site_index)
-
-dat <- (dat_nointeraction
-	%>% mutate(sp = factor(sp, levels = rownames(Vphy))
-		, obs = sp
-		)
-	# %>% group_by(sp,site)
-	%>% group_by(site,sp)
-	%>% mutate(rep=seq(nrep))
-	%>% ungroup()
-	## this is the order we want if we kronecker(Vphy,interaction_covmat) above:
-	##  if we kronecker(interaction_covmat,Vphy) then it should be (site,rep,species) (???)
-	## Pez is wrong! 
-	## rep pez mistake by screwing up the order (sp,rep,site) != kron(diag,Vphy)
-	%>% arrange(sp,rep,site)
-	# %>% arrange(site,sp,rep)
-	%>% mutate(sp_site = rep(b_interaction, each=nrep)
-		, new_y = Y + sp_site
-		, interactionindex = rep(interaction_index, each = nrep)
-		)
-	%>% mutate(index = interactionindex+site_index+phy_index)
+interactiondat <- data.frame(ints = levels(interactions) ## Check order above, if things don't add up, this is the step to check
+  , b_int = c(b_interaction)                             
 )
 
+# Generate observation error and environment covariate
 
-
-
-
-
-
-Y.e <- rnorm(nspp*nsite*nrep, sd = sd.resid)
-Y_arranged <- Y.e + rep(c(b_interaction),each=nrep)
-dd2 <- (dat_nointeraction
-  %>% arrange(site)
-  %>% mutate(new_y = Y_arranged)
+dat <- (left_join(indexdat,spdat)
+  %>% left_join(.,sitedat)
+  %>% left_join(.,interactiondat)
+  %>% rowwise()
+  %>% mutate(noise = rnorm(1,sd=sd.resid)
+   , X = rnorm(1,sd=Xsd)
+   , y = b0_phy + b1_phy*X + b0 + b1*X + b_site + b_int + noise
+   , y1 = b0_phy + b1_phy*X + noise
+   , y2 = b0_phy + b1_phy*X + b0 + b1*X + noise
+   , sp = tipname)
 )
-

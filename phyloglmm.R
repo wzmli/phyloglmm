@@ -18,15 +18,15 @@ dat <- (dat
 )	
 
 
-lme4fit <- phylo_lmm(new_y ~ X
-                     #	 	+ (1 | sp)
-                     #		+ (1 | obs)
-                     # + (1 + X | sp)
-                     # + (1 + X | obs)
+lme4fit <- phylo_lmm(y1 ~ X
+                      # + (1 | sp)
+                     	# + (1 | obs)
+                     + (1 + X | sp)
+                     + (1 + X | obs)
                      # + (1 | site)
                      # + (1 | sp:site)
-                     + (1 | site:sp)
-                     , data=dd2
+                     # + (1 | site:sp)
+                     , data=dat
                      , phylonm = c("sp","sp:site")
                      , phylo = phy
                      , phyloZ=phyZ
@@ -36,15 +36,15 @@ lme4fit <- phylo_lmm(new_y ~ X
 
 print(summary(lme4fit))
 
-lme4fit2 <- phylo_lmm(new_y ~ X
+lme4fit2 <- phylo_lmm(y2 ~ X
                      #	 	+ (1 | sp)
                      #		+ (1 | obs)
-                     # + (1 + X | sp)
-                     # + (1 + X | obs)
+                     + (1 + X | sp)
+                     + (1 + X | obs)
                      # + (1 | site)
-                     + (1 | sp:site)
+                     # + (1 | sp:site)
                      # + (1 | site:sp)
-                     , data=dd2
+                     , data=dat
                      , phylonm = c("sp","sp:site")
                      , phylo = phy
                      , phyloZ=phyZ
