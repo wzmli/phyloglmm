@@ -17,7 +17,7 @@ set.seed(tree_seed)
 # source("parameters.R")
 # nspp <- 10
 # nsite <- 5
-# nrep <- 10
+nrep <- 3
 # nspp <- 100
 # nsite <- 50
 phy <- rtree(n = nspp)
@@ -26,17 +26,17 @@ Vphy <- vcv(phy)
 
 # Generate data frame 
 
-# interactions <- interaction(1:nsite,1:nspp)
-interactions <- interaction(1:nspp,1:nsite)
+interactions <- interaction(1:nsite,1:nspp)
+# interactions <- interaction(1:nspp,1:nsite)
 
 
 indexdat <- (data.frame(ints = levels(interactions))
        %>% rowwise()
        %>% mutate(ints = as.character(ints)
-                  # , site = unlist(strsplit(ints,"[.]"))[1]
-                  # , sp = unlist(strsplit(ints,"[.]"))[2]
-                  , site = unlist(strsplit(ints,"[.]"))[2]
-                  , sp = unlist(strsplit(ints,"[.]"))[1]
+                  , site = unlist(strsplit(ints,"[.]"))[1]
+                  , sp = unlist(strsplit(ints,"[.]"))[2]
+                  # , site = unlist(strsplit(ints,"[.]"))[2]
+                  # , sp = unlist(strsplit(ints,"[.]"))[1]
        )  
 )
 
@@ -125,7 +125,8 @@ interactiondat <- data.frame(ints = levels(interactions) ## Check order above, i
 
 # Generate observation error and environment covariate
 
-dat <- (left_join(indexdat,spdat)
+dat <- (indexdat[rep(1:nrow(indexdat),each=nrep),]
+  %>% left_join(.,spdat)
   %>% left_join(.,sitedat)
   %>% left_join(.,interactiondat)
   %>% rowwise()
@@ -138,5 +139,5 @@ dat <- (left_join(indexdat,spdat)
    , y_intnophy = b_int + noise
    , y_intphy = b_intphy + noise
    , y_int = b_int + b_intphy + noise
-   , spname = tipname)
+   , sp = tipname)
 )
