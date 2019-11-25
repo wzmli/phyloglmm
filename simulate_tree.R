@@ -27,16 +27,16 @@ Vphy <- vcv(phy)
 # Generate data frame 
 
 interactions <- interaction(1:nsite,1:nspp)
-# interactions <- interaction(1:nspp,1:nsite)
+interactions <- interaction(1:nspp,1:nsite)
 
 
 indexdat <- (data.frame(ints = levels(interactions))
        %>% rowwise()
        %>% mutate(ints = as.character(ints)
-                  , site = unlist(strsplit(ints,"[.]"))[1]
-                  , sp = unlist(strsplit(ints,"[.]"))[2]
-                  # , site = unlist(strsplit(ints,"[.]"))[2]
-                  # , sp = unlist(strsplit(ints,"[.]"))[1]
+                  # , site = unlist(strsplit(ints,"[.]"))[1]
+                  # , sp = unlist(strsplit(ints,"[.]"))[2]
+                  , site = unlist(strsplit(ints,"[.]"))[2]
+                  , sp = unlist(strsplit(ints,"[.]"))[1]
        )  
 )
 
