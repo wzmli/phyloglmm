@@ -14,45 +14,159 @@ phyZ <- phyZ[order(rownames(phyZ)),]
 dat <- (dat
 	%>% mutate(obs = sp)
 	%>% ungroup()
-	%>% arrange(sp)
+	# %>% arrange(sp)
 )	
 
+# 
+# lme4fit_phy <- phylo_lmm(y_phy ~ X
+#                       # + (1 | sp)
+#                      	# + (1 | obs)
+#                      + (1 + X | sp)
+#                      # + (1 + X | obs)
+#                      # + (1 | site)
+#                      # + (1 | sp:site)
+#                      # + (1 | site:sp)
+#                      , data=dat
+#                      , phylonm = c("sp","sp:site")
+#                      , phylo = phy
+#                      , phyloZ=phyZ
+#                      , control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
+#                      , REML = FALSE
+# )
+# 
+# print(summary(lme4fit_phy))
+# 
+# lme4fit_nophy <- phylo_lmm(y_nophy ~ X
+#                      #	 	+ (1 | sp)
+#                      #		+ (1 | obs)
+#                      # + (1 + X | sp)
+#                      + (1 + X | obs)
+#                      # + (1 | site)
+#                      # + (1 | sp:site)
+#                      # + (1 | site:sp)
+#                      , data=dat
+#                      , phylonm = c("sp","sp:site")
+#                      , phylo = phy
+#                      , phyloZ=phyZ
+#                      , control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
+#                      , REML = FALSE
+# )
+# 
+# print(summary(lme4fit_nophy))
 
-lme4fit <- phylo_lmm(y1 ~ X
-                      # + (1 | sp)
-                     	# + (1 | obs)
-                     + (1 + X | sp)
-                     + (1 + X | obs)
-                     # + (1 | site)
-                     # + (1 | sp:site)
-                     # + (1 | site:sp)
-                     , data=dat
-                     , phylonm = c("sp","sp:site")
-                     , phylo = phy
-                     , phyloZ=phyZ
-                     , control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
-                     , REML = FALSE
+lme4fit_noint <- phylo_lmm(y_noint ~ X
+                           #	 	+ (1 | sp)
+                           #		+ (1 | obs)
+                           + (1 + X | sp)
+                           + (1 + X | obs)
+                           # + (1 | site)
+                           # + (1 | sp:site)
+                           # + (1 | site:sp)
+                           , data=dat
+                           , phylonm = c("sp","sp:site")
+                           , phylo = phy
+                           , phyloZ=phyZ
+                           , control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
+                           , REML = FALSE
 )
 
-print(summary(lme4fit))
+print(summary(lme4fit_noint))
 
-lme4fit2 <- phylo_lmm(y2 ~ X
-                     #	 	+ (1 | sp)
-                     #		+ (1 | obs)
-                     + (1 + X | sp)
-                     + (1 + X | obs)
-                     # + (1 | site)
-                     # + (1 | sp:site)
-                     # + (1 | site:sp)
-                     , data=dat
-                     , phylonm = c("sp","sp:site")
-                     , phylo = phy
-                     , phyloZ=phyZ
-                     , control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
-                     , REML = FALSE
+
+lme4fit_intnophy <- phylo_lmm(y_intnophy ~ X
+                           #	 	+ (1 | sp)
+                           #		+ (1 | obs)
+                           # + (1 + X | sp)
+                           # + (1 + X | obs)
+                           # + (1 | site)
+                           # + (1 | sp:site)
+                           # + (1 | obs:site)
+                           + (1 | site:obs)
+                           # + (1 | site:sp)
+                           , data=dat
+                           , phylonm = c("sp","sp:site")
+                           , phylo = phy
+                           , phyloZ=phyZ
+                           , control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
+                           , REML = FALSE
 )
 
-print(summary(lme4fit2))
+print(summary(lme4fit_intnophy))
+
+
+lme4fit_intphy <- phylo_lmm(y_intphy ~ X
+                         #	 	+ (1 | sp)
+                         #		+ (1 | obs)
+                         # + (1 + X | sp)
+                         # + (1 + X | obs)
+                         # + (1 | site)
+                         + (1 | sp:site)
+                         # + (1 | obs:site)
+                         # + (1 | site:sp)
+                         , data=dat
+                         , phylonm = c("sp","sp:site")
+                         , phylo = phy
+                         , phyloZ=phyZ
+                         , control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
+                         , REML = FALSE
+)
+
+print(summary(lme4fit_intphy))
+
+
+lme4fit_int <- phylo_lmm(y_int ~ X
+                            #	 	+ (1 | sp)
+                            #		+ (1 | obs)
+                            # + (1 + X | sp)
+                            # + (1 + X | obs)
+                            # + (1 | site)
+                            + (1 | sp:site)
+                            + (1 | obs:site)
+                            # + (1 | site:sp)
+                            , data=dat
+                            , phylonm = c("sp","sp:site")
+                            , phylo = phy
+                            , phyloZ=phyZ
+                            , control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
+                            , REML = FALSE
+)
+
+print(summary(lme4fit_int))
+# 
+# 
+# lme4fit <- phylo_lmm(y ~ X
+#                            + (1 + X | sp)
+#                            + (1 + X | obs)
+#                            + (1 | site)
+#                            + (1 | sp:site)
+#                            # + (1 | site:sp)
+#                            , data=dat
+#                            , phylonm = c("sp","sp:site")
+#                            , phylo = phy
+#                            , phyloZ=phyZ
+#                            , control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
+#                            , REML = FALSE
+# )
+# 
+# print(summary(lme4fit))
+# 
+# 
+# 
+# lme4fit2 <- phylo_lmm(y ~ X
+#                      + (1 + X | sp)
+#                      + (1 + X | obs)
+#                      + (1 | site)
+#                      # + (1 | sp:site)
+#                      + (1 | site:sp)
+#                      , data=dat
+#                      , phylonm = c("sp","sp:site")
+#                      , phylo = phy
+#                      , phyloZ=phyZ
+#                      , control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
+#                      , REML = FALSE
+# )
+# 
+# print(summary(lme4fit2))
 
 quit()
 

@@ -18,19 +18,25 @@ set.seed(tree_seed)
 # nspp <- 10
 # nsite <- 5
 # nrep <- 10
+# nspp <- 100
+# nsite <- 50
 phy <- rtree(n = nspp)
 
 Vphy <- vcv(phy)
 
 # Generate data frame 
 
-interactions <- interaction(1:nsite,1:nspp)
+# interactions <- interaction(1:nsite,1:nspp)
+interactions <- interaction(1:nspp,1:nsite)
+
 
 indexdat <- (data.frame(ints = levels(interactions))
        %>% rowwise()
        %>% mutate(ints = as.character(ints)
-                  , site = unlist(strsplit(ints,"[.]"))[1]
-                  , sp = unlist(strsplit(ints,"[.]"))[2]
+                  # , site = unlist(strsplit(ints,"[.]"))[1]
+                  # , sp = unlist(strsplit(ints,"[.]"))[2]
+                  , site = unlist(strsplit(ints,"[.]"))[2]
+                  , sp = unlist(strsplit(ints,"[.]"))[1]
        )  
 )
 
@@ -85,21 +91,36 @@ interaction_sdmat <- diag(rep(sd.interaction, nsite))
 if(nsite == 1){interaction_sdmat <- matrix(sd.interaction,nrow=1)}
 interaction_covmat <- quadform(interaction_sdmat,Diagonal(nsite))
 
-interactionSigma <- kronecker(interaction_covmat, Vphy)
-# interactionSigma <- kronecker(Vphy,interaction_covmat)
-
-image(Matrix(interactionSigma))
+interactionSigma <- kronecker(interaction_covmat, diag(nspp))
 
 interaction_Cholesky <- Cholesky(interactionSigma)
 
 b_interaction <- sparseMVN::rmvn.sparse(n=1
+  , mu=rep(beta0, each = nsite*nspp)
+  , CH = interaction_Cholesky
+  , prec = FALSE # use covariance_Cholesky when F
+)
+
+
+interaction_sdmat <- diag(rep(sd.interaction, nsite))
+if(nsite == 1){interaction_sdmat <- matrix(sd.interaction,nrow=1)}
+interactionphy_covmat <- quadform(interaction_sdmat,Diagonal(nsite))
+
+interactionphySigma <- kronecker(interactionphy_covmat, Vphy)
+# interactionSigma <- kronecker(Vphy,interaction_covmat)
+
+
+interactionphy_Cholesky <- Cholesky(interactionphySigma)
+
+b_interactionphy <- sparseMVN::rmvn.sparse(n=1
 	, mu=rep(beta0, each = nsite*nspp)
-	, CH = interaction_Cholesky
+	, CH = interactionphy_Cholesky
 	, prec = FALSE # use covariance_Cholesky when F
 )
 
 interactiondat <- data.frame(ints = levels(interactions) ## Check order above, if things don't add up, this is the step to check
-  , b_int = c(b_interaction)                             
+  , b_intphy = c(b_interactionphy)    
+  , b_int = c(b_interaction)
 )
 
 # Generate observation error and environment covariate
@@ -110,8 +131,12 @@ dat <- (left_join(indexdat,spdat)
   %>% rowwise()
   %>% mutate(noise = rnorm(1,sd=sd.resid)
    , X = rnorm(1,sd=Xsd)
-   , y = b0_phy + b1_phy*X + b0 + b1*X + b_site + b_int + noise
-   , y1 = b0_phy + b1_phy*X + noise
-   , y2 = b0_phy + b1_phy*X + b0 + b1*X + noise
-   , sp = tipname)
+   , y = b0_phy + b1_phy*X + b0 + b1*X + b_site + b_intphy + noise
+   , y_phy = b0_phy + b1_phy*X + noise
+   , y_nophy = b0 + b1*X + noise
+   , y_noint = b0_phy + b1_phy*X + b0 + b1*X + noise
+   , y_intnophy = b_int + noise
+   , y_intphy = b_intphy + noise
+   , y_int = b_int + b_intphy + noise
+   , spname = tipname)
 )

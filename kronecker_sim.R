@@ -3,11 +3,11 @@ library(Matrix)
 library(lme4)
 library(tidyverse)
 
-set.seed <- 1001
+set.seed <- 10012
 
-ngroup <- 5
-nid <- 10
-nrep <- 3
+ngroup <- 50
+nid <- 100
+nrep <- 1
 
 id <- 1:nid
 groups <- 1:ngroup
@@ -71,16 +71,17 @@ ddjoin <- (dd[rep(1:nrow(dd),each=nrep),]
    %>% ungroup()
    %>% mutate(noise = rnorm(nid*ngroup*nrep,sd=resid_sd)
       , y = noise + y_group + y_interaction
+      , y_int = noise + y_interaction
    )
 )
 
 
-ff <- lmer(y~(1|group:id)
+ff <- lmer(y_int~(1|group:id)
   , control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
   , data=ddjoin
 )
 
-ff2 <- glmer(y~(1|id:group)
+ff2 <- glmer(y_int~(1|id:group)
            , control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
            , data=ddjoin
 )

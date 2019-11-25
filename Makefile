@@ -100,7 +100,7 @@ fit.lme4pez.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R lme4p
 fit.lme4.ss.xlarge.2.Rout: phyloglmm.R
 fit.lme4.ms.large.12.Rout: phyloglmm.R
 fit.lme4.ms.small.1.Rout:
-fit.lme4.ms.xlarge.1.Rout: phyloglmm.R
+fit.lme4.ms.xlarge.4.Rout: phyloglmm.R
 ### tmb
 
 lme4_profile.Rout: lme4_profile.R
