@@ -17,7 +17,7 @@ set.seed(tree_seed)
 # source("parameters.R")
 # nspp <- 10
 # nsite <- 5
-nrep <- 5
+nrep <- 1
 # nspp <- 100
 # nsite <- 50
 phy <- rtree(n = nspp)
@@ -106,7 +106,8 @@ interaction_sdmat <- diag(rep(sd.interaction, nsite))
 if(nsite == 1){interaction_sdmat <- matrix(sd.interaction,nrow=1)}
 interactionphy_covmat <- quadform(interaction_sdmat,Diagonal(nsite))
 
-interactionphySigma <- kronecker(interactionphy_covmat, Vphy)
+interactionphySigma <- Matrix(kronecker(interactionphy_covmat, Vphy),sparse = TRUE)
+
 # interactionSigma <- kronecker(Vphy,interaction_covmat)
 
 

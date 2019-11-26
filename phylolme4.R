@@ -79,18 +79,33 @@ dat <- (dat
 #   , REML = FALSE
 # )
 
-fullmod <- phylo_lmm(y ~ X
-  + (1 + X | sp)
-  + (1 + X | obs)
-  + (1 | site)
-  + (1 | sp:site)
-  # + (1 | obs:site)
-  , data=dat
-  , phylonm = c("sp","sp:site")
-  , phylo = phy
-  , phyloZ=phyZ
-  , control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
-  , REML = FALSE
+# fullmod <- phylo_lmm(y ~ X
+#   + (1 + X | sp)
+#   + (1 + X | obs)
+#   + (1 | site)
+#   + (1 | sp:site)
+#   # + (1 | obs:site)
+#   , data=dat
+#   , phylonm = c("sp","sp:site")
+#   , phylo = phy
+#   , phyloZ=phyZ
+#   , control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
+#   , REML = FALSE
+# )
+
+
+fullmod <- phylo_lmm(y_main ~ X
+                     + (1 + X | sp)
+                     + (1 + X | obs)
+                     # + (1 | site)
+                     # + (1 | sp:site)
+                     # + (1 | obs:site)
+                     , data=dat
+                     , phylonm = c("sp","sp:site")
+                     , phylo = phy
+                     , phyloZ=phyZ
+                     , control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
+                     , REML = FALSE
 )
 
 # ll <- list(phyonly, nophy, main
