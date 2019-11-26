@@ -79,39 +79,39 @@ print(summary(lme4fit_1))
 print(peztime_1/lme4time_1)
 
 
-peztime_1 <- system.time(
-  pezfit_1 <-  communityPGLMM(formula = "Y ~ 1 + log.sla + annual"
-     , data = dat
-     , family = "gaussian"
-     , sp = dat$sp
-     , site = dat$site
-     , random.effects = list(#re.sp.phy
-    # , re.sp
-    re.nested.phy
-    # , re.sla
-    # , re.site
-     )
-     , REML = F
-     , verbose = F
-     # , s2.init = c(1.5, rep(0.01, 4))
-  )
-)
-
+# peztime_1 <- system.time(
+#   pezfit_1 <-  communityPGLMM(formula = "Y ~ 1 + log.sla + annual"
+#      , data = dat
+#      , family = "gaussian"
+#      , sp = dat$sp
+#      , site = dat$site
+#      , random.effects = list(#re.sp.phy
+#     # , re.sp
+#     re.nested.phy
+#     # , re.sla
+#     # , re.site
+#      )
+#      , REML = F
+#      , verbose = F
+#      # , s2.init = c(1.5, rep(0.01, 4))
+#   )
+# )
+# 
 chol_time <- system.time(cholphyt <- t(chol(phyZ %*% t(phyZ))))
 
 
-hackedmod <- glmmTMBhacked(Y ~ 1 + log.sla + annual 
+hackedmod <- glmmTMBhacked(Y ~ 1 + log.sla + annual
   # + (1|obs)
   + (1|sp)
   # + (0 + log.sla | site)
-  # + (1|site) 
+  # + (1|site)
   # + (1 | sp:site)
   , data=dat
   , phylonm = c("sp","sp:site")
-  , phyloZ = cholphyt  
+  , phyloZ = cholphyt
   , doFit=TRUE
   # , dispformula = ~1
   , control=glmmTMBControl(optCtrl=list(trace=1,iter.max=1e5,eval.max=1e5))
   , REML = FALSE
   , lambhack=TRUE
-) 
+)
