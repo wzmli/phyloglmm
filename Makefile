@@ -103,6 +103,13 @@ fit.lme4.ms.small.1.Rout:
 fit.lme4.ms.xlarge.5.Rout: phyloglmm.R
 ### tmb
 
+fit.lme4test.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R phylolme4.R
+	$(run-R)
+
+
+fit.lme4test.ms.large.1.Rout: phylolme4.R
+collect_lme4test.Rout: collect_lme4test.R
+
 lme4_profile.Rout: lme4_profile.R
 	$(run-R)
 
