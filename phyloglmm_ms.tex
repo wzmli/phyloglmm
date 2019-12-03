@@ -163,27 +163,19 @@ Researchers use these data to fit complex models describing species occurrence a
 For example, ecologists have used phylogenetic relationships in multi-species models \citep{garland1992procedures, freckleton2002phylogenetic, ord2010adaptation, davies2013phylogenetic}; more recently they have begun to integrate evolutionary considerations in applied ecological studies addressing biodiversity conservation and the effects of climate change \citep{winter2013phylogenetic, santamaria2012evolution, lankau2011incorporating, lavergne2010biodiversity, mace2008evolutionary}.
 % \bmb{might be interesting to do some bibliometry, although absolutely not necessary --- i.e. how do numbers of citations of (whatever) increase relative to the overall size of the eco/evo literature? \ldots}
 
-Unlike standard regression-based statistical models, where all of the predictor variables of interest (for example, species traits and environmental factors) are directly observable,  PCMs using phylogenetic regression use phylogenetic relationships to estimate the unobserved process of trait evolution \citep{felsenstein1985phylogenies, butler2004phylogenetic, hansen2012interpreting}. 
+Unlike standard regression-based statistical models, where all of the predictor variables of interest (for example, species traits and environmental covariates) are directly observable,  PCMs using phylogenetic regression use phylogenetic relationships to estimate the unobserved process of trait evolution \citep{felsenstein1985phylogenies, butler2004phylogenetic, hansen2012interpreting}. 
 % While evolutionary relationships are biologically important and interesting, they often get neglected in applications and multi-species analyses \citep{bunnefeld2012island, santamaria2012evolution}. 
 While a wide range of tools is available for phylogenetic regression, existing procedures may be either insufficiently flexible or too computationally demanding when analyzing large volumes of data.
 In such cases, researchers typically search for ways to simplify their analyses: for example, treating species effects as independent, thus neglecting phylogenetic correlations among species responses \citep{bunnefeld2012island}; ignoring degrees of relatedness and treating taxon as a strictly hierarchical description \citep{tella1999habitat}; or neglecting within-species variation \citep{ord2010adaptation}.
-%% bunnefeld2012island: used taxon for random slopes but did not include phylogenetic information
-%% ord2010adaptation : used OU process with means (single obs per taxa),
-%%  i.e. ignoring within-taxon variation?
-%% fix me!?
-% which can lead to statistical issues and erroneous conclusions
-% \citep{felsenstein1985phylogenies, li2017statistical}.
-% \bmb{What precise ``issues'' do you have in mind? Don't think we need to state them here, but we should know. Based on your comments, I can guess that (1) by using random slopes across taxa, Bunnefeld 2012 is neglecting more subtle variation due to differential relatedness? (2) not sure whether taking taxon-level means (Ord 2010) is actually a problem. Ignores some variation,
-% but it might be ignorable (cf. Murtaugh 2007 ``Simplicity and complexity in ecological data analysis'')}
+
 In this paper, we propose an alternative method for flexibly and efficiently modeling phylogenetic relationships by extending existing software for fitting mixed effect models. 
 This method allows researchers to easily incorporate evolutionary and statistical complexities without sacrificing speed.
 
 \subsection*{Challenges in modeling phylogenetic processes}
 
-% Researchers use regression-based methods such as generalized linear models (GLMs) or generalized linear mixed effect models \citep[GLMMs:][]{bolker2009generalized} to control for different levels of variation.
 Standard statistical regression techniques do not allow for correlations among species responses due to their shared evolutionary history.
 Classic phylogenetic regression uses a statistical model in which phylogenetic correlation in the residuals from a regression between two species-level traits arises because the residual variation in the dependent-variable trait evolves along the branches of the phylogeny according to a Brownian-motion evolutionary model \citep{felsenstein1985phylogenies}. 
-If in addition the residuals are normally distributed and observed without any additional error or within-species variation, Felsenstein's method of phylogenetically independent contrasts  \citep[PICS:][]{felsenstein1985phylogenies, nicolakakis2000forebrain} is sufficient to account for the phylogenetic correlation.
+If in addition the residuals are normally distributed and observed without any additional error (e.g., from other covariates) or within-species variation, Felsenstein's method of phylogenetically independent contrasts  \citep[PICS:][]{felsenstein1985phylogenies, nicolakakis2000forebrain} is sufficient to account for the phylogenetic correlation.
 More recent approaches -- including phylogenetic generalized linear mixed models (PGLMM) \citep{ives2011generalized, housworth2004phylogenetic}, Pagel's $\lambda$ \citep{pagel1999inferring}, and Blomberg's $K$ \citep{blomberg2003testing} --- build upon PICs by considering different (non-Gaussian) response distributions and by accounting for evolutionary processes other than Brownian-motion. 
 These methods partition residual variation into two components: (1) uncorrelated, or independent, residual variation (observation error or tip variation) and (2) phylogenetic signal (evolutionary process error) \citep{hansen2012interpreting, housworth2004phylogenetic}.
 If each species' traits are observed more than once, possibly under different conditions, we can potentially distinguish a third level of variation; in this case, phylogenetic variation and tip variation can both be considered part of the evolutionary process error (which we will call tip variation or intercept-level variation) while the among species residual variation is associated with among observation variation within each species.
@@ -204,6 +196,8 @@ Indeed, many existing methods are restricted to single observations per species,
 % \label{fig:variation}
 % \end{figure}
 % \end{center}
+
+%% CONT HERE
 
 Classic phylogenetic regressions usually allow the response (trait or distribution) to evolve according to the phylogenetic relationship across species, but the effects of the predictor variables may evolve according to the phylogenetic relationship across species as well.
 Suppose we have examined a collection of species that came from two groups, and wish to know whether their brain size (Y) is proportional to their body size (X) (Felsenstein's (1985) example using a mixed-effect model. 
