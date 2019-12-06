@@ -102,7 +102,7 @@
 \newcommand{\code}[1]{{\tt #1}}
 
 
-\pagenumbering{gobble}
+% \pagenumbering{gobble}
 % \linenumbers
 
 % \renewcommand{\bmb}[1]{\relax}
@@ -201,12 +201,11 @@ Classic phylogenetic regressions usually allow the response (trait or distributi
 For example, suppose we have examined a collection of species that came from two groups, and wish to know whether their brain size (Y) is proportional to their body size (X) (Felsenstein's (1985) example using a mixed-effect model. 
 The standard phylogenetic mixed-effect model allows for phylogenetic correlations in the intercept of the relationship between body and brain size. 
 However, species within taxonomic groups with similar body sizes may vary in brain size (random intercepts), or taxonomic groups may vary in the relationship between brain and body size (random slopes). 
+Analogous to phylogenetically correlated variation in intercepts, phylogenetic random slopes allow the relationship between predictors and responses to vary between species in a phylogenetically correlated way (i.e., similar species will have similar predictor--response relationships).
 Several recent studies have incorporated some form of phylogenetic variation using random effects in addition to the standard phylogenetic correlations in the intercepts and looked at species response to phylogenetic variation with changes in environmental factors.
 For example, \cite{nowakowski2018phylogenetic} considered phylogenetically correlated slopes in response to habitat conversion when studying the abundance of amphibian species using a Bayesian phylogenetic GLMM, while \cite{li2017canfun} considered phylogenetically correlated species nested within sites when modeling plant abundance via a phylogenetic GLMM approach. 
 The tools available for extending phylogenetic relationships to predictor variables (or predictor level variation) in a standard frequentist framework are relatively inflexible; thus, many biologist needing to fit random-slopes model have usually turned to more flexible Bayesian approaches, despite their additional computational burden \citep{hadfield2010mcmc, burkner2018brms}.
 Table \ref{table:model} summarizes types of platforms, data constraints, and provides model complexities for phylogenetic comparative analysis.
-
-%% CONT HERE
 
 %% FIXME: chart looks ugly
 \begin{table}[]
@@ -217,8 +216,8 @@ Table \ref{table:model} summarizes types of platforms, data constraints, and pro
 \begin{tabular}[c]{@{}l@{}}Generalized Linear \\ Model (GLM)
 \end{tabular}} & Correlated residual & Single observation & \begin{tabular}[c]{@{}l@{}}\pkg{nlme}:gls, \\ \pkg{ape}:pic\end{tabular} \\ \cline{2-4} 
 & \begin{tabular}[c]{@{}l@{}}Residual \\ + phylogenetic intercept\end{tabular} & Single observation & \begin{tabular}[c]{@{}l@{}}Pagel's $\lambda$\\ Blomberg's $k$ \\ via \pkg{nlme}:gls\\ \pkg{phylolm}\end{tabular} \\ \hline
-\multirow{2}{*}{\begin{tabular}[c]{@{}l@{}}Generalized Linear \\ Mixed Model (GLMM)\end{tabular}} & \multirow{2}{*}{Random effect}                                        & \begin{tabular}[c]{@{}l@{}}Single observation\\ Balanced design\end{tabular} & \pkg{pez}, \pkg{phyr}                                                                                            \\ \cline{3-4} 
-                                                                                                  &                                                                       & Unrestricted                                                                 & \pkg{lme4}, \pkg{glmmTMB}                                                                                  \\ \hline
+\multirow{2}{*}{\begin{tabular}[c]{@{}l@{}}Generalized Linear \\ Mixed Model (GLMM)\end{tabular}} & \multirow{2}{*}{Random effect}                                        & \begin{tabular}[c]{@{}l@{}}Single observation\\ Balanced design\end{tabular} & \pkg{pez}                                                                                            \\ \cline{3-4} 
+                                                                                                  &                                                                       & Unrestricted                                                                 & \pkg{lme4}, \pkg{glmmTMB}, \pkg{phyr}                                                                                  \\ \hline
 \multirow{2}{*}{Bayesian GLMM}                                                                    & \multirow{2}{*}{Random effect}                                        & Balanced design                                                              & \pkg{MCMCglmm}                                                                                       \\ \cline{3-4} 
                                                                                                   &                                                                       & Unrestricted                                                                 & \pkg{brms}                                                                                           \\ \hline
 \end{tabular}
@@ -227,7 +226,7 @@ Table \ref{table:model} summarizes types of platforms, data constraints, and pro
 \end{table}
 
 In this paper, we will propose an alternative formulation of phylogenetic regression in a generalized linear mixed modeling framework that is mathematically equivalent to previous approaches, but more flexible.
-In particular, our new formulation can be implemented in any framework that allows for random effects (such as random intercepts, slopes, and interactions), without the need to implement special correlation structures, by incorporating phylogenetic structures as part of the mean model \citep{hefley2017basis}.
+In particular, it easily allows for random effects (such as random intercepts, random slopes, and random interactions), without the need to implement special correlation structures, by incorporating phylogenetic structures as part of the mean model \citep{hefley2017basis}.
 %% can be incorporated relatively easily into any mixed-model platform that allows new random-effects design matrices to be specified, and can be easily extended along with the features of mixed model such as multiple observational designs, phylogenetic random-slopes models, and multiple (nested or crossed) random effects.
 We will compare our technique coded in R packages \pkg{lme4} and \pkg{glmmTMB} with existing R packages (i.e. \pkg{nlme} \citep{pinheiro2014r}, \pkg{phylolm} \citep{ho2014phylolm}, \pkg{pez} \citep{pearse2015pez} \pkg{phyr} \citep{phyr}, \pkg{MCMCglmm} \citep{hadfield2010mcmc}, and \pkg{brms} \citep{burkner2018brms}), fitting models to data from simulated model that incorporates phylogenetic variation from both predictors and tips/species as well as residual variation.
 % We expect that our approach will be fast as well as flexible, because \pkg{lme4} and \pkg{glmmTMB} use efficient approaches. 
@@ -289,17 +288,18 @@ The typical GLMM has the form:
 \label{eq:glmm}
 \end{aligned}
 \end{equation}
-where $\bZ$ is an $n \times m$ model matrix for the $n$-dimensional vector-valued $m$ predictor variables; $\bb$ (sometimes referred to as the ``G-side" effect) representing the conditional modes, is assumed to be multivariate normally distributed with a variance-covariance matrix given by $\bSigma(\theta)$; and $\phi$ is a scale parameter for the conditional distribution $\dist$.
+where $\bZ$ is an $n \times q$ model matrix for the $q$-dimensional vector-valued random effects variables; $\bb$ (sometimes referred to as the ``G-side" effect) representing the conditional mean (or mode) of the random effect, which is assumed to be multivariate normally distributed with a variance-covariance matrix given by $\bSigma(\theta)$; and $\phi$ is a scale parameter for the conditional distribution $\dist$.
 When $\dist$ is Gaussian, $g$ is the identity function, $\bZ$ is the identity matrix, and $\bSigma(\theta)=\sigma^2\bC$, (\ref{eq:glmm}) reduces to (\ref{eq:gls}).
 % ; $\besp$ (sometimes referred as "R" effect) is an $n \times 1$ vector of independent and normally distributed error terms with variance $\sigma_{\epsilon}^2$.
 % Analogously, the phylogenetic regression given by (\ref{eq:gls1}) can be represented in the generalized mixed model framework with Gaussian responses by constraining $\bSigma(\theta) = \sigma^2 \bC$ and $\sigma^{2}_{\epsilon} = 0$.
 
-There are forms of random variation in the mixed model framework.
-First, random intercepts can allow the response trait to vary independently across groups other than species (e.g., patches, sites, or experiments). 
-Second, random intercepts can also allow the response (trait or distribution) to vary either independently among species (since species represent the tips of the phylogenetic tree) or among species in a phylogenetically correlated way (i.e., species that are closely related tend to have similar responses).
-The third type of variation that is often neglected is random slopes.
-Random slopes allow fixed effects (the relationship between predictors and responses) to vary among groups.
-Analogous to phylogenetically correlated variation in intercepts, phylogenetic random slopes can allow the relationship between predictors and responses to vary between species in a phylogenetically correlated way (i.e., similar species will have similar predictor--response relationships).
+%% Check if the two s. above make sense.
+
+%%MLi: The P below does not feel like it belongs here. 
+% There are several forms of random variation in the mixed model framework.
+% First, random intercepts can allow the response trait to vary independently across groups other than species (e.g., patches, sites, or experiments). 
+% Second, random intercepts can also allow the response (trait or distribution) to vary either independently among species (since species represent the tips of the phylogenetic tree) or among species in a phylogenetically correlated way (i.e., species that are closely related tend to have similar responses).
+% The third type of variation are random slopes; they allow fixed effects (the relationship between predictors and responses) to vary among groups.
 
 % \bmb{worth including the \pkg{MCMCglmm}/\pkg{brms} inverse-VCV formulation here? And/or contacting Eric Pedersen to find out about his Markov Random Field phylog. stuff in GAM?}
 % \mli{inverse VCV for BLUP? an alternative way to find the inverse of the vcv(phy)}
@@ -319,6 +319,8 @@ Analogous to phylogenetically correlated variation in intercepts, phylogenetic r
 \newcommand{\bell}{{\boldsymbol \ell}}
 \newcommand{\e}{{ \epsilon}}
 
+The duality of $\bSigma$ and $\bZ$ for equivalent model specifications is useful for efficient implementations of models that contains a functional covariance structure \citep{hefley2017basis}. 
+Similarly, we can construct phylogenetic correlations (PC) through $\bZ$.
 Suppose that the evolution follows a Brownian-motion process, i.e., continuous traits evolve independently, following an unbiased, continuous-time random walk, along each branch of the phylogeny.
 In this case, the phylogenetic variability of a particular species can be written as the sum of the variances of evolutionary changes that occurred on all of the branches in its history. 
 Thus, modeling the evolutionary history of each species with a sequence of independent errors with species--branch matrix $\bS$ is equivalent to imposing a correlation $\bC$.
@@ -453,14 +455,15 @@ t_1 & t_2 & t_3
 \subsubsection*{Single group model}
 
 We generated test data based on the random slopes mixed model formulation (\ref{eq:glmm}) with a single response variable $\bY$ and a single continuous normally distributed predictor variable $\bm{t}$ for $n$ = 25, 50, and 100 species.
-For simplicity, the response variable $\bY$ is conditionally normally distributed (i.e., $\bm{D}$ is a Gaussian distribution, and $g$ is the identity link function), corresponding to a linear mixed effect model. 
+For simplicity, the response variable $\bY$ is conditionally normally distributed (i.e., $\cal{D}$ is a Gaussian distribution, and $g$ is the identity link function), corresponding to a linear mixed effect model. 
 For the first set of simulations, we simulate one observation per species.
 % For a broader range of comparisons, we simulate one observation ($X_i,Y_i$) per species.
 Thus, the full simulation model is as follows:
 \begin{equation}
 \begin{aligned}
-\bY & = (\beta_0 + b_{\mathrm{phy_{int}}}) + (\beta_1 + b_{\mathrm{phy_{slope}}}) \bm{t} + \besp \\\
-(b_{\mathrm{phy_{int}}}, b_{\mathrm{phy_{slope}}}) & \sim \textrm{MVN} \left( 0, \begin{bmatrix}
+\bY & = \dist(g^{-1}(\bmu), \phi) \\
+\bmu & = (\bf{\beta_0 + b_{\mathrm{phy_{int}}}}) + (\bf{\beta_1 + b_{\mathrm{phy_{slope}}}}) \bm{t} + \besp \\\
+(\bf{b_{\mathrm{phy_{int}}}, b_{\mathrm{phy_{slope}}}}) & \sim \textrm{MVN} \left( 0, \begin{bmatrix}
 \Sigma^2_{\mathrm{phy_{int}}} & \Sigma_{\mathrm{phy_{int-slope}}} \\ 
 \Sigma_{\mathrm{phy_{int-slope}}} & \Sigma^2_{\mathrm{phy_{slope}}}
 \end{bmatrix} 
@@ -480,44 +483,45 @@ The multi-group model is a generalization of multiple-site models used in commun
 The full multi-group model is as follows: 
 \begin{equation}
 \begin{aligned}
-\bY & = (\beta_0 + b_{\mathrm{phy_{int}}} + b_{\mathrm{sp_{int}}} + b_{\mathrm{group}}) + (\beta_1 + b_{\mathrm{phy_{slope}}} + b_{\mathrm{sp_{slope}}}) \bm{t} + b_{\mathrm{sp:group}} + \besp \\
-(b_{\mathrm{phy_{int}}}, b_{\mathrm{phy_{slope}}}) & \sim \textrm{MVN} \left( 0, \begin{bmatrix}
+\bY & = \dist(g^{-1}(\bmu), \phi) \\
+\bmu & = (\bf{\beta_0 + b_{\mathrm{phy_{int}}} + b_{\mathrm{sp_{int}}} + b_{\mathrm{group}}}) + (\bf{\beta_1 + b_{\mathrm{phy_{slope}}} + b_{\mathrm{sp_{slope}}}}) \bm{t} + \bf{b_{\mathrm{sp:group}}} + \besp \\
+(\bf{b_{\mathrm{phy_{int}}}, b_{\mathrm{phy_{slope}}}}) & \sim \textrm{MVN} \left( 0, \begin{bmatrix}
 \Sigma^2_{\mathrm{phy_{int}}} & \Sigma_{\mathrm{phy_{int-slope}}} \\ 
 \Sigma_{\mathrm{phy_{int-slope}}} & \Sigma^2_{\mathrm{phy_{slope}}}
 \end{bmatrix}
 \right) \\
-(b_{\mathrm{sp_{int}}}, b_{\mathrm{sp_{slope}}}) & \sim \textrm{MVN} \left( 0, \begin{bmatrix}
+(\bf{b_{\mathrm{sp_{int}}}, b_{\mathrm{sp_{slope}}}}) & \sim \textrm{MVN} \left( 0, \begin{bmatrix}
 \sigma^2_{\mathrm{sp_{int}}} & \sigma_{\mathrm{sp_{int-slope}}} \\ 
 \sigma_{\mathrm{sp_{int-slope}}} & \sigma^2_{\mathrm{sp_{slope}}}
 \end{bmatrix}
 \right) \\
-b_{\mathrm{group}} & \sim \textrm{MVN} ( 0 , \sigma^2_{\mathrm{group}}) \\
-b_{\mathrm{sp:group}} & \sim \textrm{MVN} (0, \mathrm{I}_{\mathrm{group}} \otimes \Sigma^2_{phy}) \\
+\bf{b_{\mathrm{group}}} & \sim \textrm{MVN} ( 0 , \sigma^2_{\mathrm{group}}) \\
+\bf{b_{\mathrm{sp:group}}} & \sim \textrm{MVN} (0, \mathrm{I}_{\mathrm{group}} \otimes \Sigma^2_{phy}) \\
 \besp & \sim \textrm{N} ( 0 , \sigma_{\epsilon}^2),
 \label{eq:multiple_glmm}
 \end{aligned}
 \end{equation}
 where $\textrm{I}_{\textrm{group}}$ is a indicator matrix of groups; and $\otimes$ is the Kronecker product.
 
-The multi-group full simulation model has five additional random effects (predictor-level ($\sigma^2_{\mathrm{sp_{slope}}}$) and intercept-level ($\sigma^2_{\mathrm{sp_{int}}}$) random effect of species variance and their covariance ($\sigma_{\mathrm{sp_{int-slope}}}$), random intercept of group ($b_{\mathrm{group}}$) and random intercept of species-group interaction ($b_{\mathrm{sp:group}}$)) compared to the single--group full model.
-Predictor-level and intercept-level random effects of species are applicable in the multi-group model setting because there are multiple observations per species; thus we can quantify variation among species separately from residual variation.
-Variance in the intercept of species--group interactions ($b_{\mathrm{sp:group}}$) describes whether the species within a group have more similar responses on average than expected by chance, equivalent to phylogenetic attraction \citep{helmus2007separating}. 
+The multi-group full simulation model has five additional random effects (predictor-level ($\sigma^2_{\mathrm{sp_{slope}}}$) and intercept-level ($\sigma^2_{\mathrm{sp_{int}}}$) random effect of species variance and their covariance ($\sigma_{\mathrm{sp_{int-slope}}}$), random intercept of group ($\bf{b_{\mathrm{group}}}$) and random intercept of species-group interaction ($\bf{b_{\mathrm{sp:group}}}$)) compared to the single--group full model.
+Predictor-level and intercept-level random effects of species are applicable in the multi-group model setting because there are multiple observations per species; thus we can distinguish variation among species separately from residual variation.
+Variance in the intercept of species--group interactions ($\bf{b_{\mathrm{sp:group}}}$) describes whether the species within a group have more similar responses on average than expected by chance, equivalent to phylogenetic attraction \citep{helmus2007separating}. 
 
 \subsection*{Platforms}
 
-We compare our approach with five other R packages that can fit phylogenetic comparative models: \pkg{nlme} \citep{pinheiro2014r}, \pkg{phylolm} \citep{ho2014phylolm}, \pkg{pez} \citep{pearse2015pez}, and \pkg{brms} \citep{burkner2018brms}.
+We compare our approach with five other R packages that can fit phylogenetic comparative models: \pkg{nlme} \citep{pinheiro2014r}, \pkg{phylolm} \citep{ho2014phylolm}, \pkg{pez} \citep{pearse2015pez}, \pkg{phyr} \citep{phyr} and \pkg{brms} \citep{burkner2018brms}.
 % \bmb{I think nlme can do other evolutionary models as well? May not be worth mentioning ...}
 % \begin{verbatim}
 % grep("\\.",apropos("^cor[A-Z]",ignore.case=FALSE),
 % invert=TRUE,value=TRUE)
 % \end{verbatim}
 Phylogenetic generalized least squares (PGLS) (\code{gls} in \pkg{nlme}) is one of the most widely used techniques in phylogenetic comparative analysis; it fits a linear model where the covariance structure between species assumes an evolutionary process on the tree (typically Brownian-motion, but other processes can be used) instead of treating the residual error for each species as independent.
-Phylogenetic generalized linear models (PGLM) (\code{phyloglm} in \pkg{phylolm}) are a slightly more flexible variation of PGLS that can allow for both phylogenetic and residual variation, as well as non-Gaussian response variables.
+Phylogenetic generalized linear models (PGLM) (\code{phyloglm} in the \pkg{phylolm} package) are a slightly more flexible variation of PGLS that can allow for both phylogenetic and residual variation, as well as non-Gaussian response variables.
 Both \code{gls} and \code{phylolm} can model non-Brownian evolutionary processes and different correlation structures (e.g., Pagel's $\lambda$ or Blomberg's $K$), but we restrict our PGLS fits to the simple BM correlation. 
 Neither PGLS nor PGLM can handle random slopes or multiple observations within a species.
-One of the few packages that currently fit phylogenetic correlations to predictor level variation is \pkg{pez} (and very recently \pkg{phyr}), which can handle additional random slopes ($\Sigma^2_{\mathrm{phy_{slope}}}$) and random intercept of species-group interactions ($b_{\mathrm{sp:group}}$) but does not incorporate covariation between phylogenetic random slope-intercept ($\Sigma_{\mathrm{phy_{int-slope}}}$).
+One of the few packages that currently fit phylogenetic slopes to predictor level variation is \pkg{pez} (and very recently \pkg{phyr}), which can handle additional random slopes ($\Sigma^2_{\mathrm{phy_{slope}}}$) and random intercepts of species-group interactions ($\bf{b_{\mathrm{sp:group}}}$) but does not incorporate covariation between phylogenetic random slope-intercept ($\Sigma_{\mathrm{phy_{int-slope}}}$).
 Lastly, Bayesian phylogenetic GLMMs using Markov chain Monte Carlo (MCMC) can handle all of the cases described above. 
-However, MCMC is usually much more computationally expensive for GLMMs compared to platforms using deterministic optimization.
+However, MCMC is usually much more computationally expensive for GLMMs than platforms using deterministic optimization.
 \pkg{MCMCglmm} \citep{hadfield2010general} is the most widely used Bayesian phylogenetic GLMM, but we will instead use \pkg{brms}, which uses a more computationally efficient MCMC technique called Hamiltonian Monte Carlo (HMC)\citep{duane1987hybrid}.
  
 % Table \mli{ref something} provides the statistically equivalent fitting capabilities of common/existing phylogenetic methods.
