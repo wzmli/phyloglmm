@@ -103,7 +103,7 @@
 
 
 % \pagenumbering{gobble}
-% \linenumbers
+\linenumbers
 
 % \renewcommand{\bmb}[1]{\relax}
 % \renewcommand{\mli}[1]{\relax}
@@ -334,7 +334,6 @@ For example, for the phylogeny in figure \ref{fig:tree}, the corresponding $\bS$
 \label{fig:tree}
 \end{figure}
 \end{center}
-
 \[
   \begin{blockarray}{ccccc}
   & L_1 & L_2 & L_3 & L_4  \\
@@ -542,14 +541,14 @@ Multi-group &  &  & X & X & X & X & X \\ \hline
 
 \subsection*{Simulation and evaluations}
 
-We simulated 100 phylogenetic trees for each sample size (n = 25, 50, 100 and an additional n = 500 for the multi-group model) to and then modelled responses on each tree using (\ref{eq:single_glmm}, \ref{eq:multiple_glmm}). Each realization was fitted using all model variants. 
+We simulated 100 random phylogenetic trees using R package \pkg{ape} \citep{ape} for each sample size (n = 25, 50, 100 and an additional n = 500 for the multi-group model) to generate and then modelled responses on each tree using (\ref{eq:single_glmm}, \ref{eq:multiple_glmm}). 
+Each realization was fitted using all model variants. 
 All simulation parameters are shown in Figure \ref{ssplot} and Figure \ref{msplot}. 
-Correlation $\rho$ is used in place of covariances in the simulations.
+Correlation $\rho_{xy}$ is used in place of covariances $\Sigma_{xy}$ (i.e., $\rho_{xy} = \frac{\Sigma_{xy}}{\Sigma_{x}\Sigma_{y}}$) in the simulations.
 Table \ref{table:platform} shows the parameters that are estimable for each platform. 
 We only evaluated the goodness of fit for model fits that passed the convergence tests implemented by the package.
 For Bayesian GLMM, we included only realizations where we require values of the Gelman-Rubin statistic less than the recommended threshold 1.1. Based on recent concerns about Gelman-Rubin thresholds \citep{vats2018revisiting}), we included the additional convergence criterion of effective sample size (ESS) $>1000$ for the fixed effect parameters ($\beta_{0}$ and $\beta_{1}$) for each replication \citep{vehtari2019rank}. 
 For each replication, we sample two chains starting with 10000 iterations. 
-%% TODO MAKE SURE THIS IS CORRECT!
 We first evaluate our estimates by looking at the distribution of the estimated values (maximum likelihood estimates for non-Bayesian platforms and posterior medians for Bayesian platforms) to quantify bias and variance (i.e., quality of the point estimate).
 We then compute frequentist coverage to assess the quality of the confidence intervals.
 Coverage refers to the proportion of simulations in which the computed confidence intervals include the true values of parameters.
@@ -560,9 +559,6 @@ We also compare computational speed between different platforms to evaluate the 
 \section*{Results}
 
 We used our method to reproduce the examples in chapter 11 of \cite{garamszegi2014modern} using phylogenetic GLMMs based on \pkg{lme4} and \pkg{glmmTMB} (for more details see example in supplement).
-We also used our method and fitted the full model of the dune meadow data recently used with \pkg{pez} \citep{li2017canfun}. 
-\pkg{lme4} and \pkg{pez} give identical results for fixed and random effect estimates, but our code runs approximately 120 times faster than \pkg{pez}. 
-Codes for analyzing the dune meadow data using \pkg{lme4} and \pkg{pez} are provided in the supplements. 
 
 \subsection*{Single Group model simulations}
 
@@ -576,8 +572,6 @@ Codes for analyzing the dune meadow data using \pkg{lme4} and \pkg{pez} are prov
 \label{ssplot}
 \end{figure}
 \end{center}
-
-
 \begin{center}
 \begin{figure}[H]
   \includegraphics[scale=0.7]{./figure/sstime.pdf}
@@ -585,8 +579,6 @@ Codes for analyzing the dune meadow data using \pkg{lme4} and \pkg{pez} are prov
 \label{ssplot_speed}
 \end{figure}
 \end{center}
-
-
 \begin{center}
 \begin{figure}[H]
   \includegraphics[scale=0.7]{./figure/sscoverage.pdf}
@@ -601,8 +593,8 @@ The full fitted model (which matches the simulation model that incorporates phyl
 Estimates for fixed effect parameters ($\beta_0$ and $\beta_1$) approach nominal coverage as the number of species increases for \pkg{lme4} and \pkg{glmmTMB} but not for other packages. \pkg{brms} has higher than nominal coverage (i.e., its confidence intervals are overly conservative) because the prior distributions for the simulation parameters are centered at the true values (\citet{li2018fitting} discuss the interaction of informative priors and Bayesian calibration).
 
 In general, models that are insufficiently flexible to match the true simulation model (PGLM and PGLS) will try to fit the data with the parameters available. 
-PGLM (which lacks the phylogenetic slope parameter) provides reasonably good estimates for the phylogenetic intercept standard deviation parameter ($\sigma_{\mathrm{phy_{int}}}$) but overestimates the residual standard deviation; the estimates for the intercept ($\beta_0$) are slightly overconfident (the coverage $\approx$ 90\% with 100 species) and the fixed slope parameter ($\beta_1$) has poor coverage ($<$ 60\%).
-PGLS, with only one parameter available, confounds all variation (phylogenetic intercept, slope and residual variation) into the phylogenetic intercept parameter, resulting in overestimating the phylogenetic intercept and over-covering for $\beta_0$, and under-covering for $\beta_1$.
+PGLM (which lacks the phylogenetic slope parameter) provides reasonably good estimates for the phylogenetic intercept standard deviation parameter ($\sigma_{\mathrm{phy_{int}}}$) but overestimates the residual standard deviation; the estimates for the intercept ($\beta_0$) are slightly overconfident (coverage $\approx$ 90\% with 100 species) and the fixed slope parameter ($\beta_1$) has poor coverage ($<$ 60\%).
+PGLS, with only one parameter available, confounds all variation (phylogenetic intercept, slope and residual variation) into the phylogenetic intercept parameter, resulting in overestimating the phylogenetic intercept variation, over-covering for $\beta_0$, and under-covering for $\beta_1$.
 
 \subsection*{Multi-group model simulations}
 
@@ -615,8 +607,6 @@ PGLS, with only one parameter available, confounds all variation (phylogenetic i
   \label{msplot}
 \end{figure}
 \end{center}
-
-
 \begin{center}
 \begin{figure}[H]
   \includegraphics[scale=0.8]{./figure/mstime.pdf}
@@ -624,8 +614,6 @@ PGLS, with only one parameter available, confounds all variation (phylogenetic i
   \label{msplot_time}
 \end{figure}
 \end{center}
-
-
 \begin{center}
 \begin{figure}[H]
   \includegraphics[scale=0.5]{./figure/mscoverage.pdf}
@@ -633,7 +621,6 @@ PGLS, with only one parameter available, confounds all variation (phylogenetic i
   \label{msplot_coverage}
 \end{figure}
 \end{center}
-
 
 In contrast, the multi-group model fits are much more similar across platforms (only the more powerful platforms can fit these models at all, and the fitting models are closer to the true simulation model).
 Similar to the single-group fits, \pkg{lme4} and \pkg{glmmTMB} match the simulation model well and provide good estimates for all parameters except the correlation ($\sigma_{\mathrm{sp_{int-slope}}}$) for small numbers of species (i.e. n = 25 and 50).
