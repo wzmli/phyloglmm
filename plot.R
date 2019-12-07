@@ -59,13 +59,16 @@ gg_ss <- (ggplot(data=ssdat, aes(x=size, y=sd, col=Platform))
 
 print(gg_ss)
 
+scaleFUN <- function(x) sprintf("%.2f", x)
+
 gg_sstime <- (ggplot(data=ssdat, aes(x=size, y=time, col=Platform))
 	# + geom_violin(position=position_dodge(width=0.2),alpha=0.4)
 	+ geom_boxplot(outlier.colour = NULL, varwidth=TRUE)
 	# + scale_fill_brewer(palette = "Dark2")
-	+ scale_y_log10(breaks = trans_breaks("log10", function(x) 10^x)
-	    , labels = trans_format("log10", math_format(10^.x))
-	  )
+	# + scale_y_log10(breaks = trans_breaks("log10", function(x) 10^x)
+	#     , labels = trans_format("log10", math_format(10^.x))
+	#   )
+	+ scale_y_log10(breaks = trans_breaks("log10", function(x) 10^x),labels = scaleFUN)
 	+ scale_color_manual(values=c("Black","Red","Dark Blue","Dark Green","Orange"))
 	
 	+ ylab("Time (seconds)")

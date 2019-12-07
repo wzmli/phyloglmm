@@ -31,11 +31,11 @@ dat <- (dat
 ## If you hack mkBlist in phylo_lmm and switch the order in the kronecker product step (bad!)
 lme4time_1 <- system.time(
   lme4fit_1 <- phylo_lmm(Y ~ 1 + log.sla + annual 
-+ (1|obs) 
-+ (1|sp)
+# + (1|obs) 
+# + (1|sp)
 + (1 | sp:site)
-+ (0 + log.sla | site)
-+ (1|site) 
+# + (0 + log.sla | site)
+# + (1|site) 
 , data=dat
 , phylonm = c("sp","sp:site")
 , phyloZ=phyZ
@@ -79,30 +79,30 @@ print(summary(lme4fit_1))
 print(peztime_1/lme4time_1)
 
 
-# peztime_1 <- system.time(
-#   pezfit_1 <-  communityPGLMM(formula = "Y ~ 1 + log.sla + annual"
-#      , data = dat
-#      , family = "gaussian"
-#      , sp = dat$sp
-#      , site = dat$site
-#      , random.effects = list(#re.sp.phy
-#     # , re.sp
-#     re.nested.phy
-#     # , re.sla
-#     # , re.site
-#      )
-#      , REML = F
-#      , verbose = F
-#      # , s2.init = c(1.5, rep(0.01, 4))
-#   )
-# )
-# 
+peztime_1 <- system.time(
+  pezfit_1 <-  communityPGLMM(formula = "Y ~ 1 + log.sla + annual"
+     , data = dat
+     , family = "gaussian"
+     , sp = dat$sp
+     , site = dat$site
+     , random.effects = list(#re.sp.phy
+    # , re.sp
+    re.nested.phy
+    # , re.sla
+    # , re.site
+     )
+     , REML = F
+     , verbose = F
+     # , s2.init = c(1.5, rep(0.01, 4))
+  )
+)
+
 chol_time <- system.time(cholphyt <- t(chol(phyZ %*% t(phyZ))))
 
 
 hackedmod <- glmmTMBhacked(Y ~ 1 + log.sla + annual
-  # + (1|obs)
-  + (1|sp)
+  + (1|obs:site)
+  # + (1|sp)
   # + (0 + log.sla | site)
   # + (1|site)
   # + (1 | sp:site)
@@ -115,3 +115,5 @@ hackedmod <- glmmTMBhacked(Y ~ 1 + log.sla + annual
   , REML = FALSE
   , lambhack=TRUE
 )
+
+hackedmod

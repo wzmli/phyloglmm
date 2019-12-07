@@ -223,7 +223,8 @@ mkTMBStruchacked <- function (formula, ziformula, dispformula, combForm, mf, fr,
   parameters$b <- rep(0,ncol(data.tmb$Z))
   if(lambhack){
     # condList$Z <- t(condListhacked$reTrms$Zt %*% chol(phyloZ %*% t(phyloZ)))
-    condList$Z <- t(condListhacked$reTrms$Zt) %*% phyloZ
+    condList$Z <- t(condListhacked$reTrms$Zt) %*% kronecker(phyloZ, Diagonal(nsite))
+    condList$Z <- t(condListhacked$reTrms$Zt) %*% kronecker(Diagonal(nsite),phyloZ)
     data.tmb$Z <- condList$Z
     # parameters$b <- rep(0, length(data.tmb$Z != 0))
   }

@@ -243,6 +243,11 @@ kronecker_fit.Rout: Kronecker_fit.R
 
 ######################################################################
 
+## Interaction example
+phylointeraction.Rout: phylointeraction.R
+	$(run-R)
+
+
 ### Makestuff
 
 Sources += Makefile

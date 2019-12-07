@@ -642,17 +642,14 @@ Comparing \pkg{glmmTMB} to \pkg{pez} and \pkg{phyr}, the median time for \pkg{gl
 
 % \bmb{say something about the implications of this [e.g. good enough for getting an overall impression of phylog. whatever-it-is but not enough for detailed description/inference about the evolutionary process?] (or maybe that should be saved for the Discussion?)}
 
-We have simulated relatively complex models containing phylogenetic variation in both intercepts and slopes, as well as within-species variation that is quantifiable because we allow multiple observations per species.
+We have simulated relatively complex models containing phylogenetic variation in both intercepts and slopes, as well as within-species variation that is quantifiable.
 These models are intrinsically more complex than some simple platforms for phylogenetic regression can handle, which may seem unfair; nevertheless, our models are certainly \emph{less} complex than evolutionary processes occurring in nature.
 Our results show that models that cannot match the full ``simulation world'' perform poorly even for the parameters they do estimate; it is important to understand the limitations of these simpler, commonly used methods.
 
-Even our relatively simple models can incorporate many layers of complexity --- e.g. multiple spatial grouping variables as well as correlated phylogenetic variation in the effects of several different traits and environmental variables on a focal trait.
+Even our relatively simple multi-group model described in \ref{eq:multiple_glmm} can incorporate many layers of complexity --- i.e., analogous to spatial grouping variables, as well as correlated phylogenetic variation in the effects of several different traits and environmental variables on a focal trait.
 In theory, as long as we have enough data and enough computational power, models that can incorporate more of the complexity will always describe a biological system better.
 However, real applications are always data-constrained.
-Deciding on a practically appropriate level of model complexity for a given
-problem and data set is an
-open and difficult general problem in statistical modeling, not just
-in phylogenetic studies.
+Deciding on a practically appropriate level of model complexity for a given problem and data set is an open and difficult general problem in statistical modeling, not just in phylogenetic studies.
 Should one use simple models that may be overly conservative or
 risk overfitting by using more ambitious models?
 How can one appropriately use the data themselves
@@ -662,21 +659,18 @@ starting from the most complex possible model \citep{barr2013random},
 choosing simpler models \emph{a priori} \citep{baayen2008mixed},
 or using Bayesian approaches with regularizing priors \citep{hadfield2010mcmc}?
 
-\subsection*{Incorporating different levels of variation}
+\subsection*{Confounding levels of variation}
 
 % \bmb{I think you need a lot more here; what does a random slopes model mean? You have one sentence that says ``people should be thinking about random slopes''. Then you talk about correlation (which is a much more subtle/less important issue, I think).}
 
 In classic GLMMs, random effects are used to handle group (or individual) level variation. 
-In the simplest experimental design with continuous response observations in different levels of a discrete grouping variable, where the response may vary among levels of the grouping variable, fitting random intercepts are the ``go-to'' method to handle this variation.
-The random intercept model controls the group effect in the response level by allowing different intercepts for each level of the grouping variable.
-However, random effects can take more complicated forms as the experimental design becomes more complex.  
-For example, imagine observing another continuous explanatory variable in the experimental design above, where the relationship of the response and the new explanatory variable may vary according to the grouping variable.
-A random slopes model, which allows different slopes (the relationship between continuous variables) for each level of the grouping variable is most appropriate to handle this type of variation.
-Random slopes models require appropriate observational or experimental designs (i.e., multiple measurements of traits and responses within each evolutionary group) and often require more data overall for reliable estimates, but they are relevant over a wide range of scenarios \citep{schielzeth2008conclusions, cleasby2015quantifying,ord2010adaptation}.
-Neglecting random slopes can lead to biased fixed effect estimates with inadequate coverage and type I errors \citep{schielzeth2008conclusions} as shown in the simulations above.
+In the simplest experimental design with continuous response observations with variations between different levels of discrete grouping variable -- i.e., where the response may vary among levels of the grouping variable -- fitting random intercepts are the ``go-to'' method.
+% The random intercept model models the group effect in the response level by allowing different intercepts for each level of the grouping variable.
+However, random effects can take more complicated forms as the experimental design becomes more complex, e.g., random slopes models.
+Random slopes models require appropriate observational or experimental designs (i.e., multiple measurements of traits and responses within each group) and often require more data overall for reliable estimates, but they are relevant over a wide range of scenarios \citep{schielzeth2008conclusions, cleasby2015quantifying,ord2010adaptation}.
+Neglecting random slopes can lead to biased fixed effect estimates with inadequate coverage and type I errors \citep{schielzeth2008conclusions}.
 
-% When analyzing relationships among species between traits, it is entirely plausible that change in the effect of predictor variables have on traits are changing with respect to different grouping of species or even in a phylogenetically correlated way (phylogenetic random slopes).
-Nevertheless, it is hard to account for all forms of complexities and decide if when it is best to use phylogenetic random effects, simple grouping, or both. 
+Nevertheless, for PGLMMs, it is hard to account for all forms of complexities and decide if when it is best to use phylogenetic random effects, simple grouping, or both. 
 Optimal model complexity depends on experimental design and whether the data provides enough signal to estimate these different levels of variation, which can be strongly confounded.
 For example, for experimental designs with single measurement per species, any method that can account for at least two sources of variation, such as Pagel's $\lambda$ will be sufficient. 
 However, if multiple observations are available per species, then these simple methods may confound tip variation with residual variation.
@@ -701,7 +695,7 @@ More importantly, this implementation in \pkg{lme4} and \pkg{glmmTMB} allows use
 
 \section*{Authors’ contributions}
 
-ML and BMB conceived the ideas and designed methodology; ML and BMB implemented the code in \pkg{lme4} and \pkg{glmmTMB}; ML ran all simulations; ML and BMB analyzed the results; ML wrote the first draft of the manuscript. All authors contributed critically to the drafts and gave final approval for publication.
+ML and BMB conceived the ideas and designed methodology; ML and BMB implemented the code in \pkg{lme4} and \pkg{glmmTMB}; ML ran all simulations; ML and BMB analyzed the results; ML wrote the first draft of the manuscript. Both authors contributed critically to the drafts and gave final approval for publication.
 
 \section*{Data Availability}
 
