@@ -320,7 +320,7 @@ When $\dist$ is Gaussian, $g$ is the identity function, $\bZ$ is the identity ma
 \newcommand{\bell}{{\boldsymbol \ell}}
 \newcommand{\e}{{ \epsilon}}
 
-The duality of $\bSigma$ and $\bZ$ for equivalent model specifications is useful for efficient implementations of models that contains a functional covariance structure \citep{hefley2017basis}. 
+The duality of $\bSigma$ and $\bZ$ for equivalent model specifications is useful for efficient implementations of models that contain a functional \bmb{???} covariance structure \citep{hefley2017basis}. 
 Similarly, we can construct phylogenetic correlations (PC) through $\bZ$.
 Suppose that the evolution follows a Brownian-motion process, i.e., continuous traits evolve independently, following an unbiased, continuous-time random walk, along each branch of the phylogeny.
 In this case, the phylogenetic variability of a particular species can be written as the sum of the variances of evolutionary changes that occurred on all of the branches in its history. 
@@ -645,34 +645,36 @@ Comparing \pkg{glmmTMB} to \pkg{pez} and \pkg{phyr}, the median time for \pkg{gl
 % \bmb{say something about the implications of this [e.g. good enough for getting an overall impression of phylog. whatever-it-is but not enough for detailed description/inference about the evolutionary process?] (or maybe that should be saved for the Discussion?)}
 
 We have simulated relatively complex models containing phylogenetic variation in both intercepts and slopes, as well as within-species variation that is quantifiable.
-These models are intrinsically more complex than some simple platforms for phylogenetic regression can handle, which may seem unfair; nevertheless, our models are certainly \emph{less} complex than evolutionary processes occurring in nature.
+These models are intrinsically more complex than some simple platforms for phylogenetic regression can handle, which may seem unfair; nevertheless, our models are certainly less complex than evolutionary processes occurring in nature.
 Our results show that models that cannot match the full ``simulation world'' perform poorly even for the parameters they do estimate; it is important to understand the limitations of these simpler, commonly used methods.
 
 Even our relatively simple multi-group model described in \ref{eq:multiple_glmm} can incorporate many layers of complexity --- i.e., analogous to spatial grouping variables, as well as correlated phylogenetic variation in the effects of several different traits and environmental variables on a focal trait.
 In theory, as long as we have enough data and enough computational power, models that can incorporate more of the complexity will always describe a biological system better.
 However, real applications are always data-constrained.
 Deciding on a practically appropriate level of model complexity for a given problem and data set is an open and difficult general problem in statistical modeling, not just in phylogenetic studies.
-Should one use simple models that may be overly conservative or
+For example, should one use simple models that may be overly conservative or
 risk overfitting by using more ambitious models?
-How can one appropriately use the data themselves
-to choose model complexity \citep{roberts_cross-validation_2016}?
 What are the relative costs and benefits of using a step-down procedure
 starting from the most complex possible model \citep{barr2013random},
 choosing simpler models \emph{a priori} \citep{baayen2008mixed},
 or using Bayesian approaches with regularizing priors \citep{hadfield2010mcmc}?
+For predictive models, how can one appropriately evaluate out-of-sample accuracy for
+structured data \citep{roberts_cross-validation_2016}?
 
-\subsection*{Confounding levels of variation}
+\subsection*{Incorporating multiple levels of variation}
 
 % \bmb{I think you need a lot more here; what does a random slopes model mean? You have one sentence that says ``people should be thinking about random slopes''. Then you talk about correlation (which is a much more subtle/less important issue, I think).}
 
-In classic GLMMs, random effects are used to handle group (or individual) level variation. 
-In the simplest experimental design with continuous response observations with variations between different levels of discrete grouping variable -- i.e., where the response may vary among levels of the grouping variable -- fitting random intercepts are the ``go-to'' method.
+In classic GLMMs, random effects are used to account for group-level variation. 
+In the simplest experimental designs where only the response and not the covariates vary
+within groups, random-intercept models (or even simpler analyses \cite{murtaugh2007simplicity})
+are appropriate.
 % The random intercept model models the group effect in the response level by allowing different intercepts for each level of the grouping variable.
-However, random effects can take more complicated forms as the experimental design becomes more complex, e.g., random slopes models.
-Random slopes models require appropriate observational or experimental designs (i.e., multiple measurements of traits and responses within each group) and often require more data overall for reliable estimates, but they are relevant over a wide range of scenarios \citep{schielzeth2008conclusions, cleasby2015quantifying,ord2010adaptation}.
-Neglecting random slopes can lead to biased fixed effect estimates with inadequate coverage and type I errors \citep{schielzeth2008conclusions}.
+However, random effects can take more complicated forms as the experimental design becomes more complex, e.g., random-slopes models.
+Random-slopes models require appropriate observational or experimental designs (i.e., multiple measurements of traits and responses within each group) and often require more data overall for reliable estimates, but they are relevant over a wide range of scenarios \citep{schielzeth2008conclusions, cleasby2015quantifying,ord2010adaptation}.
+Neglecting random slopes can lead to biased fixed effect estimates with inadequate coverage and inflated type~I errors \citep{schielzeth2008conclusions}.
 
-Nevertheless, for PGLMMs, it is hard to account for all forms of complexities and decide if when it is best to use phylogenetic random effects, simple grouping, or both. 
+Nevertheless, for PGLMMs, it is hard to account for all forms of complexities and decide when it is best to use phylogenetic random effects, simple grouping, or both. 
 Optimal model complexity depends on experimental design and whether the data provides enough signal to estimate these different levels of variation, which can be strongly confounded.
 For example, for experimental designs with single measurement per species, any method that can account for at least two sources of variation, such as Pagel's $\lambda$ will be sufficient. 
 However, if multiple observations are available per species, then these simple methods may confound tip variation with residual variation.
@@ -680,9 +682,11 @@ In this case, multiple observations can summarized to a single measurement (for 
 This is equivalent to assuming homoscedasticity using inverse-variance weights for unbalanced datasets. 
 Alternatively, when the within-species variance is actually of interest, accounting for within-species variation (i.e., adding species-level random effects in our example) can automatically handle multiple observations per species.
 
-It may be easier to be conservative to include both (phylogenetic random effects and grouping random effects) of them but simplify the phylogenetic relationships (at the random slopes level) and think about the random-slopes model in a strictly hierarchical setting (i.e., estimating different slopes for each family, or taxon \citep{bunnefeld2012island}) - the PGLMM collapses to a standard random-slopes model. 
+It may be easier to be conservative and include both phylogenetic random effects and grouping random effects
+\bmb{clarify? ``iid random effects''?}
+but simplify the phylogenetic relationships (at the random slopes level) and think about the random-slopes model in a strictly hierarchical setting (i.e., estimating different slopes for each family, or taxon \citep{bunnefeld2012island}). In this case, the PGLMM collapses to a standard random-slopes model where the group effects are considered to be independent and identically distributed.
 
-Another simplifying alternative is to be conservative to include both phylogenetic random effects and grouping random effects but simplify the phylogenetic relationships and think about the random-slopes model in a strictly hierarchical setting (i.e., estimating different slopes for each family, or taxon \citep{bunnefeld2012island}). 
+Another simplifying alternative is include both phylogenetic random effects and grouping random effects but simplify the phylogenetic relationships and think about the random-slopes model in a strictly hierarchical setting (i.e., estimating different slopes for each family, or taxon \citep{bunnefeld2012island}). 
 However, this collapses phylogenetic structures to a standard random-slopes model. 
 Users should be aware of two essential questions when fitting random-slope models: How much data do we need in order to practically estimate the random slopes? Are we making a mistake by ignoring random slopes \citep{schielzeth2008conclusions}? 
 % However, in the PGLMM context, as long as there's variation in the predictor among tips, there will be variation among taxa at some level, so random-slopes models will (almost always) be \emph{theoretically} identifiable.
