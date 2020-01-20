@@ -163,15 +163,6 @@ collect.Rout: collect.R
 plot.Rout: ./datadir/collect.RDS collect_brms.Rout plot.R
 	$(run-R)
 
-ssplot.Rout: ssplot.R
-	$(run-R)
-
-msplot.Rout: msplot.R
-	$(run-R)
-
-csplot.Rout: csplot.R
-	$(run-R)
-
 compare_pez_plot.Rout: compare_pez_plot.R
 	$(run-R)
 
