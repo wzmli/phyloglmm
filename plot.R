@@ -41,16 +41,22 @@ ssdat <- (ssdat_raw
 	# %>% filter(platform != "brms")
 )
 
+## FIXME: could match these more programatically (use 'values' in
+## scale_colour_manual() ?)
+colvec_all <-  c(gls="Black",phylolm="Red",lme4="Dark Blue",
+                 glmmTMB="Dark Green",brms="Orange",pez="Gray",phyr="Purple")
+colvec  <- colvec_all[c("gls","phylolm","lme4","glmmTMB","brms")]
+colvec2 <- colvec_all[c("pez","phyr","lme4","glmmTMB")]
 
-gg_ss <- (ggplot(data=ssdat, aes(x=size, y=sd, col=Platform))
+gg_ss <- (ggplot(data=ssdat, aes(x=size, y=sd, col=Platform, fill=Platform))
   + facet_wrap(~sdtype, scale="free_y", labeller = label_parsed)
   # + geom_violin(position=position_dodge(width=0.5),alpha=0.4)
-  + geom_boxplot(outlier.colour = NULL, varwidth=TRUE)
-  + geom_hline(aes(yintercept = y_int))
-  # + scale_fill_manual(values=c("Dark Red","Dark Blue","Dark Green","Purple"))
+  + geom_boxplot(outlier.colour = NULL, varwidth=TRUE, alpha=0.2)
+  + geom_hline(aes(yintercept = y_int), lty=2)
+  + scale_fill_manual(values=colvec)
   # + scale_fill_brewer(palette = "Dark2")
   # + scale_color_brewer(palette = "Dark2")
-  + scale_color_manual(values=c("Black","Red","Dark Blue","Dark Green","Orange"))
+  + scale_color_manual(values=colvec)
   # + ggtitle("Single site")
   + theme_bw()
   + ylab("Parameter Estimates")
@@ -61,16 +67,17 @@ print(gg_ss)
 
 scaleFUN <- function(x) sprintf("%.2f", x)
 
-gg_sstime <- (ggplot(data=ssdat, aes(x=size, y=time, col=Platform))
+gg_sstime <- (ggplot(data=ssdat, aes(x=size, y=time, col=Platform,
+                                     fill=Platform))
 	# + geom_violin(position=position_dodge(width=0.2),alpha=0.4)
-	+ geom_boxplot(outlier.colour = NULL, varwidth=TRUE)
+	+ geom_boxplot(outlier.colour = NULL, varwidth=TRUE, alpha=0.2)
 	# + scale_fill_brewer(palette = "Dark2")
 	# + scale_y_log10(breaks = trans_breaks("log10", function(x) 10^x)
 	#     , labels = trans_format("log10", math_format(10^.x))
 	#   )
 	+ scale_y_log10(breaks = trans_breaks("log10", function(x) 10^x),labels = scaleFUN)
-	+ scale_color_manual(values=c("Black","Red","Dark Blue","Dark Green","Orange"))
-	
+	+ scale_color_manual(values=colvec)
+	+ scale_fill_manual(values=colvec)
 	+ ylab("Time (seconds)")
 	# + ggtitle("Single site time")
   + theme_bw()
@@ -78,28 +85,47 @@ gg_sstime <- (ggplot(data=ssdat, aes(x=size, y=time, col=Platform))
 
 print(gg_sstime)
 
+b_ci <- function(x,w) {
+    x <- na.omit(x)
+    binom.test(sum(x),length(x))$conf.int[w]
+}
+
 ss_coverage <- (ssdat
-	%>% group_by(Platform, size)
-	%>% summarise(B0_coverage = mean(B0, na.rm=TRUE)
-		, B1_coverage = mean(B1, na.rm=TRUE)
-		)
-	%>% gather(key=fixed_parameter, value=coverage, -c(Platform, size))
-	%>% mutate(Parameter = factor(fixed_parameter, labels=c(expression(beta[0])
-	                                                        , expression(beta[1])
-	                                                        ))
-	)
+    %>% as_tibble()
+    %>% tidyr::gather(key=fixed_parameter, value=cov, B0,B1)
+    %>% group_by(Platform, size, fixed_parameter)
+    %>% summarise(coverage=mean(cov, na.rm=TRUE),
+                  lwr=b_ci(cov,1),
+                  upr=b_ci(cov,2))
+    %>% mutate(Parameter = factor(fixed_parameter,
+                                  labels=c(expression(beta[0])
+                                         , expression(beta[1])
+                                           )))
 )
+                  
+## ss_coverage <- (ssdat
+## 	%>% group_by(Platform, size)
+## 	%>% summarise(B0_coverage = mean(B0, na.rm=TRUE)
+## 		, B1_coverage = mean(B1, na.rm=TRUE)
+## 		)
+## 	%>% gather(key=fixed_parameter, value=coverage, -c(Platform, size))
+## 	%>% mutate(Parameter = factor(fixed_parameter, labels=c(expression(beta[0])
+## 	                                                        , expression(beta[1])
+## 	                                                        ))
+## 	)
+## )
 
 gg_sscoverage <- (ggplot(data=ss_coverage
 	, aes(x=size, y=coverage, shape=Parameter, colour=Platform)
 	)
 	+ facet_wrap(~Platform, nrow = 1)
-	+ geom_point(size=4)
+        + geom_point(size=4, alpha=0.5)
+        + geom_linerange(aes(ymin=lwr,ymax=upr))
 	+ scale_shape_discrete("Parameters",labels=c(expression(beta[0])
 	                              , expression(beta[1])))
 	+ geom_hline(aes(yintercept=0.95))
 	# + ggtitle("Single Site coverage")
-	+ scale_color_manual(values=c("Black","Red","Dark Blue","Dark Green","Orange"))
+	+ scale_color_manual(values=colvec)
 	+ annotate("rect", xmin=0, xmax=4
 	           , ymin=0.95 - 2*sqrt(0.95*0.05/100)
 	           , ymax=0.95 + 2*sqrt(0.95*0.05/100), alpha=0.1
@@ -148,7 +174,7 @@ msdat <- (msdat_raw
 
 gg_ms <- (gg_ss
 	%+% msdat
-	+ scale_color_manual(values=c("Gray","Purple","Dark Blue","Dark Green"))
+	+ scale_color_manual(values=colvec2)
 
 )
 
@@ -157,12 +183,13 @@ print(gg_ms)
 gg_mstime <- (gg_sstime
 	%+% msdat
 	# + ggtitle("multiple site time")
-	+ scale_color_manual(values=c("Gray","Purple","Dark Blue","Dark Green"))
+	+ scale_color_manual(values=colvec2)
 	
 )
 
 print(gg_mstime)
 
+## BMB: see revised code above
 ms_coverage <- (msdat
                 %>% filter(!(sd %in% c(-1,1)))
                 %>% group_by(Platform, size)
@@ -191,6 +218,6 @@ gg_mscoverage <- (ggplot(data=ms_coverage
 + theme(panel.spacing = unit(0,'lines'))
 )
 
-print(mscoverage<- gg_mscoverage 	+ scale_color_manual(values=c("Gray","Purple","Dark Blue","Dark Green"))
+print(mscoverage<- gg_mscoverage 	+ scale_color_manual(values=colvec2)
 )
 
