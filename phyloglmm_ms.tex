@@ -319,7 +319,7 @@ When $\dist$ is Gaussian, $g$ is the identity function, $\bZ$ is the identity ma
 \newcommand{\bell}{{\boldsymbol \ell}}
 \newcommand{\e}{{ \epsilon}}
 
-The duality of $\bSigma$ and $\bZ$ for equivalent model specifications is useful for efficient implementations of models that contain a functional \bmb{???} covariance structure \citep{hefley2017basis}. 
+The duality of $\bSigma$ and $\bZ$ for equivalent model specifications is useful for efficient implementations of models that contain a functional (e.g., autoregressive) covariance structure \citep{hefley2017basis}. 
 Similarly, we can construct phylogenetic correlations (PC) through $\bZ$.
 Suppose that the evolution follows a Brownian-motion process, i.e., continuous traits evolve independently, following an unbiased, continuous-time random walk, along each branch of the phylogeny.
 In this case, the phylogenetic variability of a particular species can be written as the sum of the variances of evolutionary changes that occurred on all of the branches in its history. 
@@ -544,7 +544,9 @@ Multi-group &  &  & X & X & X & X & X \\ \hline
 Using the R package \pkg{ape} \citep{ape}, we simulated 100 random phylogenetic trees  for each sample size (n = 25, 50, 100 and an additional n = 500 for the multi-group model) and then simulated the responses for each tree using (\ref{eq:single_glmm}, \ref{eq:multiple_glmm}). 
 Each realization was fitted using all model variants. 
 All simulation parameters are shown in Figure \ref{ssplot} and Figure \ref{msplot}. 
-Correlation $\rho_{xy}$ is used instead of covariances $\Sigma_{xy}$ (i.e., $\rho_{xy} = \frac{\Sigma_{xy}}{\Sigma_{x}\Sigma_{y}}$) in the simulations \bmb{???}.
+Correlation $\rho_{xy}$ is used instead of covariances $\Sigma_{xy}$ (i.e., $\rho_{xy} = \frac{\Sigma_{xy}}{\Sigma_{x}\Sigma_{y}}$) in the simulations.
+%\bmb{???}
+%mli{Just to match what lme4/glmmtmb outputs.}
 Table \ref{table:platform} shows the parameters that are estimable for each platform. 
 We only evaluated the goodness of fit for model fits that passed the convergence tests implemented by the package.
 For Bayesian GLMM, we included only realizations where we require values of the Gelman-Rubin statistic less than the recommended threshold 1.1. Based on recent concerns about Gelman-Rubin thresholds \citep{vats2018revisiting}), we included the additional convergence criterion of effective sample size (ESS) $>1000$ for the fixed effect parameters ($\beta_{0}$ and $\beta_{1}$) for each replication \citep{vehtari2019rank}. 
@@ -678,10 +680,8 @@ However, if multiple observations are available per species, then these simple m
 In this case, multiple observations can summarized to a single measurement (for example, weighted-mean) per species to avoid confounding residual and tip variation.
 This is equivalent to assuming homoscedasticity using inverse-variance weights for unbalanced datasets. 
 Alternatively, when the within-species variance is actually of interest, accounting for within-species variation (i.e., adding species-level random effects in our example) can automatically handle multiple observations per species.
-
-It may be easier to be conservative and include both phylogenetic random effects and grouping random effects
-\bmb{clarify? ``iid random effects''?}
-but simplify the phylogenetic relationships (at the random slopes level) and think about the random-slopes model in a strictly hierarchical setting (i.e., estimating different slopes for each family, or taxon \citep{bunnefeld2012island}). In this case, the PGLMM collapses to a standard random-slopes model where the group effects are considered to be independent and identically distributed.
+It may be easier to be conservative and include both phylogenetic random effects and iid grouping random effects by simplifying the phylogenetic relationships (at the random slopes level) and think about the random-slopes model in a strictly hierarchical setting (i.e., estimating different slopes for each family, or taxon \citep{bunnefeld2012island}). 
+In this case, the PGLMM collapses to a standard random-slopes model where the group effects are considered to be independent and identically distributed.
 
 Another simplifying alternative is include both phylogenetic random effects and grouping random effects but simplify the phylogenetic relationships and think about the random-slopes model in a strictly hierarchical setting (i.e., estimating different slopes for each family, or taxon \citep{bunnefeld2012island}). 
 However, this collapses phylogenetic structures to a standard random-slopes model. 
