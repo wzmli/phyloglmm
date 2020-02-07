@@ -64,6 +64,7 @@ gg_ss <- (ggplot(data=ssdat, aes(x=size, y=sd, col=Platform, fill=Platform))
 )
 
 print(gg_ss)
+ggsave(plot = gg_ss,filename = "figure/ssplot.pdf",width = 10, height=7)
 
 scaleFUN <- function(x) sprintf("%.2f", x)
 
@@ -84,6 +85,8 @@ gg_sstime <- (ggplot(data=ssdat, aes(x=size, y=time, col=Platform,
 )
 
 print(gg_sstime)
+ggsave(plot = gg_sstime,filename = "figure/sstime.pdf",width = 10, height=7)
+
 
 b_ci <- function(x,w) {
     x <- na.omit(x)
@@ -136,6 +139,7 @@ gg_sscoverage <- (ggplot(data=ss_coverage
 )
 
 print(gg_sscoverage)
+ggsave(plot = gg_sscoverage,filename = "figure/sscoverage.pdf",width = 10, height=5)
 
 mspar_df <- data.frame(
   sdtype = c("resid", "phylo_X", "phylo_int", "phylo_cor", "phylo_interaction"
@@ -175,10 +179,14 @@ msdat <- (msdat_raw
 gg_ms <- (gg_ss
 	%+% msdat
 	+ scale_color_manual(values=colvec2)
+	+ scale_fill_manual(values=colvec2)
 
 )
 
 print(gg_ms)
+ggsave(plot = gg_ms,filename = "figure/msplot.pdf",width = 10, height=7)
+
+
 
 gg_mstime <- (gg_sstime
 	%+% msdat
@@ -188,15 +196,18 @@ gg_mstime <- (gg_sstime
 )
 
 print(gg_mstime)
+ggsave(plot = gg_mstime,filename = "figure/mstime.pdf",width = 10, height=7)
+
 
 ## BMB: see revised code above
 ms_coverage <- (msdat
-                %>% filter(!(sd %in% c(-1,1)))
-                %>% group_by(Platform, size)
-                %>% summarise(B0_coverage = mean(B0, na.rm=TRUE)
-                              , B1_coverage = mean(B1, na.rm=TRUE)
-                )
-                %>% gather(key=fixed_parameter, value=coverage, -c(Platform, size))
+                # %>% filter(!(sd %in% c(-1,1)))
+                %>% as_tibble()
+                %>% tidyr::gather(key=fixed_parameter, value=cov, B0,B1)
+                %>% group_by(Platform, size, fixed_parameter)
+                %>% summarise(coverage=mean(cov, na.rm=TRUE),
+                              lwr=b_ci(cov,1),
+                              upr=b_ci(cov,2))
                 %>% mutate(Parameter = factor(fixed_parameter, labels=c(expression(beta[0])
                                                                         , expression(beta[1])
                 ))
@@ -207,7 +218,8 @@ gg_mscoverage <- (ggplot(data=ms_coverage
                          , aes(x=size, y=coverage, shape=Parameter, colour=Platform)
 )
 + facet_wrap(~Platform, nrow = 1)
-+ geom_point(size=4)
++ geom_point(size=4, alpha=0.5)
++ geom_linerange(aes(ymin=lwr,ymax=upr))
 + geom_hline(aes(yintercept=0.95))
 + scale_shape_discrete("Parameters",labels=c(expression(beta[0])
                                              , expression(beta[1])))
@@ -220,4 +232,6 @@ gg_mscoverage <- (ggplot(data=ms_coverage
 
 print(mscoverage<- gg_mscoverage 	+ scale_color_manual(values=colvec2)
 )
+
+ggsave(plot = mscoverage,filename = "figure/mscoverage.pdf",width = 10, height=5)
 

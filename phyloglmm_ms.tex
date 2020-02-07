@@ -221,8 +221,7 @@ Table \ref{table:model} summarizes currently available methods for phylogenetic 
 \multirow{2}{*}{Bayesian GLMM}                                                                    & \multirow{2}{*}{Random effect}                                        & Balanced design                                                              & \pkg{MCMCglmm}                                                                                       \\ \cline{3-4} 
                                                                                                   &                                                                       & Unrestricted                                                                 & \pkg{brms}                                                                                           \\ \hline
 \end{tabular}
-\caption{GLM-based phylogenetic comparative methods and their implementations in R packages.
-\bmb{can we add ``per species'' to ``single observation'' without wrecking the table?}}
+\caption{GLM-based phylogenetic comparative methods and their implementations in R packages.}
 \label{table:model}
 \end{table}
 
@@ -545,7 +544,7 @@ Multi-group &  &  & X & X & X & X & X \\ \hline
 Using the R package \pkg{ape} \citep{ape}, we simulated 100 random phylogenetic trees  for each sample size (n = 25, 50, 100 and an additional n = 500 for the multi-group model) and then simulated the responses for each tree using (\ref{eq:single_glmm}, \ref{eq:multiple_glmm}). 
 Each realization was fitted using all model variants. 
 All simulation parameters are shown in Figure \ref{ssplot} and Figure \ref{msplot}. 
-Correlation $\rho_{xy}$ is used in place of covariances $\Sigma_{xy}$ (i.e., $\rho_{xy} = \frac{\Sigma_{xy}}{\Sigma_{x}\Sigma_{y}}$) in the simulations \bmb{???}.
+Correlation $\rho_{xy}$ is used instead of covariances $\Sigma_{xy}$ (i.e., $\rho_{xy} = \frac{\Sigma_{xy}}{\Sigma_{x}\Sigma_{y}}$) in the simulations \bmb{???}.
 Table \ref{table:platform} shows the parameters that are estimable for each platform. 
 We only evaluated the goodness of fit for model fits that passed the convergence tests implemented by the package.
 For Bayesian GLMM, we included only realizations where we require values of the Gelman-Rubin statistic less than the recommended threshold 1.1. Based on recent concerns about Gelman-Rubin thresholds \citep{vats2018revisiting}), we included the additional convergence criterion of effective sample size (ESS) $>1000$ for the fixed effect parameters ($\beta_{0}$ and $\beta_{1}$) for each replication \citep{vehtari2019rank}. 
@@ -565,9 +564,8 @@ We used our method to reproduce the examples in chapter 11 of \cite{garamszegi20
 
 \begin{center}
 \begin{figure}[H]
-  \includegraphics[scale=0.7,page=1]{./figure/ssplot.pdf}
+  \includegraphics[scale=0.7]{./figure/ssplot.pdf}
   \caption{Comparison of single group model parameter estimates across different R packages in Table \ref{table:platform}. Total simulations $N=100$ for each category. The horizontal line shows the true value of the parameters in the simulation model. Models capable of fitting all parameters (\pkg{lme4},  \pkg{glmmTMB}, and \pkg{brms}) fit well for all parameters.
-    \bmb{add a light fill (possibly the same colour as the box edge with alpha=0.6?)? See https://serialmentor.com/dataviz/avoid-line-drawings.html}
 %\bmb{consider tweaking aspect ratio (slightly wider?) Consider including n=25, n=50, n=100 in x-axis tick labels (I don't have all the output data so can't rebuild figs myself ...)
 %\jd{Use dashed lines (or some other gg signifier) for the insufficient approaches}
 }
@@ -602,7 +600,7 @@ PGLS, with only one parameter available, confounds all variation (phylogenetic i
 
 \begin{center}
 \begin{figure}[H]
-  \includegraphics[scale=0.7,page=1]{./figure/msplot.pdf}
+  \includegraphics[scale=0.7]{./figure/msplot.pdf}
   \caption{Comparison of multi-group model parameter estimates. The horizontal line shows the true value of the parameters in the simulation model. Models capable of fitting all parameters (\pkg{lme4} and \pkg{glmmTMB}) fit well for all parameters. \pkg{pez} and \pkg{phyr} estimates for n = 100 and 500 are not available because the models did not converge within 30 minutes. 
   }
   \label{msplot}
@@ -610,14 +608,14 @@ PGLS, with only one parameter available, confounds all variation (phylogenetic i
 \end{center}
 \begin{center}
 \begin{figure}[H]
-  \includegraphics[scale=0.8]{./figure/mstime.pdf}
+  \includegraphics[scale=0.7]{./figure/mstime.pdf}
   \caption{Comparison of multi-group model computational speed.}
   \label{msplot_time}
 \end{figure}
 \end{center}
 \begin{center}
 \begin{figure}[H]
-  \includegraphics[scale=0.5]{./figure/mscoverage.pdf}
+  \includegraphics[scale=0.7]{./figure/mscoverage.pdf}
   \caption{Comparison of multi-group model coverage.}
   \label{msplot_coverage}
 \end{figure}
