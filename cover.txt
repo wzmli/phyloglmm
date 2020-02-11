@@ -1,19 +1,12 @@
 
-Dear Editor,
+To whom it may concern,
 
 We hereby submit our manuscript "Reformulating phylogenetic mixed models to improve flexibility and speed" for consideration for publication in the Methods in Ecology and Evolution.
 
 Phylogenetic comparative methods using phylogenetic regression are a powerful technique to explore relationships among related groups of species traits. 
-The primary approaches to this problem, phylogenetic generalized least square regression (PGLS) and phylogenetic generalized linear mixed models (PGLMM), have been widely and effectively used.
-However, existing procedures may be either insufficiently flexible or too computationally demanding when analyzing large volumes of data.
-When faced with these constraints, researchers typically search for ways to simplify their analyses. 
+The primary approaches to this problem, phylogenetic generalized least square regression (PGLS) and phylogenetic generalized linear mixed models (PGLMM), have been widely and effectively used. However, existing procedures may be either insufficiently flexible or too computationally demanding when analyzing large volumes of data. When faced with these constraints, researchers typically search for ways to simplify their analyses. 
 
-We propose an alternative formulation of phylogenetic generalized linear mixed models that is mathematically equivalent to previous approaches, but is more flexible in practice. 
-Our approach can be implemented in any platform for generalized mixed models. 
-We have implemented this formulation in two R statistical packages (lme4 and glmmTMB).
-Our implementation in lme4 and glmmTMB allows users to efficiently fit phylogenetic mixed models to a board range of previously difficult cases.
-We believe our method and implementation will be of board interest to the field and the readership of Methods in Ecology and Evolution.
-
+We propose an alternative formulation of phylogenetic generalized linear mixed models that is mathematically equivalent to previous approaches, but is more flexible and efficient in practice. Our approach can be implemented in any platform for generalized mixed models. We have implemented this formulation in two R statistical packages (lme4 and glmmTMB). Our implementations allow users to efficiently fit phylogenetic mixed models to a range of previously difficult cases. We believe our method and implementation will be of broad interest to the readership of Methods in Ecology and Evolution.
 
 Thank you for your consideration.
 
