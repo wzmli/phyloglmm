@@ -659,13 +659,10 @@ structured data \citep{roberts_cross-validation_2016}?
 
 \subsection*{Incorporating multiple levels of variation}
 
-% \bmb{I think you need a lot more here; what does a random slopes model mean? You have one sentence that says ``people should be thinking about random slopes''. Then you talk about correlation (which is a much more subtle/less important issue, I think).}
-
 In classic GLMMs, random effects are used to account for group-level variation. 
 In the simplest experimental designs where only the response and not the covariates vary
 within groups, random-intercept models (or even simpler analyses \cite{murtaugh2007simplicity})
 are appropriate.
-% The random intercept model models the group effect in the response level by allowing different intercepts for each level of the grouping variable.
 However, random effects can take more complicated forms as the experimental design becomes more complex, e.g., random-slopes models.
 Random-slopes models require appropriate observational or experimental designs (i.e., multiple measurements of traits and responses within each group) and often require more data overall for reliable estimates, but they are relevant over a wide range of scenarios \citep{schielzeth2008conclusions, cleasby2015quantifying,ord2010adaptation}.
 Neglecting random slopes can lead to biased fixed effect estimates with inadequate coverage and inflated type~I errors \citep{schielzeth2008conclusions}.
