@@ -1,0 +1,2 @@
+#!/bin/bash
+texcount phyloglmm_ms.tex | head -5 | tail -3 | awk '{ sum += $NF } END { print sum }'
