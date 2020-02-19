@@ -1,2 +1,3 @@
 #!/bin/bash
-texcount phyloglmm_ms.tex | head -5 | tail -3 | awk '{ sum += $NF } END { print sum }'
+## based on https://tex.stackexchange.com/questions/534/is-there-any-way-to-do-a-correct-word-count-of-a-latex-document , this seems to be the same as Overleaf uses
+texcount phyloglmm_ms.tex -sum | grep "Sum count"
