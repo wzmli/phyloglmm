@@ -232,8 +232,14 @@ gg_mscoverage <- (ggplot(data=ms_coverage
 + theme(panel.spacing = unit(0,'lines'))
 )
 
-print(mscoverage<- gg_mscoverage 	+ scale_color_manual(values=colvec2)
-)
-
+print(mscoverage<- gg_mscoverage 	+ scale_color_manual(values=colvec2))
 ggsave(plot = mscoverage,filename = "figure/mscoverage.pdf",width = 10, height=5)
+
+pp <- readRDS("datadir/lme4_ms_small_profile.RDS")
+pp2 <- pp %>% mutate(b0 = between(0,B0_lower,B0_upper), b1=between(0,B1_lower,B1_upper))
+profile_dat <- data.frame(Platform = "lme4", size=factor(25)
+                          ,fixed_parameter=c("B0","B1") ,Parameter=c("beta[0]","beta[1]")
+                          , coverage = c(sum(pp2$b0,na.rm=TRUE)/nrow(pp2), sum(pp2$b1,na.rm=TRUE)/nrow(pp2)))
+print(gg_mscoverage 	+ scale_color_manual(values=colvec2)
+      + geom_point(data=profile_dat,color="red",size=3))
 
