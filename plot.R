@@ -123,7 +123,7 @@ gg_sscoverage <- (ggplot(data=ss_coverage
 	)
 	+ facet_wrap(~Platform, nrow = 1)
         + geom_point(size=4, alpha=0.5)
-        + geom_linerange(aes(ymin=lwr,ymax=upr))
+        # + geom_linerange(aes(ymin=lwr,ymax=upr))
 	+ scale_shape_discrete("Parameters",labels=c(expression(beta[0])
 	                              , expression(beta[1])))
 	+ geom_hline(aes(yintercept=0.95))
@@ -163,23 +163,25 @@ msdat <- (msdat_raw
 			, sdtype = factor(sdtype, levels=c("phylo_int","phylo_cor","phylo_X"
 			                                   , "species_int", "species_cor", "species_X"
 			                                   , "phylo_interaction", "site_int", "resid")
-			                  , labels=c(expression(paste(Sigma[phy[int]]))
-			                             , expression(paste(rho[phy[int-slope]]))
-			                             , expression(paste(Sigma[phy[slope]]))
-			                             , expression(paste(sigma[sp[int]]))
-			                             , expression(paste(rho[sp[int-slope]]))
-			                             , expression(paste(sigma[sp[slope]]))
-			                             , expression(paste(Sigma[phy[sp:site]]))
-			                             , expression(paste(sigma[site]))
-			                             , expression(sigma[epsilon]))
+			                  , labels=c(expression(paste("Phylogenetic random intercept ",Sigma[phy[int]]))
+			                             , expression(paste("Phylo random intercept-slope correlation ",rho[phy[int-slope]]))
+			                             , expression(paste("Phylogenetic random slope ",Sigma[phy[slope]]))
+			                             , expression(paste("Species random intercept ",sigma[sp[int]]))
+			                             , expression(paste("Species random intercept-slope correlation ",rho[sp[int-slope]]))
+			                             , expression(paste("Species random slope ",sigma[sp[slope]]))
+			                             , expression(paste("Phylo random species-group interaction ",Sigma[phy[sp:site]]))
+			                             , expression(paste("random group ",sigma[site]))
+			                             , expression(paste("Residual ",sigma[epsilon])))
 			)
 		)
 )
+
 
 gg_ms <- (gg_ss
 	%+% msdat
 	+ scale_color_manual(values=colvec2)
 	+ scale_fill_manual(values=colvec2)
+	+ theme(legend.position = "bottom")
 
 )
 
@@ -219,7 +221,7 @@ gg_mscoverage <- (ggplot(data=ms_coverage
 )
 + facet_wrap(~Platform, nrow = 1)
 + geom_point(size=4, alpha=0.5)
-+ geom_linerange(aes(ymin=lwr,ymax=upr))
+# + geom_linerange(aes(ymin=lwr,ymax=upr))
 + geom_hline(aes(yintercept=0.95))
 + scale_shape_discrete("Parameters",labels=c(expression(beta[0])
                                              , expression(beta[1])))

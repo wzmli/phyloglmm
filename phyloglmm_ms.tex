@@ -381,7 +381,7 @@ Thus, the full simulation model is as follows:
 \label{eq:single_glmm}
 \end{aligned}
 \end{equation}
-The model has two fixed effect parameters ($\beta_0$ and $\beta_1$), three random effect parameters (phylogenetic random intercept variance $\Sigma^2_{\mathrm{phy}_{int}}$, phylogenetic random slope variance $\Sigma^2_{\mathrm{phy}_{slope}}$ and covariance between phylogenetic random slope and intercept $\Sigma_{\mathrm{phy_{int-slope}}}$) and residual variance ($\sigma_{\epsilon}^2$).  
+The model has two fixed effect parameters ($\beta_0$ and $\beta_1$), three random effect parameters (phylogenetic random intercept variance $\Sigma^2_{\mathrm{phy}_{int}}$, phylogenetic random slope variance $\Sigma^2_{\mathrm{phy}_{slope}}$ and covariance between phylogenetic random intercept and slope $\Sigma_{\mathrm{phy_{int-slope}}}$) and residual variance ($\sigma_{\epsilon}^2$).  
 The covariance between phylogenetic random intercept and slope measures the correlation of phylogenetic effects on the slope ($b_{\mathrm{phy_{slope}}}$) and intercept ($b_{\mathrm{phy_{int}}}$) for each branch of the phylogeny; i.e. a positive correlation indicates that species with similar intercepts also have similar slopes.
 Predictor-level and intercept-level random effects of species are not applicable in this simulation setting because there is only a single observation per species, so within-species variation cannot be separated from tip variation.
 
@@ -457,7 +457,7 @@ We only evaluated the goodness of fit for model fits that passed the convergence
 For Bayesian fits, we evaluate realizations with Gelman-Rubin statistic $<1.1$. Based on recent concerns about Gelman-Rubin thresholds \citep{vats2018revisiting}), we additionally restricted results to fits with  effective sample size $>1000$ for the fixed effect parameters ($\beta_{0}$ and $\beta_{1}$) \citep{vehtari2019rank}. 
 For each replicate, we sample two chains starting with 10000 iterations. 
 We first evaluate our estimates by looking at the distribution of the estimated values (maximum likelihood estimates for non-Bayesian platforms and posterior medians for Bayesian platforms) to quantify bias and variance (i.e., quality of the point estimate).
-We computed 95\% Wald confidence intervals for frequentist methods and quantile-based intervals for Bayesian methods, then computed coverage --- the proportion of simulations in which the computed confidence intervals include the true values of parameters --- to assess the quality of the confidence intervals. \bmb{no profiles CIs? is that problematic?}
+We computed 95\% Wald confidence intervals for frequentist methods and quantile-based intervals for Bayesian methods, then computed coverage --- the proportion of simulations in which the computed confidence intervals include the true values of parameters --- to assess the quality of the confidence intervals. \bmb{no profiles CIs? is that problematic?} \mli{Profile is EXTREMELY slow, but I did double check with an handful of examples ~50 simulations and compared them to wald}
 We also compare computational speed between different platforms to evaluate the efficiency of different platforms and methods. 
 
 In supplementary materials, we reproduce the examples in chapter 11 of \cite{garamszegi2014modern} using phylogenetic GLMMs based on \pkg{lme4} and \pkg{glmmTMB}.
@@ -505,7 +505,7 @@ PGLS, which uses only one parameter, combines all variation (phylogenetic interc
 \begin{center}
 \begin{figure}[H]
   \includegraphics[scale=0.7]{./figure/msplot.pdf}
-  \caption{Comparison of multi-group model parameter estimates. The horizontal line shows the true value of the parameters in the simulation model. Models capable of fitting all parameters (\pkg{lme4} and \pkg{glmmTMB}) fit well for all parameters. \pkg{pez} and \pkg{phyr} estimates for n = 100 and 500 are missing because the models did not converge within 30 minutes. \bmb{add English strip labels as in Fig 2?}
+  \caption{Comparison of multi-group model parameter estimates. The horizontal line shows the true value of the parameters in the simulation model. Models capable of fitting all parameters (\pkg{lme4} and \pkg{glmmTMB}) fit well for all parameters. \pkg{pez} and \pkg{phyr} estimates for n = 100 and 500 are missing because the models did not converge within 30 minutes.
   }
   \label{msplot}
 \end{figure}
@@ -565,7 +565,7 @@ Neglecting random slopes can lead to biased fixed effect estimates with inadequa
 
 Nevertheless, it is impossible to account for all possible complexities.
 The best model --- whether using phylogenetic random effects, simple grouping, or both --- depends on the experimental design and whether there are enough data to separate different levels of variation, which can be strongly confounded.
-If multiple observations are available per species, then simple methods like Pagel's $\lambda$ will confound tip variation with residual variation. \bmb{cite boettiger blog??}
+If multiple observations are available per species, then simple methods like Pagel's $\lambda$ will confound tip variation with residual variation \citep{boettiger2013is}.
 Multiple observations can be collapsed to a single value (such as the mean) per species, with analyses weighting each species by its number of observations.
 Alternatively, if the within-species variance is of interest, a phylogenetic mixed model can separate tip variation from within-species variation and measurement error.
 More generally, phylogenetic mixed models can be simplified to ordinary mixed models, at the cost of taxonomic detail, by simplifying the phylogenetic tree to a strictly hierarchical set of nested higher-level taxa \citep{bunnefeld2012island}). 
