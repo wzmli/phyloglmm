@@ -79,7 +79,8 @@ gg_sstime <- (ggplot(data=ssdat, aes(x=size, y=time, col=Platform,
 	+ scale_y_log10(breaks = trans_breaks("log10", function(x) 10^x),labels = scaleFUN)
 	+ scale_color_manual(values=colvec)
 	+ scale_fill_manual(values=colvec)
-	+ ylab("Time (seconds)")
+    + ylab("Time (seconds)")
+    + xlab("Number of Species")
 	# + ggtitle("Single site time")
   + theme_bw()
 )
@@ -229,7 +230,8 @@ gg_mscoverage <- (ggplot(data=ms_coverage
 + annotate("rect", xmin=0, xmax=5
            , ymin=0.95 - 2*sqrt(0.95*0.05/100)
            , ymax=0.95 + 2*sqrt(0.95*0.05/100), alpha=0.1, fill="blue")
-+ theme(panel.spacing = unit(0,'lines'))
+    + theme(panel.spacing = unit(0,'lines'))
+    + xlab("Number of Species")
 )
 
 print(mscoverage<- gg_mscoverage 	+ scale_color_manual(values=colvec2))
