@@ -17,7 +17,7 @@ current: target
 # journal.md
 
 ## Mike rules
-ms.pdf: main.tex phyloglmm_ms.tex
+phyloglmm_ms.pdf: main.tex phyloglmm_ms.tex
 	pdflatex phyloglmm_ms
 	bibtex phyloglmm_ms
 	pdflatex phyloglmm_ms
