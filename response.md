@@ -7,6 +7,7 @@ MLi: Thank you for letting us resubmit.
 As currently presented I found this paper a little bit in between an application note and a research paper but lacking some key components from both, but turning it into a research paper would require, in my opinion, the addition of an empirical example (see also comments from reviewer 1).
 
 MLi: This paper is intended as an application/software paper. 
+TODO: didn't we already do this? double check. We have included the example provided in Chapter 11 Garamszegi and Li et al. Dune mellow example. 
 
 The benchmarking of the new method is interesting but is mixing too many confounding factors linked with the different implementations of the various packages (see also comment from reviewer 2). What is the performance of the new model all else being equal? How much of the performance results is actually due to differences the optimization among the different R packages?
 
@@ -15,7 +16,7 @@ MLi: Comparing pez and phyr uses lme4 correlation structure. This is the most di
 
 In the Introduction, a broader perspective about PCMs should be given before jumping into the specifics of the models tested here. Phylogenetic comparative methods include lots of other things, see e.g. Luke Harmon’s book: https://lukejharmon.github.io/pcm/chapters/. In general, a better reference to previous work is required and some claims of the paper should be either demonstrated or removed. For example, stating that “existing [PCM] procedures are either insufficiently flexible or too computationally demanding to analyze large data sets” is simply not true. There are many research papers applying PCMs to large datasets (and as a side note: how large should a dataset be to be considered large?).
 
-Todo: Revisit and rewrite.
+Todo: Revisit and rewrite. It is true many research papers used PCMs to large datasets, but it depends on the complexity of the model. I.e. If we simply use GLM methods in Table 1, it is relative fast even with large datasets. If we have more complicated models, then it will be very computationally demanding. 
 
 A sentence like “Although many studies include multiple observations per species, phylogenetic analyses rarely take advantage of such information to partition variability more finely” needs references supporting it. For example, Kostikova et al. 2016 (DOI:10.1093/sysbio/syw010) present a model that seems relevant here. Further, claiming that ‘brms’ is more efficient than ‘MCMCglmm’ needs to be backed up by either a reference or a test (see also comments from the reviewers).
 
@@ -23,7 +24,7 @@ Todo: add reference!
 
 In the methods it should be better clarified what is the state of the art and what are the novel parts you are presenting in this study.
 
-Todo:... MCMCglmm.
+Todo:... MCMCglmm?
 
 In lines 74-75 “phylogenetic mixed models in community ecology” are mentioned but it is unclear what the link is to the previous paragraph and the to the following sentences.
 
