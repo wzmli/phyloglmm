@@ -41,7 +41,7 @@ tree_dune_phylocom = ladderize(tree_dune_phylocom)
 tree_dune_phylocom$tip.label = unname(sapply(tree_dune_phylocom$tip.label, simpleCap))
 
 # read traits
-dune.traits = read.table(file = input_files[[1]], header = T)
+dune.traits = read.table(file = "./data_clean/dune_traits_Z.txt", header = T)
 names(dune.traits)[1] = "abr3"
 # update species names
 dune.traits$abr3[dune.traits$abr3 == "Pot_pal"] = "Com_pal" # Potentilla palustris -- Compalu pal...

@@ -449,12 +449,11 @@ dd2 <- (dd
              # , LRT = max(as.numeric(LR > log(c)),0.5)
              , LR2 = ll-null2
              , LR3 = null-null2
-             , LRT = ll > null # abs(LR) > c/2
+             , LRT = ll > null # abs(LR) > qchisq(0.95,df=i-2)
              , LRT1 = ll > wll
              , LRT2 = ll > null2 # abs(LR2) > (qchisq(0.95,df=(2*i-1))/2)
              , LRT3 = null > null2 # abs(LR3) > (qchisq(0.95,df=(i-1))/2)
-             , LRT4 = wll > null
-             , LRT5 = wll > null2
+             , LRT4 = wll > null2
              )
   # %>% arrange(LR)
 )
@@ -463,8 +462,7 @@ ddprop$tree_cor[i-2] <- mean(dd2$LRT)
 ddprop$wrong_tree[i-2] <- mean(dd2$LRT1)
 ddprop$tree_test[i-2] <- mean(dd2$LRT2)
 ddprop$star_test[i-2] <- mean(dd2$LRT3)
-ddprop$wrongtree_cor[i-2] <- mean(dd2$LRT4)
-ddprop$wrongtree_test[i-2] <- mean(dd2$LRT5)
+ddprop$wrongtree_test[i-2] <- mean(dd2$LRT4)
 }
 
 ```

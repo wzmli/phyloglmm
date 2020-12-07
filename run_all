@@ -1,8 +1,10 @@
 #/bin/bash
-for platform in lme4; do
-    for size in small med large; do
-	for seed in {1..200}; do
-		make fit.$platform.$size.$seed.Rout
+for platform in lme4test; do
+	for numsite in ss; do
+    for size in small; do
+	for seed in {1..30}; do
+		make fit.$platform.$numsite.$size.$seed.Rout
 	    done
+		 done
         done
     done

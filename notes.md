@@ -1,3 +1,12 @@
+Nov 8th 2019
+
+simulations appears to be stable enough, maybe pez is just not good?
+
+Nov 6th 2019
+
+- Need to add "..." to all phyloglmm functions so it can pass other lmer/glmmtmb arguements
+- Kronecker product 
+
 July 25th 2018
 
 Standardize phyZ will run into problems with glmmTMB nlminb (NA/NaN function evaluation) when we have a lot of species (nspp > 300).
