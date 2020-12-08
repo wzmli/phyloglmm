@@ -12,6 +12,8 @@ dat <- (dat
 
 dat <- data.frame(dat)
 
+print(dat)
+
 time1 <- proc.time()
 inv.phylo <- inverseA(phy,nodes="TIPS",scale=FALSE)
 
@@ -23,7 +25,7 @@ prior <- list(G=list(G1=list(V=diag(2),nu=2)
               )
 
 
-	MCMCglmm_fit <- MCMCglmm(Y~X
+	MCMCglmm_fit <- MCMCglmm(y_main~X
 		, random=~ us(1+X):sp
 		, family="gaussian"
 		, ginverse=list(sp=inv.phylo$Ainv)
@@ -38,11 +40,14 @@ prior <- list(G=list(G1=list(V=diag(2),nu=2)
 time2 <- proc.time()
 
 tt <- time2-time1
+
+print(tt)
+
 print(summary(MCMCglmm_fit))
 print(plot(MCMCglmm_fit))
 
 
 MCMCglmm_list <- list(MCMCglmm_fit,tt)
-saveRDS(MCMCglmm_list,file=paste("datadir/MCMCglmm",numsite,size,seed,"rds",sep="."))
+saveRDS(MCMCglmm_list,file=paste("datadir/MCMCglmm",numsite,size,tree_seed,"rds",sep="."))
 
 # rdnosave()

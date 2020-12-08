@@ -9,6 +9,7 @@ library(tidyr)
 library(phylolm)
 library(phyr)
 library(glmmTMB)
+library(MCMCglmm)
 
 #### Collect gls results ----
 
@@ -177,6 +178,45 @@ brmsss_results <- function(tt){
 }
 
 brmsss_data <- brmsss_results(brmsss_res)
+
+## Collect MCMCglmm
+
+MCMCglmm_path <- "./datadir/MCMCglmm/"
+MCMCglmmss_res <- list.files(path = MCMCglmm_path, pattern = "ss")
+MCMCglmmss_results <- function(tt){
+  MCMCglmm_df <- data.frame(resid = numeric(300)
+    , phylo_X = numeric(300)
+    , phylo_int = numeric(300)
+    , phylo_cor = numeric(300)
+    , B0 = numeric(300)
+    , B1 = numeric(300)
+    , model = numeric(300)
+    , time = numeric(300)
+    , convergence = numeric(300)
+  )
+  for(i in 1:length(tt)){
+    MCMCglmm_obj <- readRDS(paste(MCMCglmm_path,tt[i],sep=""))
+    var_dat <- as.data.frame(MCMCglmm_obj[[1]]$VCV)
+    MCMCglmm_df[i,"resid"] <- median(var_dat[,"units"])
+    MCMCglmm_df[i, "phylo_X"] <- median(var_dat[,"X:X.sp"])
+    MCMCglmm_df[i, "phylo_int"] <- median(var_dat[,"(Intercept):(Intercept).sp"])
+    MCMCglmm_df[i,"phylo_cor"] <- median(var_dat[,"(Intercept):X.sp"])
+    b_dat <- as.data.frame(MCMCglmm_obj[[1]]$Sol)
+    MCMCglmm_df[i, "B0"] <- as.numeric(between(0
+            , quantile(b_dat[,"(Intercept)"], 0.025)
+            , quantile(b_dat[,"(Intercept)"], 0.975)
+          ))
+    MCMCglmm_df[i,"B1"] <- as.numeric(between(0
+            , quantile(b_dat[,"X"], 0.025)
+            , quantile(b_dat[,"X"], 0.975)
+          ))
+    MCMCglmm_df[i,"model"] <- tt[i]
+    MCMCglmm_df[i,"time"] <- MCMCglmm_obj[[2]][[1]]
+  }
+  return(MCMCglmm_df)
+}
+
+MCMCglmmss_data <- MCMCglmmss_results(MCMCglmmss_res)
 
 #### Collect phylolm single site results ----
 ## need to check out NA cases
