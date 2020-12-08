@@ -34,10 +34,15 @@ phy.X <- list(dat$X, sp = dat$sp, covar = Vphy)
 # sp:site
 phy.interaction <- list(1, sp = dat$sp, covar = Vphy, site = dat$site)
 
+print(phy.interaction)
+
 site.int <- list(1, site=dat$site, covar = diag(nsite))
 
+print(site.int)
+
+
 fittime <- system.time(
-	fitpez <- communityPGLMM(new_y ~ X
+	fitpez <- communityPGLMM(y_all ~ X
 		, data = dat
 		, family = "gaussian"
 		, sp = dat$sp

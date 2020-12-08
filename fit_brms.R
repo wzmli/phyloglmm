@@ -17,7 +17,7 @@ inv.phylo <- MCMCglmm:::inverseA(phy,nodes="TIPS",scale=FALSE)
 brms_time1 <- proc.time()
   A <- solve(inv.phylo$Ainv)
   rownames(A) <- rownames(inv.phylo$Ainv)
-  brms_fit <- brm(Y~ X + (1+X|sp)
+  brms_fit <- brm(y_main~ X + (1+X|sp)
       , family= gaussian()
       , cov_ranef = list(sp = A)
       , prior = c(prior(normal(0,1), "b")
@@ -35,6 +35,8 @@ brms_time2 <- proc.time()
 print(summary(brms_fit))
 
 brms_time <- brms_time2 - brms_time1
+print(brms_time)
+
 print(summary(brms_fit))
 
 brms_list <- list(brms_fit,brms_time)

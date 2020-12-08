@@ -13,8 +13,11 @@ dat <- (dat
       )
 )	
 
+print(dat)
+
+
 if(numsite == "ss"){
-  hackedmod <- glmmTMBhacked(Y ~ X  
+  glmmTMBmod <- glmmTMBphylo(y_main ~ X  
     # + (1|sp) + (0 + X| sp) 
     + (1 + X|sp)
     , data=dat
@@ -27,18 +30,10 @@ if(numsite == "ss"){
   ) 
 }
 
-# source("glmmTMBhacked.R")
-# debug(glmmTMBhacked)
-# debug(mkTMBStruchacked)
-# debug(getXReTrmshacked)
-# debug(mkReTrms)
-
 if(numsite == "ms"){
-	hackedmod <- glmmTMBhacked(new_y ~ X  
+	glmmTMBmod <- glmmTMBphylo(y_all ~ X  
 + (1 | sp:site)
-#	+ (1 | sp)
 	+ (1 + X | sp)
-#	+ (1 | obs)
 	+ (1 + X | obs)
 	+ (1 | site)
   , data=dat
@@ -52,13 +47,13 @@ if(numsite == "ms"){
 }
 t2 <- proc.time()
 glmmTMBtime <- t2-t1
-print(summary(hackedmod))
+print(summary(glmmTMBmod))
 
-glmmTMB_list <- list(hackedmod, glmmTMBtime)
+glmmTMB_list <- list(glmmTMBmod, glmmTMBtime)
 
 
-print(summary(hackedmod))
-print(hackedmod$fit$convergence)
+print(summary(glmmTMBmod))
+print(glmmTMBmod$fit$convergence)
 
 saveRDS(glmmTMB_list, file=paste("datadir/glmmTMB/glmmTMB",numsite,size,tree_seed,"rds",sep="."))
 

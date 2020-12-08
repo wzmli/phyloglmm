@@ -4,7 +4,7 @@ library(Matrix)
 library(dplyr)
 
 fittime <- system.time(
-	fitphyr <- communityPGLMM(new_y ~ X
+	fitphyr <- communityPGLMM(y_all ~ X
 		+ (1 | sp__)
 		+ (X | sp__)
 		+ (1 | site)
