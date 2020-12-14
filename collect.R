@@ -28,7 +28,7 @@ gls_results <- function(tt){
   )
   for(i in 1:length(tt)){
     gls_obj <- readRDS(paste(gls_path,tt[i],sep=""))
-    gls_df[i,"phylo_int"] <- as.numeric(gls_obj[[1]]["sigma"])
+    gls_df[i,"phylo_int"] <- as.numeric(gls_obj[[1]]["sigma"])^2
     B0 <- coef(summary(gls_obj[[1]]))["(Intercept)","Value"]
     B0se <- coef(summary(gls_obj[[1]]))["(Intercept)","Std.Error"]
     B1 <- coef(summary(gls_obj[[1]]))["X","Value"]
@@ -63,12 +63,12 @@ lme4ss_results <- function(tt){
     covmat <- as.data.frame(lme4::VarCorr(lme4_obj[[1]]))
     lme4ss_df[i,"resid"] <- (covmat 
       %>% filter(grp=="Residual") 
-      %>% dplyr:::select(sdcor) 
+      %>% dplyr:::select(vcov) 
       %>% as.numeric()
     )
     lme4ss_df[i, "phylo_X"] <- (covmat 
       %>% filter((grp=="sp") & (var1 =="X")) 
-      %>% dplyr:::select(sdcor) 
+      %>% dplyr:::select(vcov) 
       %>% as.numeric()
     )
     lme4ss_df[i, "phylo_int"] <- (covmat 
@@ -76,7 +76,7 @@ lme4ss_results <- function(tt){
         & (var1 == "(Intercept)")
         & (is.na(var2))
         ) 
-      %>% dplyr:::select(sdcor) 
+      %>% dplyr:::select(vcov) 
       %>% as.numeric()
     )
     lme4ss_df[i,"phylo_cor"] <- (covmat 
@@ -84,9 +84,10 @@ lme4ss_results <- function(tt){
         & (var1 == "(Intercept)")
         & (var2 == "X")
         ) 
-      %>% dplyr:::select(sdcor) 
+      %>% dplyr:::select(vcov) 
       %>% as.numeric()
-    )
+    	)
+    
     B0 <- coef(summary(lme4_obj[[1]]))["(Intercept)","Estimate"]
     B0se <- coef(summary(lme4_obj[[1]]))["(Intercept)","Std. Error"]
     B1 <- coef(summary(lme4_obj[[1]]))["X","Estimate"]
@@ -121,10 +122,12 @@ glmmTMBss_results <- function(tt){
   for(i in 1:length(tt)){
     glmmTMB_obj <- readRDS(paste(glmmTMB_path,tt[i],sep=""))
     covobj <- VarCorr(glmmTMB_obj[[1]])[["cond"]]
-    glmmTMBss_df[i,"resid"] <- attr(covobj,"sc")
-    glmmTMBss_df[i, "phylo_X"] <- attr(covobj[["sp"]],"stddev")[["X"]]
-    glmmTMBss_df[i, "phylo_int"] <- attr(covobj[["sp"]],"stddev")[["(Intercept)"]]
-    glmmTMBss_df[i, "phylo_cor"] <- attr(covobj[["sp"]],"correlation")[1,2]
+    glmmTMBss_df[i,"resid"] <- attr(covobj,"sc")^2
+    glmmTMBss_df[i, "phylo_X"] <- covobj[["sp"]]["X","X"]
+    glmmTMBss_df[i, "phylo_int"] <- covobj[["sp"]]["(Intercept)","(Intercept)"]
+    glmmTMBss_df[i, "phylo_cor"] <- covobj[["sp"]]["(Intercept)","X"]
+    
+    
     B0 <- coef(summary(glmmTMB_obj[[1]]))[["cond"]]["(Intercept)","Estimate"]
     B0se <- coef(summary(glmmTMB_obj[[1]]))[["cond"]]["(Intercept)","Std. Error"]
     B1 <- coef(summary(glmmTMB_obj[[1]]))[["cond"]]["X","Estimate"]
@@ -145,23 +148,23 @@ glmmTMBss_data <- glmmTMBss_results(glmmTMBss_res)
 brms_path <- "./datadir/brms/"
 brmsss_res <- list.files(path = brms_path, pattern = "ss")
 brmsss_results <- function(tt){
-  brms_df <- data.frame(resid = numeric(200)
-    , phylo_X = numeric(200)
-    , phylo_int = numeric(200)
-    , phylo_cor = numeric(200)
-    , B0 = numeric(200)
-    , B1 = numeric(200)
-    , model = numeric(200)
-    , time = numeric(200)
-    , convergence = numeric(200)
+  brms_df <- data.frame(resid = numeric(300)
+    , phylo_X = numeric(300)
+    , phylo_int = numeric(300)
+    , phylo_cor = numeric(300)
+    , B0 = numeric(300)
+    , B1 = numeric(300)
+    , model = numeric(300)
+    , time = numeric(300)
+    , convergence = numeric(300)
   )
   for(i in 1:length(tt)){
     brms_obj <- readRDS(paste(brms_path,tt[i],sep=""))
     sd_dat <- as.data.frame(posterior_samples(brms_obj[[1]],c("^sigma","^sd_","^cor_")))
-    brms_df[i,"resid"] <- median(sd_dat[,"sigma"])
-    brms_df[i, "phylo_X"] <- median(sd_dat[,"sd_sp__X"])
-    brms_df[i, "phylo_int"] <- median(sd_dat[,"sd_sp__Intercept"])
-    brms_df[i,"phylo_cor"] <- median(sd_dat[,"cor_sp__Intercept__X"])
+    brms_df[i,"resid"] <- median(sd_dat[,"sigma"])^2
+    brms_df[i, "phylo_X"] <- median(sd_dat[,"sd_sp__X"])^2
+    brms_df[i, "phylo_int"] <- median(sd_dat[,"sd_sp__Intercept"])^2
+    brms_df[i,"phylo_cor"] <- median(sd_dat[,"cor_sp__Intercept__X"] * sd_dat[,"sd_sp__Intercept"] * sd_dat[,"sd_sp__X"])
     b_dat <- as.data.frame(posterior_samples(brms_obj[[1]], c("^b")))
     brms_df[i, "B0"] <- as.numeric(between(0
             , quantile(b_dat[,"b_Intercept"], 0.025)
@@ -236,8 +239,8 @@ phylolm_results <- function(tt){
   )
   for(i in 1:length(tt)){
     phylolm_obj <- readRDS(paste(phylolm_path,tt[i],sep=""))
-    phylolm_df[i,"resid"] <- sqrt(as.numeric(phylolm_obj[[1]]["sigma2_error"]))
-    phylolm_df[i,"phylo_int"] <- sqrt(as.numeric(phylolm_obj[[1]]["sigma2"]))
+    phylolm_df[i,"resid"] <- as.numeric(phylolm_obj[[1]]["sigma2_error"])
+    phylolm_df[i,"phylo_int"] <- as.numeric(phylolm_obj[[1]]["sigma2"])
     B0 <- coef(summary(phylolm_obj[[1]]))["(Intercept)","Estimate"]
     B0se <- coef(summary(phylolm_obj[[1]]))["(Intercept)","StdErr"]
     B1 <- coef(summary(phylolm_obj[[1]]))["X","Estimate"]
@@ -252,7 +255,7 @@ phylolm_results <- function(tt){
 
 phylolm_data <- phylolm_results(phylolm_res)
 
-ssdat <- rbind(gls_data, phylolm_data, lme4ss_data, glmmTMBss_data)#, brmsss_data)
+ssdat <- rbind(gls_data, phylolm_data, lme4ss_data, glmmTMBss_data, brmsss_data, MCMCglmmss_data)
 
 
 ### Collect multiple sites ----
@@ -280,12 +283,12 @@ lme4ms_results <- function(tt){
 	  covmat <- as.data.frame(lme4::VarCorr(lme4_obj[[1]]))
 	  lme4ms_df[i,"resid"] <- (covmat 
       %>% filter(grp=="Residual") 
-	    %>% dplyr:::select(sdcor) 
+	    %>% dplyr:::select(vcov) 
 	    %>% as.numeric()
 	  )
 	  lme4ms_df[i, "phylo_X"] <- (covmat 
 	    %>% filter((grp=="sp") & (var1 =="X")) 
-	    %>% dplyr:::select(sdcor) 
+	    %>% dplyr:::select(vcov) 
 	    %>% as.numeric()
 	  )
 	  lme4ms_df[i, "phylo_int"] <- (covmat 
@@ -293,7 +296,7 @@ lme4ms_results <- function(tt){
 	      & (var1 == "(Intercept)")
 	      & (is.na(var2))
 	      ) 
-	    %>% dplyr:::select(sdcor) 
+	    %>% dplyr:::select(vcov) 
 	    %>% as.numeric()
 	  )
 	  lme4ms_df[i,"phylo_cor"] <- (covmat 
@@ -301,17 +304,17 @@ lme4ms_results <- function(tt){
 	      & (var1 == "(Intercept)")
 	      & (var2 == "X")
 	      ) 
-	    %>% dplyr:::select(sdcor) 
+	    %>% dplyr:::select(vcov) 
 	    %>% as.numeric()
 	  )
 	  lme4ms_df[i,"phylo_interaction"] <- (covmat
 	    %>% filter((grp=="sp:site"))
-	    %>% dplyr:::select(sdcor)
+	    %>% dplyr:::select(vcov)
 	    %>% as.numeric()
 	  )
 	  lme4ms_df[i, "species_X"] <- (covmat 
 	    %>% filter((grp=="obs") & (var1 =="X"))
-	    %>% dplyr:::select(sdcor)
+	    %>% dplyr:::select(vcov)
 	    %>% as.numeric()
 	  )
 	  lme4ms_df[i, "species_int"] <- (covmat 
@@ -319,7 +322,7 @@ lme4ms_results <- function(tt){
 	      & (var1 == "(Intercept)")
 	      & (is.na(var2))
 	      ) 
-	    %>% dplyr:::select(sdcor) 
+	    %>% dplyr:::select(vcov) 
 	    %>% as.numeric()
 	  )
 	  lme4ms_df[i,"species_cor"] <- (covmat 
@@ -327,12 +330,12 @@ lme4ms_results <- function(tt){
 	      & (var1 == "(Intercept)")
 	      & (var2 == "X")
 	      ) 
-	    %>% dplyr:::select(sdcor) 
+	    %>% dplyr:::select(vcov) 
 	    %>% as.numeric()
 	  )
 	  lme4ms_df[i,"site_int"] <- (covmat 
 	    %>% filter(grp=="site")
-	    %>% dplyr:::select(sdcor) 
+	    %>% dplyr:::select(vcov) 
 	    %>% as.numeric()
 	  )
 	  B0 <- coef(summary(lme4_obj[[1]]))["(Intercept)","Estimate"]
@@ -370,13 +373,13 @@ pez_results <- function(tt){
   )
   for(i in 1:length(tt)){
     pez_obj <- readRDS(paste(pez_path,tt[i],sep=""))
-    pez_df[i,"resid"] <- sqrt(unlist(pez_obj[[2]]["s2resid"]))
-	  pez_df[i,"phylo_interaction"] <- sqrt(unlist(pez_obj[[2]]["s2n"]))
-    pez_df[i,"phylo_int"] <- sqrt(unlist(pez_obj[[2]]["s2r"]))[1]
-    pez_df[i,"phylo_X"] <- sqrt(unlist(pez_obj[[2]]["s2r"]))[2]
-    pez_df[i,"species_int"] <- sqrt(unlist(pez_obj[[2]]["s2r"]))[3]
-    pez_df[i,"species_X"] <- sqrt(unlist(pez_obj[[2]]["s2r"]))[4]
-    pez_df[i,"site_int"] <- sqrt(unlist(pez_obj[[2]]["s2r"]))[5]
+    pez_df[i,"resid"] <- unlist(pez_obj[[2]]["s2resid"])
+	  pez_df[i,"phylo_interaction"] <- unlist(pez_obj[[2]]["s2n"])
+    pez_df[i,"phylo_int"] <- unlist(pez_obj[[2]]["s2r"])[1]
+    pez_df[i,"phylo_X"] <- unlist(pez_obj[[2]]["s2r"])[2]
+    pez_df[i,"species_int"] <- unlist(pez_obj[[2]]["s2r"])[3]
+    pez_df[i,"species_X"] <- unlist(pez_obj[[2]]["s2r"])[4]
+    pez_df[i,"site_int"] <- unlist(pez_obj[[2]]["s2r"])[5]
     B0 <- unlist(pez_obj[[2]]["B"])[1]
     B0se <- unlist(pez_obj[[2]]["B.se"])[1]
     B1 <- unlist(pez_obj[[2]]["B"])[2]
@@ -414,13 +417,13 @@ phyr_results <- function(tt){
   )
   for(i in 1:length(tt)){
     phyr_obj <- readRDS(paste(phyr_path,tt[i],sep=""))
-    phyr_df[i,"resid"] <- sqrt(unlist(phyr_obj[[1]]["s2resid"]))
-    phyr_df[i,"phylo_interaction"] <- sqrt(unlist(phyr_obj[[1]]["s2n"]))
-    phyr_df[i,"phylo_int"] <- sqrt(unlist(phyr_obj[[1]]["s2r"]))[2]
-    phyr_df[i,"phylo_X"] <- sqrt(unlist(phyr_obj[[1]]["s2r"]))[4]
-    phyr_df[i,"species_int"] <- sqrt(unlist(phyr_obj[[1]]["s2r"]))[1]
-    phyr_df[i,"species_X"] <- sqrt(unlist(phyr_obj[[1]]["s2r"]))[3]
-    phyr_df[i,"site_int"] <- sqrt(unlist(phyr_obj[[1]]["s2r"]))[5]
+    phyr_df[i,"resid"] <- unlist(phyr_obj[[1]]["s2resid"])
+    phyr_df[i,"phylo_interaction"] <- unlist(phyr_obj[[1]]["s2n"])
+    phyr_df[i,"phylo_int"] <- unlist(phyr_obj[[1]]["s2r"])[2]
+    phyr_df[i,"phylo_X"] <- unlist(phyr_obj[[1]]["s2r"])[4]
+    phyr_df[i,"species_int"] <- unlist(phyr_obj[[1]]["s2r"])[1]
+    phyr_df[i,"species_X"] <- unlist(phyr_obj[[1]]["s2r"])[3]
+    phyr_df[i,"site_int"] <- unlist(phyr_obj[[1]]["s2r"])[5]
     B0 <- unlist(phyr_obj[[1]]["B"])[1]
     B0se <- unlist(phyr_obj[[1]]["B.se"])[1]
     B1 <- unlist(phyr_obj[[1]]["B"])[2]
@@ -463,14 +466,14 @@ glmmTMBms_results <- function(tt){
     glmmTMB_obj <- readRDS(paste(glmmTMB_path,tt[i],sep=""))
     covobj <- VarCorr(glmmTMB_obj[[1]])[["cond"]]
     glmmTMBms_df[i,"resid"] <- attr(covobj,"sc")
-    glmmTMBms_df[i, "phylo_X"] <- attr(covobj[["sp"]],"stddev")[["X"]]
-    glmmTMBms_df[i, "phylo_int"] <- attr(covobj[["sp"]],"stddev")[["(Intercept)"]]
-    glmmTMBms_df[i, "phylo_cor"] <- attr(covobj[["sp"]],"correlation")[1,2]
-    glmmTMBms_df[i,"phylo_interaction"] <- attr(covobj[["sp:site"]],"stddev")
-    glmmTMBms_df[i, "species_X"] <- attr(covobj[["obs"]],"stddev")[["X"]]
-    glmmTMBms_df[i, "species_int"] <- attr(covobj[["obs"]],"stddev")[["(Intercept)"]]
-    glmmTMBms_df[i, "species_cor"] <- attr(covobj[["obs"]],"correlation")[1,2]
-    glmmTMBms_df[i, "site_int"] <- attr(covobj[["site"]],"stddev")
+    glmmTMBms_df[i, "phylo_X"] <- covobj[["sp"]]["X","X"]
+    glmmTMBms_df[i, "phylo_int"] <- covobj[["sp"]]["(Intercept)","(Intercept)"]
+    glmmTMBms_df[i, "phylo_cor"] <- covobj[["sp"]]["(Intercept)","X"]
+    glmmTMBms_df[i,"phylo_interaction"] <- covobj[["sp:site"]]["(Intercept)","(Intercept)"]
+    glmmTMBms_df[i, "species_X"] <- covobj[["obs"]]["X","X"]
+    glmmTMBms_df[i, "species_int"] <- covobj[["obs"]]["(Intercept)","(Intercept)"]
+    glmmTMBms_df[i, "species_cor"] <- covobj[["obs"]]["(Intercept)","X"]
+    glmmTMBms_df[i, "site_int"] <- covobj[["site"]]["(Intercept)","(Intercept)"]
     B0 <- coef(summary(glmmTMB_obj[[1]]))[["cond"]]["(Intercept)","Estimate"]
     B0se <- coef(summary(glmmTMB_obj[[1]]))[["cond"]]["(Intercept)","Std. Error"]
     B1 <- coef(summary(glmmTMB_obj[[1]]))[["cond"]]["X","Estimate"]
@@ -493,5 +496,5 @@ msdat <- rbind(lme4ms_data,pez_data, phyr_data, glmmTMBms_data)
 data_list <- list(ssdat,msdat)
 
 # data_list <- list(gls_data, lme4ss_data, lme4ss_slope_data, lme4ms_data, pez_data, lme4ms_slope_data , pez_slope_data, lme4cs_data, pez_cs_data, lme4cs_slope_data, pez_cs_slope_data)
-saveRDS(data_list,file="./datadir/collect.RDS")
+saveRDS(data_list,file="./datadir/collect_rerun.RDS")
 # rdsave(ssdat, msdat)

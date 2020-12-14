@@ -60,6 +60,6 @@ fittime <- system.time(
 print(fittime)
 print(summary(fitpez))
 
-saveRDS(list(fittime,fitpez),file=paste("datadir/pez",numsite,size,tree_seed,"rds",sep="."))
+saveRDS(list(fittime,fitpez),file=paste("datadir/pez/pez",numsite,size,tree_seed,"rds",sep="."))
 
 #rdnosave()

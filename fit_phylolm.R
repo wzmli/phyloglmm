@@ -8,7 +8,7 @@ dat <- data.frame(dat)
 
 print(head(dat))
 
-tt <- system.time(fit_phylolm <- phylolm(Y~X
+tt <- system.time(fit_phylolm <- phylolm(y_main~X
     , data=dat
     , phy=phy 
     , model = "BM"
@@ -21,6 +21,6 @@ print(summary(fit_phylolm))
 
 
 phylolm_list <- list(fit_phylolm,tt)
-saveRDS(phylolm_list,file=paste("datadir/phylolm",numsite,size,tree_seed,"rds",sep="."))
+saveRDS(phylolm_list,file=paste("datadir/phylolm/phylolm",numsite,size,tree_seed,"rds",sep="."))
 
 #rdnosave()

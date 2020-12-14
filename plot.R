@@ -14,12 +14,16 @@ brmsdat <- readRDS("./datadir/brms_dat.RDS")
 ssdat_raw <- rbind(data_list[[1]],brmsdat)
 msdat_raw <- data_list[[2]]
 
+data_list <- readRDS("datadir/collect_rerun.RDS")
+ssdat_raw <- data_list[[1]]
+msdat_raw <- data_list[[2]]
+
 tree_seed = 1
 source("parameters.R")
 
 sspar_df <- data.frame(
   sdtype = c("resid", "phylo_int", "phylo_X", "phylo_cor")
-  , y_int = c(sd.resid, physd.B0, physd.B1, phyrho.B01)
+  , y_int = c(sd.resid^2, physd.B0^2, physd.B1^2, phyrho.B01*physd.B0*physd.B1)
 )
 
 ssdat <- (ssdat_raw
@@ -30,7 +34,7 @@ ssdat <- (ssdat_raw
 	%>% mutate(size = factor(size
 	      , levels=c("small","med","large","xlarge"), labels=c("25","50","100","500")
 			)
-			, Platform = factor(platform, levels=c("gls", "phylolm","lme4", "glmmTMB", "brms"))
+			, Platform = factor(platform, levels=c("gls", "phylolm","lme4", "glmmTMB", "brms","MCMCglmm"))
 			, sdtype = factor(sdtype, levels=c("phylo_int","phylo_cor","phylo_X","resid")
 			                  , labels=c(expression(paste("Phylogenetic random intercept ", Sigma[phy[int]]))
 			                             , expression(paste("Phylogenetic random intercept-slope correlation ", rho[phy[int-slope]]))
@@ -44,11 +48,12 @@ ssdat <- (ssdat_raw
 ## FIXME: could match these more programatically (use 'values' in
 ## scale_colour_manual() ?)
 colvec_all <-  c(gls="Black",phylolm="Red",lme4="Dark Blue",
-                 glmmTMB="Dark Green",brms="Orange",pez="Gray",phyr="Purple")
-colvec  <- colvec_all[c("gls","phylolm","lme4","glmmTMB","brms")]
+                 glmmTMB="Dark Green",brms="Orange",pez="Gray",phyr="Purple",MCMCglmm="Yellow")
+colvec  <- colvec_all[c("gls","phylolm","lme4","glmmTMB","brms","MCMCglmm")]
 colvec2 <- colvec_all[c("pez","phyr","lme4","glmmTMB")]
 
 gg_ss <- (ggplot(data=ssdat, aes(x=size, y=sd, col=Platform, fill=Platform))
+  + scale_y_continuous(limits = c(0,200), oob=scales::squish)
   + facet_wrap(~sdtype, scale="free_y", labeller = label_parsed)
   # + geom_violin(position=position_dodge(width=0.5),alpha=0.4)
   + geom_boxplot(outlier.colour = NULL, varwidth=TRUE, alpha=0.2)
@@ -145,8 +150,8 @@ ggsave(plot = gg_sscoverage,filename = "figure/sscoverage.pdf",width = 10, heigh
 mspar_df <- data.frame(
   sdtype = c("resid", "phylo_X", "phylo_int", "phylo_cor", "phylo_interaction"
              , "species_X", "species_int", "species_cor", "site_int")
-  , y_int = c(sd.resid, physd.B1, physd.B0, phyrho.B01, sd.interaction
-              , sd.B1, sd.B0, rho.B01, sd.site)
+  , y_int = c(sd.resid^2, physd.B1^2, physd.B0^2, phyrho.B01*physd.B0*physd.B1, sd.interaction^2
+              , sd.B1^2, sd.B0^2, rho.B01*sd.B0*sd.B1, sd.site^2)
 )
 
 msdat <- (msdat_raw

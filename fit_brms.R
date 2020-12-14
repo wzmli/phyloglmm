@@ -40,6 +40,6 @@ print(brms_time)
 print(summary(brms_fit))
 
 brms_list <- list(brms_fit,brms_time)
-saveRDS(brms_list,file=paste("datadir/brms",numsite,size,tree_seed,"rds",sep="."))
+saveRDS(brms_list,file=paste("datadir/brms/brms",numsite,size,tree_seed,"rds",sep="."))
 
 #rdnosave()

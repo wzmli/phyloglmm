@@ -160,7 +160,7 @@ collect_gls.Rout: collect_gls.R
 collect.Rout: collect.R
 	$(run-R)
 
-plot.Rout: ./datadir/collect.RDS ./datadir/collect.RDS collect_brms.Rout plot.R
+plot.Rout: ./datadir/collect.RDS plot.R
 	$(run-R)
 
 compare_pez_plot.Rout: compare_pez_plot.R

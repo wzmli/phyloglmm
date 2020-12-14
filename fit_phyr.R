@@ -23,7 +23,7 @@ print(fitphyr)
 
 fit_list <- list(fitphyr, fittime)
 
-saveRDS(fit_list, file=paste("datadir/phyr",numsite, size, tree_seed,"rds",sep="."))
+saveRDS(fit_list, file=paste("datadir/phyr/phyr",numsite, size, tree_seed,"rds",sep="."))
 
 # rdnosave()
 
