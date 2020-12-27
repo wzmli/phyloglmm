@@ -16,14 +16,14 @@ library(MCMCglmm)
 gls_path <- "./datadir/gls/"
 gls_res <- list.files(path = gls_path)
 gls_results <- function(tt){
-  gls_df <- data.frame(resid = numeric(300)
-    , phylo_int = numeric(300)
+  gls_df <- data.frame(resid = numeric(400)
+    , phylo_int = numeric(400)
     , phylo_X = NA
     , phylo_cor = NA
-    , B0 = numeric(300)
-    , B1 = numeric(300)
-    , model = numeric(300)
-    , time = numeric(300)
+    , B0 = numeric(400)
+    , B1 = numeric(400)
+    , model = numeric(400)
+    , time = numeric(400)
     , convergence = NA
   )
   for(i in 1:length(tt)){
@@ -48,14 +48,14 @@ gls_data <- bind_rows(gls_results(gls_res))
 lme4_path <- "./datadir/lme4/"
 lme4ss_res <- list.files(path = lme4_path, pattern = "ss")
 lme4ss_results <- function(tt){
-  lme4ss_df <- data.frame(resid = numeric(300)
-    , phylo_X = numeric(300)
-    , phylo_int = numeric(300)
-    , phylo_cor = numeric(300)
-    , B0 = numeric(300)
-    , B1 = numeric(300)
-    , model = numeric(300)
-    , time = numeric(300)
+  lme4ss_df <- data.frame(resid = numeric(400)
+    , phylo_X = numeric(400)
+    , phylo_int = numeric(400)
+    , phylo_cor = numeric(400)
+    , B0 = numeric(400)
+    , B1 = numeric(400)
+    , model = numeric(400)
+    , time = numeric(400)
     , convergence = NA
   )
   for(i in 1:length(tt)){
@@ -227,14 +227,14 @@ MCMCglmmss_data <- MCMCglmmss_results(MCMCglmmss_res)
 phylolm_path <- "./datadir/phylolm/"
 phylolm_res <- list.files(path = phylolm_path)
 phylolm_results <- function(tt){
-  phylolm_df <- data.frame(resid = numeric(300)
-    , phylo_int = numeric(300)
+  phylolm_df <- data.frame(resid = numeric(400)
+    , phylo_int = numeric(400)
     , phylo_X = NA
     , phylo_cor = NA
-    , B0 = numeric(300)
-    , B1 = numeric(300)
-    , model = numeric(300)
-    , time = numeric(300)
+    , B0 = numeric(400)
+    , B1 = numeric(400)
+    , model = numeric(400)
+    , time = numeric(400)
     , convergence = NA
   )
   for(i in 1:length(tt)){
@@ -498,3 +498,4 @@ data_list <- list(ssdat,msdat)
 # data_list <- list(gls_data, lme4ss_data, lme4ss_slope_data, lme4ms_data, pez_data, lme4ms_slope_data , pez_slope_data, lme4cs_data, pez_cs_data, lme4cs_slope_data, pez_cs_slope_data)
 saveRDS(data_list,file="./datadir/collect_rerun.RDS")
 # rdsave(ssdat, msdat)
+

@@ -8,12 +8,6 @@ library(scales)
 theme_set(theme_bw())
 zmargin <- theme(panel.spacing=grid::unit(0,"lines"))
 
-# data_list <- readRDS("./datadir/collect.RDS")
-load("git_push/plot.RData")
-brmsdat <- readRDS("./datadir/brms_dat.RDS")
-ssdat_raw <- rbind(data_list[[1]],brmsdat)
-msdat_raw <- data_list[[2]]
-
 data_list <- readRDS("datadir/collect_rerun.RDS")
 ssdat_raw <- data_list[[1]]
 msdat_raw <- data_list[[2]]
@@ -160,7 +154,7 @@ msdat <- (msdat_raw
 	%>% filter((convergence != 1) | is.na(convergence))
 	%>% dplyr:::select(-convergence)
 	%>% gather(key=sdtype, value=sd, -c(platform,size,time,B0,B1))
-	%>% filter(sd <20)
+	# %>% filter(sd <20)
 	%>% left_join(.,mspar_df)
 	%>% mutate(size = factor(size,
 			levels=c("small","med","large","xlarge"), labels=c("25","50","100","500")

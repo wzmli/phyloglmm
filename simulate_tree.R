@@ -133,11 +133,11 @@ dat <- (indexdat[rep(1:nrow(indexdat),each=nrep),]
   %>% rowwise()
   %>% mutate(noise = rnorm(1,sd=sd.resid)
    , X = rnorm(1,sd=Xsd)
-   , y_all = b0_phy + b1_phy*X + b0 + b1*X + b_site + b_intphy + b_int+ noise
+   , y_all = b0_phy + b1_phy*X + b0 + b1*X + b_site + b_intphy + noise
    , y = b0_phy + b1_phy*X + b0 + b1*X + b_site + b_intphy + noise
    , y_phy = b0_phy + b1_phy*X + noise
    , y_nophy = b0 + b1*X + noise
-   , y_main = b0_phy + b1_phy*X + b0 + b1*X + noise
+   , y_main = b0_phy + b1_phy*X + noise
    , y_interaction = b_int + noise
    , y_interactionphyonly = b_intphy + noise
    , y_interactionphy = b_int + b_intphy + noise
