@@ -42,7 +42,7 @@ I am not sure about the point raised in the Discussion: “Establishing the prac
 
 In the discussion about within-species variance and measurement errors (l. 272-274) you could make several references to previous work, including several papers published in MEE.
 
-**MLi: added one already, going to find another one.**
+**Done. We added more citation on this topic.**
 
 I hope you will find these and the reviewers’ comments useful.
 Best wishes,
