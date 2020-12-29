@@ -425,7 +425,7 @@ Neither PGLS nor PGLM can handle random slopes or multiple observations within a
 Among the few packages that currently fit phylogenetic slopes to predictor level variation are \pkg{pez} and \pkg{phyr}, which can handle random-slope models ($\Sigma^2_{\mathrm{phy_{slope}}}$) and random intercepts of species-group interactions ($\bf{b_{\mathrm{sp:group}}}$) but do not incorporate covariation between phylogenetic random slopes and intercepts ($\Sigma_{\mathrm{phy_{int-slope}}}$).
 Lastly, Bayesian PGLMMs using Markov chain Monte Carlo (MCMC) can handle all of the cases described above. 
 However, MCMC is usually much more computationally expensive for GLMMs than platforms using deterministic optimization.
-\pkg{MCMCglmm} \citep{hadfield2010general} is the most widely used Bayesian phylogenetic GLMM, but we will instead use \pkg{brms}, which uses a more computationally efficient MCMC technique.
+\pkg{MCMCglmm} \citep{hadfield2010general} is the most widely used Bayesian phylogenetic GLMM, and recently \pkg{brms}, which uses a more computationally efficient MCMC technique.
  
 % Table \mli{ref something} provides the statistically equivalent fitting capabilities of common/existing phylogenetic methods.
 \begin{table}[]
@@ -448,9 +448,6 @@ Multi-group &  &  & \y & \y & \y & \y & \y \\ \hline
 Using the R package \pkg{ape} \citep{ape}, we simulated 100 random phylogenetic trees  for each sample size (n = 25, 50, 100 and an additional n = 500 for the multi-group model) and then simulated the responses for each tree (\ref{eq:single_glmm}, \ref{eq:multiple_glmm}). 
 Each realization was fitted using all model variants. 
 All simulation parameters are shown in Figure \ref{ssplot} and Figure \ref{msplot}. 
-We parameterize the models with correlation $\rho_{xy}$ rather than covariance $\Sigma_{xy}$ (i.e., $\rho_{xy} = \frac{\Sigma_{xy}}{\Sigma_{x}\Sigma_{y}}$).
-%\bmb{???}
-%mli{Just to match what lme4/glmmtmb outputs.}
 Table \ref{table:platform} shows the parameters that are estimable for each platform. 
 We only evaluated the goodness of fit for model fits that passed the convergence tests implemented by the package.
 For Bayesian fits, we evaluate realizations with Gelman-Rubin statistic $<1.1$. Based on recent concerns about Gelman-Rubin thresholds \citep{vats2018revisiting}), we additionally restricted results to fits with  effective sample size $>1000$ for the fixed effect parameters ($\beta_{0}$ and $\beta_{1}$) \citep{vehtari2019rank}. 
