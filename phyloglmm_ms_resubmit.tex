@@ -156,19 +156,18 @@ In classic PCMs, phylogenetic correlation in the residuals from a regression bet
 If the residuals are normally distributed and observed without additional error or within-species variation, Felsenstein's method of phylogenetically independent contrasts  \citep[PICS:][]{felsenstein1985phylogenies} is sufficient to account for the phylogenetic correlation.
 More recent approaches --- including phylogenetic generalized linear mixed models (PGLMM) \citep{ives2011generalized, housworth2004phylogenetic}, Pagel's $\lambda$ \citep{pagel1999inferring}, and Blomberg's $K$ \citep{blomberg2003testing} --- extend PICs by considering different (non-Gaussian) response distributions and by accounting for evolutionary models other than BM.
 These methods partition residual variation into two components: (1) independent residual variation (tip variation, which is confounded with observation error) and (2) phylogenetic signal (evolutionary process error) \citep{hansen2012interpreting, housworth2004phylogenetic}.
-If each species' traits are measured multiple times, we can distinguish a third level of variation; in this case, phylogenetic variation and tip variation are both part of the evolutionary process error while the observation error can be independently identified from within-species variation.
-Although many studies include multiple observations per species, phylogenetic analyses rarely take advantage of such information to partition variability more finely.
+If each species' traits are measured multiple times, we can distinguish a third level of variation; in this case, phylogenetic variation and tip variation are both part of the evolutionary process error while the observation error can be independently identified from within-species variation \citep{kostikova2016bridging}.
 
 Classic PCMs allow the residuals to evolve along the phylogeny, but the effects of the predictor variables may evolve along the phylogeny as well; extending PCMs to allow for multiple sources of variation leads to the  \emph{phylogenetic mixed model} \citep{housworth2004phylogenetic}.
 For example, suppose we wish to fit a PCM to predict species' brain size from their body size \cite{felsenstein1985phylogenies} using a mixed-effect model.
-The standard PCM allows for phylogenetic correlations in the residuals of the relationship between body and brain size; the phylogenetic mixed model can allow incorporate both
+The standard PCM allows for phylogenetic correlations in the residuals of the relationship between body and brain size; the phylogenetic mixed model can allow to incorporate both
 variation in brain size among taxa with similar body sizes (random intercepts) and
 variation in the \emph{relationship} between predictors and responses among taxa (random slopes).
 
-Several recent studies have used phylogenetic mixed models in
-community ecology \citep{nowakowski2018phylogenetic, li2017canfun}.
+Several recent studies developed new tools to fit phylogenetic mixed models in
+community ecology applications \citep{nowakowski2018phylogenetic, li2017canfun}.
 However, the phylogenetic mixed modeling tools that allow extensions such as random slopes
-and separation of tip and observation error in a frequentist framework are inflexible; thus, biologists needing to fit random-slopes models typically turn to Bayesian approaches, despite their additional computational burden \citep{hadfield2010mcmc, burkner2018brms} (Table \ref{table:model}).
+and separation of tip and observation error in a frequentist framework are inflexible; thus, biologists needing to fit more complex models typically turn to Bayesian approaches which is the state of the art, despite their additional computational burden \citep{hadfield2010mcmc, burkner2018brms, kostikova2016bridging} (Table \ref{table:model}).
 
 \begin{table}[]
 \begin{tabular}{|l|l|l|l|}
@@ -253,7 +252,7 @@ For example, for the phylogeny in figure \ref{fig:tree}, the corresponding $\bS$
 
 \begin{center}
 \begin{figure}[H]
-  \includegraphics[scale=0.8,page=1]{./figure/phylotree.png}
+  \includegraphics[scale=0.8]{./figure/phylotree.png}
   \caption{Three-species phylogenetic tree.}
 \label{fig:tree}
 \end{figure}
@@ -460,9 +459,9 @@ We first evaluate our estimates by looking at the distribution of the estimated 
 We computed 95\% Wald confidence intervals for frequentist methods and quantile-based intervals for Bayesian methods, then computed coverage --- the proportion of simulations in which the computed confidence intervals include the true values of parameters --- to assess the quality of the confidence intervals.
 We also compare computational speed between different platforms to evaluate the efficiency of different platforms and methods. 
 
-In supplementary materials, we reproduce the examples in chapter 11 of \cite{garamszegi2014modern} using phylogenetic GLMMs based on \pkg{lme4} and \pkg{glmmTMB}.
-
 \section*{Results}
+
+In supplementary materials, we reproduce the examples in chapter 11 of \cite{garamszegi2014modern} using phylogenetic GLMMs based on \pkg{lme4} and \pkg{glmmTMB}.
 
 \subsection*{Single Group model simulations}
 
@@ -567,7 +566,7 @@ Nevertheless, it is impossible to account for all possible complexities.
 The best model --- whether using phylogenetic random effects, simple grouping, or both --- depends on the experimental design and whether there are enough data to separate different levels of variation, which can be strongly confounded.
 If multiple observations are available per species, then simple methods like Pagel's $\lambda$ will confound tip variation with residual variation \citep{boettiger2013is}.
 Multiple observations can be collapsed to a single value (such as the mean) per species, with analyses weighting each species by its number of observations.
-Alternatively, if the within-species variance is of interest, a phylogenetic mixed model can separate tip variation from within-species variation and measurement error.
+Alternatively, if the within-species variance is of interest, a phylogenetic mixed model can separate tip variation from within-species variation and measurement error \citep{kostikova2016bridging}.
 More generally, phylogenetic mixed models can be simplified to ordinary mixed models, at the cost of taxonomic detail, by simplifying the phylogenetic tree to a strictly hierarchical set of nested higher-level taxa \citep{bunnefeld2012island}). 
 Users should be aware of two essential questions when fitting random-slope models: do they have enough information to practically estimate the random slopes, and what are the potential costs of ignoring them \citep{schielzeth2008conclusions}? 
 % However, in the PGLMM context, as long as there's variation in the predictor among tips, there will be variation among taxa at some level, so random-slopes models will (almost always) be \emph{theoretically} identifiable.

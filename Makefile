@@ -97,7 +97,7 @@ fit.lme4.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R phyloglm
 fit.lme4pez.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R lme4pez.R
 	$(run-R)
 
-fit.lme4.ss.large.1.Rout: phyloglmm.R
+fit.lme4.ss.xlarge.1.Rout: phyloglmm.R
 fit.lme4.ms.large.101.Rout: phyloglmm.R
 fit.glmmTMB.ss.xlarge.4.Rout:
 fit.lme4.ms.small.1.Rout:

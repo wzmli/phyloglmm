@@ -6,14 +6,14 @@ Thank you for submitting your research to MEE and apologies for the long time ge
 
 As currently presented I found this paper a little bit in between an application note and a research paper but lacking some key components from both, but turning it into a research paper would require, in my opinion, the addition of an empirical example (see also comments from reviewer 1).
 
-**MLi: This paper is intended as an application/software paper. 
-TODO: didn't we already do this? double check. We have included the example provided in Chapter 11 Garamszegi and Li et al. Dune mellow example.** 
+**MLi: This paper is intended as an application/software paper.** 
+**TODO: didn't we already do this? We have included the example provided in Chapter 11 Garamszegi. We can add Li et al. Dune mellow example if we want.** 
 
 The benchmarking of the new method is interesting but is mixing too many confounding factors linked with the different implementations of the various packages (see also comment from reviewer 2). What is the performance of the new model all else being equal? How much of the performance results is actually due to differences the optimization among the different R packages?
 
 **MLi: The model is the mathematically equivalent, thus, the difference is the speed/efficiency.**
 
-**MLi: Comparing pez and phyr uses lme4 correlation structure. This is the most direct comparision. **
+**MLi: Comparing pez and phyr uses lme4/glmer correlation structure. This is the most direct comparision of the proposed method (i.e. correlation vs random effect matrix structure. **
 
 In the Introduction, a broader perspective about PCMs should be given before jumping into the specifics of the models tested here. Phylogenetic comparative methods include lots of other things, see e.g. Luke Harmon’s book: https://lukejharmon.github.io/pcm/chapters/. In general, a better reference to previous work is required and some claims of the paper should be either demonstrated or removed. For example, stating that “existing [PCM] procedures are either insufficiently flexible or too computationally demanding to analyze large data sets” is simply not true. There are many research papers applying PCMs to large datasets (and as a side note: how large should a dataset be to be considered large?).
 
@@ -21,27 +21,28 @@ In the Introduction, a broader perspective about PCMs should be given before jum
 
 A sentence like “Although many studies include multiple observations per species, phylogenetic analyses rarely take advantage of such information to partition variability more finely” needs references supporting it. For example, Kostikova et al. 2016 (DOI:10.1093/sysbio/syw010) present a model that seems relevant here. Further, claiming that ‘brms’ is more efficient than ‘MCMCglmm’ needs to be backed up by either a reference or a test (see also comments from the reviewers).
 
-**Todo: add reference!**
+** MLi: This line is now removed. We have confirmed that the suggested example is relevant to our framework in partitioning different levels of variation. **
 
 In the methods it should be better clarified what is the state of the art and what are the novel parts you are presenting in this study.
 
-**Todo:... MCMCglmm is probably the state of the art**
+**MLi: Bayesian methods are the state of the art for more complex. I've now reworded the last parameter in the intro before methods.**
 
 In lines 74-75 “phylogenetic mixed models in community ecology” are mentioned but it is unclear what the link is to the previous paragraph and the to the following sentences.
 
-**Todo: revisit**
+**MLi: This refers to the recent developed frequentist tools for phyloglmm and used in community ecology applications. We have now reword and clarify this sentence. **
 
 Why are the parameter estimates of the two implementations of the new model different in Fig. 5? And, in the same figure, why were runs of alternative implementations killed after 30 min?
 
-**Todo: Help? lme4 vs glmmTMB differences?**
+**To BMB: Help? lme4 vs glmmTMB differences? Maybe convergence settings? Should we bother if they are close enough?**
+**MLi: The parameters that are in both single and multiple site models remain the same. We have now added one more alternative implementation run for the 100 species simulation with the slow platforms. The goal of this paper is to show the inflexiably of existing tools and the efficiency of the new implemented approach. ** 
 
 I am not sure about the point raised in the Discussion: “Establishing the practical level of model complexity for a given problem and data set is an open and difficult general problem throughout statistical modeling, not just in phylogenetic studies.” Model complexity is typically addressed by model testing, which is not mentioned here.
 
-**Todo: What do they mean by model testing here? This feels like snooping and cheating if we test and select models.** 
+**To BMB: What do they mean by model testing here? This feels like snooping and cheating if we test and select models.** 
 
 In the discussion about within-species variance and measurement errors (l. 272-274) you could make several references to previous work, including several papers published in MEE.
 
-**Todo: find references.**
+**MLi: added one already, going to find another one.**
 
 I hope you will find these and the reviewers’ comments useful.
 Best wishes,
@@ -59,9 +60,20 @@ The authors propose a reformulation of the phylogenetic mixed model in order to 
 However, I think the article could fail to reach the extent of its audience by missing several key elements:
 
 - Because that work isn’t a theoretical work but instead the description of an applied statistics method, adding a few examples, such as the one provided at l68-73, would help the reader understanding the value of those models. I think examples should particularly be aimed at the “Simulation” § l132-155, where they could shed light on the subtle differences between the parameters
+
+**Todo**
+
 - In the same spirit of applied statistics, a brief description (or table) of which functions to use in the libraries lme4 and glmmTMB to make these models work would make it easier to start. There should also be mention of the tutorial available in the repository
+
+**MLi: we have now added a tutorial**
+
 - It would also be beneficial to add an application of the method with biological data directly in the article. The more your article is associated with biological ideas, the more users you will reach in my opinion.
+
+**Going to be a little annoying looking for an example with replicates.**
+
 - Naming that class of models (even though it is still pglmm) could help the reader follow the results section and identify the method as well.
+
+**TO BMB: What do they mean by class?**
 
 These remarks might sound cosmetic but I think they might help to reach a broader audience and help all kind of users getting started with those models.
 
@@ -78,27 +90,30 @@ Minor comments:
 L26. In the Abstract, a claim has been made about the benefit of the method against unbalanced observational designs, but we lack insight on that point throughout the article. I think that sort of claim should be tested and I expect the Bayesian methods to perform better with that kind of problems.
 
 **Todo: Table 1 shows all the possbilities (double check) with existing package.** 
+**Todo: Add it to the tutorial?**
 
-L10. Small grammatical error: “can allow to incorporate”
+L10. Small grammatical error: “can allow to incorporate” 
+
+**MLi: Fixed.**
 
 Reviewer: 2
 
 Comments to the Corresponding Author
 This paper proposes an alternative formulation for the phylogenetic generalized linear mixed model which can utilize existing R packages for linear mixed models (lme4 and glmmTMB). The authors illustrate the advantages of their proposed method through simulations. The paper is well written and easy to follow. My main concern is that the proposed method is not scalable. That is, the computational efficiency of the proposed method only relies on the highly optimized implementation of lme4 and glmmTMB and its algorithm is actually "slower" than existing algorithms in phylogenetics. The followings are my specific comments:
 
-**Todo: Why is it slower? Do we need to profile the pieces?** 
+**To BMB: Why is it slower? Do we need to profile the pieces?** 
 
 1. What is the computational complexity of the proposed method? Does the alternative formulation help avoid matrix inversion such that the complexity is linear with respect to the number of species? Note that this is the case for many phylogenetic packages including phylolm and MCMCglmm. I am aware that it is hard or even impossible to achieve linear-complexity for all models. However, could linear-complexity be achieved by the proposed methods for some simple models such as the standard phylogenetic linear regression (equation 1)?
 
-**Todo: Exactly, we are avoiding the matrix inversion step.** 
+**MLi: Exactly, we are avoiding the matrix inversion step.** 
 
 2. In the paper, the authors replace the package MCMCglmm by the package brms. Although the implementation of MCMCglmm is not as efficient as brms, the complexity of MCMCglmm is linear with respect to the number of species while brms should be cubic (since it doesn't have a special method to avoid matrix inversion). It may be a good idea to add a simulation with a series of trees from dozens to thousands of species for showing the scalability of these methods (including MCMCglmm).
 
-**Todo: Will look into it.** 
+**MLi: Thanks. We have now added MCMCglmm to our simulation. For our simple simulation test, MCMCglmm is turned out to be faster based on your convergence critrion which heavily depend on the number of iteration. However, the goal is to look at the granlarity of frequentist approaches. Even for simple linear models, Bayesian approaches are much slowly due to MCMC compared to least squares.** 
 
 3. The models in simulations are not sufficiently described. What are the formulae for the phylogenetic random intercept variance, phylogenetic random slope variance, and covariance between phylogenetic random intercept and slope, and so on? Do they depend on the phylogenetic tree? The authors provide a clear explanation for how their proposed method can be applied to the standard phylogenetic regression (equation 1) but do not include it in the simulation section. I suggest the authors add this model to the simulation part for illustrating the applicability of their proposed method for this simple case.
 
-**Todo: what? go back to the paper and see if we say this clearly, this should be trival and clear. **
+**Todo: what? go back to the paper and see if we say this clearly, this should be trival and clear. The formulas are clear! We are using the variance of the phylogenetic tree when simulating the b's.**
 
 +++++
 RESUBMISSION INSTRUCTIONS
