@@ -93,8 +93,8 @@ print(summary(glmmTMB_fit))
 datR <- read.table("data/data_repeat.txt",header=TRUE)
 datR$obs <- factor(seq(nrow(datR)))
 datR <- (datR 
-  %>% mutate(sp = species
-        , animals = phylo
+  %>% mutate(sp = factor(species)
+        , animals = factor(phylo)
         )
 )
 datR$spec_mean_cf <- sapply(split(datR$cofactor,datR$phylo),mean)[datR$phylo]
@@ -130,7 +130,7 @@ dat <- read.table("data/data_pois.txt",header=TRUE)
 dat$obs <- factor(seq(nrow(dat)))
 
 
-dat <- dat %>% mutate(sp=phylo) 
+dat <- dat %>% mutate(sp=factor(phylo)) 
 phylo_glmm_fit <- phylo_glmm(phen_pois~cofactor+(1|sp)+(1|obs)
   , data=dat
   , phylonm = "sp"

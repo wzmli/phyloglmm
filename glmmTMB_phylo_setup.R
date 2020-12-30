@@ -2,7 +2,7 @@ glmmTMBphylo <- function (formula, data = NULL, family = gaussian(), ziformula =
                            dispformula = ~1, weights = NULL, offset = NULL, contrasts = NULL, phyloZ = NULL, 
                            phylonm = NULL,
                            na.action = na.fail, se = TRUE, verbose = FALSE, doFit = TRUE, 
-                           control = glmmTMBControl(), REML = FALSE) 
+                           control = glmmTMBControl(), REML = FALSE, map=NULL, sparseX = NULL) 
 {
   call <- mf <- mc <- match.call()
   if (is.character(family)) {
@@ -90,7 +90,7 @@ glmmTMBphylo <- function (formula, data = NULL, family = gaussian(), ziformula =
   TMBStruc <- mkTMBStrucphylo(formula, ziformula, dispformula, combForm, 
                                mf, fr, yobs = y, respCol, weights, contrasts = contrasts, 
                                family = family, se = se, call = call, verbose = verbose, 
-                               REML = REML, phylonm=phylonm, phyloZ=phyloZ)
+                               REML = REML, phylonm=phylonm, phyloZ=phyloZ, map=map, sparseX=sparseX)
   TMBStruc$control <- lapply(control, eval, envir = TMBStruc)
   if (!doFit) 
     return(TMBStruc)
@@ -102,7 +102,7 @@ mkTMBStrucphylo <- function (formula, ziformula, dispformula, combForm, mf, fr,
                               yobs, respCol, weights, contrasts=contrasts, size = NULL, family, se = NULL, phyloZ = phyloZ, 
                               phylonm=phylonm,
                               call = NULL, verbose = NULL, ziPredictCode = "corrected", 
-                              doPredict = 0, whichPredict = integer(0), REML = FALSE) 
+                              doPredict = 0, whichPredict = integer(0), REML = FALSE, map =NULL, sparseX=NULL) 
 {
   if (!is(family, "family")) {
     if (is.list(family)) {
@@ -226,7 +226,7 @@ mkTMBStrucphylo <- function (formula, ziformula, dispformula, combForm, mf, fr,
                           grpVar, condList, ziList, dispList, condReStruc, ziReStruc, 
                           family, contrasts, respCol, allForm = lme4:::namedList(combForm, 
                                                                                  formula, ziformula, dispformula), fr, se, call, verbose, 
-                          REML))
+                          REML, map, sparseX))
 }
 
 getXReTrmsphylo <- function (formula, mf, fr, ranOK = TRUE, type = "", contrasts, phyloZ = phyloZ, 
