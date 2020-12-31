@@ -139,12 +139,12 @@ fit.phyr.ms.small.1.Rout: fit_phyr.R
 
 fit.pez.ms.small.1.Rout: fit_pez.R
 
-fit.lme4.ms.small.2.Rout: phyloglmm.R
+fit.lme4.ms.large.1.Rout: phyloglmm.R names.R
 
 compare.pez.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R compare_pez.R
 	$(run-R)
 
-compare.pez.ms.small.1.Rout: compare_pez.R
+compare.pez.ms.med.1.Rout: compare_pez.R
 
 fit.pez.ms.med.1.Rout: fit_pez.R
 fit.lme4.ms.med.1.Rout: phyloglmm.R

@@ -22,6 +22,9 @@ dat <- filter(dune.veg2, sp%in% dune.traits2$sp)
 
 dat <- left_join(dat,dune.traits2,by="sp")
 
+print(dat)
+
+
 #   if (full.data == 1) {
 #     data.sp <- aggregate(presence ~ sp, data = dat, sum)
 #     #hist(data.sp$presence, breaks=30)
@@ -126,13 +129,15 @@ trait_phy_sig = filter(trait.phy, year == "2012") %>%
 trait_phy_sig
 # get traits that sites are selecting for
 
-traits_lme4 = trait_selection(veg.long = dune.veg2, 
-                                           trait = dune.traits2,
-                                           binary = FALSE, trans =  "log")# %>% 
-traits_lme4 %>%  mutate(lmer.Pr = round(lmer.Pr, 6)) %>% 
-  arrange(lmer.Pr) # part of table 3
 
-traits_glme4 = trait_selection(veg.long = dune.veg2, 
-                                            trait = dune.traits2, 
-                                            binary = TRUE)
-# part of table 3S
+## Everything below doesn't work, comment out for now
+# traits_lme4 = trait_selection(veg.long = dune.veg2, 
+#                                            trait = dune.traits2,
+#                                            binary = FALSE, trans =  "log")# %>% 
+# traits_lme4 %>%  mutate(lmer.Pr = round(lmer.Pr, 6)) %>% 
+#   arrange(lmer.Pr) # part of table 3
+# 
+# traits_glme4 = trait_selection(veg.long = dune.veg2, 
+#                                             trait = dune.traits2, 
+#                                             binary = TRUE)
+# # part of table 3S

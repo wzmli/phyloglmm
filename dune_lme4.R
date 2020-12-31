@@ -29,8 +29,8 @@ phyZ <- phylo.to.Z(phy,stand = TRUE)
 phyZ <- phyZ[order(rownames(phyZ)),]
 
 dat <- (dat
-  %>% rowwise()
-  %>% mutate(obs = sp
+#  %>% rowwise()
+  %>% mutate(obs = factor(sp)
   )
 )
 
@@ -39,18 +39,20 @@ dat <- (dat
 
 lme4time_1 <- system.time(
   lme4fit_1 <- phylo_lmm(Y ~ 1 + log.sla + annual 
-		  + (1|obs) 
-		 + (1|sp)
-      + (1 | sp:site)
+		+ (1|sp)
+		+ (1|obs) 
+      + (1 | site:sp)
 		   + (0 + log.sla | site)
-		  + (1|site) 
+#		  + (1|site) 
 		, data=dat
-		, phylonm = c("sp","sp:site")
+		, phylonm = c("sp","site:sp")
 		, phyloZ=phyZ
 		, control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
 		, REML = FALSE
   )
 )
+
+print(summary(lme4fit_1))
 
 REs <- get_RE(veg.long = dune.veg2
 	, trait = dune.traits2[c(1, 2)]
@@ -77,7 +79,7 @@ peztime_1 <- system.time(
    , re.sp
       , re.nested.phy
       , re.sla
-      , re.site
+#      , re.site
      )
    , REML = F
    , verbose = F

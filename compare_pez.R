@@ -18,11 +18,11 @@ phyZ <- phylo.to.Z(phy)
 # debug(phylo_lmm)
 # debug(modify_phylo_retrms)
 
-Vphy <- Vphy[levels(dat$sp),levels(dat$sp)]
+# Vphy <- Vphy[levels(dat$sp),levels(dat$sp)]
 
 
 
-phyrfit <- communityPGLMM(new_y ~ X
+phyrfit <- communityPGLMM(y_all ~ X
 	+ (1 | sp__)
 	+ (X | sp__)
 	+ (1 | site)
@@ -35,7 +35,7 @@ phyrfit <- communityPGLMM(new_y ~ X
 	, verbose = T
 )
 
-lme4fit <- phylo_lmm(new_y ~ X
+lme4fit <- phylo_lmm(y_all ~ X
 	+ (1 | sp)
 	+ (0 + X | sp)
 	+ (1 | obs)
