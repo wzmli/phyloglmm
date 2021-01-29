@@ -7,7 +7,7 @@ Thank you for submitting your research to MEE and apologies for the long time ge
 As currently presented I found this paper a little bit in between an application note and a research paper but lacking some key components from both, but turning it into a research paper would require, in my opinion, the addition of an empirical example (see also comments from reviewer 1).
 
 **MLi: This paper is intended as an application/software paper.** 
-**TODO: didn't we already do this? We have included the example provided in Chapter 11 Garamszegi. We can add Li et al. Dune mellow example if we want.** 
+**TODO: didn't we already do this? We have included the example provided in Chapter 11 Garamszegi (DONE) in our release branch. We can add Li et al. Dune mellow example if we want, however, one of the reason we went through the trouble is because we found some bugs in their example with phylo-interactions.** 
 
 The benchmarking of the new method is interesting but is mixing too many confounding factors linked with the different implementations of the various packages (see also comment from reviewer 2). What is the performance of the new model all else being equal? How much of the performance results is actually due to differences the optimization among the different R packages?
 
@@ -70,6 +70,7 @@ However, I think the article could fail to reach the extent of its audience by m
 - It would also be beneficial to add an application of the method with biological data directly in the article. The more your article is associated with biological ideas, the more users you will reach in my opinion.
 
 **Going to be a little annoying looking for an example with replicates.**
+**Skip?**
 
 - Naming that class of models (even though it is still pglmm) could help the reader follow the results section and identify the method as well.
 
