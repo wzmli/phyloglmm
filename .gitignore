@@ -9,9 +9,13 @@
 *.Rlog
 *.wrapR.rout
 
+*.html
+
 *.Rds
 *.rds
 target.mk
+
+datadir/lme4/*.rds
 
 *.aux
 *.log
