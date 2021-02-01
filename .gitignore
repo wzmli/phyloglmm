@@ -13,6 +13,8 @@
 *.rds
 target.mk
 
+*.pdf
+
 *.aux
 *.log
 *.bbl
