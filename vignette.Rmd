@@ -25,7 +25,7 @@ seed <- 101
 set.seed(seed)
 
 # Basic parameters
-nspp <- 3
+nspp <- 10
 
 # # fixed effects
 beta0 <- 0
@@ -121,11 +121,12 @@ dat <- (dat %>% mutate(obs = sp))
 
 ## everything can be reduce down to formula,data, and a phy object
 
-fitmod <- phylo_lmm2(Y ~ X + (1 |sp) + (1 + X|sp)
+fitmod <- phylo_lmm(Y ~ X + (1 + X|sp)
 			, data=dat 
 			, phylonm = "sp" # wishy-washy
+			, phylo = phy
 			, phyloZ = phyZ # Maybe we just want the phy object and compute this internally
-			, nsp = nspp # make default check
+			# , nsp = nspp # make default check
 			, control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")  ## make default
 			, REML = FALSE # make default 
 )
