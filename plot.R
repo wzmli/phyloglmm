@@ -5,8 +5,21 @@ library(ggplot2)
 library(tidyr)
 library(grid)
 library(scales)
+library(colorspace)
+library(directlabels)
+library(ggrepel)
+
 theme_set(theme_bw())
 zmargin <- theme(panel.spacing=grid::unit(0,"lines"))
+
+all_pkgs <- c("gls","phylolm","lme4","glmmTMB","brms","pez","phyr","MCMCglmm")
+sub_pkgs <- setdiff(all_pkgs, c("pez","phyr"))
+sub_pkgs2 <- setdiff(all_pkgs, c("gls","phylolm","brms","MCMCglmm"))
+colvec_all <- setNames(colorspace::qualitative_hcl(n=length(all_pkgs)),
+                       all_pkgs)
+colvec  <- colvec_all[sub_pkgs]
+##    c(gls="Black",phylolm="Red",lme4="Dark Blue",
+##                 glmmTMB="Dark Green",brms="Orange",pez="Gray",phyr="Purple",MCMCglmm="Yellow")
 
 data_list <- readRDS("datadir/collect_rerun.RDS")
 ssdat_raw <- data_list[[1]]
@@ -24,11 +37,11 @@ ssdat <- (ssdat_raw
 	%>% separate(model,c("platform", "sites", "size", "seed","saveformat"), "[.]")
 	%>% dplyr:::select(time, platform, size, seed, resid, phylo_int, phylo_X, phylo_cor, B0, B1)
 	%>% gather(key = sdtype, value = sd, -c(platform, size, seed, time, B0, B1))
-	%>% left_join(.,sspar_df)
+	%>% left_join(.,sspar_df, by="sdtype")
 	%>% mutate(size = factor(size
 	      , levels=c("small","med","large","xlarge"), labels=c("25","50","100","500")
 			)
-			, Platform = factor(platform, levels=c("gls", "phylolm","lme4", "glmmTMB", "brms","MCMCglmm"))
+			, Platform = factor(platform, levels=sub_pkgs)
 			, sdtype = factor(sdtype, levels=c("phylo_int","phylo_cor","phylo_X","resid")
 			                  , labels=c(expression(paste("Phylogenetic random intercept ", Sigma[phy[int]]))
 			                             , expression(paste("Phylogenetic random intercept-slope correlation ", rho[phy[int-slope]]))
@@ -39,18 +52,11 @@ ssdat <- (ssdat_raw
 	# %>% filter(platform != "brms")
 )
 
-## FIXME: could match these more programatically (use 'values' in
-## scale_colour_manual() ?)
-colvec_all <-  c(gls="Black",phylolm="Red",lme4="Dark Blue",
-                 glmmTMB="Dark Green",brms="Orange",pez="Gray",phyr="Purple",MCMCglmm="Yellow")
-colvec  <- colvec_all[c("gls","phylolm","lme4","glmmTMB","brms","MCMCglmm")]
-colvec2 <- colvec_all[c("pez","phyr","lme4","glmmTMB")]
-
 gg_ss <- (ggplot(data=ssdat, aes(x=size, y=sd, col=Platform, fill=Platform))
   + scale_y_continuous(limits = c(0,200), oob=scales::squish)
   + facet_wrap(~sdtype, scale="free_y", labeller = label_parsed)
   # + geom_violin(position=position_dodge(width=0.5),alpha=0.4)
-  + geom_boxplot(outlier.colour = NULL, varwidth=TRUE, alpha=0.2)
+  + geom_boxplot(outlier.colour = NULL, varwidth=TRUE, alpha=0.5)
   + geom_hline(aes(yintercept = y_int), lty=2)
   + scale_fill_manual(values=colvec)
   # + scale_fill_brewer(palette = "Dark2")
@@ -65,7 +71,26 @@ gg_ss <- (ggplot(data=ssdat, aes(x=size, y=sd, col=Platform, fill=Platform))
 print(gg_ss)
 ggsave(plot = gg_ss,filename = "figure/ssplot.pdf",width = 10, height=7)
 
-scaleFUN <- function(x) sprintf("%.2f", x)
+## scaleFUN <- function(x) sprintf("%.2g", x)
+scaleFUN <- function(x) {
+    ## apply format() individually so we can get decimal places where
+    ## needed and suppress them elsewhere
+    sapply(x,format,signif=1,scientific=FALSE)
+}
+##format(x,signif=1,scientific=FALSE)
+
+## tweak label positions
+sspos <- ssdat %>% group_by(Platform,size) %>%
+    summarise(time=median(time),.groups="drop_last") %>%
+    filter(time==max(time)) %>%
+    ungroup() %>%
+    mutate(nplatform=drop(scale(as.numeric(Platform),scale=FALSE)),
+           nsize=as.numeric(size)+0.1*nplatform,
+           ## geom_label_repel() messes up other vertical positions: we only
+           ## want to adjust these two ...
+           time=time*case_when(Platform=="lme4" ~ 0.6,
+                             Platform=="glmmTMB" ~ 1.5,
+                             TRUE ~ 1))
 
 gg_sstime <- (ggplot(data=ssdat, aes(x=size, y=time, col=Platform,
                                      fill=Platform))
@@ -75,17 +100,30 @@ gg_sstime <- (ggplot(data=ssdat, aes(x=size, y=time, col=Platform,
 	# + scale_y_log10(breaks = trans_breaks("log10", function(x) 10^x)
 	#     , labels = trans_format("log10", math_format(10^.x))
 	#   )
-	+ scale_y_log10(breaks = trans_breaks("log10", function(x) 10^x),labels = scaleFUN)
+    + scale_y_log10(breaks = trans_breaks("log10",
+                                          function(x) 10^x),labels = scaleFUN)
 	+ scale_color_manual(values=colvec)
 	+ scale_fill_manual(values=colvec)
     + ylab("Time (seconds)")
     + xlab("Number of Species")
 	# + ggtitle("Single site time")
-  + theme_bw()
+    + theme_bw()
+    + stat_summary(fun=median,geom="line",aes(group=Platform),
+                   position=position_dodge(width=0.75),
+                   size=3,alpha=0.1)
+    + geom_label(data=sspos,
+                 aes(x=nsize,y=time,label=Platform,colour=Platform),
+                 ## direction="y",
+                 hjust="left",
+                 nudge_x=0.2,
+                 fill=NA)
+    + theme(legend.position="none")
 )
-
 print(gg_sstime)
-ggsave(plot = gg_sstime,filename = "figure/sstime.pdf",width = 10, height=7)
+## TODO: spend more time piddling with horizontal placement
+## to match position_dodge effects?
+
+ggsave(plot = gg_sstime,filename = "figure/sstime.pdf",width = 10, height=5)
 
 
 b_ci <- function(x,w) {
@@ -182,7 +220,6 @@ gg_ms <- (gg_ss
 	+ scale_color_manual(values=colvec2)
 	+ scale_fill_manual(values=colvec2)
 	+ theme(legend.position = "bottom")
-
 )
 
 print(gg_ms)
