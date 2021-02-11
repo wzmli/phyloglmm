@@ -1,5 +1,4 @@
 ## plots for the ms
-
 library(dplyr)
 library(ggplot2)
 library(tidyr)
@@ -18,6 +17,7 @@ sub_pkgs2 <- setdiff(all_pkgs, c("gls","phylolm","brms","MCMCglmm"))
 colvec_all <- setNames(colorspace::qualitative_hcl(n=length(all_pkgs)),
                        all_pkgs)
 colvec  <- colvec_all[sub_pkgs]
+colvec2  <- colvec_all[sub_pkgs2]
 ##    c(gls="Black",phylolm="Red",lme4="Dark Blue",
 ##                 glmmTMB="Dark Green",brms="Orange",pez="Gray",phyr="Purple",MCMCglmm="Yellow")
 
@@ -92,7 +92,7 @@ sspos <- ssdat %>% group_by(Platform,size) %>%
                              Platform=="glmmTMB" ~ 1.5,
                              TRUE ~ 1))
 
-gg_sstime <- (ggplot(data=ssdat, aes(x=size, y=time, col=Platform,
+gg_sstime0 <- (ggplot(data=ssdat, aes(x=size, y=time, col=Platform,
                                      fill=Platform))
 	# + geom_violin(position=position_dodge(width=0.2),alpha=0.4)
 	+ geom_boxplot(outlier.colour = NULL, varwidth=TRUE, alpha=0.2)
@@ -111,15 +111,21 @@ gg_sstime <- (ggplot(data=ssdat, aes(x=size, y=time, col=Platform,
     + stat_summary(fun=median,geom="line",aes(group=Platform),
                    position=position_dodge(width=0.75),
                    size=3,alpha=0.1)
-    + geom_label(data=sspos,
+)
+
+gg_sstime <- (gg_sstime0
+          + geom_label(data=sspos,
                  aes(x=nsize,y=time,label=Platform,colour=Platform),
                  ## direction="y",
                  hjust="left",
                  nudge_x=0.2,
                  fill=NA)
-    + theme(legend.position="none")
+          + theme(legend.position="none")
 )
-print(gg_sstime)
+
+print(
+    gg_sstime
+)
 ## TODO: spend more time piddling with horizontal placement
 ## to match position_dodge effects?
 
@@ -227,18 +233,16 @@ ggsave(plot = gg_ms,filename = "figure/msplot.pdf",width = 10, height=7)
 
 
 
-gg_mstime <- (gg_sstime
+gg_mstime <- (gg_sstime0
 	%+% msdat
 	# + ggtitle("multiple site time")
-	+ scale_color_manual(values=colvec2)
-	
+	+ scale_color_manual(values=colvec_all)
 )
-
 print(gg_mstime)
+
 ggsave(plot = gg_mstime,filename = "figure/mstime.pdf",width = 10, height=7)
 
 
-## BMB: see revised code above
 ms_coverage <- (msdat
                 # %>% filter(!(sd %in% c(-1,1)))
                 %>% as_tibble()
@@ -274,7 +278,7 @@ print(mscoverage<- gg_mscoverage 	+ scale_color_manual(values=colvec2))
 ggsave(plot = mscoverage,filename = "figure/mscoverage.pdf",width = 10, height=5)
 
 pp <- readRDS("datadir/lme4_ms_small_profile.RDS")
-pp2 <- pp %>% mutate(b0 = between(0,B0_lower,B0_upper), b1=between(0,B1_lower,B1_upper))
+pp2 <- pp %>% rowwise() %>% mutate(b0 = between(0,B0_lower,B0_upper), b1=between(0,B1_lower,B1_upper))
 profile_dat <- data.frame(Platform = "lme4", size=factor(25)
                           ,fixed_parameter=c("B0","B1") ,Parameter=c("beta[0]","beta[1]")
                           , coverage = c(sum(pp2$b0,na.rm=TRUE)/nrow(pp2), sum(pp2$b1,na.rm=TRUE)/nrow(pp2)))

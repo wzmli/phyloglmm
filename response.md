@@ -2,17 +2,17 @@ Dear Authors,
 
 Thank you for submitting your research to MEE and apologies for the long time getting back to you, which partly a consequence of the ongoing lock-down work-from-home situation. Your manuscript has been reviewed by two highly qualified reviewers who found your work interesting while raising several points about the presentation and extent of the simulations, the scalability of the method and suggesting the inclusion of empirical examples. Based on the reviewers’ judgment and my own take on the paper I cannot recommend the acceptance of this paper at this point, but would encourage you to resubmit a thoroughly re-worked version.
 
-**MLi: Thank you for letting us resubmit.**
+**We appreciate the opportunity to resubmit a revised version.**
 
 As currently presented I found this paper a little bit in between an application note and a research paper but lacking some key components from both, but turning it into a research paper would require, in my opinion, the addition of an empirical example (see also comments from reviewer 1).
 
-**MLi: This paper is intended as an application/software paper.** 
-**TODO: didn't we already do this? We have included the example provided in Chapter 11 Garamszegi (DONE) in our release branch. We can add Li et al. Dune mellow example if we want, however, one of the reason we went through the trouble is because we found some bugs in their example with phylo-interactions.** 
+**We intended the paper as an application/software paper, not as a research paper: there is some novelty here, but as our primary innovation is to recast the model in a mathematically equivalent but more convenient/efficient form, we would prefer to treat this as an application.** 
+
+**BMB: I think if we have a non-problematic example we should include it**
 
 The benchmarking of the new method is interesting but is mixing too many confounding factors linked with the different implementations of the various packages (see also comment from reviewer 2). What is the performance of the new model all else being equal? How much of the performance results is actually due to differences the optimization among the different R packages?
 
 **MLi: The model is the mathematically equivalent, thus, the difference is the speed/efficiency.**
-
 **MLi: Comparing pez and phyr uses lme4/glmer correlation structure. This is the most direct comparision of the proposed method (i.e. correlation vs random effect matrix structure. **
 
 In the Introduction, a broader perspective about PCMs should be given before jumping into the specifics of the models tested here. Phylogenetic comparative methods include lots of other things, see e.g. Luke Harmon’s book: https://lukejharmon.github.io/pcm/chapters/. In general, a better reference to previous work is required and some claims of the paper should be either demonstrated or removed. For example, stating that “existing [PCM] procedures are either insufficiently flexible or too computationally demanding to analyze large data sets” is simply not true. There are many research papers applying PCMs to large datasets (and as a side note: how large should a dataset be to be considered large?).

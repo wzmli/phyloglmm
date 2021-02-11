@@ -157,7 +157,7 @@ fit.brms.ss.small.1.Rout: fit_brms.R
 
 collect_gls.Rout: collect_gls.R
 	$(run-R)
-
+	
 collect.Rout: collect.R
 	$(run-R)
 
