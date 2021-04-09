@@ -1,5 +1,5 @@
 ---
-title: "Example"
+title: "Garamszegi example"
 author: "Michael Li and Ben Bolker"
 output:
   pdf_document: default
@@ -72,7 +72,7 @@ phylo_lmm_fit <- phylo_lmm(phen~cofactor+(1|sp)
 print(summary(phylo_lmm_fit))
 ```
 
-Similarily, fitting using glmmTMB:
+Similarly, fitting using glmmTMB:
 
 ```{r glmmTMB}
 glmmTMB_fit <- glmmTMBphylo(phen~cofactor+(1|sp)
