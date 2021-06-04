@@ -1,4 +1,5 @@
 ## new phyloglmm_setup
+if (getRversion() < "4.0.0") stop("need R version >= 4.0.x (for deparse1)")
 
 phylo.to.Z <- function(r,stand=FALSE){
   ntip <- length(r$tip.label)
@@ -21,7 +22,7 @@ phylo.to.Z <- function(r,stand=FALSE){
   if(stand){Z <- t(sqrt(r$edge.length/sig) * t(Zid))}
   rownames(Z) <- r$tip.label
   colnames(Z) <- 1:length(r$edge.length)
-  return(Z)                                  
+  return(Z)
 }
 
 phylo_lmm <- function(formula,data,phylo,phylonm=NULL,phyloZ=NULL,control,REML,doFit,...){
@@ -31,9 +32,9 @@ phylo_lmm <- function(formula,data,phylo,phylonm=NULL,phyloZ=NULL,control,REML,d
   mkMerMod(environment(devfun), opt, lmod$reTrms, fr = lmod$fr)
 }
 
-lFormula <- function (formula, data = NULL, REML = TRUE, subset, weights, 
+lFormula <- function (formula, data = NULL, REML = TRUE, subset, weights,
           na.action, offset, contrasts = NULL, control = lmerControl(),phylonm,phyloZ,
-          ...) 
+          ...)
 {
   control <- control$checkControl
   mf <- mc <- match.call()
@@ -43,18 +44,18 @@ lFormula <- function (formula, data = NULL, REML = TRUE, subset, weights,
   do.call(lme4:::checkArgs, c(list("lmer"), l...))
   if (!is.null(list(...)[["family"]])) {
     mc[[1]] <- quote(lme4::glFormula)
-    if (missing(control)) 
+    if (missing(control))
       mc[["control"]] <- glmerControl()
     return(eval(mc, parent.frame()))
   }
   cstr <- "check.formula.LHS"
   lme4:::checkCtrlLevels(cstr, control[[cstr]])
-  denv <- lme4:::checkFormulaData(formula, data, checkLHS = control$check.formula.LHS == 
+  denv <- lme4:::checkFormulaData(formula, data, checkLHS = control$check.formula.LHS ==
                              "stop")
   formula <- as.formula(formula, env = denv)
   lme4:::RHSForm(formula) <- expandDoubleVerts(lme4:::RHSForm(formula))
   mc$formula <- formula
-  m <- match(c("data", "subset", "weights", "na.action", "offset"), 
+  m <- match(c("data", "subset", "weights", "na.action", "offset"),
              names(mf), 0L)
   mf <- mf[c(1L, m)]
   mf$drop.unused.levels <- TRUE
@@ -62,7 +63,7 @@ lFormula <- function (formula, data = NULL, REML = TRUE, subset, weights,
   fr.form <- subbars(formula)
   environment(fr.form) <- environment(formula)
   for (i in c("weights", "offset")) {
-    if (!eval(bquote(missing(x = .(i))))) 
+    if (!eval(bquote(missing(x = .(i)))))
       assign(i, get(i, parent.frame()), environment(fr.form))
   }
   mf$formula <- fr.form
@@ -75,7 +76,7 @@ lFormula <- function (formula, data = NULL, REML = TRUE, subset, weights,
   wmsgNlev <- lme4:::checkNlevels(reTrms$flist, n = n, control)
   wmsgZdims <- lme4:::checkZdims(reTrms$Ztlist, n = n, control, allow.n = FALSE)
   if (anyNA(reTrms$Zt)) {
-    stop("NA in Z (random-effects model matrix): ", "please use ", 
+    stop("NA in Z (random-effects model matrix): ", "please use ",
          shQuote("na.action='na.omit'"), " or ", shQuote("na.action='na.exclude'"))
   }
   wmsgZrank <- lme4:::checkZrank(reTrms$Zt, n = n, control, nonSmall = 1e+06)
@@ -83,34 +84,34 @@ lFormula <- function (formula, data = NULL, REML = TRUE, subset, weights,
   lme4:::RHSForm(fixedform) <- nobars(lme4:::RHSForm(fixedform))
   mf$formula <- fixedform
   fixedfr <- eval(mf, parent.frame())
-  attr(attr(fr, "terms"), "predvars.fixed") <- attr(attr(fixedfr, 
+  attr(attr(fr, "terms"), "predvars.fixed") <- attr(attr(fixedfr,
                                                          "terms"), "predvars")
   ranform <- formula
   lme4:::RHSForm(ranform) <- subbars(lme4:::RHSForm(lme4:::reOnly(formula)))
   mf$formula <- ranform
   ranfr <- eval(mf, parent.frame())
-  attr(attr(fr, "terms"), "predvars.random") <- attr(terms(ranfr), 
+  attr(attr(fr, "terms"), "predvars.random") <- attr(terms(ranfr),
                                                      "predvars")
   X <- model.matrix(fixedform, fr, contrasts)
-  if (is.null(rankX.chk <- control[["check.rankX"]])) 
+  if (is.null(rankX.chk <- control[["check.rankX"]]))
     rankX.chk <- eval(formals(lmerControl)[["check.rankX"]])[[1]]
   X <- lme4:::chkRank.drop.cols(X, kind = rankX.chk, tol = 1e-07)
-  if (is.null(scaleX.chk <- control[["check.scaleX"]])) 
+  if (is.null(scaleX.chk <- control[["check.scaleX"]]))
     scaleX.chk <- eval(formals(lmerControl)[["check.scaleX"]])[[1]]
   X <- lme4:::checkScaleX(X, kind = scaleX.chk)
-  list(fr = fr, X = X, reTrms = reTrms, REML = REML, formula = formula, phyloZ=phyloZ, 
+  list(fr = fr, X = X, reTrms = reTrms, REML = REML, formula = formula, phyloZ=phyloZ,
        wmsgs = c(Nlev = wmsgNlev, Zdims = wmsgZdims, Zrank = wmsgZrank))
 }
 
 
 mkReTrms <- function(bars, fr, phylonm,phyloZ,drop.unused.levels = TRUE){
-  if (!length(bars)) 
-    stop("No random effects terms specified in formula", 
+  if (!length(bars))
+    stop("No random effects terms specified in formula",
          call. = FALSE)
-  stopifnot(is.list(bars), vapply(bars, is.language, NA), inherits(fr, 
+  stopifnot(is.list(bars), vapply(bars, is.language, NA), inherits(fr,
                                                                    "data.frame"))
   names(bars) <- lme4:::barnames(bars)
-  term.names <- vapply(bars, lme4:::safeDeparse, "")
+  term.names <- vapply(bars, deparse1, "")
   blist <- lapply(bars, mkBlist, fr, phylonm, phyloZ, drop.unused.levels)
   nl <- vapply(blist, `[[`, 0L, "nl")
   if (any(diff(nl) > 0)) {
@@ -128,24 +129,24 @@ mkReTrms <- function(bars, fr, phylonm,phyloZ,drop.unused.levels = TRUE){
   nth <- as.integer((nc * (nc + 1))/2)
   nb <- nc * nl
 #   if (sum(nb) != q) {
-#     stop(sprintf("total number of RE (%d) not equal to nrow(Zt) (%d)", 
+#     stop(sprintf("total number of RE (%d) not equal to nrow(Zt) (%d)",
 #                  sum(nb), q))
 #   }
   boff <- cumsum(c(0L, nb))
   thoff <- cumsum(c(0L, nth))
-  Lambdat <- t(do.call(sparseMatrix, do.call(rBind, lapply(seq_along(blist), 
+  Lambdat <- t(do.call(sparseMatrix, do.call(rBind, lapply(seq_along(blist),
                                                            function(i) {
                                                              mm <- matrix(seq_len(nb[i]), ncol = nc[i], byrow = TRUE)
                                                              dd <- diag(nc[i])
                                                              ltri <- lower.tri(dd, diag = TRUE)
                                                              ii <- row(dd)[ltri]
                                                              jj <- col(dd)[ltri]
-                                                             data.frame(i = as.vector(mm[, ii]) + boff[i], j = as.vector(mm[, 
-                                                                                                                            jj]) + boff[i], x = as.double(rep.int(seq_along(ii), 
+                                                             data.frame(i = as.vector(mm[, ii]) + boff[i], j = as.vector(mm[,
+                                                                                                                            jj]) + boff[i], x = as.double(rep.int(seq_along(ii),
                                                                                                                                                                   rep.int(nl[i], length(ii))) + thoff[i]))
                                                            }))))
   thet <- numeric(sum(nth))
-  ll <- list(Zt = drop0(Zt), theta = thet, Lind = as.integer(Lambdat@x), 
+  ll <- list(Zt = drop0(Zt), theta = thet, Lind = as.integer(Lambdat@x),
              Gp = unname(c(0L, cumsum(nb))))
   ll$lower <- -Inf * (thet + 1)
   ll$lower[unique(diag(Lambdat))] <- 0
@@ -167,24 +168,24 @@ mkReTrms <- function(bars, fr, phylonm,phyloZ,drop.unused.levels = TRUE){
   ll
 }
 
-mkBlist <- function (x, frloc, phylonm,phyloZ, drop.unused.levels = TRUE) 
+mkBlist <- function (x, frloc, phylonm,phyloZ, drop.unused.levels = TRUE)
 {
   frloc <- factorize(x, frloc)
-  if (is.null(ff <- tryCatch(eval(substitute(lme4:::makeFac(fac), 
-                                             list(fac = x[[3]])), frloc), error = function(e) NULL))) 
-    stop("couldn't evaluate grouping factor ", deparse(x[[3]]), 
-         " within model frame:", " try adding grouping factor to data ", 
+  if (is.null(ff <- tryCatch(eval(substitute(lme4:::makeFac(fac),
+                                             list(fac = x[[3]])), frloc), error = function(e) NULL)))
+    stop("couldn't evaluate grouping factor ", deparse(x[[3]]),
+         " within model frame:", " try adding grouping factor to data ",
          "frame explicitly if possible", call. = FALSE)
-  if (all(is.na(ff))) 
-    stop("Invalid grouping factor specification, ", deparse(x[[3]]), 
+  if (all(is.na(ff)))
+    stop("Invalid grouping factor specification, ", deparse(x[[3]]),
          call. = FALSE)
-  if (drop.unused.levels) 
+  if (drop.unused.levels)
     ff <- factor(ff, exclude = NA)
   if(phylonm[1] %in% names(frloc)){
     phyloZ <- phyloZ[levels(frloc[,phylonm[1]]),]
   }
   nl <- length(levels(ff))
-  mm <- model.matrix(eval(substitute(~foo, list(foo = x[[2]]))), 
+  mm <- model.matrix(eval(substitute(~foo, list(foo = x[[2]]))),
                      frloc)
   sm <- fac2sparse(ff, to = "d", drop.unused.levels = drop.unused.levels)
   if(grepl(phylonm[1],x[3])){
@@ -231,35 +232,35 @@ phylo_glmm <- function(formula,data,phylo,phylonm=NULL,phyloZ=NULL,control,famil
   mkMerMod(environment(devfun), opt, glmod$reTrms, fr = glmod$fr)
 }
 
-glFormula <- function (formula, data = NULL, family = gaussian, subset, weights, 
-                        na.action, offset, contrasts = NULL, start, mustart, etastart, 
-                        control = glmerControl(),phylonm,phyloZ,...) 
+glFormula <- function (formula, data = NULL, family = gaussian, subset, weights,
+                        na.action, offset, contrasts = NULL, start, mustart, etastart,
+                        control = glmerControl(),phylonm,phyloZ,...)
 {
   control <- control$checkControl
   mf <- mc <- match.call()
-  if (is.character(family)) 
+  if (is.character(family))
     family <- get(family, mode = "function", envir = parent.frame(2))
-  if (is.function(family)) 
+  if (is.function(family))
     family <- family()
   if (isTRUE(all.equal(family, gaussian()))) {
     mc[[1]] <- quote(lme4::lFormula)
     mc["family"] <- NULL
     return(eval(mc, parent.frame()))
   }
-  if (family$family %in% c("quasibinomial", "quasipoisson", 
-                           "quasi")) 
+  if (family$family %in% c("quasibinomial", "quasipoisson",
+                           "quasi"))
     stop("\"quasi\" families cannot be used in glmer")
-  ignoreArgs <- c("start", "verbose", "devFunOnly", "optimizer", 
+  ignoreArgs <- c("start", "verbose", "devFunOnly", "optimizer",
                   "control", "nAGQ")
   l... <- list(...)
   l... <- l...[!names(l...) %in% ignoreArgs]
   do.call(lme4:::checkArgs, c(list("glmer"), l...))
   cstr <- "check.formula.LHS"
   lme4:::checkCtrlLevels(cstr, control[[cstr]])
-  denv <- lme4:::checkFormulaData(formula, data, checkLHS = control$check.formula.LHS == 
+  denv <- lme4:::checkFormulaData(formula, data, checkLHS = control$check.formula.LHS ==
                              "stop")
   mc$formula <- formula <- as.formula(formula, env = denv)
-  m <- match(c("data", "subset", "weights", "na.action", "offset", 
+  m <- match(c("data", "subset", "weights", "na.action", "offset",
                "mustart", "etastart"), names(mf), 0L)
   mf <- mf[c(1L, m)]
   mf$drop.unused.levels <- TRUE
@@ -267,7 +268,7 @@ glFormula <- function (formula, data = NULL, family = gaussian, subset, weights,
   fr.form <- subbars(formula)
   environment(fr.form) <- environment(formula)
   for (i in c("weights", "offset")) {
-    if (!eval(bquote(missing(x = .(i))))) 
+    if (!eval(bquote(missing(x = .(i)))))
       assign(i, get(i, parent.frame()), environment(fr.form))
   }
   mf$formula <- fr.form
@@ -282,28 +283,28 @@ glFormula <- function (formula, data = NULL, family = gaussian, subset, weights,
   reTrms <- mkReTrms(findbars(lme4:::RHSForm(formula)), fr,phylonm, phyloZ)
   wmsgNlev <- lme4:::checkNlevels(reTrms$flist, n = n, control, allow.n = TRUE)
   wmsgZdims <- lme4:::checkZdims(reTrms$Ztlist, n = n, control, allow.n = TRUE)
-  wmsgZrank <- lme4:::checkZrank(reTrms$Zt, n = n, control, nonSmall = 1e+06, 
+  wmsgZrank <- lme4:::checkZrank(reTrms$Zt, n = n, control, nonSmall = 1e+06,
                           allow.n = TRUE)
   fixedform <- formula
   lme4:::RHSForm(fixedform) <- nobars(lme4:::RHSForm(fixedform))
   mf$formula <- fixedform
   fixedfr <- eval(mf, parent.frame())
-  attr(attr(fr, "terms"), "predvars.fixed") <- attr(attr(fixedfr, 
+  attr(attr(fr, "terms"), "predvars.fixed") <- attr(attr(fixedfr,
                                                          "terms"), "predvars")
   ranform <- formula
   lme4:::RHSForm(ranform) <- subbars(lme4:::RHSForm(lme4:::reOnly(formula)))
   mf$formula <- ranform
   ranfr <- eval(mf, parent.frame())
-  attr(attr(fr, "terms"), "predvars.random") <- attr(terms(ranfr), 
+  attr(attr(fr, "terms"), "predvars.random") <- attr(terms(ranfr),
                                                      "predvars")
   X <- model.matrix(fixedform, fr, contrasts)
-  if (is.null(rankX.chk <- control[["check.rankX"]])) 
+  if (is.null(rankX.chk <- control[["check.rankX"]]))
     rankX.chk <- eval(formals(lmerControl)[["check.rankX"]])[[1]]
   X <- lme4:::chkRank.drop.cols(X, kind = rankX.chk, tol = 1e-07)
-  if (is.null(scaleX.chk <- control[["check.scaleX"]])) 
+  if (is.null(scaleX.chk <- control[["check.scaleX"]]))
     scaleX.chk <- eval(formals(lmerControl)[["check.scaleX"]])[[1]]
   X <- lme4:::checkScaleX(X, kind = scaleX.chk)
-  list(fr = fr, X = X, reTrms = reTrms, family = family, formula = formula, 
+  list(fr = fr, X = X, reTrms = reTrms, family = family, formula = formula,
        wmsgs = c(Nlev = wmsgNlev, Zdims = wmsgZdims, Zrank = wmsgZrank))
 }
 
