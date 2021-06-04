@@ -1,9 +1,12 @@
-## new phyloglmm_setup
-if (getRversion() < "4.0.0") stop("need R version >= 4.0.x (for deparse1)")
-
-phylo.to.Z <- function(r,stand=FALSE){
+##' construct a Z matrix from a phylogeny
+##' @name phylo_machinery
+##' @param r a \code{phylo} object
+##' @param stand (?)
+##' @export
+##' @importFrom Matrix t diag
+phylo.to.Z <- function(r, stand=FALSE){
   ntip <- length(r$tip.label)
-  Zid <- Matrix(0.0,ncol=length(r$edge.length),nrow=ntip)
+  Zid <- Matrix::Matrix(0.0,ncol=length(r$edge.length),nrow=ntip)
   nodes <- (ntip+1):max(r$edge)
   root <- nodes[!(nodes %in% r$edge[,2])]
   for (i in 1:ntip){
@@ -17,24 +20,38 @@ phylo.to.Z <- function(r,stand=FALSE){
   V <- vcv(r)
   # V <- V/max(V)
   sig <- exp(as.numeric(determinant(V)["modulus"])/ntip)
-  # sig <- det(V)^(1/ntip)
-  Z <- t(sqrt(r$edge.length) * t(Zid))
-  if(stand){Z <- t(sqrt(r$edge.length/sig) * t(Zid))}
+  ## sig <- det(V)^(1/ntip)
+  tZid <- Matrix::t(Zid)
+  Z <- Matrix::t(sqrt(r$edge.length) * tZid)
+  if (stand) { Z <- Matrix::t(sqrt(r$edge.length/sig) * tZid) }
   rownames(Z) <- r$tip.label
   colnames(Z) <- 1:length(r$edge.length)
   return(Z)
 }
 
-phylo_lmm <- function(formula,data,phylo,phylonm=NULL,phyloZ=NULL,control,REML,doFit,...){
-  lmod <- lFormula(formula=formula,data = data,control=control, REML=REML,phylonm=phylonm, phyloZ=phyloZ,...)
+##' phylogenetic linear mixed model
+phylo_lmm <- function(formula, data, phylo, phylonm=NULL, phyloZ=NULL, control, REML, doFit) {
+  lmod <- lFormula(formula=formula,data = data,control=control, REML=REML,phylonm=phylonm, phyloZ=phyloZ)
   devfun <- do.call(mkLmerDevfun, lmod)
   opt <- optimizeLmer(devfun,control=control$optCtrl)
   mkMerMod(environment(devfun), opt, lmod$reTrms, fr = lmod$fr)
 }
 
+##' hacked version of lme4::lFormula
+##' @param formula mixed-model formula
+##' @param data data frame
+##' @param REML use restricted max likelihood?
+##' @param subset subset expression
+##' @param weights weights
+##' @param na.action na.action
+##' @param offset offset
+##' @param contrasts contrasts
+##' @param control control
+##' @param phylonm name of phylogenetic grouping variable
+##' @param phyloZ phylogenetic Z-matrix
+##' @export
 lFormula <- function (formula, data = NULL, REML = TRUE, subset, weights,
-          na.action, offset, contrasts = NULL, control = lmerControl(),phylonm,phyloZ,
-          ...)
+          na.action, offset, contrasts = NULL, control = lme4::lmerControl(),phylonm, phyloZ, ...)
 {
   control <- control$checkControl
   mf <- mc <- match.call()
@@ -104,6 +121,8 @@ lFormula <- function (formula, data = NULL, REML = TRUE, subset, weights,
 }
 
 
+##' hacked version of lme4::mkReTrms
+##' @export
 mkReTrms <- function(bars, fr, phylonm,phyloZ,drop.unused.levels = TRUE){
   if (!length(bars))
     stop("No random effects terms specified in formula",
@@ -121,7 +140,7 @@ mkReTrms <- function(bars, fr, phylonm,phyloZ,drop.unused.levels = TRUE){
     term.names <- term.names[ord]
   }
   Ztlist <- lapply(blist, `[[`, "sm")
-  Zt <- do.call(rBind, Ztlist)
+  Zt <- do.call(rbind, Ztlist)
   names(Ztlist) <- term.names
   q <- nrow(Zt)
   cnms <- lapply(blist, `[[`, "cnms")
@@ -134,7 +153,7 @@ mkReTrms <- function(bars, fr, phylonm,phyloZ,drop.unused.levels = TRUE){
 #   }
   boff <- cumsum(c(0L, nb))
   thoff <- cumsum(c(0L, nth))
-  Lambdat <- t(do.call(sparseMatrix, do.call(rBind, lapply(seq_along(blist),
+  Lambdat <- t(do.call(sparseMatrix, do.call(rbind, lapply(seq_along(blist),
                                                            function(i) {
                                                              mm <- matrix(seq_len(nb[i]), ncol = nc[i], byrow = TRUE)
                                                              dd <- diag(nc[i])
@@ -168,6 +187,7 @@ mkReTrms <- function(bars, fr, phylonm,phyloZ,drop.unused.levels = TRUE){
   ll
 }
 
+##' hacked version of mkBlist
 mkBlist <- function (x, frloc, phylonm,phyloZ, drop.unused.levels = TRUE)
 {
   frloc <- factorize(x, frloc)
@@ -199,15 +219,16 @@ mkBlist <- function (x, frloc, phylonm,phyloZ, drop.unused.levels = TRUE)
     lkr <- 1
     rkr <- 1
     if(nrep > 1){
-      if(strsplit(as.character(x[[3]]),":")[[3]] == phylonm[1]){
+      if(strsplit(as.character(x[[3]]),":")[[2]] == phylonm[1]){
         lkr <- nrep
       }
-      if(strsplit(as.character(x[[3]]),":")[[2]] == phylonm[1]){
+      if(strsplit(as.character(x[[3]]),":")[[2]] == phylonm[2]){
         rkr <- nrep
       }
     # sm <- t(sm)
     }
-    bmat <- kronecker(kronecker(diag(rkr),phyloZ),diag(lkr))
+    ## bmat <- kronecker(kronecker(diag(rkr),phyloZ),diag(lkr))
+    bmat <- kronecker(diag(lkr),phyloZ)
     # bmat <- kronecker(phyloZ,diag(lkr))
     # bmat <- kronecker(kronecker(diag(lkr),phyloZ),diag(rkr))  ## This is the one that works?
  #   if(nrow(sm) == nspp*nsite){
@@ -221,7 +242,7 @@ mkBlist <- function (x, frloc, phylonm,phyloZ, drop.unused.levels = TRUE)
   list(ff = ff, sm = sm, nl = nl, cnms = colnames(mm))
 }
 
-
+#' phylogenetic GLMM
 phylo_glmm <- function(formula,data,phylo,phylonm=NULL,phyloZ=NULL,control,family){
   glmod <- glFormula(formula=formula,data = data,control=control,family,phylonm=phylonm, phyloZ=phyloZ)
   # glmod$reTrms <- modify_phylo_retrms(glmod$reTrms,phylo,phylonm,phyloZ)
@@ -232,6 +253,8 @@ phylo_glmm <- function(formula,data,phylo,phylonm=NULL,phyloZ=NULL,control,famil
   mkMerMod(environment(devfun), opt, glmod$reTrms, fr = glmod$fr)
 }
 
+#' hacked version of glFormula
+#' @export
 glFormula <- function (formula, data = NULL, family = gaussian, subset, weights,
                         na.action, offset, contrasts = NULL, start, mustart, etastart,
                         control = glmerControl(),phylonm,phyloZ,...)
@@ -307,4 +330,3 @@ glFormula <- function (formula, data = NULL, family = gaussian, subset, weights,
   list(fr = fr, X = X, reTrms = reTrms, family = family, formula = formula,
        wmsgs = c(Nlev = wmsgNlev, Zdims = wmsgZdims, Zrank = wmsgZrank))
 }
-

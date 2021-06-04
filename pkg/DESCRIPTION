@@ -1,0 +1,18 @@
+Package: phyloglmm
+Title: Machinery for phylogenetic GLMMs
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Michael",
+           family = "Li",
+           role = c("aut", "cre"),
+           email = "first.last@example.com",
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+Description: Sets up the necessary construct to fit phylogenetic GLMM(s) in lme4 or glmmTMB.
+Depends: R (>= 4.0.0)
+Imports: lme4, Matrix
+Suggests: lme4, glmmTMB, ape, MASS, coda, lattice, broom, poorman
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
