@@ -29,3 +29,6 @@ datadir/lme4/*.rds
 .Rhistory
 
 *~
+.texdeps
+makestuff/
+*_cache/

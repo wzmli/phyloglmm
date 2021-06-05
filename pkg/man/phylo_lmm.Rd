@@ -2,6 +2,9 @@
 % Please edit documentation in R/lme4_phylo_setup.R
 \name{phylo_lmm}
 \alias{phylo_lmm}
+\alias{lme4_utils}
+\alias{lFormula}
+\alias{phylo_glmm}
 \title{phylogenetic linear mixed model}
 \usage{
 phylo_lmm(
@@ -14,7 +17,59 @@ phylo_lmm(
   REML,
   doFit
 )
+
+lFormula(
+  formula,
+  data = NULL,
+  REML = TRUE,
+  subset,
+  weights,
+  na.action,
+  offset,
+  contrasts = NULL,
+  control = lme4::lmerControl(),
+  phylonm,
+  phyloZ,
+  ...
+)
+
+phylo_glmm(
+  formula,
+  data,
+  phylo,
+  phylonm = NULL,
+  phyloZ = NULL,
+  control,
+  family
+)
+}
+\arguments{
+\item{formula}{mixed-model formula}
+
+\item{data}{data frame}
+
+\item{phylonm}{name of phylogenetic grouping variable}
+
+\item{phyloZ}{phylogenetic Z-matrix}
+
+\item{control}{control}
+
+\item{REML}{use restricted max likelihood?}
+
+\item{subset}{subset expression}
+
+\item{weights}{weights}
+
+\item{na.action}{na.action}
+
+\item{offset}{offset}
+
+\item{contrasts}{contrasts}
 }
 \description{
 phylogenetic linear mixed model
+
+hacked version of lme4::lFormula
+
+phylogenetic GLMM
 }

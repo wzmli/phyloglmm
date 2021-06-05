@@ -1,4 +1,6 @@
 #' hacked version of glmmTMB
+#' @importFrom stats make.link na.fail update as.formula terms model.weights gaussian model.matrix
+#' @importFrom methods is new
 #' @export
 glmmTMBphylo <- function (formula, data = NULL, family = gaussian(), ziformula = ~0,
                            dispformula = ~1, weights = NULL, offset = NULL, contrasts = NULL, phyloZ = NULL,

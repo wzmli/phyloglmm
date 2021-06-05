@@ -30,6 +30,10 @@ phylo.to.Z <- function(r, stand=FALSE){
 }
 
 ##' phylogenetic linear mixed model
+##' @export
+##' @inheritParams lme4_utils
+##' @importFrom lme4 optimizeLmer optimizeGlmer mkMerMod mkLmerDevfun mkGlmerDevfun
+##' @importFrom lme4 findbars nobars lmerControl glmerControl updateGlmerDevfun
 phylo_lmm <- function(formula, data, phylo, phylonm=NULL, phyloZ=NULL, control, REML, doFit) {
   lmod <- lFormula(formula=formula,data = data,control=control, REML=REML,phylonm=phylonm, phyloZ=phyloZ)
   devfun <- do.call(mkLmerDevfun, lmod)
@@ -38,6 +42,8 @@ phylo_lmm <- function(formula, data, phylo, phylonm=NULL, phyloZ=NULL, control, 
 }
 
 ##' hacked version of lme4::lFormula
+##' @name lme4_utils
+##' @rdname phylo_lmm
 ##' @param formula mixed-model formula
 ##' @param data data frame
 ##' @param REML use restricted max likelihood?
@@ -122,6 +128,8 @@ lFormula <- function (formula, data = NULL, REML = TRUE, subset, weights,
 
 
 ##' hacked version of lme4::mkReTrms
+##' @rdname lme4_utils
+##' @importFrom Matrix KhatriRao fac2sparse sparseMatrix
 ##' @export
 mkReTrms <- function(bars, fr, phylonm,phyloZ,drop.unused.levels = TRUE){
   if (!length(bars))
@@ -188,6 +196,8 @@ mkReTrms <- function(bars, fr, phylonm,phyloZ,drop.unused.levels = TRUE){
 }
 
 ##' hacked version of mkBlist
+##' @rdname lme4_utils
+##' @inheritParams lme4_utils
 mkBlist <- function (x, frloc, phylonm,phyloZ, drop.unused.levels = TRUE)
 {
   frloc <- factorize(x, frloc)
@@ -243,6 +253,9 @@ mkBlist <- function (x, frloc, phylonm,phyloZ, drop.unused.levels = TRUE)
 }
 
 #' phylogenetic GLMM
+#' @rdname phylo_lmm
+#' @inheritParams lme4_utils
+#' @export
 phylo_glmm <- function(formula,data,phylo,phylonm=NULL,phyloZ=NULL,control,family){
   glmod <- glFormula(formula=formula,data = data,control=control,family,phylonm=phylonm, phyloZ=phyloZ)
   # glmod$reTrms <- modify_phylo_retrms(glmod$reTrms,phylo,phylonm,phyloZ)
@@ -254,6 +267,8 @@ phylo_glmm <- function(formula,data,phylo,phylonm=NULL,phyloZ=NULL,control,famil
 }
 
 #' hacked version of glFormula
+#' @rdname lme4_utils
+#' @inheritParams lme4_utils
 #' @export
 glFormula <- function (formula, data = NULL, family = gaussian, subset, weights,
                         na.action, offset, contrasts = NULL, start, mustart, etastart,
