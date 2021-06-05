@@ -32,3 +32,5 @@ datadir/lme4/*.rds
 .texdeps
 makestuff/
 *_cache/
+
+pkg/release/

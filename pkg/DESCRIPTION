@@ -9,8 +9,8 @@ Authors@R:
            comment = c(ORCID = "YOUR-ORCID-ID"))
 Description: Sets up the necessary construct to fit phylogenetic GLMM(s) in lme4 or glmmTMB.
 Depends: R (>= 4.0.0)
-Imports: lme4, Matrix, stats, methods
-Suggests: glmmTMB, ape, MASS, coda, lattice, broom, poorman
+Imports: lme4, Matrix, stats, methods, ape
+Suggests: glmmTMB, MASS, coda, lattice, broom, poorman
 License: GPL-3
 Encoding: UTF-8
 LazyData: true

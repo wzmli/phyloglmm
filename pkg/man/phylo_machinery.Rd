@@ -10,7 +10,7 @@ phylo.to.Z(r, stand = FALSE)
 \arguments{
 \item{r}{a \code{phylo} object}
 
-\item{stand}{(?)}
+\item{stand}{standardize edge lengths by determinant of phylogenetic covariance matrix}
 }
 \description{
 construct a Z matrix from a phylogeny

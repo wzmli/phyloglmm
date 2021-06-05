@@ -14,15 +14,9 @@ We will reproduce the examples in [chapter 11](http://www.mpcm-evolution.com/pra
 To fit we need a random effect in the formula that includes a `(...|phylo)` term, to build the basic random effect structure multiplied by the `phyloZ` matrix (see vignette for more details on the `phyloZ` matrix).
 
 ```{r pkgs,message=FALSE, warning=FALSE}
-library(ape)
-library(Matrix)
 library(lme4)
-library(MASS) 
 library(glmmTMB)
-library(coda)
-library(lattice)
-library(broom)
-library(poorman)
+library(ape)
 ```
 
 ```{r phylocode}
@@ -54,7 +48,7 @@ phylo_lmm_fit <- phylo_lmm(phen~cofactor+(1|sp)
   , data=datG
   , phylonm = "sp"
   , phylo = phylo
-  , phyloZ=phyloZ
+  , phyloZ = phyloZ
   , REML = TRUE
   , control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
 )
@@ -80,19 +74,19 @@ print(summary(glmmTMB_fit))
 
 ```{r GR_results}
 datR <- garamszegi_repeat
-datR$obs <- factor(seq(nrow(datR)))
-datR <- (datR 
-  %>% mutate(sp = factor(species)
-        , animals = factor(phylo)
-        )
-)
-datR$spec_mean_cf <- sapply(split(datR$cofactor,datR$phylo),mean)[datR$phylo]
-datR$within_spec_cf <- datR$cofactor-datR$spec_mean_cf
+datR <- within(datR,
+                 {
+                   obs <- factor(seq(nrow(datR)))
+                   sp <- factor(species)
+                   animals <- factor(phylo)
+                   spec_mean_cf  <- sapply(split(cofactor, phylo), mean)[phylo]
+                   within_spec_cf <- cofactor-spec_mean_cf
+                 })
 phylo_lmm_fit <- phylo_lmm(phen~spec_mean_cf+within_spec_cf+(1|sp) + (1|animals)
   , data=datR
   , phylonm = "sp"
   , phylo = phylo
-  , phyloZ=phyloZ
+  , phyloZ = phyloZ
   , REML = FALSE
   , control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
 )
@@ -141,7 +135,9 @@ glmmTMB_fit3 <- glmmTMBphylo(phen_pois~cofactor+(1|sp)+(1|obs)
     , REML = FALSE
   ) 
 print(summary(glmmTMB_fit3))
+```
 
+```r
 print(packageVersion("glmmTMB"))
 print(packageVersion("lme4"))
 
