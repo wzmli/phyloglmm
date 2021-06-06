@@ -2,36 +2,10 @@
 % Please edit documentation in R/lme4_phylo_setup.R
 \name{phylo_lmm}
 \alias{phylo_lmm}
-\alias{lme4_utils}
-\alias{lFormula}
 \alias{phylo_glmm}
 \title{phylogenetic linear mixed model}
 \usage{
-phylo_lmm(
-  formula,
-  data,
-  phylo,
-  phylonm = NULL,
-  phyloZ = NULL,
-  control,
-  REML,
-  doFit
-)
-
-lFormula(
-  formula,
-  data = NULL,
-  REML = TRUE,
-  subset,
-  weights,
-  na.action,
-  offset,
-  contrasts = NULL,
-  control = lme4::lmerControl(),
-  phylonm,
-  phyloZ,
-  ...
-)
+phylo_lmm(formula, data, phylo, phylonm = NULL, phyloZ = NULL, control, REML)
 
 phylo_glmm(
   formula,
@@ -48,28 +22,20 @@ phylo_glmm(
 
 \item{data}{data frame}
 
+\item{phylo}{phylogenetic tree in \code{\link{phylo}} format}
+
 \item{phylonm}{name of phylogenetic grouping variable}
 
-\item{phyloZ}{phylogenetic Z-matrix}
+\item{phyloZ}{phylogenetic Z-matrix (see \code{\link{phylo.to.Z}})}
 
 \item{control}{control}
 
 \item{REML}{use restricted max likelihood?}
 
-\item{subset}{subset expression}
-
-\item{weights}{weights}
-
-\item{na.action}{na.action}
-
-\item{offset}{offset}
-
-\item{contrasts}{contrasts}
+\item{family}{GLMM family}
 }
 \description{
 phylogenetic linear mixed model
-
-hacked version of lme4::lFormula
 
 phylogenetic GLMM
 }

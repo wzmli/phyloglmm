@@ -19,7 +19,6 @@ phylo.to.Z <- function(r, stand = FALSE) {
     }
   }
   tZid <- t(Zid)
-  browser()
   Z <- t(sqrt(r$edge.length) * tZid)
   if (stand) {
     V <- ape::vcv(r)
@@ -36,32 +35,45 @@ phylo.to.Z <- function(r, stand = FALSE) {
 }
 
 ##' phylogenetic linear mixed model
-##' @export
-##' @inheritParams lme4_utils
 ##' @importFrom lme4 optimizeLmer optimizeGlmer mkMerMod mkLmerDevfun mkGlmerDevfun
-##' @importFrom lme4 findbars nobars lmerControl glmerControl updateGlmerDevfun
-phylo_lmm <- function(formula, data, phylo, phylonm = NULL, phyloZ = NULL, control, REML, doFit) {
+##' @importFrom lme4 findbars nobars lmerControl glmerControl updateGlmerDevfun subbars
+##' @param formula mixed-model formula
+##' @param data data frame
+##' @param phylo phylogenetic tree in \code{\link{phylo}} format
+##' @param phylonm name of phylogenetic grouping variable
+##' @param phyloZ phylogenetic Z-matrix (see \code{\link{phylo.to.Z}})
+##' @param control control
+##' @param REML use restricted max likelihood?
+## unimplemented ... pass via ... ?
+## @param subset subset expression
+## @param weights weights
+## @param na.action na.action
+## @param offset offset
+## @param contrasts contrasts
+##' @export
+phylo_lmm <- function(formula, data, phylo, phylonm = NULL, phyloZ = NULL, control, REML) {
   lmod <- lFormula(formula = formula, data = data, control = control, REML = REML, phylonm = phylonm, phyloZ = phyloZ)
   devfun <- do.call(mkLmerDevfun, lmod)
   opt <- optimizeLmer(devfun, control = control$optCtrl)
   mkMerMod(environment(devfun), opt, lmod$reTrms, fr = lmod$fr)
 }
 
-##' hacked version of lme4::lFormula
-##' @name lme4_utils
-##' @rdname phylo_lmm
-##' @param formula mixed-model formula
-##' @param data data frame
-##' @param REML use restricted max likelihood?
-##' @param subset subset expression
-##' @param weights weights
-##' @param na.action na.action
-##' @param offset offset
-##' @param contrasts contrasts
-##' @param control control
-##' @param phylonm name of phylogenetic grouping variable
-##' @param phyloZ phylogenetic Z-matrix
-##' @export
+## DON'T document externally
+## hacked version of lme4::lFormula
+## @name lme4_utils
+## @rdname phylo_lmm
+## @param formula mixed-model formula
+## @param data data frame
+## @param REML use restricted max likelihood?
+## @param subset subset expression
+## @param weights weights
+## @param na.action na.action
+## @param offset offset
+## @param contrasts contrasts
+## @param control control
+## @param phylonm name of phylogenetic grouping variable
+## @param phyloZ phylogenetic Z-matrix
+## @param ... additional arguments (ignored)
 ##' @importFrom lme4 factorize
 lFormula <- function(formula, data = NULL, REML = TRUE, subset, weights,
                      na.action, offset, contrasts = NULL, control = lme4::lmerControl(), phylonm, phyloZ, ...) {
@@ -146,10 +158,9 @@ lFormula <- function(formula, data = NULL, REML = TRUE, subset, weights,
 }
 
 
-##' hacked version of lme4::mkReTrms
-##' @rdname lme4_utils
-##' @importFrom Matrix KhatriRao fac2sparse sparseMatrix
-##' @export
+## hacked version of lme4::mkReTrms
+## @rdname lme4_utils
+##' @importFrom Matrix KhatriRao fac2sparse sparseMatrix drop0
 mkReTrms <- function(bars, fr, phylonm, phyloZ, drop.unused.levels = TRUE) {
   if (!length(bars)) {
     stop("No random effects terms specified in formula",
@@ -228,9 +239,9 @@ mkReTrms <- function(bars, fr, phylonm, phyloZ, drop.unused.levels = TRUE) {
   ll
 }
 
-##' hacked version of mkBlist
-##' @rdname lme4_utils
-##' @inheritParams lme4_utils
+## hacked version of mkBlist
+## @rdname lme4_utils
+## @inheritParams lme4_utils
 mkBlist <- function(x, frloc, phylonm, phyloZ, drop.unused.levels = TRUE) {
   frloc <- factorize(x, frloc)
   if (is.null(ff <- tryCatch(eval(substitute(
@@ -296,10 +307,11 @@ mkBlist <- function(x, frloc, phylonm, phyloZ, drop.unused.levels = TRUE) {
 
 #' phylogenetic GLMM
 #' @rdname phylo_lmm
-#' @inheritParams lme4_utils
+#' @param family GLMM family
 #' @export
 phylo_glmm <- function(formula, data, phylo, phylonm = NULL, phyloZ = NULL, control, family) {
-  glmod <- glFormula(formula = formula, data = data, control = control, family, phylonm = phylonm, phyloZ = phyloZ)
+  glmod <- glFormula(formula = formula, data = data, control = control, family = family,
+                     phylonm = phylonm, phyloZ = phyloZ)
   # glmod$reTrms <- modify_phylo_retrms(glmod$reTrms,phylo,phylonm,phyloZ)
   devfun <- do.call(mkGlmerDevfun, glmod)
   opt <- optimizeGlmer(devfun)
@@ -308,15 +320,37 @@ phylo_glmm <- function(formula, data, phylo, phylonm = NULL, phyloZ = NULL, cont
   mkMerMod(environment(devfun), opt, glmod$reTrms, fr = glmod$fr)
 }
 
-#' hacked version of glFormula
-#' @rdname lme4_utils
-#' @inheritParams lme4_utils
-#' @export
-#'
-gl_tmp <- deparse(body(lme4::glFormula))
-mkre_ind <- grep("mkReTrms(findbars(RHSForm(formula)", gl_tmp, fixed=TRUE)
-gl_tmp[mkre_ind] <- "  reTrms <- mkReTrms(findbars(lme4:::RHSForm(formula)), fr, phylonm, phyloZ)"
-glFormula <- parse(text=gl_tmp)
+hack_function <- function(orig_fn,
+                          string_target_start,
+                          string_target_end = string_target_start,
+                          string_target_fixed = TRUE,
+                          string_replace,
+                          add_args,
+                          after_arg) {
+  f_tmp <- deparse(body(orig_fn))
+  beg_pos <- grep(string_target_start, f_tmp, fixed = string_target_fixed)
+  end_pos <- grep(string_target_end, f_tmp, fixed = string_target_fixed)
+  f_tmp[beg_pos:end_pos] <- string_replace
+  res <- function() {}
+  body(res) <- parse(text = f_tmp)
+  ## adjust arguments
+  ff <- formals(orig_fn)
+  arg_pos <- match(after_arg, names(ff))
+  ## FIXME: warn if after_arg == end ...
+  formals(res) <- c(ff[1:arg_pos], as.pairlist(add_args), ff[(arg_pos+1):length(ff)])
+  return(res)
+}
+
+glFormula <- hack_function(lme4::glFormula,
+                           string_target_start = "mkReTrms(findbars(RHSForm(formula)",
+                           string_replace = "  reTrms <- mkReTrms(findbars(lme4:::RHSForm(formula)), fr, phylonm, phyloZ)",
+                           add_args = list(phylonm = NULL, phyloZ = NULL),
+                           after_arg = "control")
+
+
+## @rdname lme4_utils
+## @inheritParams lme4_utils
+## glFormula
 
 ## glFormula0 <- function(formula, data = NULL, family = gaussian, subset, weights,
 ##                       na.action, offset, contrasts = NULL, start, mustart, etastart,

@@ -7,7 +7,12 @@ output:
   html_document: null
 bibliography: phyloglmm.bib
 urlcolor: blue
+vignette: >
+  %\VignetteIndexEntry{Garamszegi example}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
 ---
+
 
 We will reproduce the examples in [chapter 11](http://www.mpcm-evolution.com/practice/online-practical-material-chapter-11/chapter-11-1-simple-model-mcmcglmm) of @garamszegi2014modern using phylogenetic GLMMs based on `lme4` and `glmmTMB`. 
 
