@@ -13,6 +13,7 @@ phylo_glmmTMB(
   weights = NULL,
   offset = NULL,
   contrasts = NULL,
+  phylo = NULL,
   phyloZ = NULL,
   phylonm = NULL,
   na.action = na.fail,
@@ -41,6 +42,8 @@ phylo_glmmTMB(
 \item{offset}{offset for conditional model (only).}
 
 \item{contrasts}{an optional list, e.g., \code{list(fac1="contr.sum")}. See the \code{contrasts.arg} of \code{\link{model.matrix.default}}.}
+
+\item{phylo}{phylogenetic tree in \code{\link{phylo}} format}
 
 \item{phyloZ}{phylogenetic Z-matrix (see \code{\link{phylo.to.Z}})}
 

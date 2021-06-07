@@ -5,7 +5,15 @@
 \alias{phylo_glmm}
 \title{phylogenetic linear mixed model}
 \usage{
-phylo_lmm(formula, data, phylo, phylonm = NULL, phyloZ = NULL, control, REML)
+phylo_lmm(
+  formula,
+  data,
+  phylo = NULL,
+  phylonm = NULL,
+  phyloZ = NULL,
+  control,
+  REML = FALSE
+)
 
 phylo_glmm(
   formula,

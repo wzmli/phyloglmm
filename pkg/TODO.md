@@ -1,5 +1,5 @@
 - pkgdown site
-- try to pass checks
+- work on passing checks
    - ask glmmTMB/lme4 maintainers to export more functions?
    - copy functions?
    - formula utils in separate package?
@@ -10,7 +10,9 @@
    - use with more functions
    - allow multiple insertions/changes
 - Rcpp version/core of phylo.to.Z?
-- redundant phylo/phyloZ args: is this an oversight or for saving time?
+- document redundant phylo/phyloZ args: phyloZ to save time in recomputing it
 - better naming/diagnostics (label internal nodes?)
 - resolve warning in glmmTMB fitting: "number of items to replace is not a multiple of replacement length", glmmTMB_phylo_setup.R:138:2
+- utils for predictions at tips?
+
 
