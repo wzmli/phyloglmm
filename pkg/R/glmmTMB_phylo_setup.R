@@ -20,15 +20,19 @@
 ##' @param sparseX a named logical vector containing (possibly) elements named "cond", "zi", "disp" to indicate whether fixed-effect model matrices for particular model components should be generated as sparse matrices, e.g. \code{c(cond=TRUE)}. Default is all \code{FALSE}
 ##' @importFrom stats make.link na.fail update as.formula terms model.weights gaussian model.matrix
 ##' @importFrom methods is new
+##' @importFrom glmmTMB inForm extractForm dropHead noSpecials addForm splitForm getReStruc glmmTMBControl getGrpVar fitTMB
 #' @export
-phylo_glmmTMB <-
-
-  function(formula, data = NULL, family = gaussian(), ziformula = ~0,
+phylo_glmmTMB <-  function(formula, data = NULL, family = gaussian(), ziformula = ~0,
                          dispformula = ~1, weights = NULL, offset = NULL, contrasts = NULL, phyloZ = NULL,
                          phylonm = NULL,
                          na.action = na.fail, se = TRUE, verbose = FALSE, doFit = TRUE,
                          control = glmmTMBControl(), REML = FALSE, map = NULL, sparseX = NULL) {
+
   call <- mf <- mc <- match.call()
+
+  ## hack_function
+  check_phylo_names(phyloZ, data[[phylonm]])
+
   if (is.character(family)) {
     if (family == "beta") {
       family <- "beta_family"
@@ -66,7 +70,7 @@ phylo_glmmTMB <-
   environment(formula) <- parent.frame()
   call$formula <- mc$formula <- formula
   if (!is.null(eval(substitute(offset), data, enclos = environment(formula)))) {
-    formula <- addForm0(formula, makeOp(substitute(offset),
+    formula <- glmmTMB:::addForm0(formula, glmmTMB:::makeOp(substitute(offset),
       op = quote(offset)
     ))
   }
@@ -83,7 +87,7 @@ phylo_glmmTMB <-
   mf[[1]] <- as.name("model.frame")
   if (inForm(ziformula, quote(.))) {
     ziformula <- update(
-      glmmTMB:::RHSForm(drop.special2(formula), as.form = TRUE),
+      glmmTMB:::RHSForm(glmmTMB:::drop.special2(formula), as.form = TRUE),
       ziformula
     )
   }
@@ -129,6 +133,8 @@ phylo_glmmTMB <-
       "Zeros are compatible with a trucated distribution only when zero-inflation is added."
     ))
   }
+  ## hack_function: start at TMBStruc <-
+  ## end with control=control)
   TMBStruc <- mkTMBStrucphylo(formula, ziformula, dispformula, combForm,
     mf, fr,
     yobs = y, respCol, weights, contrasts = contrasts,
@@ -139,12 +145,12 @@ phylo_glmmTMB <-
   if (!doFit) {
     return(TMBStruc)
   }
-  res <- glmmTMB:::fitTMB(TMBStruc)
+  res <- glmmTMB::fitTMB(TMBStruc)
   return(res)
 }
 
-#' make TMB structure
-#' @export
+# make TMB structure
+# don't export!
 mkTMBStrucphylo <- function(formula, ziformula, dispformula, combForm, mf, fr,
                             yobs, respCol, weights, contrasts = contrasts, size = NULL, family, se = NULL, phyloZ = phyloZ,
                             phylonm = phylonm,
@@ -186,6 +192,7 @@ mkTMBStrucphylo <- function(formula, ziformula, dispformula, combForm, mf, fr,
     dispformula[] <- ~0
   }
   condList <- glmmTMB:::getXReTrms(formula, mf, fr, contrasts = contrasts)
+  ## hack_function: add after "condList <- getXReTerms"
   condListphylo <- getXReTrmsphylo(formula, mf, fr, contrasts = contrasts, phylonm = phylonm, phyloZ = phyloZ)
   ziList <- glmmTMB:::getXReTrms(ziformula, mf, fr, contrasts = contrasts)
   dispList <- glmmTMB:::getXReTrms(dispformula, mf, fr,
@@ -260,6 +267,7 @@ mkTMBStrucphylo <- function(formula, ziformula, dispformula, combForm, mf, fr,
   if (REML) {
     randomArg <- c(randomArg, "beta")
   }
+  ## hack_function: add after 'if (REML) randomArg <- c(randomArg, "beta")'
   n.edge <- ncol(phyloZ)
   n.site <- length(unique(fr[["site"]]))
   relength <- length(condReStruc)
@@ -287,6 +295,7 @@ mkTMBStrucphylo <- function(formula, ziformula, dispformula, combForm, mf, fr,
   condList$Z <- t(condListphylo$reTrms$Zt)
   data.tmb$Z <- t(condListphylo$reTrms$Zt)
   parameters$b <- rep(0, ncol(data.tmb$Z))
+  ## hack_function: add up to here
   dispformula <- dispformula.orig
   return(lme4:::namedList(data.tmb, parameters, mapArg, randomArg,
     grpVar, condList, ziList, dispList, condReStruc, ziReStruc,
@@ -336,7 +345,7 @@ getXReTrmsphylo <- function(formula, mf, fr, ranOK = TRUE, type = "", contrasts,
     if (!ranOK) {
       stop("no random effects allowed in ", type, " term")
     }
-    glmmTMB:::RHSForm(ranform) <- lme4:::subbars(glmmTMB:::RHSForm(glmmTMB:::reOnly(formula)))
+    glmmTMB:::RHSForm(ranform) <- subbars(glmmTMB:::RHSForm(glmmTMB:::reOnly(formula)))
     mf$formula <- ranform
     reTrms <- mkReTrms(lme4::findbars(glmmTMB:::RHSForm(formula)), fr, phylonm, phyloZ)
     ss <- splitForm(formula)

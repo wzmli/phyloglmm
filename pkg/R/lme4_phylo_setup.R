@@ -1,39 +1,3 @@
-##' construct a Z matrix from a phylogeny
-##' @name phylo_machinery
-##' @param r a \code{phylo} object
-##' @param stand standardize edge lengths by determinant of phylogenetic covariance matrix
-##' @export
-##' @importFrom Matrix t diag
-##' @importFrom ape vcv
-phylo.to.Z <- function(r, stand = FALSE) {
-  ntip <- length(r$tip.label)
-  Zid <- Matrix::Matrix(0.0, ncol = length(r$edge.length), nrow = ntip)
-  nodes <- (ntip + 1):max(r$edge)
-  root <- nodes[!(nodes %in% r$edge[, 2])]
-  for (i in 1:ntip) {
-    cn <- i ## current node
-    while (cn != root) {
-      ce <- which(r$edge[, 2] == cn) ## find current edge
-      Zid[i, ce] <- 1 ## set Zid to 1
-      cn <- r$edge[ce, 1] ## find previous node
-    }
-  }
-  tZid <- t(Zid)
-  Z <- t(sqrt(r$edge.length) * tZid)
-  if (stand) {
-    V <- ape::vcv(r)
-    ## V <- V/max(V)
-    sig <- exp(as.numeric(determinant(V)["modulus"]) / ntip)
-    ## sig <- det(V)^(1/ntip)
-    ## all.equal(Z/sqrt(sig),
-    ##  t(sqrt(r$edge.length / sig) * tZid), tolerance=2e-16)
-    Z <- Z/sqrt(sig)
-  }
-  rownames(Z) <- r$tip.label
-  colnames(Z) <- 1:length(r$edge.length)
-  return(Z)
-}
-
 ##' phylogenetic linear mixed model
 ##' @importFrom lme4 optimizeLmer optimizeGlmer mkMerMod mkLmerDevfun mkGlmerDevfun
 ##' @importFrom lme4 findbars nobars lmerControl glmerControl updateGlmerDevfun subbars
@@ -52,6 +16,7 @@ phylo.to.Z <- function(r, stand = FALSE) {
 ## @param contrasts contrasts
 ##' @export
 phylo_lmm <- function(formula, data, phylo, phylonm = NULL, phyloZ = NULL, control, REML) {
+  check_phylo_names(phyloZ, data[[phylonm]])
   lmod <- lFormula(formula = formula, data = data, control = control, REML = REML, phylonm = phylonm, phyloZ = phyloZ)
   devfun <- do.call(mkLmerDevfun, lmod)
   opt <- optimizeLmer(devfun, control = control$optCtrl)
@@ -74,7 +39,7 @@ phylo_lmm <- function(formula, data, phylo, phylonm = NULL, phyloZ = NULL, contr
 ## @param phylonm name of phylogenetic grouping variable
 ## @param phyloZ phylogenetic Z-matrix
 ## @param ... additional arguments (ignored)
-##' @importFrom lme4 factorize
+##' @importFrom lme4 factorize expandDoubleVerts
 lFormula <- function(formula, data = NULL, REML = TRUE, subset, weights,
                      na.action, offset, contrasts = NULL, control = lme4::lmerControl(), phylonm, phyloZ, ...) {
   control <- control$checkControl
@@ -94,7 +59,7 @@ lFormula <- function(formula, data = NULL, REML = TRUE, subset, weights,
   lme4:::checkCtrlLevels(cstr, control[[cstr]])
   denv <- lme4:::checkFormulaData(formula, data, checkLHS = control$check.formula.LHS == "stop")
   formula <- as.formula(formula, env = denv)
-  lme4:::RHSForm(formula) <- lme4:::expandDoubleVerts(lme4:::RHSForm(formula))
+  lme4:::RHSForm(formula) <- lme4::expandDoubleVerts(lme4:::RHSForm(formula))
   mc$formula <- formula
   m <- match(
     c("data", "subset", "weights", "na.action", "offset"),
@@ -320,17 +285,39 @@ phylo_glmm <- function(formula, data, phylo, phylonm = NULL, phyloZ = NULL, cont
   mkMerMod(environment(devfun), opt, glmod$reTrms, fr = glmod$fr)
 }
 
+## @param orig_fn original function to hack
+## @param string_target_start regex for beginning of hacked section
+## @param string_target_end regex for end of hacked section
+## @param string_replace text to include in place of hacked section
+## @param add_args list of additional args (names + values)
+## @param after_arg name of argument after which to add new args (not first or last!)
+## @param subs_fns named list of functions to :::-preface in order to grab them from other namespaces (name=package, value = character vec of f'n names)
 hack_function <- function(orig_fn,
                           string_target_start,
                           string_target_end = string_target_start,
                           string_target_fixed = TRUE,
                           string_replace,
                           add_args,
-                          after_arg) {
+                          after_arg,
+                          subs_fns = NULL) {
   f_tmp <- deparse(body(orig_fn))
   beg_pos <- grep(string_target_start, f_tmp, fixed = string_target_fixed)
   end_pos <- grep(string_target_end, f_tmp, fixed = string_target_fixed)
   f_tmp[beg_pos:end_pos] <- string_replace
+  ## allow for private functions/get from namespace
+  if (!is.null(subs_fns)) {
+    for (i in seq_along(subs_fns)) {
+      for (j in seq_along(subs_fns[[i]])) {
+        ## substitute
+        f0 <- subs_fns[[i]][[j]]
+        ## cat(names(subs_fns)[[i]], f0, "\n")
+        ## negative lookbehind: don't match f0 preceded by ":::"
+        f_tmp <- gsub(sprintf("(?<!:::)%s",f0),
+                      sprintf("%s:::%s", names(subs_fns)[[i]], f0), f_tmp,
+                      perl = TRUE)
+      }
+    }
+  }
   res <- function() {}
   body(res) <- parse(text = f_tmp)
   ## adjust arguments
@@ -338,14 +325,20 @@ hack_function <- function(orig_fn,
   arg_pos <- match(after_arg, names(ff))
   ## FIXME: warn if after_arg == end ...
   formals(res) <- c(ff[1:arg_pos], as.pairlist(add_args), ff[(arg_pos+1):length(ff)])
+  environment(res) <- parent.frame()
   return(res)
 }
 
+## need this implicitly ...
+#' @importFrom lme4 GHrule
 glFormula <- hack_function(lme4::glFormula,
                            string_target_start = "mkReTrms(findbars(RHSForm(formula)",
                            string_replace = "  reTrms <- mkReTrms(findbars(lme4:::RHSForm(formula)), fr, phylonm, phyloZ)",
                            add_args = list(phylonm = NULL, phyloZ = NULL),
-                           after_arg = "control")
+                           after_arg = "control",
+                           subs_fns = list(lme4 = c("checkArgs", "checkCtrlLevels", "checkFormulaData", "checkNlevels", "checkZdims",
+                                                    "checkZrank", "RHSForm", "reOnly", "chkRank.drop.cols",
+                                                    "checkScaleX")))
 
 
 ## @rdname lme4_utils
