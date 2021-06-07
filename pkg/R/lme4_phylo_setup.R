@@ -15,8 +15,8 @@
 ## @param offset offset
 ## @param contrasts contrasts
 ##' @export
-phylo_lmm <- function(formula, data, phylo, phylonm = NULL, phyloZ = NULL, control, REML) {
-  check_phylo_names(phyloZ, data[[phylonm]])
+phylo_lmm <- function(formula, data, phylo = NULL, phylonm = NULL, phyloZ = NULL, control, REML = FALSE) {
+  phyloZ <- get_phyloZ(phylo, phyloZ, data[[phylonm]])
   lmod <- lFormula(formula = formula, data = data, control = control, REML = REML, phylonm = phylonm, phyloZ = phyloZ)
   devfun <- do.call(mkLmerDevfun, lmod)
   opt <- optimizeLmer(devfun, control = control$optCtrl)

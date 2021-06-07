@@ -56,3 +56,28 @@ check_phylo_names <- function(phyloZ, data_sp) {
   return(NULL)
 }
 
+
+## check consistency etc. for phyloZ vs species data
+get_phyloZ <- function(phylo = NULL, phyloZ = NULL, data_sp) {
+  if (is.null(phylo) && is.null(phyloZ)) {
+    stop("must provide either phylo or phyloZ")
+  }
+  if (!is.null(phylo) && !is.null(phyloZ)) {
+    warning("both phylo and phyloZ provided: overwriting phyloZ")
+  }
+  if (!is.factor(data_sp)) {
+    stop("species identifier in data must be a factor")
+  }
+  if (is.null(phylo)) {
+    check_phylo_names(phyloZ, data_sp)
+    if (!identical(rownames(phyloZ), levels(data_sp))) {
+      stop("row names of phyloZ must match values and order of levels of the species identifier")
+      ## FIXME: identify mismatches?
+    }
+    return(phyloZ)
+  }
+  phyloZ <- phylo.to.Z(phylo)
+  check_phylo_names(phyloZ, data_sp)
+  phyloZ <- phyloZ[levels(data_sp), ] ## match order
+  return(phyloZ)
+}
