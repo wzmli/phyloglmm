@@ -62,19 +62,20 @@ test_that("phylo_glmm", {
                tolerance = 1e-3)
 })
 
-sf <- function(x) system.file("test_data", x, package="phyloglmm", mustWork=TRUE)
-
-dd <- read.table(sf("GH6_data.txt"), header=TRUE)
-pp <- ape::read.nexus(sf("GH6_tree.nex"))
-phyloZ <- phylo.to.Z(pp)
+set.seed(101)
+tt <- ape::rtree(20)
+dd <- data.frame(y = rnorm(20), x = rnorm(20), sp = paste0("t", 1:20))
+dd[20, "sp"] <- "T20"
+pZ <- phylo.to.Z(tt)
 cc <- lmerControl(check.nobs.vs.nlev="ignore",
                   check.nobs.vs.nRE="ignore")
 
 test_that("check tips vs data species", {
-  expect_error(phylo_lmm_fit <- phylo_lmm(v~bio1+(1|sp)
-                         , data=dd,
-                         , phylonm = "sp"
-                         , phyloZ = phyloZ
-                         , control = cc),
-               "in data but not phyloZ")
+  expect_error(phylo_lmm(y ~ x + (1|sp),
+                         data = dd,
+                         phylonm = "sp",
+                         phyloZ = pZ,
+                         REML = FALSE,
+                         control = cc),
+               "in phyloZ but not data:.*in data but not phyloZ:")
 })
