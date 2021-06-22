@@ -280,8 +280,8 @@ mkTMBStrucphylo <- function(formula, ziformula, dispformula, combForm, mf, fr,
     }
   }
   if (relength > 1) {
-    for (i in 1:length(condReStruc)) {
-      REname <- unlist(strsplit(names(condReStruc[[i]]), " "))
+    for (i in seq_along(condReStruc)) {
+      REname <- unlist(strsplit(names(condReStruc)[i], " "))
       rightbar <- REname[length(REname)]
       if (rightbar %in% phylonm) {
         condReStruc[[i]]$blockReps <- n.edge

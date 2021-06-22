@@ -93,9 +93,6 @@ test_that("phylo_glmm", {
                              , family = poisson
                              , phyloZ=phyloZ
                                )
-## Warning message:
-## In condReStruc[i] <- `*vtmp*` :
-##   number of items to replace is not a multiple of replacement length
 
   expect_equal(simp_VC(phylo_glmm_fit), simp_VC(phylo_glmmTMB_fit),
                tolerance = 1e-3)
