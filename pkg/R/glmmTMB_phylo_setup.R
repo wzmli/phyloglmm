@@ -281,10 +281,10 @@ mkTMBStrucphylo <- function(formula, ziformula, dispformula, combForm, mf, fr,
   }
   if (relength > 1) {
     for (i in 1:length(condReStruc)) {
-      REname <- unlist(strsplit(names(condReStruc[i]), " "))
+      REname <- unlist(strsplit(names(condReStruc[[i]]), " "))
       rightbar <- REname[length(REname)]
       if (rightbar %in% phylonm) {
-        condReStruc[i]$blockReps <- n.edge
+        condReStruc[[i]]$blockReps <- n.edge
         data.tmb$terms[[i]]$blockReps <- n.edge
         if (rightbar == "sp:site") {
           data.tmb$terms[[i]]$blockReps <- n.edge * n.site ## FIXME: pull out number of site from somewhere

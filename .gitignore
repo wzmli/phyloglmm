@@ -34,3 +34,4 @@ makestuff/
 *_cache/
 
 pkg/release/
+*.loc
