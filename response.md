@@ -9,6 +9,7 @@ As currently presented I found this paper a little bit in between an application
 **We intended the paper as an application/software paper, not as a research paper: there is some novelty here, but as our primary innovation is to recast the model in a mathematically equivalent but more convenient/efficient form, we would prefer to treat this as an application.** 
 
 **BMB: I think if we have a non-problematic example we should include it**
+**MLI: I think we cleaned up garamszegi's example for the package already. DOUBLE CHECK**
 
 The benchmarking of the new method is interesting but is mixing too many confounding factors linked with the different implementations of the various packages (see also comment from reviewer 2). What is the performance of the new model all else being equal? How much of the performance results is actually due to differences the optimization among the different R packages?
 
@@ -25,7 +26,7 @@ A sentence like “Although many studies include multiple observations per speci
 
 In the methods it should be better clarified what is the state of the art and what are the novel parts you are presenting in this study.
 
-**MLi: Bayesian methods are the state of the art for more complex. I've now reworded the last parameter in the intro before methods.**
+**MLi: Bayesian methods are the state of the art for more complex. I've now reworded the last paragraph in the intro before methods.**
 
 In lines 74-75 “phylogenetic mixed models in community ecology” are mentioned but it is unclear what the link is to the previous paragraph and the to the following sentences.
 
@@ -71,6 +72,7 @@ However, I think the article could fail to reach the extent of its audience by m
 
 **Going to be a little annoying looking for an example with replicates.**
 **Skip?**
+**garamszegi's example is real**
 
 - Naming that class of models (even though it is still pglmm) could help the reader follow the results section and identify the method as well.
 
