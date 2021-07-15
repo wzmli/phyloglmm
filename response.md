@@ -6,10 +6,7 @@ Thank you for submitting your research to MEE and apologies for the long time ge
 
 As currently presented I found this paper a little bit in between an application note and a research paper but lacking some key components from both, but turning it into a research paper would require, in my opinion, the addition of an empirical example (see also comments from reviewer 1).
 
-**We intended the paper as an application/software paper, not as a research paper: there is some novelty here, but as our primary innovation is to recast the model in a mathematically equivalent but more convenient/efficient form, we would prefer to treat this as an application.** 
-
-**BMB: I think if we have a non-problematic example we should include it**
-**MLI: I think we cleaned up garamszegi's example for the package already. DOUBLE CHECK**
+**We intended the paper as an application/software paper, not as a research paper: there is some novelty here, but as our primary innovation is to recast the model in a mathematically equivalent but more convenient/efficient form, we would prefer to treat this as an application. We have provided an example in the vignette.** 
 
 The benchmarking of the new method is interesting but is mixing too many confounding factors linked with the different implementations of the various packages (see also comment from reviewer 2). What is the performance of the new model all else being equal? How much of the performance results is actually due to differences the optimization among the different R packages?
 
@@ -22,20 +19,19 @@ In the Introduction, a broader perspective about PCMs should be given before jum
 
 A sentence like “Although many studies include multiple observations per species, phylogenetic analyses rarely take advantage of such information to partition variability more finely” needs references supporting it. For example, Kostikova et al. 2016 (DOI:10.1093/sysbio/syw010) present a model that seems relevant here. Further, claiming that ‘brms’ is more efficient than ‘MCMCglmm’ needs to be backed up by either a reference or a test (see also comments from the reviewers).
 
-** MLi: This line is now removed. We have confirmed that the suggested example is relevant to our framework in partitioning different levels of variation. **
+** This line is now removed. We have confirmed that the suggested example is relevant to our framework in partitioning different levels of variation and cited appropriately. **
 
 In the methods it should be better clarified what is the state of the art and what are the novel parts you are presenting in this study.
 
-**MLi: Bayesian methods are the state of the art for more complex. I've now reworded the last paragraph in the intro before methods.**
+**Bayesian methods are the state of the art for more complex. I've now reworded the last paragraph in the intro before methods.**
 
 In lines 74-75 “phylogenetic mixed models in community ecology” are mentioned but it is unclear what the link is to the previous paragraph and the to the following sentences.
 
-**MLi: This refers to the recent developed frequentist tools for phyloglmm and used in community ecology applications. We have now reword and clarify this sentence. **
+**This refers to the recent developed frequentist tools for phyloglmm and used in community ecology applications. We have now reword and clarify this sentence. **
 
 Why are the parameter estimates of the two implementations of the new model different in Fig. 5? And, in the same figure, why were runs of alternative implementations killed after 30 min?
 
-**To BMB: Help? lme4 vs glmmTMB differences? Maybe convergence settings? Should we bother if they are close enough?**
-**MLi: The parameters that are in both single and multiple site models remain the same. We have now added one more alternative implementation run for the 100 species simulation with the slow platforms. The goal of this paper is to show the inflexiably of existing tools and the efficiency of the new implemented approach. ** 
+**MLi: The parameters that are in both single and multiple site models remain the same. We have now added one more alternative implementation run for the 100 species simulation with the slow platforms. The goal of this paper is to show the inflexiably of existing tools and the efficiency of the new implemented approach. The implementation of glmmTMB designed to maximize speed and flexibility. All else equal, the computational performance of glmmTMB are expected to outperform lme4. We added a text in the results that cites this expectiation.** 
 
 I am not sure about the point raised in the Discussion: “Establishing the practical level of model complexity for a given problem and data set is an open and difficult general problem throughout statistical modeling, not just in phylogenetic studies.” Model complexity is typically addressed by model testing, which is not mentioned here.
 
@@ -62,21 +58,19 @@ However, I think the article could fail to reach the extent of its audience by m
 
 - Because that work isn’t a theoretical work but instead the description of an applied statistics method, adding a few examples, such as the one provided at l68-73, would help the reader understanding the value of those models. I think examples should particularly be aimed at the “Simulation” § l132-155, where they could shed light on the subtle differences between the parameters
 
-**Todo**
+**MLi: We have added an example in the vignette for this package**
 
 - In the same spirit of applied statistics, a brief description (or table) of which functions to use in the libraries lme4 and glmmTMB to make these models work would make it easier to start. There should also be mention of the tutorial available in the repository
 
-**MLi: we have now added a tutorial**
+**MLi: We have added an example in the vignette for this package**
 
 - It would also be beneficial to add an application of the method with biological data directly in the article. The more your article is associated with biological ideas, the more users you will reach in my opinion.
 
-**Going to be a little annoying looking for an example with replicates.**
-**Skip?**
-**garamszegi's example is real**
+**MLi: Thanks for the suggestion. This paper is written to be an application paper rather than a research paper. We have provided a real example from Garamszegi's ``Modern phylogenetic comparative methods and their application in evolutionary biology: concepts and practice'' in the repository.** 
 
 - Naming that class of models (even though it is still pglmm) could help the reader follow the results section and identify the method as well.
 
-**TO BMB: What do they mean by class?**
+**Thanks. We have now renamed everything under phylogenetic regression**
 
 These remarks might sound cosmetic but I think they might help to reach a broader audience and help all kind of users getting started with those models.
 
@@ -85,7 +79,7 @@ I recommend the authors to think on those ideas to improve the visibility of the
 In a purely scientific perspective, I have no objections to publish that article.
 
 
-**Todo: Thanks, these are wonderful and helpful suggestion. We have included a tutorial in the released version on zenodo/github. We have now included the link in the paper.... **
+**Thanks, these are wonderful and helpful suggestion. We have included a tutorial example in the released version on zenodo/github. We have now included the link in the paper.... **
 
 
 Minor comments:

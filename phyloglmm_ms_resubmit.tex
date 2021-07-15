@@ -500,7 +500,7 @@ PGLS, which uses only one parameter, combines all variation (phylogenetic interc
 \begin{center}
 \begin{figure}[H]
   \includegraphics[scale=0.7]{./figure/msplot.pdf}
-  \caption{Comparison of multi-group model parameter estimates. The horizontal line shows the true value of the parameters in the simulation model. Models capable of fitting all parameters (\pkg{lme4} and \pkg{glmmTMB}) fit well for all parameters. \pkg{pez} and \pkg{phyr} estimates for n = 100 and 500 are missing because the models did not converge within 30 minutes.
+  \caption{Comparison of multi-group model parameter estimates. The horizontal line shows the true value of the parameters in the simulation model. Models capable of fitting all parameters (\pkg{lme4} and \pkg{glmmTMB}) fit well for all parameters. \pkg{pez} and \pkg{phyr} estimates for n = 500 are missing because the models did not converge within 30 minutes.
   }
   \label{msplot}
 \end{figure}
@@ -525,7 +525,7 @@ As with the single-group fits, \pkg{lme4} and \pkg{glmmTMB} match the simulation
 The absence of correlations in \pkg{pez} and \pkg{phyr}'s statistical models has little effect on the other parameter estimates but leads to underestimates of the residual standard deviation (Figure \ref{msplot}).
 
 Although the parameter estimates are similar across platforms, computational efficiency varies enormously across platforms and sample size.
-Comparing our two implementations, \pkg{glmmTMB} is almost an order of magnitude faster than \pkg{lme4}.
+Comparing our two implementations, \pkg{glmmTMB} is almost an order of magnitude faster than \pkg{lme4}; \pkg{glmmTMB} is expected to out perform \pkg{lme4} as it is designed to maximize flexibility and speed \citep{brooks2017glmmTMB}.
 \pkg{glmmTMB} is also faster than \pkg{pez} and \pkg{phyr}: the median time for \pkg{glmmTMB} to fit a 50-species model is $\approx$ 9, versus $\approx$ 200 seconds for \pkg{pez} and \pkg{phyr}.
 \pkg{glmmTMB} takes $\approx$ 125 seconds to fit a 500-species model; it was impractical to fit 500-species models with \pkg{pez} and \pkg{phyr}.
 
