@@ -70,7 +70,7 @@ phylo_glmmTMB <-  function(formula, data = NULL, family = gaussian(), ziformula 
   environment(formula) <- parent.frame()
   call$formula <- mc$formula <- formula
   if (!is.null(eval(substitute(offset), data, enclos = environment(formula)))) {
-    formula <- glmmTMB:::addForm0(formula, glmmTMB:::makeOp(substitute(offset),
+    formula <- glmmTMB::addForm0(formula, glmmTMB:::makeOp(substitute(offset),
       op = quote(offset)
     ))
   }
@@ -87,7 +87,7 @@ phylo_glmmTMB <-  function(formula, data = NULL, family = gaussian(), ziformula 
   mf[[1]] <- as.name("model.frame")
   if (inForm(ziformula, quote(.))) {
     ziformula <- update(
-      glmmTMB:::RHSForm(glmmTMB:::drop.special2(formula), as.form = TRUE),
+      glmmTMB::RHSForm(glmmTMB::drop.special(formula), as.form = TRUE),
       ziformula
     )
   }
@@ -311,10 +311,10 @@ mkTMBStrucphylo <- function(formula, ziformula, dispformula, combForm, mf, fr,
 getXReTrmsphylo <- function(formula, mf, fr, ranOK = TRUE, type = "", contrasts, phyloZ = phyloZ,
                             phylonm = phylonm) {
   fixedform <- formula
-  glmmTMB:::RHSForm(fixedform) <- nobars(glmmTMB:::RHSForm(fixedform))
+  glmmTMB::RHSForm(fixedform) <- nobars(glmmTMB::RHSForm(fixedform))
   nobs <- nrow(fr)
-  if (identical(glmmTMB:::RHSForm(fixedform), ~0) || identical(
-    glmmTMB:::RHSForm(fixedform),
+  if (identical(glmmTMB::RHSForm(fixedform), ~0) || identical(
+    glmmTMB::RHSForm(fixedform),
     ~ -1
   )) {
     X <- NULL
@@ -322,7 +322,7 @@ getXReTrmsphylo <- function(formula, mf, fr, ranOK = TRUE, type = "", contrasts,
   else {
     mf$formula <- fixedform
     terms_fixed <- terms(eval(mf, envir = environment(fixedform)))
-    X <- model.matrix(glmmTMB:::drop.special2(fixedform), fr, contrasts)
+    X <- model.matrix(glmmTMB::drop.special(fixedform), fr, contrasts)
     offset <- rep(0, nobs)
     terms <- list(fixed = terms(terms_fixed))
     if (inForm(fixedform, quote(offset))) {
@@ -345,9 +345,9 @@ getXReTrmsphylo <- function(formula, mf, fr, ranOK = TRUE, type = "", contrasts,
     if (!ranOK) {
       stop("no random effects allowed in ", type, " term")
     }
-    glmmTMB:::RHSForm(ranform) <- subbars(glmmTMB:::RHSForm(glmmTMB:::reOnly(formula)))
+    glmmTMB::RHSForm(ranform) <- subbars(glmmTMB::RHSForm(glmmTMB::reOnly(formula)))
     mf$formula <- ranform
-    reTrms <- mkReTrms(lme4::findbars(glmmTMB:::RHSForm(formula)), fr, phylonm, phyloZ)
+    reTrms <- mkReTrms(lme4::findbars(glmmTMB::RHSForm(formula)), fr, phylonm, phyloZ)
     ss <- splitForm(formula)
     ss <- unlist(ss$reTrmClasses)
     Z <- t(reTrms$Zt)
