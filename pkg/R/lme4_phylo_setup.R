@@ -274,7 +274,9 @@ mkBlist <- function(x, frloc, phylonm, phyloZ, drop.unused.levels = TRUE) {
 #' @rdname phylo_lmm
 #' @param family GLMM family
 #' @export
-phylo_glmm <- function(formula, data, phylo, phylonm = NULL, phyloZ = NULL, control, family) {
+phylo_glmm <- function(formula, data, phylo, phylonm = NULL,
+                       phyloZ = NULL, control, family) {
+  phyloZ <- get_phyloZ(phylo, phyloZ, data[[phylonm]])
   glmod <- glFormula(formula = formula, data = data, control = control, family = family,
                      phylonm = phylonm, phyloZ = phyloZ)
   # glmod$reTrms <- modify_phylo_retrms(glmod$reTrms,phylo,phylonm,phyloZ)

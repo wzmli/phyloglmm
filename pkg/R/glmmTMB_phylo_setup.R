@@ -275,7 +275,7 @@ mkTMBStrucphylo <- function(formula, ziformula, dispformula, combForm, mf, fr,
     REname <- unlist(strsplit(names(condReStruc), " "))
     rightbar <- REname[length(REname)]
     if (rightbar %in% phylonm) {
-      condReStruc$blockReps <- n.edge
+      condReStruc[[1]]$blockReps <- n.edge
       data.tmb$terms[[1]]$blockReps <- n.edge
     }
   }

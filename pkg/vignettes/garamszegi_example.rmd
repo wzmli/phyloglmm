@@ -48,12 +48,11 @@ system.time(phyloZ <- phylo.to.Z(phylo))
 datG <- garamszegi_simple
 ## create observation-level grouping variable
 datG$obs <- factor(seq(nrow(datG)))
-datG$sp <- datG$phylo
+datG$sp <- factor(datG$phylo)
 phylo_lmm_fit <- phylo_lmm(phen~cofactor+(1|sp)
   , data=datG
   , phylonm = "sp"
   , phylo = phylo
-  , phyloZ = phyloZ
   , REML = TRUE
   , control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
 )
@@ -64,10 +63,9 @@ Similarly, fitting using glmmTMB:
 
 ```{r glmmTMB}
 glmmTMB_fit <- phylo_glmmTMB(phen~cofactor+(1|sp)
-    , data=datG
-    , phyloZ=phyloZ
+    , data = datG
     , phylonm = "sp"
-    , doFit=TRUE
+    , phylo = phylo
     , dispformula = ~1
     , REML = FALSE
   ) 
@@ -91,7 +89,6 @@ phylo_lmm_fit <- phylo_lmm(phen~spec_mean_cf+within_spec_cf+(1|sp) + (1|animals)
   , data=datR
   , phylonm = "sp"
   , phylo = phylo
-  , phyloZ = phyloZ
   , REML = FALSE
   , control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
 )
@@ -100,9 +97,8 @@ print(summary(phylo_lmm_fit))
 
 glmmTMB_fit2 <- phylo_glmmTMB(phen~spec_mean_cf+within_spec_cf+(1|sp) + (1|animals)
     , data=datR
-    , phyloZ=phyloZ
+    , phylo = phylo
     , phylonm = "sp"
-    , doFit=TRUE
     , dispformula = ~1
     , REML = FALSE
   ) 
@@ -115,16 +111,15 @@ print(summary(glmmTMB_fit2))
 
 ```{r P_results}
 dat <- garamszegi_pois
-dat$obs <- factor(seq(nrow(dat)))
+dat <- transform(dat,
+                 obs = factor(seq(nrow(dat))),
+                 sp=factor(phylo))
 
-
-dat <- dat %>% mutate(sp=factor(phylo)) 
 phylo_glmm_fit <- phylo_glmm(phen_pois~cofactor+(1|sp)+(1|obs)
-  , data=dat
+  , data = dat
   , phylonm = "sp"
   , family = poisson
   , phylo = phylo
-  , phyloZ=phyloZ
   , control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
 )
 
@@ -133,9 +128,8 @@ summary(phylo_glmm_fit)
 glmmTMB_fit3 <- phylo_glmmTMB(phen_pois~cofactor+(1|sp)+(1|obs)
     , data=dat
     , family = poisson
-    , phyloZ=phyloZ
+    , phylo = phylo
     , phylonm = "sp"
-    , doFit=TRUE
     , dispformula = ~1
     , REML = FALSE
   ) 
@@ -145,8 +139,6 @@ print(summary(glmmTMB_fit3))
 ```r
 print(packageVersion("glmmTMB"))
 print(packageVersion("lme4"))
-
 ```
-
 
 ## References
