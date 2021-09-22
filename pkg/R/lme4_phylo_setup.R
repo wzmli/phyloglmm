@@ -5,7 +5,11 @@
 ##' @param data data frame
 ##' @param phylo phylogenetic tree in \code{\link{phylo}} format
 ##' @param phylonm name of phylogenetic grouping variable
-##' @param phyloZ phylogenetic Z-matrix (see \code{\link{phylo.to.Z}})
+##' @param phyloZ phylogenetic Z-matrix (see \code{\link{phylo.to.Z}}): optional, will be computed
+##' internally from \code{phylo} if not specified here. (For large phylogenies that are going to
+##' be used in multiple models it may make sense to compute the Z matrix first and pass it to
+##' the modeling functions to avoid recomputing it each time.)
+##' to compute \code{phyloZ} fi
 ##' @param control control
 ##' @param REML use restricted max likelihood?
 ## unimplemented ... pass via ... ?

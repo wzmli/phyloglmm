@@ -45,7 +45,11 @@ phylo_glmmTMB(
 
 \item{phylo}{phylogenetic tree in \code{\link{phylo}} format}
 
-\item{phyloZ}{phylogenetic Z-matrix (see \code{\link{phylo.to.Z}})}
+\item{phyloZ}{phylogenetic Z-matrix (see \code{\link{phylo.to.Z}}): optional, will be computed
+internally from \code{phylo} if not specified here. (For large phylogenies that are going to
+be used in multiple models it may make sense to compute the Z matrix first and pass it to
+the modeling functions to avoid recomputing it each time.)
+to compute \code{phyloZ} fi}
 
 \item{phylonm}{name of phylogenetic grouping variable}
 

@@ -5,6 +5,7 @@
 ##' @export
 ##' @importFrom Matrix t diag
 ##' @importFrom ape vcv
+## FIXME:: rename to phylo_to_Z ?
 phylo.to.Z <- function(r, stand = FALSE) {
   ntip <- length(r$tip.label)
   Zid <- Matrix::Matrix(0.0, ncol = length(r$edge.length), nrow = ntip)

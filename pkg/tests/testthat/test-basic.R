@@ -83,7 +83,7 @@ test_that("phylo_glmm", {
                              , data=datP
                              , phylonm = "sp"
                              , family = poisson
-                             , phyloZ = phyloZ
+                             , phylo = garamszegi_phy
                              , control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
                                )
 
@@ -91,7 +91,7 @@ test_that("phylo_glmm", {
                              , data=datP
                              , phylonm = "sp"
                              , family = poisson
-                             , phyloZ=phyloZ
+                             , phylo = garamszegi_phy
                                )
 
   expect_equal(simp_VC(phylo_glmm_fit), simp_VC(phylo_glmmTMB_fit),
