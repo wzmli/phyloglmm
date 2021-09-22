@@ -1,0 +1,29 @@
+Package: phyloglmm
+Title: Machinery for phylogenetic GLMMs
+Version: 0.1.0.9001
+Authors@R: 
+	   c(person(given = "Michael",
+           family = "Li",
+           role = c("aut", "cre"),
+           email = "wzmichael.li@gmail.com"),
+	   person("Ben","Bolker",
+	   role="aut",
+	   comment=c(ORCID="0000-0002-2127-0443")))
+Description: Sets up the necessary pieces to fit phylogenetic GLMM(s) in lme4 or glmmTMB.
+Depends: R (>= 4.0.0)
+Imports: glmmTMB (> 1.1.2.2), lme4, Matrix, stats, methods, ape
+Suggests: 
+    MASS,
+    coda,
+    lattice,
+    broom,
+    poorman,
+    rmarkdown,
+    testthat (>= 3.0.0)
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+VignetteBuilder: rmarkdown
+Roxygen: list(markdown = TRUE)
+Config/testthat/edition: 3
+RoxygenNote: 7.1.2

@@ -1,0 +1,144 @@
+---
+title: "Garamszegi example"
+author: "Michael Li and Ben Bolker"
+output:
+  pdf_document: default
+  mathjax: default
+  html_document: null
+bibliography: phyloglmm.bib
+urlcolor: blue
+vignette: >
+  %\VignetteIndexEntry{Garamszegi example}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+
+We will reproduce the examples in [chapter 11](http://www.mpcm-evolution.com/practice/online-practical-material-chapter-11/chapter-11-1-simple-model-mcmcglmm) of @garamszegi2014modern using phylogenetic GLMMs based on `lme4` and `glmmTMB`. 
+
+To fit we need a random effect in the formula that includes a `(...|phylo)` term, to build the basic random effect structure multiplied by the `phyloZ` matrix (see vignette for more details on the `phyloZ` matrix).
+
+```{r pkgs,message=FALSE, warning=FALSE}
+library(lme4)
+library(glmmTMB)
+library(ape)
+```
+
+```{r phylocode}
+library("phyloglmm")
+```
+
+### Get data
+
+From [chapter 11](http://www.mpcm-evolution.com/practice/online-practical-material-chapter-11/chapter-11-1-simple-model-mcmcglmm) of @garamszegi2014modern: data are [here](http://mpcm-evolution.com/OPM/Chapter11_OPM/data.zip)
+
+```{r getdat}
+phylo <- garamszegi_phy
+```
+
+Compute appropriate $Z$ matrix up front, to measure speed (also
+reusable in a few places below):
+
+```{r calc_phyloZ,cache=TRUE}
+system.time(phyloZ <- phylo.to.Z(phylo))
+```
+## Result comparison with Gaussian example in chapter 11
+
+```{r G_results}
+datG <- garamszegi_simple
+## create observation-level grouping variable
+datG$obs <- factor(seq(nrow(datG)))
+datG$sp <- factor(datG$phylo)
+phylo_lmm_fit <- phylo_lmm(phen~cofactor+(1|sp)
+  , data=datG
+  , phylonm = "sp"
+  , phylo = phylo
+  , REML = TRUE
+  , control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
+)
+print(summary(phylo_lmm_fit))
+```
+
+Similarly, fitting using glmmTMB:
+
+```{r glmmTMB}
+glmmTMB_fit <- phylo_glmmTMB(phen~cofactor+(1|sp)
+    , data = datG
+    , phylonm = "sp"
+    , phylo = phylo
+    , dispformula = ~1
+    , REML = FALSE
+  ) 
+print(summary(glmmTMB_fit))
+```
+
+
+## Result comparison with Gaussian with repeated measures example in chapter 11
+
+```{r GR_results}
+datR <- garamszegi_repeat
+datR <- within(datR,
+                 {
+                   obs <- factor(seq(nrow(datR)))
+                   sp <- factor(species)
+                   animals <- factor(phylo)
+                   spec_mean_cf  <- sapply(split(cofactor, phylo), mean)[phylo]
+                   within_spec_cf <- cofactor-spec_mean_cf
+                 })
+phylo_lmm_fit <- phylo_lmm(phen~spec_mean_cf+within_spec_cf+(1|sp) + (1|animals)
+  , data=datR
+  , phylonm = "sp"
+  , phylo = phylo
+  , REML = FALSE
+  , control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
+)
+             
+print(summary(phylo_lmm_fit))
+
+glmmTMB_fit2 <- phylo_glmmTMB(phen~spec_mean_cf+within_spec_cf+(1|sp) + (1|animals)
+    , data=datR
+    , phylo = phylo
+    , phylonm = "sp"
+    , dispformula = ~1
+    , REML = FALSE
+  ) 
+print(summary(glmmTMB_fit2))
+
+
+```
+
+## Result comparison with non-Gaussian example in chapter 11
+
+```{r P_results}
+dat <- garamszegi_pois
+dat <- transform(dat,
+                 obs = factor(seq(nrow(dat))),
+                 sp=factor(phylo))
+
+phylo_glmm_fit <- phylo_glmm(phen_pois~cofactor+(1|sp)+(1|obs)
+  , data = dat
+  , phylonm = "sp"
+  , family = poisson
+  , phylo = phylo
+  , control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
+)
+
+summary(phylo_glmm_fit)
+
+glmmTMB_fit3 <- phylo_glmmTMB(phen_pois~cofactor+(1|sp)+(1|obs)
+    , data=dat
+    , family = poisson
+    , phylo = phylo
+    , phylonm = "sp"
+    , dispformula = ~1
+    , REML = FALSE
+  ) 
+print(summary(glmmTMB_fit3))
+```
+
+```r
+print(packageVersion("glmmTMB"))
+print(packageVersion("lme4"))
+```
+
+## References
