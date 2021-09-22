@@ -1,3 +1,6 @@
+lpackage:
+	R CMD INSTALL .
+
 check:
 	echo "devtools::check()" | R --slave
 
