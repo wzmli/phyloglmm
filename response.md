@@ -35,7 +35,7 @@ Why are the parameter estimates of the two implementations of the new model diff
 
 I am not sure about the point raised in the Discussion: “Establishing the practical level of model complexity for a given problem and data set is an open and difficult general problem throughout statistical modeling, not just in phylogenetic studies.” Model complexity is typically addressed by model testing, which is not mentioned here.
 
-**To BMB: What do they mean by model testing here? This feels like snooping and cheating if we test and select models.** 
+**Todo: (for response and possibly add something to discussion) Problem 1: effects of model selection on coverage etc. (i.e. snooping), maybe not a problem if the aspects of the model being selected are not focal (e.g. Matuschek et al.); problem 2: understanding what levels of complexity are computationally practical**
 
 In the discussion about within-species variance and measurement errors (l. 272-274) you could make several references to previous work, including several papers published in MEE.
 
@@ -66,7 +66,7 @@ However, I think the article could fail to reach the extent of its audience by m
 
 - It would also be beneficial to add an application of the method with biological data directly in the article. The more your article is associated with biological ideas, the more users you will reach in my opinion.
 
-**MLi: Thanks for the suggestion. This paper is written to be an application paper rather than a research paper. We have provided a real example from Garamszegi's ``Modern phylogenetic comparative methods and their application in evolutionary biology: concepts and practice'' in the repository.** 
+**MLi: Thanks for the suggestion. This paper is written to be an application paper rather than a research paper. We have provided a real example from Garamszegi's ``Modern phylogenetic comparative methods and their application in evolutionary biology: concepts and practice'' in the repository (we could add this if the editor thought it was appropriate, but we're up against the length limits for an application paper and would prefer not to open the can of worms of making this into a research paper ...** 
 
 - Naming that class of models (even though it is still pglmm) could help the reader follow the results section and identify the method as well.
 
@@ -86,8 +86,7 @@ Minor comments:
 
 L26. In the Abstract, a claim has been made about the benefit of the method against unbalanced observational designs, but we lack insight on that point throughout the article. I think that sort of claim should be tested and I expect the Bayesian methods to perform better with that kind of problems.
 
-**Todo: Table 1 shows all the possbilities (double check) with existing package.** 
-**Todo: Add it to the tutorial?**
+**Table 1 identifies several broadly used packages that are restricted to balanced designs. (We are not discussing the performance (e.g. power or efficiency) of different methods applied to unbalanced designs, simply the fact that some software packages for PCM cannot handle unbalanced designs.)**
 
 L10. Small grammatical error: “can allow to incorporate” 
 
@@ -98,7 +97,7 @@ Reviewer: 2
 Comments to the Corresponding Author
 This paper proposes an alternative formulation for the phylogenetic generalized linear mixed model which can utilize existing R packages for linear mixed models (lme4 and glmmTMB). The authors illustrate the advantages of their proposed method through simulations. The paper is well written and easy to follow. My main concern is that the proposed method is not scalable. That is, the computational efficiency of the proposed method only relies on the highly optimized implementation of lme4 and glmmTMB and its algorithm is actually "slower" than existing algorithms in phylogenetics. The followings are my specific comments:
 
-**To BMB: Why is it slower? Do we need to profile the pieces?** 
+**Todo: Why is it slower? Do we need to profile the pieces? Waffle!** 
 
 1. What is the computational complexity of the proposed method? Does the alternative formulation help avoid matrix inversion such that the complexity is linear with respect to the number of species? Note that this is the case for many phylogenetic packages including phylolm and MCMCglmm. I am aware that it is hard or even impossible to achieve linear-complexity for all models. However, could linear-complexity be achieved by the proposed methods for some simple models such as the standard phylogenetic linear regression (equation 1)?
 
@@ -110,7 +109,7 @@ This paper proposes an alternative formulation for the phylogenetic generalized 
 
 3. The models in simulations are not sufficiently described. What are the formulae for the phylogenetic random intercept variance, phylogenetic random slope variance, and covariance between phylogenetic random intercept and slope, and so on? Do they depend on the phylogenetic tree? The authors provide a clear explanation for how their proposed method can be applied to the standard phylogenetic regression (equation 1) but do not include it in the simulation section. I suggest the authors add this model to the simulation part for illustrating the applicability of their proposed method for this simple case.
 
-**Todo: what? go back to the paper and see if we say this clearly, this should be trival and clear. The formulas are clear! We are using the variance of the phylogenetic tree when simulating the b's.**
+**Todo: what? go back to the paper and see if we say this clearly, this should be trivial and clear. The formulas are clear! We are using the variance of the phylogenetic tree when simulating the b's.**
 
 +++++
 RESUBMISSION INSTRUCTIONS
