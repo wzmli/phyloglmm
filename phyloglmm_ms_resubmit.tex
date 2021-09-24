@@ -144,7 +144,7 @@ Phylogenetic regressions (PR) account for evolutionary relatedness when analyzin
 Given a known phylogeny, PRs model the relationships among species traits while incorporating relatedness; they can be used to control statistically for phylogeny, to quantify phylogenetic signal in traits, or both. 
 
 In contrast to standard statistical models, where all of the predictor variables (such as species traits and environmental covariates) are directly observable, PRs use phylogenetic relationships to incorporate the unobserved process of trait evolution \citep{felsenstein1985phylogenies, butler2004phylogenetic, hansen2012interpreting}. 
-While a wide range of tools is available for PR, existing procedures are either insufficiently flexible or too computationally demanding to analyze large data sets.
+While a wide range of tools is available for PR, existing procedures are either insufficiently flexible or too computationally demanding to analyze large data sets (e.g. random-slopes phylogenetic regressions with hundreds of species).
 When faced with these constraints, researchers often simplify their analyses, at the risk of neglecting important processes.
 
 \subsection*{Challenges in modeling phylogenetic processes}
@@ -391,8 +391,8 @@ The full multi-group model is as follows:
 \bY & = \dist(g^{-1}(\bmu), \phi) \\
 \bmu & = (\bf{\beta_0 + b_{\mathrm{phy_{int}}} + b_{\mathrm{sp_{int}}} + b_{\mathrm{group}}}) + (\bf{\beta_1 + b_{\mathrm{phy_{slope}}} + b_{\mathrm{sp_{slope}}}}) \bm{t} + \bf{b_{\mathrm{sp:group}}} + \besp \\
 (\bf{b_{\mathrm{phy_{int}}}, b_{\mathrm{phy_{slope}}}}) & \sim \textrm{MVN} \left( 0, \begin{bmatrix}
-\Sigma^2_{\mathrm{phy_{int}}} & \Sigma_{\mathrm{phy_{int-slope}}} \\ 
-\Sigma_{\mathrm{phy_{int-slope}}} & \Sigma^2_{\mathrm{phy_{slope}}}
+\sigma^2_{\mathrm{phy_{int}}} & \sigma_{\mathrm{phy_{int-slope}}} \\ 
+\sigma_{\mathrm{phy_{int-slope}}} & \sigma^2_{\mathrm{phy_{slope}}}
 \end{bmatrix}
 \right) \\
 (\bf{b_{\mathrm{sp_{int}}}, b_{\mathrm{sp_{slope}}}}) & \sim \textrm{MVN} \left( 0, \begin{bmatrix}
@@ -401,7 +401,7 @@ The full multi-group model is as follows:
 \end{bmatrix}
 \right) \\
 \bf{b_{\mathrm{group}}} & \sim \textrm{MVN} ( 0 , \sigma^2_{\mathrm{group}}) \\
-\bf{b_{\mathrm{sp:group}}} & \sim \textrm{MVN} (0, \mathrm{I}_{\mathrm{group}} \otimes \Sigma^2_{phy}) \\
+\bf{b_{\mathrm{sp:group}}} & \sim \textrm{MVN} (0, \mathrm{I}_{\mathrm{group}} \otimes \sigma^2_{phy}) \\
 \besp & \sim \textrm{N} ( 0 , \sigma_{\epsilon}^2),
 \label{eq:multiple_glmm}
 \end{aligned}
@@ -419,7 +419,7 @@ Phylogenetic generalized least squares (PGLS) (\code{gls} in \pkg{nlme}) is one 
 Phylogenetic generalized linear models (PGLM) (\code{phyloglm} in the \pkg{phylolm} package) are extend PGLS by allowing for both phylogenetic and residual variation, as well as non-Gaussian response variables.
 Both \code{gls} and \code{phylolm} can model non-Brownian evolutionary processes and different correlation structures (e.g., Pagel's $\lambda$ or Blomberg's $K$), but we restrict our PGLS fits to the simple BM correlation.
 Neither PGLS nor PGLM can handle random slopes or multiple observations within a species.
-Among the few packages that currently fit phylogenetic slopes to predictor level variation are \pkg{pez} and \pkg{phyr}, which can handle random-slope models ($\Sigma^2_{\mathrm{phy_{slope}}}$) and random intercepts of species-group interactions ($\bf{b_{\mathrm{sp:group}}}$) but do not incorporate covariation between phylogenetic random slopes and intercepts ($\Sigma_{\mathrm{phy_{int-slope}}}$).
+Among the few packages that currently fit phylogenetic slopes to predictor level variation are \pkg{pez} and \pkg{phyr}, which can handle random-slope models ($\sigma^2_{\mathrm{phy_{slope}}}$) and random intercepts of species-group interactions ($\bf{b_{\mathrm{sp:group}}}$) but do not incorporate covariation between phylogenetic random slopes and intercepts ($\sigma_{\mathrm{phy_{int-slope}}}$).
 Lastly, Bayesian PGLMMs using Markov chain Monte Carlo (MCMC) can handle all of the cases described above. 
 However, MCMC is usually much more computationally expensive for GLMMs than platforms using deterministic optimization.
 \pkg{MCMCglmm} \citep{hadfield2010general} is the most widely used Bayesian phylogenetic GLMM, and recently \pkg{brms}, which uses a more computationally efficient MCMC technique.
@@ -463,7 +463,6 @@ In supplementary materials, we reproduce the examples in chapter 11 of \cite{gar
 \begin{figure}[H]
   \includegraphics[scale=0.7]{./figure/ssplot.pdf}
   \caption{Comparison of single group model parameter estimates across different R packages in Table \ref{table:platform}.
-\bmb{we need a better colour for MCMCglmm.  colorspace package? }
     Total simulations $N=100$ for each category. The horizontal line shows the true value of the parameters in the simulation model. Models capable of fitting all parameters (\pkg{lme4},  \pkg{glmmTMB}, and \pkg{brms}) fit well for all parameters.
 %\bmb{consider tweaking aspect ratio (slightly wider?) Consider including n=25, n=50, n=100 in x-axis tick labels (I don't have all the output data so can't rebuild figs myself ...)
 %\jd{Use dashed lines (or some other gg signifier) for the insufficient approaches}

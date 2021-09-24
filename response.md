@@ -10,10 +10,12 @@ As currently presented I found this paper a little bit in between an application
 
 The benchmarking of the new method is interesting but is mixing too many confounding factors linked with the different implementations of the various packages (see also comment from reviewer 2). What is the performance of the new model all else being equal? How much of the performance results is actually due to differences the optimization among the different R packages?
 
-**MLi: The model is the mathematically equivalent, thus, the difference is the speed/efficiency.**
-**MLi: Comparing pez and phyr uses lme4/glmer correlation structure. This is the most direct comparision of the proposed method (i.e. correlation vs random effect matrix structure. **
+**MLi: The model is the mathematically equivalent, thus, the difference is the speed/efficiency. The most direct comparison is between `phyloglmm` and the `phyr` or `pez` packages: all three methods are built on the mixed-models machinery of `lme4`, but `phyloglmm` modifies the Z matrix while `phyr` and `pez` modify the correlation structure of the random effects**. (TODO/MLi: is my restatement correct?)
 
 In the Introduction, a broader perspective about PCMs should be given before jumping into the specifics of the models tested here. Phylogenetic comparative methods include lots of other things, see e.g. Luke Harmon’s book: https://lukejharmon.github.io/pcm/chapters/. In general, a better reference to previous work is required and some claims of the paper should be either demonstrated or removed. For example, stating that “existing [PCM] procedures are either insufficiently flexible or too computationally demanding to analyze large data sets” is simply not true. There are many research papers applying PCMs to large datasets (and as a side note: how large should a dataset be to be considered large?).
+
+**We have switched our focal set of models from "phylogenetic comparative methods" (PCM) to the narrower scope of "phylogenetic regression" (PR). The reviewer is correct that PCM is too broad a scope for describing our goals here. We demonstrate in our simulations that the fastest other methods in our set of comparisons take >30 minutes for a 
+
 
 **Todo: Revisit and rewrite. It is true many research papers used PCMs to large datasets, but it depends on the complexity of the model. I.e. If we simply use GLM methods in Table 1, it is relative fast even with large datasets. If we have more complicated models, then it will be very computationally demanding.** 
 
@@ -23,7 +25,7 @@ A sentence like “Although many studies include multiple observations per speci
 
 In the methods it should be better clarified what is the state of the art and what are the novel parts you are presenting in this study.
 
-**Bayesian methods are the state of the art for more complex. I've now reworded the last paragraph in the intro before methods.**
+**Bayesian methods are the state of the art for more complex models. I've now reworded the last paragraph in the intro before methods.**
 
 In lines 74-75 “phylogenetic mixed models in community ecology” are mentioned but it is unclear what the link is to the previous paragraph and the to the following sentences.
 
