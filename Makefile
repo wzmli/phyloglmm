@@ -26,6 +26,8 @@ phyloglmm_ms.pdf: main.tex phyloglmm_ms.tex
 Sources += main.tex phyloglmm_ms.tex
 phyloglmm_ms.pdf: main.tex phyloglmm_ms.tex
 
+phyloglmm_ms_resubmit.pdf: main.tex phyloglmm_ms.tex plot.Rout
+
 ##################################################################
 
 Sources += $(wildcard *.R)
@@ -157,7 +159,7 @@ fit.brms.ss.small.1.Rout: fit_brms.R
 
 collect_gls.Rout: collect_gls.R
 	$(run-R)
-	
+
 collect.Rout: collect.R
 	$(run-R)
 

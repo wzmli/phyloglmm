@@ -100,6 +100,8 @@
 \newcommand{\pkg}[1]{{\tt #1}}
 \newcommand{\code}[1]{{\tt #1}}
 
+\newcommand{\plmefour}{phyloglmm/lme4}
+\newcommand{\pgTMB}{phyloglmm/glmmTMB}
 
 % \pagenumbering{gobble}
 \linenumbers
@@ -130,7 +132,7 @@ Michael Li\textsuperscript{1*} and Benjamin M. Bolker\textsuperscript{1,2,3}
 \\
 \textbf{2} Department of Mathematics and Statistics, McMaster University, Hamilton, Ontario, Canada
 \\
-\textbf{3} Institute for Infectious Diseases Research, McMaster University, Hamilton, Ontario, Canada
+\textbf{3} Institute for Infectious Disease Research, McMaster University, Hamilton, Ontario, Canada
 \\
 \bigskip
 
@@ -140,11 +142,11 @@ Michael Li\textsuperscript{1*} and Benjamin M. Bolker\textsuperscript{1,2,3}
 
 \section*{Introduction}
 
-Phylogenetic regressions (PR) account for evolutionary relatedness when analyzing relationships among characteristics of species.
+Phylogenetic regressions (PR), a subset of phylogenetic comparative methods, account for evolutionary relatedness when analyzing relationships among morphological, physiological, or ecological characteristics of species.
 Given a known phylogeny, PRs model the relationships among species traits while incorporating relatedness; they can be used to control statistically for phylogeny, to quantify phylogenetic signal in traits, or both. 
 
-In contrast to standard statistical models, where all of the predictor variables (such as species traits and environmental covariates) are directly observable, PRs use phylogenetic relationships to incorporate the unobserved process of trait evolution \citep{felsenstein1985phylogenies, butler2004phylogenetic, hansen2012interpreting}. 
-While a wide range of tools is available for PR, existing procedures are either insufficiently flexible or too computationally demanding to analyze large data sets (e.g. random-slopes phylogenetic regressions with hundreds of species).
+In contrast to standard statistical models, where all of the predictor variables (such as species traits and environmental covariates) are directly observable, PRs incorporate phylogenetic relationships to account for the unobserved process of trait evolution \citep{felsenstein1985phylogenies, butler2004phylogenetic, hansen2012interpreting}. 
+While a wide range of tools is available for PR, most existing procedures are either insufficiently flexible or too computationally demanding to analyze large data sets (e.g. random-slopes phylogenetic regressions with hundreds of species).
 When faced with these constraints, researchers often simplify their analyses, at the risk of neglecting important processes.
 
 \subsection*{Challenges in modeling phylogenetic processes}
@@ -175,7 +177,7 @@ and separation of tip and observation error in a frequentist framework are infle
 \end{tabular}} & Correlated residual & \begin{tabular}[c]{@{}l@{}}Single observation \\ per species \end{tabular} & \begin{tabular}[c]{@{}l@{}}\pkg{nlme}:gls, \\ \pkg{ape}:pic\end{tabular} \\ \cline{2-4} 
 & \begin{tabular}[c]{@{}l@{}}Residual \\ + phylogenetic intercept\end{tabular} & \begin{tabular}[c]{@{}l@{}}Single observation \\ per species \end{tabular} & \begin{tabular}[c]{@{}l@{}}Pagel's $\lambda$\\ Blomberg's $k$ \\ via \pkg{nlme}:gls\\ \pkg{phylolm}\end{tabular} \\ \hline
 \multirow{2}{*}{\begin{tabular}[c]{@{}l@{}}Generalized Linear \\ Mixed Model (GLMM)\end{tabular}} & \multirow{2}{*}{Random effect}                                        & \begin{tabular}[c]{@{}l@{}}Single observation \\per species, \\ Balanced design\end{tabular} & \pkg{pez}                                                                                            \\ \cline{3-4} 
-                                                                                                  &                                                                       & Unrestricted                                                                 & \pkg{lme4}, \pkg{glmmTMB}, \pkg{phyr}                                                                                  \\ \hline
+                                                                                                  &                                                                       & Unrestricted                                                                 & \pkg{\plmefour}, \pkg{\pgTMB}, \pkg{phyr}                                                                                  \\ \hline
 \multirow{2}{*}{Bayesian GLMM}                                                                    & \multirow{2}{*}{Random effect}                                        & Balanced design                                                              & \pkg{MCMCglmm}                                                                                       \\ \cline{3-4} 
                                                                                                   &                                                                       & Unrestricted                                                                 & \pkg{brms}                                                                                           \\ \hline
 \end{tabular}
@@ -429,14 +431,15 @@ However, MCMC is usually much more computationally expensive for GLMMs than plat
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{|c|c|c|c|c|c|c|c|}
 \hline
- & \pkg{nlme} & \pkg{phylolm} & \pkg{lme4}/\pkg{glmmTMB} & \pkg{pez} & \pkg{phyr} & \pkg{brms} & \pkg{MCMCglmm} \\ \hline
+& \pkg{nlme} & \pkg{phylolm} & \pkg{phyloglmm} & \pkg{pez} & \pkg{phyr} & \pkg{brms} & \pkg{MCMCglmm} \\
+&            &               & (this paper)    &           &            &            &                \\  \hline
 Single Group & \y & \y & \y &  &  & \y & \y \\ \hline
 \begin{tabular}[c]{@{}c@{}}Phylo Intercept\\ Phylo Slope\\ Phylo Slope-Intercept correlation\\ Residual\end{tabular} & \y & \begin{tabular}[c]{@{}c@{}}\y\\ \\ \\ \y\end{tabular} & \begin{tabular}[c]{@{}c@{}}\y\\ \y\\ \y\\ \y\end{tabular} &  &  & \begin{tabular}[c]{@{}c@{}}\y\\ \y\\ \y\\ \y\end{tabular} & \begin{tabular}[c]{@{}c@{}}\y\\ \y\\ \y\\ \y\end{tabular} \\ \hline
 Multi-group &  &  & \y & \y & \y & \y & \y \\ \hline
 \begin{tabular}[c]{@{}c@{}}Phylo Intercept\\ Phylo Slope\\ Phylo Slope-intercept correlation\\ Phylo Species-group interaction\\ Species intercept\\ Species Slope \\ Species Slope-intercept correlation\\ Residual\end{tabular} &  &  & \begin{tabular}[c]{@{}c@{}}\y\\ \y\\ \y\\ \y\\ \y\\ \y\\ \y\\ \y\end{tabular} & \begin{tabular}[c]{@{}c@{}}\y\\ \y\\ \\ \y\\ \y\\ \y\\ \\ \y\end{tabular} & \begin{tabular}[c]{@{}c@{}}\y\\ \y\\ \\ \y\\ \y\\ \y\\ \\ \y\end{tabular} & \begin{tabular}[c]{@{}c@{}}\y\\ \y\\ \y\\ \y\\ \y\\ \y\\ \y\\ \y\end{tabular} & \begin{tabular}[c]{@{}c@{}}\y\\ \y\\ \y\\ \\ \y\\ \y\\ \y\\ \y\end{tabular} \\ \hline
 \end{tabular}%
 }
-\caption{List of estimable parameters for each R package.}
+\caption{List of estimable models for each R package.}
 \label{table:platform}
 \end{table}
 
@@ -463,7 +466,7 @@ In supplementary materials, we reproduce the examples in chapter 11 of \cite{gar
 \begin{figure}[H]
   \includegraphics[scale=0.7]{./figure/ssplot.pdf}
   \caption{Comparison of single group model parameter estimates across different R packages in Table \ref{table:platform}.
-    Total simulations $N=100$ for each category. The horizontal line shows the true value of the parameters in the simulation model. Models capable of fitting all parameters (\pkg{lme4},  \pkg{glmmTMB}, and \pkg{brms}) fit well for all parameters.
+    Total simulations $N=100$ for each category. The horizontal line shows the true value of the parameters in the simulation model. Models capable of fitting all parameters (\pkg{\plmefour},  \pkg{\pgTMB}, and \pkg{brms}) fit well for all parameters.
 %\bmb{consider tweaking aspect ratio (slightly wider?) Consider including n=25, n=50, n=100 in x-axis tick labels (I don't have all the output data so can't rebuild figs myself ...)
 %\jd{Use dashed lines (or some other gg signifier) for the insufficient approaches}
 }
@@ -480,7 +483,7 @@ In supplementary materials, we reproduce the examples in chapter 11 of \cite{gar
 \begin{center}
 \begin{figure}[H]
   \includegraphics[scale=0.7]{./figure/sscoverage.pdf}
-  \caption{Comparison of coverage probability for fixed effect parameters. Models matching the simulation model (\pkg{lme4}, \pkg{glmmTMB} and pkg{brms}) have coverage near the nominal value of 0.95. The black line shows the nominal coverage, and the blue ribbon the 95\% binomial confidence interval based on 100 simulated fits. 
+  \caption{Comparison of coverage probability for fixed effect parameters. Models matching the simulation model (\pkg{\plmefour}, \pkg{\pgTMB} and \pkg{brms}) have coverage near the nominal value of 0.95. The black line shows the nominal coverage; the blue ribbon shows the 95\% binomial confidence interval around the nominal coverage based on fits to 100 simulated data sets.
 %  \bmb{really picky, but maybe change grid lines or ribbon colour slightly so they're not confusable (maybe use blue ribbon with alpha=0.1?)}
   }
 \label{ssplot_coverage}
@@ -499,7 +502,7 @@ PGLS, which uses only one parameter, combines all variation (phylogenetic interc
 \begin{center}
 \begin{figure}[H]
   \includegraphics[scale=0.7]{./figure/msplot.pdf}
-  \caption{Comparison of multi-group model parameter estimates. The horizontal line shows the true value of the parameters in the simulation model. Models capable of fitting all parameters (\pkg{lme4} and \pkg{glmmTMB}) fit well for all parameters. \pkg{pez} and \pkg{phyr} estimates for n = 500 are missing because the models did not converge within 30 minutes.
+  \caption{Comparison of multi-group model parameter estimates. The horizontal line shows the true value of the parameters in the simulation model. Models capable of fitting all parameters (\pkg{\plmefour} and \pkg{\pgTMB}) fit well for all parameters. \pkg{pez} and \pkg{phyr} estimates for n = 500 are missing because the models did not converge within 30 minutes.
   }
   \label{msplot}
 \end{figure}
@@ -542,7 +545,11 @@ Models that cannot match the full simulations perform poorly even for the parame
 Even the relatively simple multi-group model described in (\ref{eq:multiple_glmm}) can incorporate many layers of complexity.
 In theory, as long as we have enough data and enough computational power, models that can incorporate more of the complexity will always describe a biological system better.
 However, real applications are always data-constrained.
-Establishing the practical level of model complexity for a given problem and data set is an open and difficult general problem throughout statistical modeling, not just in phylogenetic studies.
+Establishing the practical level of model complexity for a given problem and data set is an open and difficult general problem throughout statistical modeling,
+not just in phylogenetic studies.
+While information-theoretic or stepwise selection methods are often used to decide the complexity of models in ecology and evolution \cite{matuschek2017balancing,darriba2020modeltest}, sufficiently complex models may simply be too complex to fit without some form of regularization
+\cite{uriarte2009preaching}, and data-driven model selection may affect inference in unexpected and unwanted ways \cite{hurvich1990impact,morin2020is}.
+
 %For example, should one use simple models that may be overly conservative or
 % risk overfitting by using more ambitious models?
 %What are the relative costs and benefits of using a step-down procedure
