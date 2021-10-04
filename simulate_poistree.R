@@ -26,13 +26,12 @@ covmat <- varmat * cormat
 
 Sigma <- kronecker(covmat,Vphy)
 
-
 b.all <- MASS::mvrnorm(n=1
                        , mu=rep(c(beta0,beta1),each=nspp)
                        , Sigma=Sigma
 )
 
-b0 <- b.all[1:nspp] 
+b0 <- b.all[1:nspp]
 b1 <- b.all[(nspp+1):(2*nspp)]
 
 res <- rnorm(length(b0),mean=0,sd=1)

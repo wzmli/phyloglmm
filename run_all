@@ -1,10 +1,11 @@
-#/bin/bash
+#! /bin/bash
+ALL_PLATFORMS=pez phyr lme4 brms gls glmmTMB phylolm
 for platform in lme4test; do
-	for numsite in ss; do
-    for size in small; do
-	for seed in {1..30}; do
+    for numsite in ss ms; do
+	for size in small medium large; do
+	    for seed in {1..30}; do
 		make fit.$platform.$numsite.$size.$seed.Rout
 	    done
-		 done
-        done
+	done
     done
+done

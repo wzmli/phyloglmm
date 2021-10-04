@@ -66,7 +66,7 @@ pez_simulate_tree.Rout: pez_simulate_tree.R
 simulate_poistree.Rout: parameters.R simulate_poistree.R
 	$(run-R)
 
-fit.pois.Rout: simulate_poistree.Rout new_phylo_setup.R phyloglmm_pois.R
+fit.pois.Rout: simulate_poistree.Rout phyloglmm_pois.R
 	$(run-R)
 
 ######################################################################
@@ -93,7 +93,7 @@ fit.phylolm.ss.xlarge.1.Rout: fit_phylolm.R
 
 ### lme4 can fit single and multiple sites
 
-fit.lme4.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R phyloglmm.R
+fit.lme4.%.Rout: names.R parameters.R simulate_tree.R phyloglmm.R
 	$(run-R)
 
 fit.lme4pez.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R lme4pez.R
@@ -151,7 +151,7 @@ compare.pez.ms.med.1.Rout: compare_pez.R
 fit.pez.ms.med.1.Rout: fit_pez.R
 fit.lme4.ms.med.1.Rout: phyloglmm.R
 
-fit.brms.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R  fit_brms.R
+fit.brms.%.Rout: names.R parameters.R simulate_tree.R fit_brms.R
 	$(run-R)
 
 fit.brms.ss.small.1.Rout: fit_brms.R
@@ -169,7 +169,7 @@ plot.Rout: ./datadir/collect.RDS plot.R
 compare_pez_plot.Rout: compare_pez_plot.R
 	$(run-R)
 
-peztest.Rout: new_phylo_setup.R peztest.R
+peztest.Rout: peztest.R
 	$(run-R)
 
 Ignore += outline.html
@@ -187,13 +187,13 @@ fit_glmmPQL.Rout: parameters.Rout simulate_tree.Rout fit_glmmPQL.R
 	$(run-R)
 
 
-fit_tmb.Rout: parameters.R simulate_tree.R phyloglmm_setup.R new_phylo_setup.R glmmTMBhacked.R fit_tmb.R
+fit_tmb.Rout: parameters.R simulate_tree.R fit_tmb.R
 	$(run-R)
 
 fit_gls.Rout: parameters.R simulate_tree.R fit_gls.R
 	$(run-R)
 
-fit_lme4.Rout: parameters.R simulate_tree.R new_phylo_setup.R phyloglmm.R
+fit_lme4.Rout: parameters.R simulate_tree.R phyloglmm.R
 	$(run-R)
 
 #### Li et al 2017 examples
@@ -213,13 +213,13 @@ analyses.Rout: forward_selection.Rout hacked_code/4-analyses.R
 
 ### fitting dune's example using lme4
 
-dune_lme4.Rout: phylosig.Rout get_RE.R hacked_code/0_pkg_func.R new_phylo_setup.R hacked_nested.R dune_lme4.R
+dune_lme4.Rout: phylosig.Rout get_RE.R hacked_code/0_pkg_func.R hacked_nested.R dune_lme4.R
 	$(run-R)
 
-compare_pez.Rout: phylosig.Rout get_RE.R hacked_code/0_pkg_func.R phyloglmm_setup.R hacked_nested.R compare_pez.R
+compare_pez.Rout: phylosig.Rout get_RE.R hacked_code/0_pkg_func.R hacked_nested.R compare_pez.R
 	$(run-R)
 
-compare_pez_lme4.Rout: phylosig.Rout get_RE.R hacked_code/0_pkg_func.R phyloglmm_setup.R hacked_nested.R compare_pez_lme4.R
+compare_pez_lme4.Rout: phylosig.Rout get_RE.R hacked_code/0_pkg_func.R hacked_nested.R compare_pez_lme4.R
 	$(run-R)
 
 

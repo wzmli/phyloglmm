@@ -110,7 +110,7 @@ get_pos <- function(dat,
     ## for the max(time), nplatform should indicate platform order
     sspos$nsize <- with(sspos, as.numeric(size)+bwid*nplatform)
   } else {
-    sspos$nsize <- with(sspos,as_num(size))
+    sspos$nsize <- with(sspos,as_num(size)*(exp(bwid)^as.numeric(Platform)))
   }
   ## geom_label_repel() messes up other vertical positions: adjust manually
   for (i in seq_along(y_tweak)) {
@@ -144,14 +144,14 @@ gg_cstime0 <- (ggplot(data=ssdat, aes(x=as_num(size),
                                       group=interaction(size,Platform),
                                       y=time, col=Platform,
                                       fill=Platform))
-  + geom_function(fun=function(x) x/200, linetype=2, col="black")
+  + geom_function(fun=function(x) x/200, linetype=2, col="darkgray")
   + annotate(x=c(100, 200),
-             y= 0.5*c(100/200, 200^2/100),
+             y= 0.5*c(100/200, 200^2/100*0.85),
              colour = "black",
              label=c('"time" %prop% S', '"time" %prop% S^2'),
              parse=TRUE,
              geom = "label")
-  + geom_function(fun=function(x) x^2/100, linetype=2, col="black")
+  + geom_function(fun=function(x) x^2/100, linetype=2, col="darkgray")
   + scale_x_log10(breaks = as_num(ssdat$size))
   + geom_boxplot(outlier.colour = NULL, alpha=0.2,
                  width = boxwid)
@@ -165,17 +165,18 @@ gg_cstime0 <- (ggplot(data=ssdat, aes(x=as_num(size),
                  position=position_dodge(width = boxwid),
                  size=3, alpha=0.1)
 )
-csspos <- get_pos(ssdat, discrete=FALSE, y_tweak=c(glmmTMB=2, lme4=0.9))
+csspos <- get_pos(ssdat, discrete=FALSE, y_tweak=c(glmmTMB=2.5, lme4=0.6), bwid=0.03)
 
 
 gg_csstime <- (gg_cstime0
   + theme(legend.position="none")
-  + expand_limits(x=700)
+  + expand_limits(x=800)
   + geom_text(data=csspos,
-               aes(x=nsize, y=time, label=Platform, colour=Platform),
-               hjust="left",
-               nudge_x=0.05,
-               fill=NA)
+              size = 3,
+              aes(x=nsize, y=time, label=Platform, colour=Platform),
+              hjust="left",
+              nudge_x=0.01,
+              fill=NA)
 )
 
 print(gg_csstime)

@@ -4,54 +4,46 @@ library(ape)
 library(Matrix)
 library(lme4)
 library(dplyr)
-
+library(phyloglmm)
 
 t1 <- proc.time()
 
-phyZ <- phylo.to.Z(phy,stand=FALSE)
-phyZ <- phyZ[order(rownames(phyZ)),]
 
 dat <- (dat
 	%>% mutate(obs = sp)
 	%>% ungroup()
 	# %>% arrange(sp)
-)	
-
-#debug(phylo_lmm)
-#debug(modify_phylo_retrms)
+)
 
 if(numsite == "ss"){
-	lme4fit <- phylo_lmm(y_main ~ X + (1+X|sp)
-		, data=dat
-		, phylonm = c("sp","site:sp")
-		, phylo = phy
-		, phyloZ=phyZ
-		, control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
-		, REML = FALSE
-	)
+  lme4fit <- phylo_lmm(y_main ~ X + (1+X|sp)
+                     , data=dat
+                     , phylonm = c("sp","site:sp")
+                     , phylo = phy
+                     , control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
+                     , REML = FALSE
+                       )
 }
 
 if(numsite == "ms"){
-  
-t4 <- proc.time()
-    lme4fit <- phylo_lmm(y_all ~ X
+  t4 <- proc.time()
+  lme4fit <- phylo_lmm(y_all ~ X
 #	 	+ (1 | sp)
 #		+ (1 | obs)
-      + (1 + X | sp)
-		+ (1 + X | obs)
-      + (1 | site)
-		+ (1 | sp:site)
-      , data=dat
-      , phylonm = c("sp","sp:site")
-      , phylo = phy
-      , phyloZ=phyZ
-      , control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
-      , REML = FALSE
-    )
+                       + (1 + X | sp)
+                       + (1 + X | obs)
+                       + (1 | site)
+                       + (1 | sp:site)
+                     , data=dat
+                     , phylonm = c("sp","sp:site")
+                     , phylo = phy
+                     , control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
+                     , REML = FALSE
+                       )
 }
 t2 <- proc.time()
 
-lme4time <- t2 - t1 
+lme4time <- t2 - t1
 print(lme4time)
 
 print(summary(lme4fit))
