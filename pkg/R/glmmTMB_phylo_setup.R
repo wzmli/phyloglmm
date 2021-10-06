@@ -31,7 +31,7 @@ phylo_glmmTMB <-  function(formula, data = NULL, family = gaussian(), ziformula 
   call <- mf <- mc <- match.call()
 
   ## include with hack_function
-  phyloZ <- get_phyloZ(phylo, phyloZ, data[[phylonm]])
+  phyloZ <- get_phyloZ(phylo, phyloZ, data[phylonm])
 
   if (is.character(family)) {
     if (family == "beta") {

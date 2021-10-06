@@ -7,8 +7,10 @@ library(pez)
 
 
 dat <- (dat
-	%>% mutate(obs = sp
-		, site = factor(site)
+  %>% mutate(
+          sp = factor(sp)
+        , obs = sp,
+        , site = factor(site)
 		)
 	%>% arrange(site,sp)
 )

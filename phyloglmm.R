@@ -18,7 +18,7 @@ dat <- (dat
 if(numsite == "ss"){
   lme4fit <- phylo_lmm(y_main ~ X + (1+X|sp)
                      , data=dat
-                     , phylonm = c("sp","site:sp")
+                     , phylonm = c("sp")
                      , phylo = phy
                      , control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
                      , REML = FALSE

@@ -20,7 +20,7 @@
 ## @param contrasts contrasts
 ##' @export
 phylo_lmm <- function(formula, data, phylo = NULL, phylonm = NULL, phyloZ = NULL, control, REML = FALSE) {
-  phyloZ <- get_phyloZ(phylo, phyloZ, data[[phylonm]])
+  phyloZ <- get_phyloZ(phylo, phyloZ, data[phylonm])
   lmod <- lFormula(formula = formula, data = data, control = control, REML = REML, phylonm = phylonm, phyloZ = phyloZ)
   devfun <- do.call(mkLmerDevfun, lmod)
   opt <- optimizeLmer(devfun, control = control$optCtrl)
@@ -280,7 +280,7 @@ mkBlist <- function(x, frloc, phylonm, phyloZ, drop.unused.levels = TRUE) {
 #' @export
 phylo_glmm <- function(formula, data, phylo, phylonm = NULL,
                        phyloZ = NULL, control, family) {
-  phyloZ <- get_phyloZ(phylo, phyloZ, data[[phylonm]])
+  phyloZ <- get_phyloZ(phylo, phyloZ, data[phylonm])
   glmod <- glFormula(formula = formula, data = data, control = control, family = family,
                      phylonm = phylonm, phyloZ = phyloZ)
   # glmod$reTrms <- modify_phylo_retrms(glmod$reTrms,phylo,phylonm,phyloZ)
