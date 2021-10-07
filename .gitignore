@@ -35,3 +35,6 @@ makestuff/
 
 pkg/release/
 *.loc
+
+.#*
+\#*

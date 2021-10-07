@@ -25,13 +25,14 @@
 phylo_glmmTMB <-  function(formula, data = NULL, family = gaussian(), ziformula = ~0,
                          dispformula = ~1, weights = NULL, offset = NULL, contrasts = NULL, phylo = NULL, phyloZ = NULL,
                          phylonm = NULL,
+                         phylosp = phylonm[1],
                          na.action = na.fail, se = TRUE, verbose = FALSE, doFit = TRUE,
                          control = glmmTMBControl(), REML = FALSE, map = NULL, sparseX = NULL) {
 
   call <- mf <- mc <- match.call()
 
   ## include with hack_function
-  phyloZ <- get_phyloZ(phylo, phyloZ, data[phylonm])
+  phyloZ <- get_phyloZ(phylo, phyloZ, data[[phylosp]])
 
   if (is.character(family)) {
     if (family == "beta") {

@@ -1,4 +1,4 @@
-## plots
+\## plots
 
 * tweak plots, go over all
 
@@ -16,13 +16,19 @@ make fit.MCMCglmm.ss.small.1.Rout
 make fit.brms.ss.small.1.Rout
 make fit.gls.ss.small.1.Rout
 make fit.lme4.ss.small.1.Rout
+make fit.lme4.ms.small.1.Rout
 
 ## problems
 
 * pez: Warning message: arguments `tree` and `tree_site` are deprecated; please use `cov_ranef` instead. 
 
-* phylolm: fails
-* lme4: fails
-  Subscript `phylonm` has size 2 but must be size 1.
+lme4 ms:
+## 1: In ans * length(l) + if1 :
+  longer object length is not a multiple of shorter object length
+2: In ans * length(l) + if1 :
+  longer object length is not a multiple of shorter object length
 
-Figure out how new machinery works with multiple phylo grouping vars!!
+* phylolm: fails
+
+Reconsider solution for phylosp/phylonm!
+

@@ -10,8 +10,9 @@ t1 <- proc.time()
 
 
 dat <- (dat
-	%>% mutate(obs = sp)
-	%>% ungroup()
+  %>% mutate(sp = factor(sp), obs = sp)
+  %>% ungroup()
+
 	# %>% arrange(sp)
 )
 
@@ -35,7 +36,7 @@ if(numsite == "ms"){
                        + (1 | site)
                        + (1 | sp:site)
                      , data=dat
-                     , phylonm = c("sp","sp:site")
+                     , phylonm = c("sp", "sp:site")
                      , phylo = phy
                      , control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
                      , REML = FALSE

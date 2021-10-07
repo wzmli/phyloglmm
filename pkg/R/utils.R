@@ -58,7 +58,12 @@ check_phylo_names <- function(phyloZ, data_sp) {
 }
 
 
-## check consistency etc. for phyloZ vs species data
+##' check consistency etc. for phyloZ vs species data
+##'
+##' @param phylo phylogenetic tree
+##' @param phyloZ phylogenetic Z (branch-indicator) matrix
+##' @param data_sp factor from data specifying species variable
+##' @export
 get_phyloZ <- function(phylo = NULL, phyloZ = NULL, data_sp) {
   if (is.null(phylo) && is.null(phyloZ)) {
     stop("must provide either phylo or phyloZ")
