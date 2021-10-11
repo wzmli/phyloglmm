@@ -42,7 +42,7 @@ gls_results <- function(tt) {
     gls_df[i,"B0"] <- as.numeric(between(0, B0-1.96*B0se, B0+1.96*B0se))
     gls_df[i,"B1"] <- as.numeric(between(0, B1-1.96*B1se, B1+1.96*B1se))
     gls_df[i,"model"] <- tt[i]
-    gls_df[i,"time"] <- gls_obj[[2]][[1]]
+    gls_df[i,"time"] <- gls_obj[[2]][["elapsed"]]
     }
   return(gls_df)
 }
@@ -92,7 +92,7 @@ lme4ss_results <- function(tt){
     lme4ss_df[i,"B0"] <- as.numeric(between(0, B0-1.96*B0se, B0+1.96*B0se))
     lme4ss_df[i,"B1"] <- as.numeric(between(0, B1-1.96*B1se, B1+1.96*B1se))
     lme4ss_df[i,"model"] <- tt[i]
-    lme4ss_df[i,"time"] <- lme4_obj[[2]][[1]]
+    lme4ss_df[i,"time"] <- lme4_obj[[2]][["elapsed"]]
     lme4ss_df[i,"convergence"] <- lme4_obj[[1]]@optinfo$conv$opt
     }
   return(lme4ss_df)
@@ -123,7 +123,7 @@ glmmTMBss_results <- function(tt){
     glmmTMBss_df[i,"B0"] <- as.numeric(between(0, B0-1.96*B0se, B0+1.96*B0se))
     glmmTMBss_df[i,"B1"] <- as.numeric(between(0, B1-1.96*B1se, B1+1.96*B1se))
     glmmTMBss_df[i,"model"] <- tt[i]
-    glmmTMBss_df[i,"time"] <- glmmTMB_obj[[2]][[1]]
+    glmmTMBss_df[i,"time"] <- glmmTMB_obj[[2]][["elapsed"]]
     glmmTMBss_df[i,"convergence"] <- glmmTMB_obj[[1]]$fit$convergence
   }
   return(glmmTMBss_df)
@@ -144,7 +144,7 @@ brmsss_results <- function(tt){
     brms_df[i, "phylo_X"] <- median(sd_dat[,"sd_sp__X"])^2
     brms_df[i, "phylo_int"] <- median(sd_dat[,"sd_sp__Intercept"])^2
     brms_df[i,"phylo_cor"] <- median(sd_dat[,"cor_sp__Intercept__X"] * sd_dat[,"sd_sp__Intercept"] * sd_dat[,"sd_sp__X"])
-    b_dat <- as.data.frame(posterior_samples(brms_obj[[1]], c("^b")))
+    b_dat <- as.data.frame(posteior_samples(brms_obj[[1]], c("^b")))
     brms_df[i, "B0"] <- as.numeric(between(0
             , quantile(b_dat[,"b_Intercept"], 0.025)
             , quantile(b_dat[,"b_Intercept"], 0.975)
@@ -154,7 +154,10 @@ brmsss_results <- function(tt){
             , quantile(b_dat[,"b_X"], 0.975)
           ))
     brms_df[i,"model"] <- tt[i]
-    brms_df[i,"rawtime"] <- brms_obj[[2]][[1]]
+    eff_size <- bayestestR::effective_sample(brms_obj[[1]])[["ESS"]]
+    brms_df[i,"rawtime"] <- brms_obj[[2]][["elapsed"]]
+    size_ratio <- target_effsize/min(eff_size)
+    brms_df[i,"time"] <- brms_df[i,"rawtime"]*size_ratio
   }
   return(brms_df)
 }
@@ -184,7 +187,7 @@ MCMCglmmss_results <- function(tt){
             , quantile(b_dat[,"X"], 0.975)
           ))
     MCMCglmm_df[i,"model"] <- tt[i]
-    MCMCglmm_df[i,"rawtime"] <- MCMCglmm_obj[[2]][[1]]
+    MCMCglmm_df[i,"rawtime"] <- MCMCglmm_obj[[2]][["elapsed"]]
     eff_size <- coda::effectiveSize(MCMCglmm_obj[[1]]$Sol)
     size_ratio <- target_effsize/min(eff_size)
     MCMCglmm_df[i,"time"] <- MCMCglmm_df[i,"rawtime"]*size_ratio
@@ -211,7 +214,7 @@ phylolm_results <- function(tt){
     phylolm_df[i,"B0"] <- as.numeric(between(0, B0-1.96*B0se, B0+1.96*B0se))
     phylolm_df[i,"B1"] <- as.numeric(between(0, B1-1.96*B1se, B1+1.96*B1se))
     phylolm_df[i,"model"] <- tt[i]
-    phylolm_df[i,"time"] <- phylolm_obj[[2]][[1]]
+    phylolm_df[i,"time"] <- phylolm_obj[[2]][["elapsed"]]
     }
   return(phylolm_df)
 }
@@ -294,7 +297,7 @@ lme4ms_results <- function(tt){
 	  lme4ms_df[i,"B0"] <- as.numeric(between(0, B0-1.96*B0se, B0+1.96*B0se))
 	  lme4ms_df[i,"B1"] <- as.numeric(between(0, B1-1.96*B1se, B1+1.96*B1se))
 	  lme4ms_df[i,"model"] <- tt[i]
-	  lme4ms_df[i,"time"] <- lme4_obj[[2]][[1]]
+	  lme4ms_df[i,"time"] <- lme4_obj[[2]][["elapsed"]]
 	  lme4ms_df[i,"convergence"] <- lme4_obj[[1]]@optinfo$conv$opt
 	}
 	return(lme4ms_df)
@@ -352,7 +355,7 @@ phyr_results <- function(tt){
     phyr_df[i,"B0"] <- as.numeric(between(0, B0-1.96*B0se, B0+1.96*B0se))
     phyr_df[i,"B1"] <- as.numeric(between(0, B1-1.96*B1se, B1+1.96*B1se))
     phyr_df[i,"model"] <- tt[i]
-    phyr_df[i,"time"] <- phyr_obj[[2]][[1]]
+    phyr_df[i,"time"] <- phyr_obj[[2]][["elapsed"]]
     phyr_df[i,"convergence"] <- phyr_obj[[1]]["convcode"]
   }
   return(phyr_df)
@@ -388,7 +391,7 @@ glmmTMBms_results <- function(tt){
     glmmTMBms_df[i,"B0"] <- as.numeric(between(0, B0-1.96*B0se, B0+1.96*B0se))
     glmmTMBms_df[i,"B1"] <- as.numeric(between(0, B1-1.96*B1se, B1+1.96*B1se))
     glmmTMBms_df[i,"model"] <- tt[i]
-    glmmTMBms_df[i,"time"] <- glmmTMB_obj[[2]][[1]]
+    glmmTMBms_df[i,"time"] <- glmmTMB_obj[[2]][["elapsed"]]
     glmmTMBms_df[i,"convergence"] <- glmmTMB_obj[[1]]$fit$convergence
 
   }

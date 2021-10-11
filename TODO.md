@@ -8,10 +8,11 @@
    - interactions tweak in simulate_tree ...???
    - add form=~sp in gls/corBrownian???
 - lme4: Reconsider solution for phylosp/phylonm!
+- improvements for brms, MCMCglmm priors etc. ??
+   - why are RE priors so wide ... ?
+   - pay attention to divergences etc.?
 
 * rerun all from scratch?
-* run pez/phyr longer?
-* adjust convergence rules to account for effective sample size
 * make rules for making dirs appropriately?
 * targets ??? parallelize runs? stop on failure?
 
