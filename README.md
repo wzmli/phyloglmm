@@ -10,7 +10,7 @@ is supposed to generate a fit using:
 
 - `$platform`: pez phyr lme4 brms gls glmmTMB phylolm ?
 - `$numsite`: `ss` (single), `ms` (multiple)
-- `$size`: `small`, `medium`, `large`
+- `$size`: `small`, `medium`, `large`, `xlarge`
 - `$seed`: integer value
 
 Fit uncorrelated intercept slope glmms using pez and lme4

@@ -8,9 +8,10 @@ dat <- data.frame(dat)
 
 print(head(dat))
 
+rownames(dat) <- dat$tipname
 tt <- system.time(fit_phylolm <- phylolm(y_main~X
     , data=dat
-    , phy=phy 
+    , phy=phy
     , model = "BM"
     , measurement_error = TRUE
 )

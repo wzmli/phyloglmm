@@ -104,6 +104,7 @@ fit.lme4.ms.large.101.Rout: phyloglmm.R
 fit.glmmTMB.ss.xlarge.4.Rout:
 fit.lme4.ms.small.1.Rout:
 fit.lme4.ms.xlarge.5.Rout: phyloglmm.R
+
 ### tmb
 
 fit.lme4test.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R phylolme4.R
@@ -116,7 +117,7 @@ collect_lme4test.Rout: collect_lme4test.R
 lme4_profile.Rout: lme4_profile.R
 	$(run-R)
 
-fit.glmmTMB.%.Rout: names.R parameters.R simulate_tree.R glmmTMB_phylo_setup.R new_phylo_setup.R fit_tmb.R
+fit.glmmTMB.%.Rout: names.R parameters.R simulate_tree.R phyloglmm.R
 	$(run-R)
 
 fit.glmmTMB.ms.large.62.Rout: fit_tmb.R
