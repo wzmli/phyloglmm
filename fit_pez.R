@@ -5,7 +5,6 @@ library(lme4)
 library(dplyr)
 library(pez)
 
-
 dat <- (dat
   %>% mutate(
           sp = factor(sp)

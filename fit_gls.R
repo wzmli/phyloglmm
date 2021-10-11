@@ -1,7 +1,7 @@
 ### Fitting phyloglmm with gls
 library(ape)
 library(dplyr)
-library(nlme)
+library(nlme, warn.conflicts = FALSE)
 
 dat <- data.frame(dat)
 rownames(dat) <- dat$sp
@@ -14,7 +14,7 @@ varweights <- varFixed(~phy_var)
 
 tt <- system.time(fit_gls <- gls(y_main~X
 	, data=dat
-	, correlation=corBrownian(phy=phy)
+	, correlation=corBrownian(phy=phy, form = sp)
 	, weights = varweights
 #	, correlation=corPagel(0.5,phy=phy)
 	, verbose=FALSE

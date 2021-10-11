@@ -32,24 +32,11 @@ phyloglmm_ms_resubmit.pdf: main.tex phyloglmm_ms.tex plot.Rout
 
 Sources += $(wildcard *.R)
 
-### debug Morgan's example
-
-debug.Rout: phyloglmm_setup.Rout ./debug_examp/worked_example_phylolmm.rds ./debug_examp/worked_example_phylolmm.R
-	$(run-R)
-
-
-#2, parameters.R
-#3, phyloglmm_setup.R
-
-
 ######################################################################
 
 ### simulate phylogenetic tree
 
-
 #parameters.Rout:
-
-phyloglmm_setup.Rout:
 
 simulate_tree.Rout: names.R parameters.R simulate_tree.R
 	$(run-R)
@@ -76,20 +63,15 @@ example.Rout: example.R
 
 ### Single site 
 
+### gls
+
 fit.gls.%.Rout: names.R parameters.R simulate_tree.R fit_gls.R
 	$(run-R)
-
-fit.gls.ss.xlarge.104.Rout: fit_gls.R
-
-fit.gls.ss.large.7777.Rout: fit_gls.R
-fit.glmmTMB.ss.large.1.Rout:
 
 ### phylolm
 
 fit.phylolm.%.Rout: names.R parameters.R simulate_tree.R fit_phylolm.R
 	$(run-R)
-
-fit.phylolm.ss.xlarge.1.Rout: fit_phylolm.R
 
 ### lme4 can fit single and multiple sites
 
@@ -99,63 +81,42 @@ fit.lme4.%.Rout: names.R parameters.R simulate_tree.R phyloglmm.R
 fit.lme4pez.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R lme4pez.R
 	$(run-R)
 
-fit.lme4.ss.xlarge.1.Rout: phyloglmm.R
-fit.lme4.ms.large.101.Rout: phyloglmm.R
-fit.glmmTMB.ss.xlarge.4.Rout:
-fit.lme4.ms.small.1.Rout:
-fit.lme4.ms.xlarge.5.Rout: phyloglmm.R
-
 ### tmb
+
+fit.glmmTMB.%.Rout: names.R parameters.R simulate_tree.R phyloglmm.R
+	$(run-R)
 
 fit.lme4test.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R phylolme4.R
 	$(run-R)
 
-
-fit.lme4test.ms.large.1.Rout: phylolme4.R
 collect_lme4test.Rout: collect_lme4test.R
 
 lme4_profile.Rout: lme4_profile.R
 	$(run-R)
 
-fit.glmmTMB.%.Rout: names.R parameters.R simulate_tree.R phyloglmm.R
-	$(run-R)
-
-fit.glmmTMB.ms.large.62.Rout: fit_tmb.R
-fit.glmmTMB.ss.small.2.Rout: fit_tmb.R
-
 ### pez can only fit multiple sites
 
-fit.pez.ms.small.1.Rout: fit_pez.R
+fit.pez.%.Rout: names.R parameters.R simulate_tree.R fit_pez.R
+	$(run-R)
 
 ### Multiple sites compound symmetric case
 
 fit_cs.lme4.%.Rout: names.R parameters.R simulate_tree.R phyloglmm_setup.Rout fit_cs_lme4.R
 	$(run-R)
 
-fit.pez.%.Rout: names.R parameters.R simulate_tree.R fit_pez.R
-	$(run-R)
 
+### phyr
 fit.phyr.%.Rout: names.R parameters.R simulate_tree.R fit_phyr.R
 	$(run-R)
-
-fit.phyr.ms.small.1.Rout: fit_phyr.R
-
-fit.pez.ms.small.1.Rout: fit_pez.R
-
-fit.lme4.ms.large.1.Rout: phyloglmm.R names.R
 
 compare.pez.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R compare_pez.R
 	$(run-R)
 
-compare.pez.ms.med.1.Rout: compare_pez.R
-
-fit.pez.ms.med.1.Rout: fit_pez.R
-fit.lme4.ms.med.1.Rout: phyloglmm.R
+## brms
 
 fit.brms.%.Rout: names.R parameters.R simulate_tree.R fit_brms.R
 	$(run-R)
 
-fit.brms.ss.small.1.Rout: fit_brms.R
 ### Collect and plot results
 
 collect_gls.Rout: collect_gls.R

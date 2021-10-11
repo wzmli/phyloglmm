@@ -2,18 +2,22 @@
 
 * tweak plots, go over all
 
-## 
+##  ASK MIKE
+
+- interactions tweak in simulate_tree ...???
 
 * rerun all from scratch?
 * run pez/phyr longer?
 * adjust convergence rules to account for effective sample size
 * make rules for making dirs appropriately?
+* targets ??? parallelize runs? stop on failure?
 
 ## Single-site
 
 phylolm gls lme4 glmmTMB (MCMCglmm brms)
 
 ## Multi-site
+
 
 lme4 glmmTMB pez phyr
 
@@ -36,13 +40,14 @@ make fit.lme4.ms.small.1.Rout
 
 ## problems
 
-* pez: Warning message: arguments `tree` and `tree_site` are deprecated; please use `cov_ranef` instead. 
-
-lme4 ms:
-## 1: In ans * length(l) + if1 :
-  longer object length is not a multiple of shorter object length
-2: In ans * length(l) + if1 :
-  longer object length is not a multiple of shorter object length
+perl -wf makestuff/wrapR/Rtrim.pl fit.pez.ms.xlarge.2.wrapR.rout > fit.pez.ms.xlarge.2.Rout
+Can't open fit.pez.ms.xlarge.2.wrapR.rout: No such file or directory at makestuff/wrapR/Rtrim.pl line 4.
+Use of uninitialized value $f in substitution (s///) at makestuff/wrapR/Rtrim.pl line 6.
+Use of uninitialized value $f in substitution (s///) at makestuff/wrapR/Rtrim.pl line 7.
+Use of uninitialized value $f in print at makestuff/wrapR/Rtrim.pl line 8.
+/bin/mv -f   fit.pez.ms.xlarge.2.Rlog ./.fit.pez.ms.xlarge.2.Rlog
+/bin/mv: cannot stat 'fit.pez.ms.xlarge.2.Rlog': No such file or directory
+make: *** [Makefile:136: fit.pez.ms.xlarge.2.Rout] Error 1
 
 Reconsider solution for phylosp/phylonm!
 

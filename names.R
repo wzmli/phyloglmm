@@ -5,15 +5,17 @@ numsite <- targetname[3]
 size <- targetname[4]
 tree_seed <- as.numeric(targetname[5])
 
-if(size == "small"){nspp <- 25}
-if(size == "med"){nspp <- 50}
-if(size == "large"){nspp <- 100}
-if(size == "xlarge"){nspp <- 500}
+nspp <- switch(size,
+               small = 25,
+               med = 50,
+               large = 100,
+               xlarge = 500,
+               stop("unknown size",nspp))
 
-
-if(numsite == "ss"){nsite <- 1}
-if(numsite == "ms"){nsite <- 20}
-
+nsite <- switch(numsite,
+                ss = 1,
+                ms = 20,
+                stop("unknown numsite", nsite))
 
 rep = 10
 

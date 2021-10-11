@@ -1,10 +1,9 @@
 ### simulate phylogenetic tree
-
 library(ape)
 library(MASS)
 library(sparseMVN)
 library(Matrix)
-library(dplyr)
+library(dplyr, warn.conflicts = FALSE)
 ## library(MASS)  ## for mvrnorm() ## don't load so we don't screw up dplyr::select()
 
 quadform <- function(sd_mat,cormat){
@@ -24,11 +23,11 @@ phy <- rtree(n = nspp)
 
 Vphy <- vcv(phy)
 
-# Generate data frame 
+# Generate data frame
 
-interactions <- interaction(1:nsite,1:nspp)
-interactions <- interaction(1:nspp,1:nsite)
-
+## interactions <- interaction(1:nsite,1:nspp)
+## interactions <- interaction(1:nspp,1:nsite)
+interactions <- factor(c(outer(1:nspp, 1:nsite, paste, sep=".")))
 
 indexdat <- (data.frame(ints = levels(interactions))
        %>% rowwise()
@@ -37,10 +36,10 @@ indexdat <- (data.frame(ints = levels(interactions))
                   # , sp = unlist(strsplit(ints,"[.]"))[2]
                   , site = unlist(strsplit(ints,"[.]"))[2]
                   , sp = unlist(strsplit(ints,"[.]"))[1]
-       )  
+       )
 )
 
-# Species frame: 
+# Species frame:
 ## Generate phylogenetic intercept and slope
 
 phycormat <- matrix(c(1,phyrho.B01,phyrho.B01,1),2,2)
@@ -71,7 +70,7 @@ b <- MASS::mvrnorm(n=nspp
                    , empirical = TRUE)
 
 spdat <- data.frame(sp = as.character(1:nspp)
-  , b0_phy = head(b_phy,nspp) 
+  , b0_phy = head(b_phy,nspp)
   , b1_phy = tail(b_phy,nspp)
   , b0 = b[,1]
   , b1 = b[,2]
@@ -120,16 +119,16 @@ b_interactionphy <- sparseMVN::rmvn.sparse(n=1
 )
 
 interactiondat <- data.frame(ints = levels(interactions) ## Check order above, if things don't add up, this is the step to check
-  , b_intphy = c(b_interactionphy)    
+  , b_intphy = c(b_interactionphy)
   , b_int = c(b_interaction)
 )
 
 # Generate observation error and environment covariate
 
 dat <- (indexdat[rep(1:nrow(indexdat),each=nrep),]
-  %>% left_join(.,spdat)
-  %>% left_join(.,sitedat)
-  %>% left_join(.,interactiondat)
+  %>% left_join(.,spdat, by = "sp")
+  %>% left_join(.,sitedat, by = "site")
+  %>% left_join(.,interactiondat, by = "ints")
   %>% rowwise()
   %>% mutate(noise = rnorm(1,sd=sd.resid)
    , X = rnorm(1,sd=Xsd)

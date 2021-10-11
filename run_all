@@ -1,11 +1,27 @@
 #! /bin/bash
-ALL_PLATFORMS=pez phyr lme4 brms gls glmmTMB phylolm
-for platform in lme4test; do
-    for numsite in ss ms; do
-	for size in small medium large; do
-	    for seed in {1..30}; do
-		make fit.$platform.$numsite.$size.$seed.Rout
+## https://stackoverflow.com/questions/38774355/how-to-parallelize-for-loop-in-bash-limiting-number-of-processes
+SS_PLATFORMS=(lme4 glmmTMB gls phylolm MCMCglmm brms)
+MS_PLATFORMS=(lme4 glmmTMB pez phyr)
+SIZES=(small med large xlarge)
+num_procs=18
+num_jobs="\j"  # The prompt escape for number of jobs currently running
+for platform in ${SS_PLATFORMS[@]}; do
+    for size in ${SIZES[@]}; do
+	for seed in {1..50}; do
+	    while (( ${num_jobs@P} >= num_procs )); do
+		wait -n
 	    done
+	    make fit.$platform.ss.$size.$seed.Rout &
+	done
+    done
+done
+for platform in ${MS_PLATFORMS[@]}; do
+    for size in ${SIZES[@]}; do
+	for seed in {1..50}; do
+	    while (( ${num_jobs@P} >= $num_procs )); do
+		wait -n
+	    done
+	    make fit.$platform.ms.$size.$seed.Rout &
 	done
     done
 done

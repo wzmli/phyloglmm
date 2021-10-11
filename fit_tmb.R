@@ -11,39 +11,37 @@ phyZ <- phylo.to.Z(phy,stand=FALSE)
 dat <- (dat
   %>% mutate(obs = sp
       )
-)	
+)
 
 print(dat)
 
-
-if(numsite == "ss"){
-  glmmTMBmod <- glmmTMBphylo(y_main ~ X  
-    # + (1|sp) + (0 + X| sp) 
+if (numsite == "ss") {
+  glmmTMBmod <- phylo_glmmTMB(y_main ~ X
     + (1 + X|sp)
     , data=dat
-    , phyloZ = phyZ
-    , phylonm = c("sp", "sp:site")
+    , phylo = phy
+    , phylonm = "sp"
     , doFit=TRUE
-    # , dispformula = ~1
     , control=glmmTMBControl(optCtrl=list(trace=1,iter.max=1e5,eval.max=1e5))
     , REML = FALSE
-  ) 
+  )
 }
 
-if(numsite == "ms"){
-	glmmTMBmod <- glmmTMBphylo(y_all ~ X  
-+ (1 | sp:site)
-	+ (1 + X | sp)
-	+ (1 + X | obs)
-	+ (1 | site)
-  , data=dat
-  , phyloZ = phyZ
-  , phylonm = c("sp", "sp:site")
-  , doFit=TRUE
-  , dispformula = ~1
-  , control=glmmTMBControl(optCtrl=list(trace=1,iter.max=1e4,eval.max=1e4))
-  , REML = FALSE
-  ) 
+if (numsite == "ms"){
+  glmmTMBmod <- phylo_glmmTMB(y_all ~ X
+                              + (1 | sp:site)
+                              + (1 + X | sp)
+                              + (1 + X | obs)
+                              + (1 | site)
+                            , data=dat
+                            , phylo = phy,
+                            , phylonm = c("sp", "sp:site")
+                            , doFit=TRUE
+                            , dispformula = ~1
+                            , control=glmmTMBControl(optCtrl=list(trace=1,
+                                                                  iter.max=1e4,eval.max=1e4))
+                            , REML = FALSE
+                              )
 }
 t2 <- proc.time()
 glmmTMBtime <- t2-t1
