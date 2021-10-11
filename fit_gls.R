@@ -14,7 +14,8 @@ varweights <- varFixed(~phy_var)
 
 tt <- system.time(fit_gls <- gls(y_main~X
 	, data=dat
-	, correlation=corBrownian(phy=phy, form = sp)
+	, correlation=corBrownian(phy=phy,
+                                  form = ~sp)
 	, weights = varweights
 #	, correlation=corPagel(0.5,phy=phy)
 	, verbose=FALSE

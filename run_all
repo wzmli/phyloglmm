@@ -1,11 +1,13 @@
 #! /bin/bash
-## https://stackoverflow.com/questions/38774355/how-to-parallelize-for-loop-in-bash-limiting-number-of-processes
-SS_PLATFORMS=(lme4 glmmTMB gls phylolm MCMCglmm brms)
+SS_PLATFORMS=(lme4 glmmTMB gls phylolm)
 MS_PLATFORMS=(lme4 glmmTMB pez phyr)
+SLOW_PLATFORMS=(MCMCglmm brms)
 SIZES=(small med large xlarge)
-num_procs=18
-num_jobs="\j"  # The prompt escape for number of jobs currently running
+## https://stackoverflow.com/questions/38774355/how-to-parallelize-for-loop-in-bash-limiting-number-of-processes
+num_procs=18   ## max parallel jobs
+num_jobs="\j"  ## prompt escape for number of jobs currently running
 for platform in ${SS_PLATFORMS[@]}; do
+    mkdir -p datadir/$platform
     for size in ${SIZES[@]}; do
 	for seed in {1..50}; do
 	    while (( ${num_jobs@P} >= num_procs )); do
@@ -16,12 +18,25 @@ for platform in ${SS_PLATFORMS[@]}; do
     done
 done
 for platform in ${MS_PLATFORMS[@]}; do
+    mkdir -p datadir/$platform
     for size in ${SIZES[@]}; do
 	for seed in {1..50}; do
 	    while (( ${num_jobs@P} >= $num_procs )); do
 		wait -n
 	    done
 	    make fit.$platform.ms.$size.$seed.Rout &
+	done
+    done
+done
+## run slow stuff last (ss only)
+for platform in ${SLOW_PLATFORMS[@]}; do
+    mkdir -p datadir/$platform
+    for size in ${SIZES[@]}; do
+	for seed in {1..50}; do
+	    while (( ${num_jobs@P} >= $num_procs )); do
+		wait -n
+	    done
+	    make fit.$platform.ss.$size.$seed.Rout &
 	done
     done
 done

@@ -4,7 +4,10 @@
 
 ##  ASK MIKE
 
-- interactions tweak in simulate_tree ...???
+- significant changes:
+   - interactions tweak in simulate_tree ...???
+   - add form=~sp in gls/corBrownian???
+- lme4: Reconsider solution for phylosp/phylonm!
 
 * rerun all from scratch?
 * run pez/phyr longer?
@@ -12,31 +15,7 @@
 * make rules for making dirs appropriately?
 * targets ??? parallelize runs? stop on failure?
 
-## Single-site
-
-phylolm gls lme4 glmmTMB (MCMCglmm brms)
-
-## Multi-site
-
-
-lme4 glmmTMB pez phyr
-
-for i in pez phyr brms gls lme4 glmmTMB phylolm; do 
-   mkdir -p datadir/$i
-   make fit.$i.ss.small.1.Rout
-done
-
-make fit.glmmTMB.ss.small.1.Rout
-
-make fit.pez.ss.small.1.Rout ## OK
-make fit.phyr.ss.small.1.Rout ## OK
-make fit.MCMCglmm.ss.small.1.Rout
-make fit.brms.ss.small.1.Rout
-make fit.gls.ss.small.1.Rout
-make fit.lme4.ss.small.1.Rout
-make fit.lme4.ss.small.1.Rout
-make fit.lme4.ms.small.1.Rout
-
+see `run_all` ...
 
 ## problems
 
@@ -49,5 +28,5 @@ Use of uninitialized value $f in print at makestuff/wrapR/Rtrim.pl line 8.
 /bin/mv: cannot stat 'fit.pez.ms.xlarge.2.Rlog': No such file or directory
 make: *** [Makefile:136: fit.pez.ms.xlarge.2.Rout] Error 1
 
-Reconsider solution for phylosp/phylonm!
+
 

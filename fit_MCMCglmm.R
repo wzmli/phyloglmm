@@ -7,7 +7,7 @@ dat <- (dat
 	 %>% mutate(phylo=paste("t",sp,sep="")
       , obs=phylo
       )
-#	 %>% filter(site == 1) 
+#	 %>% filter(site == 1)
 )
 
 dat <- data.frame(dat)
@@ -48,6 +48,6 @@ print(plot(MCMCglmm_fit))
 
 
 MCMCglmm_list <- list(MCMCglmm_fit,tt)
-saveRDS(MCMCglmm_list,file=paste("datadir/MCMCglmm",numsite,size,tree_seed,"rds",sep="."))
+saveRDS(MCMCglmm_list,file=paste("datadir/MCMCglmm/MCMCglmm",numsite,size,tree_seed,"rds",sep="."))
 
 # rdnosave()
