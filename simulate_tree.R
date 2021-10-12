@@ -26,8 +26,10 @@ Vphy <- vcv(phy)
 # Generate data frame
 
 ## interactions <- interaction(1:nsite,1:nspp)
-## interactions <- interaction(1:nspp,1:nsite)
-interactions <- factor(c(outer(1:nspp, 1:nsite, paste, sep=".")))
+## we ONLY care about the interactions
+## creates a vector with all crossed levels, despite length mismatch
+interactions <- suppressWarnings(interaction(1:nspp,1:nsite))
+
 
 indexdat <- (data.frame(ints = levels(interactions))
        %>% rowwise()
