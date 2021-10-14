@@ -5,29 +5,28 @@
 ##  ASK MIKE
 
 - significant changes:
-   - interactions tweak in simulate_tree ...???
    - add form=~sp in gls/corBrownian???
 - lme4: Reconsider solution for phylosp/phylonm!
 - improvements for brms, MCMCglmm priors etc. ??
    - why are RE priors so wide ... ?
    - pay attention to divergences etc.?
+- is gls collection stuff in `collect.R` correct? resid=0, phylosig = sigma?
+- is pez much slower than previously? Why?
 
-* rerun all from scratch?
+* move 'pez' to 'slow' category?
+* switch loop order to interleave model types etc. ? (seed rep as outermost loop?)
 * make rules for making dirs appropriately?
+* set up for SHARCnet/furrr ??
 * targets ??? parallelize runs? stop on failure?
+* make rules for .rds file, not .Rout?
 
 see `run_all` ...
 
-## problems
+## problems/incomplete runs
 
-perl -wf makestuff/wrapR/Rtrim.pl fit.pez.ms.xlarge.2.wrapR.rout > fit.pez.ms.xlarge.2.Rout
-Can't open fit.pez.ms.xlarge.2.wrapR.rout: No such file or directory at makestuff/wrapR/Rtrim.pl line 4.
-Use of uninitialized value $f in substitution (s///) at makestuff/wrapR/Rtrim.pl line 6.
-Use of uninitialized value $f in substitution (s///) at makestuff/wrapR/Rtrim.pl line 7.
-Use of uninitialized value $f in print at makestuff/wrapR/Rtrim.pl line 8.
-/bin/mv -f   fit.pez.ms.xlarge.2.Rlog ./.fit.pez.ms.xlarge.2.Rlog
-/bin/mv: cannot stat 'fit.pez.ms.xlarge.2.Rlog': No such file or directory
-make: *** [Makefile:136: fit.pez.ms.xlarge.2.Rout] Error 1
+* pez.ms missing: 33, 34, 41, 42, 49, 50
+* pez.xlarge missing: all? (memory?)
+
 
 
 

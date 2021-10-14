@@ -10,6 +10,8 @@ library(phylolm)
 library(phyr)
 library(glmmTMB)
 library(MCMCglmm)
+library(broom)
+library(broom.mixed)
 
 target_effsize <- 4000
 
@@ -34,7 +36,8 @@ gls_results <- function(tt) {
   gls_df <- blank_df(length(tt))
   for(i in 1:length(tt)){
     gls_obj <- readRDS(paste(gls_path,tt[i],sep=""))
-    gls_df[i,"phylo_int"] <- as.numeric(gls_obj[[1]]["sigma"])^2
+    gls_df[i,"resid"] <- 0
+    gls_df[i,"phylo_int"] <- sigma(gls_obj[[1]])^2
     B0 <- coef(summary(gls_obj[[1]]))["(Intercept)","Value"]
     B0se <- coef(summary(gls_obj[[1]]))["(Intercept)","Std.Error"]
     B1 <- coef(summary(gls_obj[[1]]))["X","Value"]
@@ -47,7 +50,7 @@ gls_results <- function(tt) {
   return(gls_df)
 }
 
-gls_data <- bind_rows(gls_results(gls_res))
+gls_data <- gls_results(gls_res)
 
 #### Collect lme4 single site results ----
 
@@ -406,6 +409,6 @@ msdat <- rbind(lme4ms_data,pez_data, phyr_data, glmmTMBms_data)
 data_list <- list(ssdat,msdat)
 
 # data_list <- list(gls_data, lme4ss_data, lme4ss_slope_data, lme4ms_data, pez_data, lme4ms_slope_data , pez_slope_data, lme4cs_data, pez_cs_data, lme4cs_slope_data, pez_cs_slope_data)
-saveRDS(data_list,file="./datadir/collect_rerun.RDS")
+saveRDS(data_list,file="./datadir/collect_rerun_new.RDS")
 # rdsave(ssdat, msdat)
 
