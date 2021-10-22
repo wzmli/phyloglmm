@@ -4,12 +4,13 @@ library(dplyr)
 library(glmmTMB)
 library(lme4)
 library(Matrix)
+library(phyloglmm)
+
 t1 <- proc.time()
 
-phyZ <- phylo.to.Z(phy,stand=FALSE)
-
 dat <- (dat
-  %>% mutate(obs = sp
+  %>% mutate(sp = factor(sp),
+             obs = sp
       )
 )
 

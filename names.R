@@ -5,12 +5,11 @@ numsite <- targetname[3]
 size <- targetname[4]
 tree_seed <- as.numeric(targetname[5])
 
-nspp <- switch(size,
-               small = 25,
-               med = 50,
-               large = 100,
-               xlarge = 500,
-               stop("unknown size",nspp))
+size_vec <- c(small=25, med=50, large = 100,
+              mlarge = 250, xlarge = 500)
+
+nspp <- size_vec[[size]]
+if (is.na(nspp)) stop("unknown size")
 
 nsite <- switch(numsite,
                 ss = 1,

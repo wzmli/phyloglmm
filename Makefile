@@ -86,7 +86,10 @@ fit.lme4pez.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R lme4p
 
 ### tmb
 
-fit.glmmTMB.%.Rout: names.R parameters.R simulate_tree.R phyloglmm.R
+datadir/glmmTMB/glmmTMB.%.rds: names.R parameters.R simulate_tree.R fit_tmb.R
+	$(run-R)
+
+fit.glmmTMB.%.Rout: names.R parameters.R simulate_tree.R fit_tmb.R
 	$(run-R)
 
 fit.lme4test.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R phylolme4.R

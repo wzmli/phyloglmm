@@ -13,6 +13,7 @@ library(MCMCglmm)
 library(broom)
 library(broom.mixed)
 
+verbose <- TRUE
 target_effsize <- 4000
 
 ss_names = c("resid", "phylo_int", "phylo_X", "phylo_cor",
@@ -29,6 +30,7 @@ blank_df <- function(nrow, type="ss") {
 }
 
 #### Collect gls results ----
+if (verbose) cat("gls\n")
 
 gls_path <- "./datadir/gls/"
 gls_res <- list.files(path = gls_path)
@@ -53,7 +55,7 @@ gls_results <- function(tt) {
 gls_data <- gls_results(gls_res)
 
 #### Collect lme4 single site results ----
-
+if (verbose) cat("lme4ss\n")
 lme4_path <- "./datadir/lme4/"
 lme4ss_res <- list.files(path = lme4_path, pattern = "ss")
 lme4ss_results <- function(tt){
@@ -105,7 +107,7 @@ lme4ss_data <- lme4ss_results(lme4ss_res)
 
 
 ## single site glmmTMB
-
+if (verbose) cat("glmmTMBss\n")
 glmmTMB_path <- "./datadir/glmmTMB/"
 glmmTMBss_res <- list.files(path = glmmTMB_path, pattern = "ss")
 glmmTMBss_results <- function(tt){
@@ -138,16 +140,24 @@ glmmTMBss_data <- glmmTMBss_results(glmmTMBss_res)
 
 brms_path <- "./datadir/brms/"
 brmsss_res <- list.files(path = brms_path, pattern = "ss")
+
+get_draws <- function(obj, vars) {
+  ## need to unclass as_draws() to convince bind_rows to stick it together ...
+  dplyr::bind_rows(unclass(as_draws(obj, vars, regex = TRUE)))
+}
+
+if (verbose) cat("brmsss\n")
 brmsss_results <- function(tt){
   brms_df <- blank_df(length(tt))
   for(i in 1:length(tt)){
+    cat(".")
     brms_obj <- readRDS(paste(brms_path,tt[i],sep=""))
-    sd_dat <- as.data.frame(posterior_samples(brms_obj[[1]],c("^sigma","^sd_","^cor_")))
+    sd_dat <- get_draws(brms_obj[[1]], c("^sigma","^sd_","^cor_"))
     brms_df[i,"resid"] <- median(sd_dat[,"sigma"])^2
     brms_df[i, "phylo_X"] <- median(sd_dat[,"sd_sp__X"])^2
     brms_df[i, "phylo_int"] <- median(sd_dat[,"sd_sp__Intercept"])^2
     brms_df[i,"phylo_cor"] <- median(sd_dat[,"cor_sp__Intercept__X"] * sd_dat[,"sd_sp__Intercept"] * sd_dat[,"sd_sp__X"])
-    b_dat <- as.data.frame(posterior_samples(brms_obj[[1]], c("^b")))
+    b_dat <- get_draws(brms_obj[[1]], c("^b"))
     brms_df[i, "B0"] <- as.numeric(between(0
             , quantile(b_dat[,"b_Intercept"], 0.025)
             , quantile(b_dat[,"b_Intercept"], 0.975)
@@ -167,8 +177,9 @@ brmsss_results <- function(tt){
 
 brmsss_data <- brmsss_results(brmsss_res)
 
+cat("\n")
 ## Collect MCMCglmm
-
+if (verbose) cat("MCMCglmmss\n")
 MCMCglmm_path <- "./datadir/MCMCglmm/"
 MCMCglmmss_res <- list.files(path = MCMCglmm_path, pattern = "ss")
 MCMCglmmss_results <- function(tt){
@@ -203,10 +214,12 @@ MCMCglmmss_data <- MCMCglmmss_results(MCMCglmmss_res)
 #### Collect phylolm single site results ----
 ## need to check out NA cases
 
+if (verbose) cat("phylolmss\n")
 phylolm_path <- "./datadir/phylolm/"
 phylolm_res <- list.files(path = phylolm_path)
 phylolm_results <- function(tt){
-  phylolm_df <- blank_df(length(tt))  for(i in 1:length(tt)){
+  phylolm_df <- blank_df(length(tt))
+  for(i in 1:length(tt)){
     phylolm_obj <- readRDS(paste(phylolm_path,tt[i],sep=""))
     phylolm_df[i,"resid"] <- as.numeric(phylolm_obj[[1]]["sigma2_error"])
     phylolm_df[i,"phylo_int"] <- as.numeric(phylolm_obj[[1]]["sigma2"])
@@ -229,6 +242,7 @@ ssdat <- rbind(gls_data, phylolm_data, lme4ss_data, glmmTMBss_data, brmsss_data,
 
 ### Collect multiple sites ----
 
+if (verbose) cat("lme4ms\n")
 lme4_path <- "./datadir/lme4/"
 lme4ms_res <- list.files(path = lme4_path, pattern = "ms")
 lme4ms_results <- function(tt){
@@ -308,6 +322,7 @@ lme4ms_results <- function(tt){
 
 lme4ms_data <- lme4ms_results(lme4ms_res)
 
+if (verbose) cat("pezms\n")
 pez_path <- "./datadir/pez/"
 pez_res <- list.files(path = pez_path)
 pez_results <- function(tt){
@@ -337,7 +352,7 @@ pez_results <- function(tt){
 pez_data <- pez_results(pez_res)
 
 
-
+if (verbose) cat("phyrms\n")
 phyr_path <- "./datadir/phyr/"
 phyr_res <- list.files(path = phyr_path)
 phyr_results <- function(tt){
@@ -366,10 +381,7 @@ phyr_results <- function(tt){
 
 phyr_data <- phyr_results(phyr_res)
 
-
-
-
-
+if (verbose) cat("glmmTMBms\n")
 glmmTMB_path <- "./datadir/glmmTMB/"
 glmmTMB_res <- list.files(path = glmmTMB_path, pattern = "ms")
 glmmTMBms_results <- function(tt){
@@ -409,6 +421,5 @@ msdat <- rbind(lme4ms_data,pez_data, phyr_data, glmmTMBms_data)
 data_list <- list(ssdat,msdat)
 
 # data_list <- list(gls_data, lme4ss_data, lme4ss_slope_data, lme4ms_data, pez_data, lme4ms_slope_data , pez_slope_data, lme4cs_data, pez_cs_data, lme4cs_slope_data, pez_cs_slope_data)
-saveRDS(data_list,file="./datadir/collect_rerun_new.RDS")
+saveRDS(data_list, file="./datadir/collect_rerun_new.RDS")
 # rdsave(ssdat, msdat)
-

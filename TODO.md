@@ -20,6 +20,7 @@
 * targets ??? parallelize runs? stop on failure?
 * make rules for .rds file, not .Rout?
 
+* speed up collect?
 see `run_all` ...
 
 ## problems/incomplete runs
