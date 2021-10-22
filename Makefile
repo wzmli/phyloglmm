@@ -75,6 +75,9 @@ fit.phylolm.%.Rout: names.R parameters.R simulate_tree.R fit_phylolm.R
 
 ### lme4 can fit single and multiple sites
 
+datadir/lme4/lme4.%.rds: names.R parameters.R simulate_tree.R phyloglmm.R
+	$(run-R)
+
 fit.lme4.%.Rout: names.R parameters.R simulate_tree.R phyloglmm.R
 	$(run-R)
 
