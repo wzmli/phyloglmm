@@ -147,7 +147,7 @@ brmsss_results <- function(tt){
     brms_df[i, "phylo_X"] <- median(sd_dat[,"sd_sp__X"])^2
     brms_df[i, "phylo_int"] <- median(sd_dat[,"sd_sp__Intercept"])^2
     brms_df[i,"phylo_cor"] <- median(sd_dat[,"cor_sp__Intercept__X"] * sd_dat[,"sd_sp__Intercept"] * sd_dat[,"sd_sp__X"])
-    b_dat <- as.data.frame(posteior_samples(brms_obj[[1]], c("^b")))
+    b_dat <- as.data.frame(posterior_samples(brms_obj[[1]], c("^b")))
     brms_df[i, "B0"] <- as.numeric(between(0
             , quantile(b_dat[,"b_Intercept"], 0.025)
             , quantile(b_dat[,"b_Intercept"], 0.975)
