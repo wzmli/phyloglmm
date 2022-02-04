@@ -154,7 +154,7 @@ fit.lme4.ms.med.1.Rout: phyloglmm.R
 fit.brms.%.Rout: names.R parameters.R simulate_tree.R fit_brms.R
 	$(run-R)
 
-fit.brms.ss.small.1.Rout: fit_brms.R
+fit.brms.ss.large.1.Rout: fit_brms.R
 ### Collect and plot results
 
 collect_gls.Rout: collect_gls.R
@@ -181,7 +181,7 @@ fit.MCMCglmm.%.Rout: names.R parameters.R simulate_tree.R MCMCglmmhacked.R fit_M
 	$(run-R)
 
 fit.lme4.ss.large.1.Rout: phyloglmm.R
-fit.MCMCglmm.ss.large.1.Rout: fit_MCMCglmm.R
+fit.MCMCglmm.ss.small.1.Rout: fit_MCMCglmm.R
 
 fit_glmmPQL.Rout: parameters.Rout simulate_tree.Rout fit_glmmPQL.R
 	$(run-R)
