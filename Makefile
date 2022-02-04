@@ -141,7 +141,7 @@ fit.phyr.ms.small.1.Rout: fit_phyr.R
 
 fit.pez.ms.small.1.Rout: fit_pez.R
 
-fit.lme4.ms.large.1.Rout: phyloglmm.R names.R
+fit.lme4.ss.large.1.Rout: phyloglmm.R names.R
 
 compare.pez.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R compare_pez.R
 	$(run-R)

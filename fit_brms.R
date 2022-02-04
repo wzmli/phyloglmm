@@ -17,22 +17,26 @@ inv.phylo <- MCMCglmm:::inverseA(phy,nodes="TIPS",scale=FALSE)
 brms_time1 <- proc.time()
   A <- solve(inv.phylo$Ainv)
   rownames(A) <- rownames(inv.phylo$Ainv)
-  brms_fit <- brm(y_main~ X + (1+X|sp)
+  brms_fit <- brm(y_main~ X + (1+X|gr(sp,cov=A))
       , family= gaussian()
-      , cov_ranef = list(sp = A)
+      , data2 = list(A = A)
       , prior = c(prior(normal(0,1), "b")
 			, prior(normal(0,1), "Intercept")
-			, prior(student_t(2,0,20), "sd")
-         , prior(student_t(4,0,20), "sigma")
+			, prior(normal(10,1), "sd")
+#			, prior(normal(phyrho.B01,1), "cor(Intercept,X)")
+         , prior(normal(10,1), "sigma")
       )
       , data=dat
 			, iter = stan_nitt
 			, chains = 2
+			# , adapt_delta = 0.8
 		)
 
 brms_time2 <- proc.time()
 
 print(summary(brms_fit))
+
+print(brms_fit)
 
 brms_time <- brms_time2 - brms_time1
 print(brms_time)
