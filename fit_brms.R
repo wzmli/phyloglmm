@@ -7,7 +7,7 @@ dat <- (dat
         %>% mutate(phylo=paste("t",sp,sep="")
                    , obs=phylo
         )
-        #	 %>% filter(site == 1) 
+        #	 %>% filter(site == 1)
 )
 
 dat <- data.frame(dat)
@@ -23,8 +23,21 @@ brms_time1 <- proc.time()
       , prior = c(prior(normal(0,1), "b")
 			, prior(normal(0,1), "Intercept")
 			, prior(normal(10,1), "sd")
-#			, prior(normal(phyrho.B01,1), "cor(Intercept,X)")
-         , prior(normal(10,1), "sigma")
+                  ##			, prior(normal(phyrho.B01,1), "cor(Intercept,X)")
+                  ## 1. source of divergent transitions if we use normal(1,1) [~ 1000 divergent trans]
+                  ## 2. they go away with normal(10,1) but that's nowhere near the true value (1)
+                  ##   (and the prior drags the estimate up to 10) [0 divergent transitions]
+                  ## 3. they go away with normal(1, 0.001) (i.e. centered at true value with
+                  ##  small SD/high precision) but that's cheating
+                  ## next steps, *if* we wanted to take them
+                  ##    - can we get away with some 0.001 < sigma < 1 ?
+                  ##    - would allowing a heavier tail help? e.g. studentt(10, 1, 1) ???
+                  ##    - look at diagnostics to try to figure out where/what is driving the divergences
+                  ##      (the most typical problem, which may not apply here, is a 'funnel' - we would
+                  ##       look at the bivariate distribution of the sigma estimate and any of the RE values
+                  ##       I'm not sure how that applies here because we don't have latent variables??)
+                  ##
+                , prior(normal(1, 0.1), "sigma")
       )
       , data=dat
 			, iter = stan_nitt

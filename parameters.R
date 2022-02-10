@@ -27,16 +27,16 @@ phyrho.B01 <- 0.7
 
 # magnitude of random effects
 
-sd.B0 <- 3 
-sd.B1 <- 3
-rho.B01 <- 0.4
+## sd.B0 <- 3
+## sd.B1 <- 3
+## rho.B01 <- 0.4
 
-#sd.B0 <- 0
-#sd.B1 <- 0
-#rho.B01 <- 0
+sd.B0 <- 0
+sd.B1 <- 0
+rho.B01 <- 0
 
-# compound symmetric parameters 
-sd.interaction  <- 5 ## sp:site 
+# compound symmetric parameters
+sd.interaction  <- 5 ## sp:site
 
 # MCMC iterations
 
