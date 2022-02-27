@@ -18,7 +18,7 @@ beta0 <- 0
 beta1 <- 0
 
 # magnitude of phylogenetic random effects
-physd.B0 <- 10
+physd.B0 <- 20
 physd.B1 <- 10
 phyrho.B01 <- 0.7
 
@@ -27,13 +27,13 @@ phyrho.B01 <- 0.7
 
 # magnitude of random effects
 
-sd.B0 <- 3 
-sd.B1 <- 3
+sd.B0 <- 1
+sd.B1 <- 1
 rho.B01 <- 0.4
 
-#sd.B0 <- 0
-#sd.B1 <- 0
-#rho.B01 <- 0
+sd.B0 <- 0.000001
+sd.B1 <- 0.000001
+rho.B01 <- 0.00001
 
 # compound symmetric parameters 
 sd.interaction  <- 5 ## sp:site 

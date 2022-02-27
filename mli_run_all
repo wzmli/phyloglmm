@@ -1,0 +1,11 @@
+#! /bin/bash
+ALL_PLATFORMS=pez phyr lme4 brms gls glmmTMB phylolm
+for platform in MCMCglmm; do
+    for numsite in ss; do
+	for size in small med large; do
+	    for seed in {1..50}; do
+		make fit.$platform.$numsite.$size.$seed.Rout
+	    done
+	done
+    done
+done

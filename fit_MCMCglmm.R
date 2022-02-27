@@ -21,7 +21,7 @@ prior <- list(G=list(G1=list(V=diag(2),nu=2)
 #						, G2 = list(V=1,nu=2)
 #						, G3 = list(V=diag(2), nu=2)
                      )
-              , R=list(V=1,nu=1)
+              , R=list(V=2,nu=2)
               )
 
 
