@@ -1,6 +1,7 @@
 library(brms)
 library(Matrix)
 library(dplyr)
+library(cmdstanr)
 
 dat <- (dat
         %>% rowwise()
@@ -19,17 +20,26 @@ inv.phylo <- MCMCglmm:::inverseA(phy,nodes="TIPS",scale=FALSE)
 ## might want to time solve() too, but will be a drop in the bucket
 A <- solve(inv.phylo$Ainv)
 rownames(A) <- rownames(inv.phylo$Ainv)
+
+## Help with priors 
+## https://rdrr.io/cran/brms/man/set_prior.html
+
 brms_time1 <- proc.time()
   brms_dummy <- brm(y_main~ X + (1+X|gr(sp, cov = A))
                 , family= gaussian()
                 , data2 = list(A = A)
                   ## , cov_ranef = list(sp = A)
-                , prior = c(prior(normal(0,1), "b")
-                , prior(normal(15,2), "Intercept")
-                , prior(normal(15,2), "sd")
-                , prior(normal(1,0.1), "sigma")
+                , prior = c(prior(normal(0,1))
+                  , prior(normal(0,1), coef = "X")
+                  , prior(normal(20,2), class = sd, coef = "Intercept")
+                  , prior(normal(10,2), class = sd, coef = "X")
+                  , prior(normal(1,0.1), "sigma")
 #                , prior(student_t(2,0,20), "sd")
 #                , prior(student_t(4,0,20), "sigma")
+# work            , prior(normal(0,1),"b")
+# work            , prior(normal(20,2),"Intercept")
+# work            , prior(normal(10,2),"sd")
+# work            , prior(normal(1,0.1),"sigma")
                   )
       , data=dat
       , iter = 10
