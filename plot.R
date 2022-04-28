@@ -24,7 +24,17 @@ colvec2  <- colvec_all[sub_pkgs2]
 ##                 glmmTMB="Dark Green",brms="Orange",pez="Gray",phyr="Purple",MCMCglmm="Yellow")
 
 data_list <- readRDS("datadir/collect_rerun.RDS")
+brms <- readRDS("datadir/brms_dat_new.RDS")
+mcmcglmm <- readRDS("datadir/MCMCglmm_dat.RDS")
+
 ssdat_raw <- data_list[[1]]
+
+ssdat2 <- (ssdat_raw
+	%>% filter(!(grepl("brms",model)))
+	%>% filter(!(grepl("MCMCglmm",model)))
+)
+ssdat_raw2 <- bind_rows(ssdat2,brms,mcmcglmm)
+
 msdat_raw <- data_list[[2]]
 
 tree_seed = 1
@@ -42,7 +52,7 @@ trans_platform <- function(platform) {
 }
 
 
-ssdat <- (ssdat_raw
+ssdat <- (ssdat_raw2
   %>% as_tibble()
   %>% separate(model,c("platform", "sites", "size", "seed","saveformat"), "[.]")
   %>% dplyr:::select(time, platform, size, seed, resid, phylo_int, phylo_X, phylo_cor, B0, B1)

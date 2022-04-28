@@ -3,6 +3,8 @@ library(Matrix)
 library(dplyr)
 library(cmdstanr)
 
+set_cmdstan_path("cmdstan/")
+
 dat <- (dat
         %>% rowwise()
         %>% mutate(phylo=paste("t",sp,sep="")
@@ -30,16 +32,16 @@ brms_time1 <- proc.time()
                 , data2 = list(A = A)
                   ## , cov_ranef = list(sp = A)
                 , prior = c(prior(normal(0,1))
-                  , prior(normal(0,1), coef = "X")
-                  , prior(normal(20,2), class = sd, coef = "Intercept")
-                  , prior(normal(10,2), class = sd, coef = "X")
-                  , prior(normal(1,0.1), "sigma")
+                #   , prior(normal(0,1), coef = "X")
+                #   , prior(normal(20,2), class = sd, coef = "Intercept")
+                #   , prior(normal(10,2), class = sd, coef = "X")
+                #   , prior(normal(1,0.1), "sigma")
 #                , prior(student_t(2,0,20), "sd")
 #                , prior(student_t(4,0,20), "sigma")
-# work            , prior(normal(0,1),"b")
-# work            , prior(normal(20,2),"Intercept")
-# work            , prior(normal(10,2),"sd")
-# work            , prior(normal(1,0.1),"sigma")
+              # , prior(normal(0,1),"b")          ## work
+              # , prior(normal(0,2),"Intercept") ## work
+              , prior(normal(10,1),"sd")        ## work
+              , prior(normal(1,0.001),"sigma")    ## work
                   )
       , data=dat
       , iter = 10
@@ -53,6 +55,7 @@ brms_compiletime <- brms_time2 - brms_time1
 brms_time1 <- proc.time()
 brms_fit <- update(brms_dummy
                    , iter = stan_nitt
+                   , adapt_delta = 0.95
                  , chains = 2)
 brms_time2 <- proc.time()
 

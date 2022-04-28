@@ -18,7 +18,7 @@ beta0 <- 0
 beta1 <- 0
 
 # magnitude of phylogenetic random effects
-physd.B0 <- 20
+physd.B0 <- 10
 physd.B1 <- 10
 phyrho.B01 <- 0.7
 
