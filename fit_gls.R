@@ -4,9 +4,13 @@ library(dplyr)
 library(nlme, warn.conflicts = FALSE)
 
 dat <- data.frame(dat)
-rownames(dat) <- dat$sp
+# rownames(dat) <- dat$sp
+
+print(dat)
 
 print(phy)
+
+quit()
 
 phy_var <- diag(vcv(phy))
 

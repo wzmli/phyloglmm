@@ -8,19 +8,26 @@ library(phyloglmm)
 
 t1 <- proc.time()
 
+# phyZ <- phylo.to.Z(phy,stand=FALSE)
+# phyZ2 <- phyZ[order(rownames(phyZ)),]
 
 dat <- (dat
   %>% mutate(sp = factor(sp), obs = sp)
+  # %>% mutate(obs = sp)
   %>% ungroup()
 
 	# %>% arrange(sp)
 )
+
+print(dat %>% select(ints,y_main,y_all))
+
 
 if(numsite == "ss"){
   lme4fit <- phylo_lmm(y_main ~ X + (1+X|sp)
                      , data=dat
                      , phylonm = c("sp")
                      , phylo = phy
+                     # , phyloZ = phyZ
                      , control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
                      , REML = FALSE
                        )

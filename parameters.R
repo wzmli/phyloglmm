@@ -12,7 +12,16 @@ sd.resid <- 1
 sd.site <- 5
 Xsd <- 1
 
-# sd.resid <- 0.000000001
+## set this for gls
+
+if(!exists("platform")){
+	platform <- "general"
+}
+
+if(platform == "gls"){
+	sd.resid <- 0.000000001
+}
+
 # # fixed effects
 beta0 <- 0
 beta1 <- 0
@@ -31,9 +40,11 @@ sd.B0 <- 1
 sd.B1 <- 1
 rho.B01 <- 0.4
 
+if(platform == "brms"){
 sd.B0 <- 0.000001
 sd.B1 <- 0.000001
 rho.B01 <- 0.00001
+}
 
 # compound symmetric parameters 
 sd.interaction  <- 5 ## sp:site 

@@ -23,19 +23,20 @@ colvec2  <- colvec_all[sub_pkgs2]
 ##    c(gls="Black",phylolm="Red",lme4="Dark Blue",
 ##                 glmmTMB="Dark Green",brms="Orange",pez="Gray",phyr="Purple",MCMCglmm="Yellow")
 
-data_list <- readRDS("datadir/collect_rerun.RDS")
+data_list <- readRDS("datadir/collect_rerun_new2.RDS")
 brms <- readRDS("datadir/brms_dat_new.RDS")
 mcmcglmm <- readRDS("datadir/MCMCglmm_dat.RDS")
 
 ssdat_raw <- data_list[[1]]
-
+ssdat_raw <- readRDS("datadir/ssdat_new.RDS")
 ssdat2 <- (ssdat_raw
-	%>% filter(!(grepl("brms",model)))
-	%>% filter(!(grepl("MCMCglmm",model)))
+#	%>% filter(!(grepl("brms",model)))
+#	%>% filter(!(grepl("MCMCglmm",model)))
 )
 ssdat_raw2 <- bind_rows(ssdat2,brms,mcmcglmm)
+ssdat_raw2 <- ssdat2
 
-msdat_raw <- data_list[[2]]
+msdat_raw <- readRDS("datadir/msdat_new.RDS")
 
 tree_seed = 1
 source("parameters.R")
@@ -89,7 +90,7 @@ gg_ss <- (ggplot(data=ssdat, aes(x=size, y=sd, col=Platform, fill=Platform))
 )
 
 print(gg_ss)
-ggsave(plot = gg_ss,filename = "figure/ssplot.pdf", width = 10, height=7)
+ggsave(plot = gg_ss,filename = "figure/ssplot_new.pdf", width = 10, height=7)
 
 ## scaleFUN <- function(x) sprintf("%.2g", x)
 scaleFUN <- function(x) {

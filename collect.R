@@ -113,6 +113,7 @@ glmmTMBss_res <- list.files(path = glmmTMB_path, pattern = "ss")
 glmmTMBss_results <- function(tt){
   glmmTMBss_df <- blank_df(length(tt))
   for(i in 1:length(tt)){
+  	print(tt[i])
     glmmTMB_obj <- readRDS(paste(glmmTMB_path,tt[i],sep=""))
     covobj <- VarCorr(glmmTMB_obj[[1]])[["cond"]]
     glmmTMBss_df[i,"resid"] <- attr(covobj,"sc")^2
@@ -153,18 +154,18 @@ brmsss_results <- function(tt){
     cat(".")
     brms_obj <- readRDS(paste(brms_path,tt[i],sep=""))
     sd_dat <- get_draws(brms_obj[[1]], c("^sigma","^sd_","^cor_"))
-    brms_df[i,"resid"] <- median(sd_dat[,"sigma"])^2
-    brms_df[i, "phylo_X"] <- median(sd_dat[,"sd_sp__X"])^2
-    brms_df[i, "phylo_int"] <- median(sd_dat[,"sd_sp__Intercept"])^2
-    brms_df[i,"phylo_cor"] <- median(sd_dat[,"cor_sp__Intercept__X"] * sd_dat[,"sd_sp__Intercept"] * sd_dat[,"sd_sp__X"])
+    brms_df[i,"resid"] <- median(sd_dat[["sigma"]]^2)
+    brms_df[i, "phylo_X"] <- median(sd_dat[["sd_sp__X"]]^2)
+    brms_df[i, "phylo_int"] <- median(sd_dat[["sd_sp__Intercept"]]^2)
+    brms_df[i,"phylo_cor"] <- median(sd_dat[["cor_sp__Intercept__X"]] * sd_dat[["sd_sp__Intercept"]] * sd_dat[["sd_sp__X"]])
     b_dat <- get_draws(brms_obj[[1]], c("^b"))
     brms_df[i, "B0"] <- as.numeric(between(0
-            , quantile(b_dat[,"b_Intercept"], 0.025)
-            , quantile(b_dat[,"b_Intercept"], 0.975)
+            , quantile(b_dat[["b_Intercept"]], 0.025)
+            , quantile(b_dat[["b_Intercept"]], 0.975)
           ))
     brms_df[i,"B1"] <- as.numeric(between(0
-            , quantile(b_dat[,"b_X"], 0.025)
-            , quantile(b_dat[,"b_X"], 0.975)
+            , quantile(b_dat[["b_X"]], 0.025)
+            , quantile(b_dat[["b_X"]], 0.975)
           ))
     brms_df[i,"model"] <- tt[i]
     eff_size <- bayestestR::effective_sample(brms_obj[[1]])[["ESS"]]
@@ -239,6 +240,7 @@ phylolm_data <- phylolm_results(phylolm_res)
 
 ssdat <- rbind(gls_data, phylolm_data, lme4ss_data, glmmTMBss_data, brmsss_data, MCMCglmmss_data)
 
+saveRDS(ssdat, file="./datadir/ssdat_new.RDS")
 
 ### Collect multiple sites ----
 
@@ -417,9 +419,12 @@ glmmTMBms_data <- glmmTMBms_results(glmmTMB_res)
 
 
 msdat <- rbind(lme4ms_data,pez_data, phyr_data, glmmTMBms_data)
+
+saveRDS(msdat, file="./datadir/msdat_new.RDS")
+
 #### Save results ----
 data_list <- list(ssdat,msdat)
 
 # data_list <- list(gls_data, lme4ss_data, lme4ss_slope_data, lme4ms_data, pez_data, lme4ms_slope_data , pez_slope_data, lme4cs_data, pez_cs_data, lme4cs_slope_data, pez_cs_slope_data)
-saveRDS(data_list, file="./datadir/collect_rerun_new.RDS")
+saveRDS(data_list, file="./datadir/collect_rerun_new2.RDS")
 # rdsave(ssdat, msdat)

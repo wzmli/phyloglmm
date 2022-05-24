@@ -49,7 +49,7 @@ physdmat <- diag(c(physd.B0,physd.B1))
 phycovmat <- quadform(physdmat,phycormat)
 
 phySigma <- kronecker(phycovmat,Vphy)  ## phylo blocks
-# phySigma <- kronecker(Vphy,phycovmat)
+# phySigma <- kronecker(Vphy,phycovmat)  ## originally commented out and confirmed not the problem (i.e. this is not correct anyway)
 
 b_phy <- MASS::mvrnorm(n=1
 	, mu=rep(c(beta0,beta1),each=nspp)
@@ -134,7 +134,7 @@ dat <- (indexdat[rep(1:nrow(indexdat),each=nrep),]
   %>% rowwise()
   %>% mutate(noise = rnorm(1,sd=sd.resid)
    , X = rnorm(1,sd=Xsd)
-   , y_all = b0_phy + b1_phy*X + b0 + b1*X + b_site + b_intphy + noise
+   , y_all = b0_phy + b1_phy*X + b0 + b1*X + b_site + b_intphy + b_int + noise
    , y = b0_phy + b1_phy*X + b0 + b1*X + b_site + b_intphy + noise
    , y_phy = b0_phy + b1_phy*X + noise
    , y_nophy = b0 + b1*X + noise

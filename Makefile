@@ -65,6 +65,7 @@ example.Rout: example.R
 
 ### gls
 
+fit.gls.ss.small.1.Rout: fit_gls.R
 fit.gls.%.Rout: names.R parameters.R simulate_tree.R fit_gls.R
 	$(run-R)
 
@@ -81,7 +82,8 @@ fit.phylolm.%.Rout: names.R parameters.R simulate_tree.R fit_phylolm.R
 datadir/lme4/lme4.%.rds: names.R parameters.R simulate_tree.R phyloglmm.R
 	$(run-R)
 
-fit.lme4.ms.large.1.Rout: phyloglmm.R
+fit.lme4.ss.small.22.Rout: phyloglmm.R simulate_tree.R
+fit.lme4.ms.large.1.Rout: phyloglmm.R simulate_tree.R
 fit.lme4.%.Rout: names.R parameters.R simulate_tree.R phyloglmm.R
 	$(run-R)
 
@@ -90,11 +92,12 @@ fit.lme4pez.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R lme4p
 
 ### tmb
 
-fit.glmmTMB.ss.large.1.Rout: fit_tmb.R
-fit.glmmTMB.ms.large.1.Rout: fit_tmb.R
+fit.glmmTMB.ss.large.1.Rout: fit_tmb.R simulate_tree.R
+fit.glmmTMB.ms.large.11.Rout: fit_tmb.R parameters.R
 datadir/glmmTMB/glmmTMB.%.rds: names.R parameters.R simulate_tree.R fit_tmb.R
 	$(run-R)
 
+fit.glmmTMB.ss.large.1.Rout: fit_tmb.R
 fit.glmmTMB.%.Rout: names.R parameters.R simulate_tree.R fit_tmb.R
 	$(run-R)
 
