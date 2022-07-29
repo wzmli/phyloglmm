@@ -23,17 +23,11 @@ colvec2  <- colvec_all[sub_pkgs2]
 ##    c(gls="Black",phylolm="Red",lme4="Dark Blue",
 ##                 glmmTMB="Dark Green",brms="Orange",pez="Gray",phyr="Purple",MCMCglmm="Yellow")
 
-data_list <- readRDS("datadir/collect_rerun_new2.RDS")
-brms <- readRDS("datadir/brms_dat_new.RDS")
-mcmcglmm <- readRDS("datadir/MCMCglmm_dat.RDS")
-
-ssdat_raw <- data_list[[1]]
 ssdat_raw <- readRDS("datadir/ssdat_new.RDS")
 ssdat2 <- (ssdat_raw
 #	%>% filter(!(grepl("brms",model)))
 #	%>% filter(!(grepl("MCMCglmm",model)))
 )
-ssdat_raw2 <- bind_rows(ssdat2,brms,mcmcglmm)
 ssdat_raw2 <- ssdat2
 
 msdat_raw <- readRDS("datadir/msdat_new.RDS")
