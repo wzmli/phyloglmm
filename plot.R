@@ -181,7 +181,7 @@ csspos <- get_pos(ssdat, discrete=FALSE, y_tweak=c(glmmTMB=2.5, lme4=0.6), bwid=
 
 gg_csstime <- (gg_cstime0
   + theme(legend.position="none")
-  + expand_limits(x=800)
+  + expand_limits(x=150)
   + geom_text(data=csspos,
               size = 3,
               aes(x=nsize, y=time, label=Platform, colour=Platform),
