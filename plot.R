@@ -24,11 +24,6 @@ colvec2  <- colvec_all[sub_pkgs2]
 ##                 glmmTMB="Dark Green",brms="Orange",pez="Gray",phyr="Purple",MCMCglmm="Yellow")
 
 ssdat_raw <- readRDS("datadir/ssdat_new.RDS")
-ssdat2 <- (ssdat_raw
-#	%>% filter(!(grepl("brms",model)))
-#	%>% filter(!(grepl("MCMCglmm",model)))
-)
-ssdat_raw2 <- ssdat2
 
 msdat_raw <- readRDS("datadir/msdat_new.RDS")
 
@@ -47,7 +42,7 @@ trans_platform <- function(platform) {
 }
 
 
-ssdat <- (ssdat_raw2
+ssdat <- (ssdat_raw
   %>% as_tibble()
   %>% separate(model,c("platform", "sites", "size", "seed","saveformat"), "[.]")
   %>% dplyr:::select(time, platform, size, seed, resid, phylo_int, phylo_X, phylo_cor, B0, B1)
