@@ -267,34 +267,34 @@ mspar_df <- data.frame(
 )
 
 msdat <- (msdat_raw
-	%>% separate(model,c("platform", "sites", "size", "seed", "saveformat"),"[.]")
-	%>% dplyr:::select(-c(sites,seed,saveformat))
-	%>% filter((convergence != 1) | is.na(convergence))
-	%>% dplyr:::select(-convergence)
-	%>% gather(key=sdtype, value=sd, -c(platform,size,time,B0,B1))
-	# %>% filter(sd <20)
-	%>% left_join(.,mspar_df)
-	%>% mutate(size = factor(size,
-                                 levels=c("small","med","large","xlarge"), labels=c("25","50","100","500")
+    %>% separate(model,c("platform", "sites", "size", "seed", "saveformat"),"[.]")
+    %>% dplyr:::select(-c(sites,seed,saveformat))
+    %>% filter((convergence != 1) | is.na(convergence))
+    %>% dplyr:::select(-convergence)
+    %>% gather(key=sdtype, value=sd, -c(platform,size,time,B0,B1))
+                                        # %>% filter(sd <20)
+    %>% left_join(.,mspar_df)
+    %>% mutate(size = factor(size,
+                             levels=c("small","med","large","xlarge"), labels=c("25","50","100","500")
+                             )
+             , Platform = factor(platform,
+                                 levels=c("pez","phyr","lme4", "glmmTMB"),
+                                 labels=trans_platform(c("pez","phyr","lme4", "glmmTMB")),
                                  )
-                 , Platform = factor(platform,
-                                     levels=c("pez","phyr","lme4", "glmmTMB"),
-                                     labels=trans_platform(c("pez","phyr","lme4", "glmmTMB")),
-                                     )
-			, sdtype = factor(sdtype, levels=c("phylo_int","phylo_cor","phylo_X"
-			                                   , "species_int", "species_cor", "species_X"
-			                                   , "phylo_interaction", "site_int", "resid")
-			                  , labels=c(expression(paste("Phylogenetic random intercept ",Sigma[phy[int]]))
-			                             , expression(paste("Phylo random intercept-slope correlation ",rho[phy[int-slope]]))
-			                             , expression(paste("Phylogenetic random slope ",Sigma[phy[slope]]))
-			                             , expression(paste("Species random intercept ",sigma[sp[int]]))
-			                             , expression(paste("Species random intercept-slope correlation ",rho[sp[int-slope]]))
-			                             , expression(paste("Species random slope ",sigma[sp[slope]]))
-			                             , expression(paste("Phylo random species-group interaction ",Sigma[phy[sp:group]]))
-			                             , expression(paste("Random group ",sigma[group]))
-			                             , expression(paste("Residual ",sigma[epsilon])))
-			)
-		)
+             , sdtype = factor(sdtype, levels=c("phylo_int","phylo_cor","phylo_X"
+                                              , "species_int", "species_cor", "species_X"
+                                              , "phylo_interaction", "site_int", "resid")
+                             , labels=c(expression(paste("Phylogenetic random intercept ",Sigma[phy[int]]))
+                                      , expression(paste("Phylo random intercept-slope correlation ",rho[phy[int-slope]]))
+                                      , expression(paste("Phylogenetic random slope ",Sigma[phy[slope]]))
+                                      , expression(paste("Species random intercept ",sigma[sp[int]]))
+                                      , expression(paste("Species random intercept-slope correlation ",rho[sp[int-slope]]))
+                                      , expression(paste("Species random slope ",sigma[sp[slope]]))
+                                      , expression(paste("Phylo random species-group interaction ",Sigma[phy[sp:group]]))
+                                      , expression(paste("Random group ",sigma[group]))
+                                      , expression(paste("Residual ",sigma[epsilon])))
+                               )
+               )
 )
 
 
