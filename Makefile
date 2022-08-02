@@ -1,6 +1,8 @@
 ## This is phyloglmm, a resting screens project directory
 ## makestuff/project.Makefile
 
+all: phyloglmm_ms_resubmit.pdf
+
 current: target
 -include target.mk
 
