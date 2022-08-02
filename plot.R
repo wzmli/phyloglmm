@@ -100,10 +100,11 @@ get_pos <- function(dat,
                     bwid = 0.02,
                     discrete = TRUE) {
   sspos <- dat %>%
-    group_by(Platform,size) %>%
-    summarise(time=median(time), .groups="drop_last") %>%
-    filter(time==max(time)) %>%
-    ungroup() %>%
+      group_by(Platform,size) %>%
+      summarise(time=median(time), .groups="drop_last") %>%
+      filter(time==max(time)) %>%
+      slice(n()) %>%  ## take only last row, in case there are ties on max(time)
+      ungroup() %>%
     mutate(nplatform=drop(scale(as.numeric(Platform), scale=FALSE)))
   if (discrete) {
     ## x-position calculation: 'size' is going to be the size
@@ -139,14 +140,16 @@ gg_sstime0 <- (ggplot(data=ssdat, aes(x=size, y=time, col=Platform,
                  size=3, alpha=0.1)
 )
 
+scaleposx <- c(80, 150)
+scaleposy <- 0.5*c(scaleposx[1]/200, scaleposx[2]^2/100*0.85)
 boxwid <- 0.125
 gg_cstime0 <- (ggplot(data=ssdat, aes(x=as_num(size),
                                       group=interaction(size,Platform),
                                       y=time, col=Platform,
                                       fill=Platform))
   + geom_function(fun=function(x) x/200, linetype=2, col="darkgray")
-  + annotate(x=c(100, 200),
-             y= 0.5*c(100/200, 200^2/100*0.85),
+  + annotate(x=scaleposx,
+             y= scaleposy,
              colour = "black",
              label=c('"time" %prop% S', '"time" %prop% S^2'),
              parse=TRUE,
@@ -165,18 +168,18 @@ gg_cstime0 <- (ggplot(data=ssdat, aes(x=as_num(size),
                  position=position_dodge(width = boxwid),
                  size=3, alpha=0.1)
 )
-csspos <- get_pos(ssdat, discrete=FALSE, y_tweak=c(glmmTMB=2.5, lme4=0.6), bwid=0.03)
-
+csspos <- get_pos(ssdat, discrete=FALSE, y_tweak=c(glmmTMB=2.5, lme4=0.6, gls = 2), bwid=0.03)
 
 gg_csstime <- (gg_cstime0
   + theme(legend.position="none")
-  + expand_limits(x=150)
-  + geom_text(data=csspos,
-              size = 3,
-              aes(x=nsize, y=time, label=Platform, colour=Platform),
-              hjust="left",
-              nudge_x=0.01,
-              fill=NA)
+  + expand_limits(x=200)
+  + geom_label(data=csspos,
+               size = 3,
+               fill = "white",
+               aes(x=nsize, y=time, label=Platform, colour=Platform),
+               hjust="left",
+               nudge_x=0.01,
+               fill=NA)
 )
 
 print(gg_csstime)
@@ -307,6 +310,7 @@ print(gg_ms)
 ggsave(plot = gg_ms,filename = "figure/msplot.pdf",width = 10, height=7)
 
 
+## Figure 6
 
 gg_mstime0 <- (gg_sstime0
   %+% msdat
@@ -315,8 +319,7 @@ gg_mstime0 <- (gg_sstime0
 )
 
 
-mspos <- get_pos(msdat, y_tweak = c(pez=1.5, phyr=0.8, lme4=1, glmmTMB=1))
-
+mspos <- get_pos(msdat, y_tweak = c(pez=1.5, phyr=0.8, lme4=1.8, glmmTMB=0.6))
 gg_mstime <- (gg_mstime0
   + geom_label(data=mspos,
                aes(x=nsize, y=time, label=Platform, colour=Platform),
@@ -340,10 +343,11 @@ ms_coverage <- (msdat
                 %>% summarise(coverage=mean(cov, na.rm=TRUE),
                               lwr=b_ci(cov,1),
                               upr=b_ci(cov,2))
-                %>% mutate(Parameter = factor(fixed_parameter, labels=c(expression(beta[0])
-                                                                        , expression(beta[1])
+    %>% mutate(Parameter = factor(fixed_parameter,
+                                  labels=c(expression(beta[0])
+                                         , expression(beta[1])
                 ))
-                )
+               )
 )
 
 gg_mscoverage <- (ggplot(data=ms_coverage
@@ -363,7 +367,16 @@ gg_mscoverage <- (ggplot(data=ms_coverage
     + xlab("Number of Species")
 )
 
-print(mscoverage<- gg_mscoverage 	+ scale_color_manual(values=colvec2))
+## rename to match enhanced names
+colvec2B <- setNames(colvec2,
+                     paste0(rep(c("phyloglmm/\n", ""), each = 2),
+                            names(colvec2)))
+## plot with new colours/order
+print(mscoverage<- gg_mscoverage  +
+          scale_color_manual(breaks = names(colvec2B)[c(3:4,1:2)],
+                             values=colvec2B))
+       
+
 ggsave(plot = mscoverage,filename = "figure/mscoverage.pdf",width = 10, height=5)
 
 pp <- readRDS("datadir/lme4_ms_small_profile.RDS")
