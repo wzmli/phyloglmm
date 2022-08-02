@@ -272,12 +272,12 @@ lev_vec <- c("phylo_int","phylo_cor","phylo_X"
            , "phylo_interaction", "site_int", "resid")
 
 lab_vec <- c(expression(atop("Phylogenetic random intercept ",Sigma[phy[int]]))
-           , expression(atop("Phylo random intercept-slope correlation ",rho[phy[int-slope]]))
+           , expression(atop("Phylo random intercept-slope corr",rho[phy[int-slope]]))
            , expression(atop("Phylogenetic random slope ",Sigma[phy[slope]]))
            , expression(atop("Species random intercept ",sigma[sp[int]]))
-           , expression(atop("Species random intercept-slope correlation ",rho[sp[int-slope]]))
+           , expression(atop("Species random intercept-slope corr",rho[sp[int-slope]]))
            , expression(atop("Species random slope ",sigma[sp[slope]]))
-           , expression(atop("Phylo random species-group interaction ",Sigma[phy[sp:group]]))
+           , expression(atop("Phylo random species-group interact",Sigma[phy[sp:group]]))
            , expression(atop("Random group ",sigma[group]))
            , expression(atop("Residual ",sigma[epsilon])))
 
@@ -309,6 +309,7 @@ gg_ms <- (gg_ss
 	+ scale_color_manual(values=trans_colvec2)
 	+ scale_fill_manual(values=trans_colvec2)
 	+ theme(legend.position = "bottom")
+    + theme(strip.text.x = element_text(size = 12))
 )
 
 print(gg_ms)
