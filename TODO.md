@@ -1,8 +1,17 @@
+## misc
+
+- write cover letter
+- finish responses
+- read over full ms
+
 ## plots
 
-* tweak plots, go over all
+* should figure 5 be scale="free" instead?
 
-##  ASK MIKE
+
+## OLD
+
+### "ask Mike" (all resolved?)
 
 - significant changes:
    - add form=~sp in gls/corBrownian???
