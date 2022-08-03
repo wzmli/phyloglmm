@@ -10,7 +10,7 @@ As currently presented I found this paper a little bit in between an application
 
 The benchmarking of the new method is interesting but is mixing too many confounding factors linked with the different implementations of the various packages (see also comment from reviewer 2). What is the performance of the new model all else being equal? How much of the performance results is actually due to differences the optimization among the different R packages?
 
-**The model is the mathematically equivalent; thus, the difference is the speed/efficiency. The most direct comparison is between `phyloglmm` and the `phyr` or `pez` packages: all three methods are built on the mixed-models machinery of `lme4`, but `phyloglmm` modifies the Z matrix while `phyr` and `pez` modify the correlation structure of the random effects**. (TODO/MLi: is my restatement correct?)
+**For models that are sufficiently flexible to fit a model structure of given complexity (e.g. brms/pez), all of the models are mathematically equivalent; the difference is in the precise formulation and implementation, leading to the observed significant differences in speed. The most direct comparison is between `phyloglmm` and the `phyr` or `pez` packages: all three methods are built on the mixed-models machinery of `lme4`, but `phyloglmm` modifies the Z matrix while `phyr` and `pez` modify the correlation structure of the random effects**.
 
 In the Introduction, a broader perspective about PCMs should be given before jumping into the specifics of the models tested here. Phylogenetic comparative methods include lots of other things, see e.g. Luke Harmon’s book: https://lukejharmon.github.io/pcm/chapters/. In general, a better reference to previous work is required and some claims of the paper should be either demonstrated or removed. For example, stating that “existing [PCM] procedures are either insufficiently flexible or too computationally demanding to analyze large data sets” is simply not true. There are many research papers applying PCMs to large datasets (and as a side note: how large should a dataset be to be considered large?).
 
@@ -38,12 +38,7 @@ I am not sure about the point raised in the Discussion: “Establishing the prac
 
 In the discussion about within-species variance and measurement errors (l. 272-274) you could make several references to previous work, including several papers published in MEE.
 
-**Done. We have added more citations on this topic.**
-
-I hope you will find these and the reviewers’ comments useful.
-Best wishes,
-
-Daniele Silvestro
+**We have added more citations on this topic.**
 
 Reviewer(s)' Comments to Author:
 Reviewer: 1
@@ -51,25 +46,25 @@ Reviewer: 1
 Comments to the Corresponding Author
 The authors propose a reformulation of the phylogenetic mixed model in order to make that class of PCM faster and more flexible. Given, their results, their goal has been reached. I found the paper well written and informative and their method of interest for a large audience. I don’t have any remarks about the scientific aspect nor about the benchmarking of that application which are thorough and well detailed.
 
-**MLi: Thanks.**
+**Thank you.**
 
 However, I think the article could fail to reach the extent of its audience by missing several key elements:
 
 - Because that work isn’t a theoretical work but instead the description of an applied statistics method, adding a few examples, such as the one provided at l68-73, would help the reader understanding the value of those models. I think examples should particularly be aimed at the “Simulation” § l132-155, where they could shed light on the subtle differences between the parameters
 
-**MLi: We have added an example in the vignette for this package**
+**We have added an example in the vignette for this package.**
 
 - In the same spirit of applied statistics, a brief description (or table) of which functions to use in the libraries lme4 and glmmTMB to make these models work would make it easier to start. There should also be mention of the tutorial available in the repository
 
-**MLi: We have added an example in the vignette for this package**
+**We have added an example in the vignette for this package.**
 
 - It would also be beneficial to add an application of the method with biological data directly in the article. The more your article is associated with biological ideas, the more users you will reach in my opinion.
 
-**MLi: Thanks for the suggestion. This paper is written to be an application paper rather than a research paper. We have provided a real example from Garamszegi's ``Modern phylogenetic comparative methods and their application in evolutionary biology: concepts and practice'' in the repository (we could add this if the editor thought it was appropriate, but we're up against the length limits for an application paper and would prefer not to open the can of worms of making this into a research paper ...** 
+**Thanks you for the suggestion. This paper is written to be an application paper rather than a research paper. We have provided a real example from Garamszegi's ``Modern phylogenetic comparative methods and their application in evolutionary biology: concepts and practice'' in the repository (we could add this if the editor thought it was appropriate, but we're up against the length limits for an application paper and would prefer not to open the can of worms of making this into a research paper ...** 
 
 - Naming that class of models (even though it is still pglmm) could help the reader follow the results section and identify the method as well.
 
-**Thanks. We have now renamed everything under phylogenetic regression**
+**We have now renamed everything under phylogenetic regression**
 
 These remarks might sound cosmetic but I think they might help to reach a broader audience and help all kind of users getting started with those models.
 
@@ -77,8 +72,7 @@ I recommend the authors to think on those ideas to improve the visibility of the
 
 In a purely scientific perspective, I have no objections to publish that article.
 
-
-**Thanks, these are wonderful and helpful suggestion. We have included a tutorial example in the released version on zenodo/github. We have now included the link in the paper.... **
+**These are very useful suggestions. We have included a tutorial example in the released version on zenodo/github; the link is included n the paper.**
 
 
 Minor comments:
@@ -89,7 +83,7 @@ L26. In the Abstract, a claim has been made about the benefit of the method agai
 
 L10. Small grammatical error: “can allow to incorporate” 
 
-**MLi: Fixed.**
+**Fixed.**
 
 Reviewer: 2
 
@@ -98,20 +92,14 @@ This paper proposes an alternative formulation for the phylogenetic generalized 
 
 1. What is the computational complexity of the proposed method? Does the alternative formulation help avoid matrix inversion such that the complexity is linear with respect to the number of species? Note that this is the case for many phylogenetic packages including phylolm and MCMCglmm. I am aware that it is hard or even impossible to achieve linear-complexity for all models. However, could linear-complexity be achieved by the proposed methods for some simple models such as the standard phylogenetic linear regression (equation 1)?
 
-**MLi: Exactly, we are avoiding the matrix inversion step.** 
+**Exactly, we are avoiding the matrix inversion step.** 
 
 2. In the paper, the authors replace the package MCMCglmm by the package brms. Although the implementation of MCMCglmm is not as efficient as brms, the complexity of MCMCglmm is linear with respect to the number of species while brms should be cubic (since it doesn't have a special method to avoid matrix inversion). It may be a good idea to add a simulation with a series of trees from dozens to thousands of species for showing the scalability of these methods (including MCMCglmm).
 
-**We have now added MCMCglmm to our simulation. For our simple simulation test, MCMCglmm turned out to be faster based on your convergence criterion which heavily depend on the number of iteration. However, the goal is to look at the granularity of frequentist approaches. Even for simple linear models, Bayesian approaches are much slowly due to MCMC compared to least squares.** 
+**We have now added MCMCglmm to our set of simulation. For our simple simulation test, MCMCglmm was generally faster than brms, although both Bayesian approaches (MCMCglmm/brms) were still significantly slower than frequentist methods, and scaled slightly worse.**
 
 3. The models in simulations are not sufficiently described. What are the formulae for the phylogenetic random intercept variance, phylogenetic random slope variance, and covariance between phylogenetic random intercept and slope, and so on? Do they depend on the phylogenetic tree? The authors provide a clear explanation for how their proposed method can be applied to the standard phylogenetic regression (equation 1) but do not include it in the simulation section. I suggest the authors add this model to the simulation part for illustrating the applicability of their proposed method for this simple case.
 
-**Todo: what? go back to the paper and see if we say this clearly, this should be trivial and clear. The formulas are clear! We are using the variance of the phylogenetic tree when simulating the b's.**
+**FIXME: make sure we state that the simulations follow the estimation model exactly, so that all the formulas for simulation are the same as those for estimation (and maybe emphasize that the Z/Sigma setup generalizes standardized phylogenetic regression to all of the more complex cases).**
 
-+++++
-RESUBMISSION INSTRUCTIONS
-Please note that resubmitting your manuscript does not guarantee eventual acceptance, and that your resubmission may be subject to re-review before a decision is rendered. Please also ensure that your altered manuscript still conforms to our word limit of 3000 for applications.
 
-Once you have made the suggested changes, go to https://mc.manuscriptcentral.com/mee-besjournals and login to your Author Centre. Click on "Manuscripts with Decisions," and then click on "Create a Resubmission" located next to the manuscript number. Then, follow the steps for resubmitting your manuscript.
-
-Because we are trying to facilitate timely publication of manuscripts submitted to Methods in Ecology and Evolution, your new manuscript should be uploaded within 12 weeks. The deadline for your resubmission is 05-Aug-2020. If it is not possible for you to submit your manuscript by that date, please get in touch with the editorial office, otherwise we will consider your paper as a completely new submission.
