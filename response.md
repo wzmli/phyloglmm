@@ -100,6 +100,5 @@ This paper proposes an alternative formulation for the phylogenetic generalized 
 
 3. The models in simulations are not sufficiently described. What are the formulae for the phylogenetic random intercept variance, phylogenetic random slope variance, and covariance between phylogenetic random intercept and slope, and so on? Do they depend on the phylogenetic tree? The authors provide a clear explanation for how their proposed method can be applied to the standard phylogenetic regression (equation 1) but do not include it in the simulation section. I suggest the authors add this model to the simulation part for illustrating the applicability of their proposed method for this simple case.
 
-**FIXME: make sure we state that the simulations follow the estimation model exactly, so that all the formulas for simulation are the same as those for estimation (and maybe emphasize that the Z/Sigma setup generalizes standardized phylogenetic regression to all of the more complex cases).**
-
+**We have to admit that we are confused by this comment. We tried to clearly indicate that the simulations follow precisely the same structures as we are using for estimation, which is described in detail in the first section ...**
 

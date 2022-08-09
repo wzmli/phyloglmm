@@ -1,6 +1,6 @@
 ## new
 
-- (BMB) tweak alignment
+- (BMB) tweak alignment of 
 - (ML) where does phylotree.png come from? I would like to tweak it to be a little bit 'skinnier' top to bottom (and be reproducible).  Could re-make it myself but ...
 - (ML) check notation in full multi-group model and explanation
 - (BMB/ML) finish cleaning up notation?

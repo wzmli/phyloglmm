@@ -384,7 +384,7 @@ The full multi-group model is as follows:
 \end{equation}
 where $\textrm{I}_{\textrm{group}}$ is a indicator matrix for groups and $\otimes$ is the Kronecker product.
 
-\bmb{ML: please check notation; in particular, is $\sigma^2_{\mathrm{phy}}$ correct??}
+\bmb{ML: please check notation; in particular, is $\sigma^2_{\mathrm{phy}}$ correct for the sp-group variance??}
 Compared to the single--group model, the multi-group simulation model has five additional random effect parameters: predictor-level ($\sigma^2_{\mathrm{sp_{slope}}}$) and intercept-level ($\sigma^2_{\mathrm{sp_{int}}}$) among-species variances;  their covariance ($\sigma_{\mathrm{sp_{int-slope}}}$);  among-group variation in the intercept ($\sigma^2_{\mathrm{group}}$); and variation among species-group combinations in the intercept ($\sigma^2_{\mathrm{phy}}$).
 Because each species has multiple observations we can distinguish variation among species from residual variation, and thus we can include predictor-level and intercept-level random effects of species.
 Variance in the intercept of species--group interactions ($\sigma^2_{\mathrm{phy}}$) describes whether the species within a group have more similar responses on average than expected by chance, equivalent to phylogenetic attraction \citep{helmus2007separating}. 
