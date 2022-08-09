@@ -43,16 +43,16 @@ trans_platform <- function(platform) {
 
 
 ssdat <- (ssdat_raw
-  %>% as_tibble()
-  %>% separate(model,c("platform", "sites", "size", "seed","saveformat"), "[.]")
-  %>% dplyr:::select(time, platform, size, seed, resid, phylo_int, phylo_X, phylo_cor, B0, B1)
-  %>% gather(key = sdtype, value = sd, -c(platform, size, seed, time, B0, B1))
-  %>% left_join(.,sspar_df, by="sdtype")
-  %>% mutate(size = factor(size
-                         , levels=c("small","med","large","xlarge"), labels=c("25","50","100","500")
-                           )
-           , Platform = factor(trans_platform(platform), levels=trans_platform(sub_pkgs))
-           , sdtype = factor(sdtype, levels=c("phylo_int","phylo_cor","phylo_X","resid")
+    %>% as_tibble()
+    %>% separate(model,c("platform", "sites", "size", "seed","saveformat"), "[.]")
+    %>% dplyr:::select(time, platform, size, seed, resid, phylo_int, phylo_X, phylo_cor, B0, B1)
+    %>% gather(key = sdtype, value = sd, -c(platform, size, seed, time, B0, B1))
+    %>% left_join(.,sspar_df, by="sdtype")
+    %>% mutate(size = factor(size
+                           , levels=c("small","med","large","xlarge"), labels=c("25","50","100","500")
+                             )
+             , Platform = factor(trans_platform(platform), levels=trans_platform(sub_pkgs))
+             , sdtype = factor(sdtype, levels=c("phylo_int","phylo_cor","phylo_X","resid")
                            , labels=c(expression(paste("Phylogenetic random intercept ", sigma[phy[int]]))
                                     , expression(paste("Phylogenetic random intercept-slope correlation ", rho[phy[int-slope]]))
                                     , expression(paste("Phylogenetic random slope ", sigma[phy[slope]]))
@@ -64,9 +64,11 @@ ssdat <- (ssdat_raw
 
 colvec_trans <- setNames(colvec, trans_platform(names(colvec)))
 
+ssdat |> group_by(Platform) |> summarise(bad = mean(sd > 200, na.rm = TRUE))
+mean(ssdat$sd > 200, na.rm = TRUE)
 gg_ss <- (ggplot(data=ssdat, aes(x=size, y=sd, col=Platform, fill=Platform))
   + scale_y_continuous(limits = c(0,200), oob=scales::squish)
-  + facet_wrap(~sdtype, scale="free_y", labeller = label_parsed)
+    + facet_wrap(~sdtype, scale="free_y", labeller = label_parsed)
   # + geom_violin(position=position_dodge(width=0.5),alpha=0.4)
   + geom_boxplot(outlier.colour = NULL, varwidth=TRUE, alpha=0.5)
   + geom_hline(aes(yintercept = y_int), lty=2)
@@ -115,9 +117,10 @@ get_pos <- function(dat,
   }
   ## geom_label_repel() messes up other vertical positions: adjust manually
   for (i in seq_along(y_tweak)) {
-    mm <- grep(names(y_tweak)[i], sspos[["Platform"]])
-    sspos[["time"]][mm] <-
-      sspos[["time"]][mm]*y_tweak[i]
+      mm <- grep(names(y_tweak)[i], sspos[["Platform"]], fixed = TRUE)
+      if (length(mm)==0) cat("nothing found for", names(y_tweak)[i], "\n")
+      sspos[["time"]][mm] <-
+          sspos[["time"]][mm]*y_tweak[i]
   }
   return(sspos)
 }
@@ -318,26 +321,27 @@ ggsave(plot = gg_ms,filename = "figure/msplot.pdf",width = 10, height=7)
 
 ## Figure 6
 
-gg_mstime0 <- (gg_sstime0
+gg_mstime0 <- (gg_cstime0
   %+% msdat
   + scale_color_manual(values=trans_colvec2)
   + scale_fill_manual(values=trans_colvec2)
 )
 
-
-mspos <- get_pos(msdat, y_tweak = c(pez=1.5, phyr=0.8, lme4=1.8, glmmTMB=0.6))
+mspos <- get_pos(msdat, discrete=FALSE, y_tweak = c(pez=1, phyr=1,
+                                                    "phyloglmm/\nlme4"=5,
+                                                    "phyloglmm/\nglmmTMB"=0.4))
 gg_mstime <- (gg_mstime0
-  + geom_label(data=mspos,
-               aes(x=nsize, y=time, label=Platform, colour=Platform),
-               ## direction="y",
-               hjust="left",
-               nudge_x=0.1,
-               fill=NA)
-  + theme(legend.position="none")
-  + expand_limits(x=5)
+    + scale_x_log10(breaks = as_num(msdat$size))
+    + geom_label(data=mspos,
+                 aes(x=nsize, y=time, label=Platform, colour=Platform),
+                 ## direction="y",
+                 hjust="left",
+                 nudge_x=0.02,
+                 fill=NA)
+    + theme(legend.position="none")
+    + expand_limits(x = 1000)
 )
 print(gg_mstime)
-
 ggsave(plot = gg_mstime,filename = "figure/mstime.pdf",width = 7, height=5)
 
 

@@ -441,9 +441,8 @@ In supplementary materials, we reproduce the examples in chapter 11 of \cite{gar
 \begin{figure}[H]
   \includegraphics[scale=0.7]{./figure/ssplot.pdf}
   \caption{Comparison of single group model parameter estimates across different R packages in Table \ref{table:platform}.
-    Total simulations $n=100$ for each category. The horizontal line shows the true value of the parameters in the simulation model. Models capable of fitting all parameters (\pkg{\plmefour},  \pkg{\pgTMB}, and \pkg{brms}) fit well for all parameters.
-    \bmb{are we setting a boundary at 200? why are some methods pegging out here?}
-%\bmb{consider tweaking aspect ratio (slightly wider?) Consider including n=25, n=50, n=100 in x-axis tick labels (I don't have all the output data so can't rebuild figs myself ...)
+    Total simulations $n=100$ for each category. The horizontal line shows the true value of the parameters in the simulation model. Models capable of fitting all parameters (\pkg{\plmefour},  \pkg{\pgTMB}, and \pkg{brms}) fit well for all parameters. Values above 200 (very common for \pkg{gls} and \pkg{phylolm}, less than 1\% of results otherwise) are censored to 200.
+    %\bmb{consider tweaking aspect ratio (slightly wider?) Consider including n=25, n=50, n=100 in x-axis tick labels (I don't have all the output data so can't rebuild figs myself ...)
 %\jd{Use dashed lines (or some other gg signifier) for the insufficient approaches}
 }
 \label{ssplot}
@@ -488,8 +487,8 @@ PGLS, which uses only one parameter, combines all variation (phylogenetic interc
 \begin{center}
 \begin{figure}[H]
   \includegraphics[scale=0.7]{./figure/mstime.pdf}
-  \caption{Multi-group model computational speed.}
-  \label{msplot_time}
+  \caption{Multi-group model computational speed. Linear and quadratic scaling lines as in Figure~\ref{ssplot_speed}.}
+  \label{msplot_speed}
 \end{figure}
 \end{center}
 \begin{center}
