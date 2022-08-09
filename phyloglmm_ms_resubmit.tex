@@ -425,7 +425,7 @@ Each realization was fitted using all model variants.
 All simulation parameters are shown in Figure \ref{ssplot} and Figure \ref{msplot}. 
 Table \ref{table:platform} shows the parameters that are estimable for each platform. 
 We only evaluated the goodness of fit for model fits that passed the convergence tests implemented by the package.
-For Bayesian fits, we evaluate realizations with Gelman-Rubin statistic $<1.1$. Based on recent concerns about Gelman-Rubin thresholds \citep{vats2018revisiting}, we additionally restricted results to fits with  effective sample size $>1000$ for the fixed effect parameters  \citep[$\beta_{0}$ and $\beta_{1}$: ][]{vehtari2019rank}. 
+For Bayesian fits, we evaluate realizations with Gelman-Rubin statistic $<1.1$. Based on recent concerns about Gelman-Rubin thresholds \citep{vats2021revisiting}, we additionally restricted results to fits with  effective sample size $>1000$ for the fixed effect parameters  \citep[$\beta_{0}$ and $\beta_{1}$: ][]{vehtari2021rank}. 
 For each replicate, we sample two chains starting with 10000 iterations. 
 We first evaluate our estimates by looking at the distribution of the estimated values (maximum likelihood estimates for non-Bayesian platforms and posterior medians for Bayesian platforms) to quantify bias and variance (i.e., quality of the point estimate).
 We computed 95\% Wald confidence intervals for frequentist methods \bmb{check: I would think lme4 would only give profile CIs for RE parameters?} and quantile-based intervals for Bayesian methods, then computed coverage --- the proportion of simulations in which the computed confidence intervals include the true values of parameters --- to assess the quality of the confidence intervals.
@@ -452,7 +452,8 @@ In supplementary materials, we reproduce the examples in chapter 11 of \cite{gar
 \begin{center}
 \begin{figure}[H]
   \includegraphics[scale=0.7]{./figure/csstime.pdf}
-  \caption{Comparison of single-group model computational speed.}
+  \caption{Single-group model computational speed. Dashed lines indicate scaling relationships: lines parallel to the lower line would indicate linear scaling of computational time with number of species,
+  while those parallel to the upper line would indicate quadratic scaling.}
 \label{ssplot_speed}
 \end{figure}
 \end{center}
@@ -460,7 +461,7 @@ In supplementary materials, we reproduce the examples in chapter 11 of \cite{gar
 \begin{center}
 \begin{figure}[H]
   \includegraphics[scale=0.7]{./figure/sscoverage.pdf}
-  \caption{Comparison of coverage probability for fixed effect parameters. Models matching the simulation model (\pkg{\plmefour}, \pkg{\pgTMB} and \pkg{brms}) have coverage near the nominal value of 0.95. The black line shows the nominal coverage; the blue ribbon shows the 95\% binomial confidence interval around the nominal coverage based on fits to 100 simulated data sets.
+  \caption{Coverage probability for fixed effect parameters. Models matching the simulation model (\pkg{\plmefour}, \pkg{\pgTMB} and \pkg{brms}) have coverage near the nominal value of 0.95. The black line shows the nominal coverage; the blue ribbon shows the 95\% binomial confidence interval around the nominal coverage based on fits to 100 simulated data sets.
 %  \bmb{really picky, but maybe change grid lines or ribbon colour slightly so they're not confusable (maybe use blue ribbon with alpha=0.1?)}
   }
 \label{ssplot_coverage}
@@ -468,18 +469,18 @@ In supplementary materials, we reproduce the examples in chapter 11 of \cite{gar
 \end{center}
 
 The full fitted model (which matches the simulation model that incorporates phylogenetic intercept, slope, and correlation) provides estimates with low bias (average difference between the estimated parameters and the true simulation parameters) for all parameters. 
-Estimates for fixed effect parameters ($\beta_0$ and $\beta_1$) approach nominal coverage as the number of species increases for \pkg{lme4} and \pkg{glmmTMB} but not for other packages. \pkg{brms} has higher than nominal coverage (i.e., its confidence intervals are too conservative) because the prior distributions for the simulation parameters are centered at the true values (\citet{li2018fitting}).
+Estimates for fixed effect parameters ($\beta_0$ and $\beta_1$) approach nominal coverage as the number of species increases for \pkg{lme4} and \pkg{glmmTMB} but not for other packages. \pkg{brms} has higher than nominal coverage for the slope parameter $\beta_1$ (i.e., its confidence intervals are too conservative) because the prior distributions for the simulation parameters are centered at the true values \citep{li2018fitting}.
 
 In general, models that are insufficiently flexible to match the data (PGLM and PGLS) will lead to bias in some parameters.
 PGLM (which lacks the phylogenetic slope parameter) provides reasonably good estimates for the phylogenetic intercept standard deviation parameter ($\sigma_{\mathrm{phy_{int}}}$) but overestimates the residual standard deviation; the estimates for the intercept ($\beta_0$) are slightly overconfident (coverage $\approx$ 90\% with 100 species) and the fixed slope parameter ($\beta_1$) has extremely poor coverage ($<$ 60\%).
-PGLS, which uses only one parameter, combines all variation (phylogenetic intercept, slope and residual variation) into the phylogenetic intercept parameter, resulting in overestimating the phylogenetic intercept variation, over-covering for $\beta_0$, and under-covering for $\beta_1$.
+PGLS, which uses only one parameter, combines all variation (phylogenetic intercept, slope and residual variation) into the phylogenetic intercept parameter; as a result, it overestimates the phylogenetic intercept variation, over-covers for $\beta_0$, and under-covers for $\beta_1$.
 
 \subsection*{Multi-group model simulations}
 
 \begin{center}
 \begin{figure}[H]
   \includegraphics[scale=0.7]{./figure/msplot.pdf}
-  \caption{Comparison of multi-group model parameter estimates. The horizontal line shows the true value of the parameters in the simulation model. Models capable of fitting all parameters (\pkg{\plmefour} and \pkg{\pgTMB}) fit well for all parameters. \pkg{pez} and \pkg{phyr} estimates for n = 500 are missing because the models did not converge within 30 minutes.
+  \caption{Multi-group model parameter estimates. The horizontal line shows the true value of the parameters in the simulation model. Models capable of fitting all parameters (\pkg{\plmefour} and \pkg{\pgTMB}) fit well for all parameters. \pkg{pez} and \pkg{phyr} estimates for $n$ = 500 are missing because the models did not converge within 30 minutes.
   }
   \label{msplot}
 \end{figure}
@@ -487,7 +488,7 @@ PGLS, which uses only one parameter, combines all variation (phylogenetic interc
 \begin{center}
 \begin{figure}[H]
   \includegraphics[scale=0.7]{./figure/mstime.pdf}
-  \caption{Comparison of multi-group model computational speed.}
+  \caption{Multi-group model computational speed.}
   \label{msplot_time}
 \end{figure}
 \end{center}
@@ -515,7 +516,7 @@ Comparing our two implementations, \pkg{glmmTMB} is almost an order of magnitude
 
 \section*{Discussion}
 
-We have simulated relatively complex models containing phylogenetic variation in species intercepts and slopes, as well as within-species variation.
+We have simulated complex models containing phylogenetic variation in species intercepts and slopes, as well as within-species variation.
 Comparing our fits with simple platforms for phylogenetic regression that cannot handle these complexities may seem unfair; nevertheless, our models are certainly less complex than evolutionary processes occurring in nature.
 Models that cannot match the full simulations perform poorly even for the parameters they do estimate.
 
@@ -524,8 +525,8 @@ In theory, as long as we have enough data and enough computational power, models
 However, real applications are always data-constrained.
 Establishing the practical level of model complexity for a given problem and data set is an open and difficult general problem throughout statistical modeling,
 not just in phylogenetic studies.
-While information-theoretic or stepwise selection methods are often used to decide the complexity of models in ecology and evolution \cite{matuschek2017balancing,darriba2020modeltest}, sufficiently complex models may simply be too complex to fit without some form of regularization
-\cite{uriarte2009preaching}, and data-driven model selection may affect inference in unexpected and unwanted ways \cite{hurvich1990impact,morin2020is}.
+While information-theoretic or stepwise selection methods are often used to decide the complexity of models in ecology and evolution \citep{matuschek2017balancing,darriba2020modeltest}, sufficiently complex models may be impossible to fit without some form of regularization
+\citep{uriarte2009preaching}, and data-driven model selection may affect inference in unexpected and unwanted ways \citep{hurvich1990impact,morin2020is}.
 
 %For example, should one use simple models that may be overly conservative or
 % risk overfitting by using more ambitious models?
@@ -539,21 +540,21 @@ While information-theoretic or stepwise selection methods are often used to deci
 \subsection*{Incorporating multiple levels of variation}
 
 Random-slopes models require appropriate observational or experimental designs (i.e., multiple measurements of traits and responses within each group) and generally require more data overall, but they are relevant over a wide range of scenarios \citep{schielzeth2008conclusions, cleasby2015quantifying,ord2010adaptation}.
-Neglecting random slopes can lead to biased fixed effect estimates with inadequate coverage and inflated type~I errors \citep{schielzeth2008conclusions}.
+Neglecting random slopes can lead to biased fixed-effect estimates with inadequate coverage and inflated type~I errors \citep{schielzeth2008conclusions}.
 
 Nevertheless, it is impossible to account for all possible complexities.
-The best model --- whether using phylogenetic random effects, simple grouping, or both --- depends on the experimental design and whether there are enough data to separate different levels of variation, which can be strongly confounded.
+The best model --- whether using phylogenetic random effects, simple grouping, or both --- depends on the experimental design and whether there is enough data to separate different levels of variation, which can be strongly confounded.
 If multiple observations are available per species, then simple methods like Pagel's $\lambda$ will confound tip variation with residual variation \citep{boettiger2013is}.
-Multiple observations can be collapsed to a single value (such as the mean) per species, with analyses weighting each species by its number of observations.
+Multiple observations can be collapsed to a single value (such as the mean) per species, with analyses weighting each species by its number of observations \citep{murtaugh2007simplicity}.
 Alternatively, if the within-species variance is of interest, a phylogenetic mixed model can separate tip variation from within-species variation and measurement error \citep{kostikova2016bridging}.
 More generally, phylogenetic mixed models can be simplified to ordinary mixed models, at the cost of taxonomic detail, by simplifying the phylogenetic tree to a strictly hierarchical set of nested higher-level taxa \citep{bunnefeld2012island}). 
-Users should be aware of two essential questions when fitting random-slope models: do they have enough information to practically estimate the random slopes, and what are the potential costs of ignoring them \citep{schielzeth2008conclusions}? 
+Users should be aware of two essential questions when fitting random-slope models: do they have enough information to reliably estimate the random slopes, and what are the potential costs of ignoring them \citep{schielzeth2008conclusions}? 
 % However, in the PGLMM context, as long as there's variation in the predictor among tips, there will be variation among taxa at some level, so random-slopes models will (almost always) be \emph{theoretically} identifiable.
 
 \subsection*{Extensions and alternatives}
 
 The range of PRs presented here can incorporate many levels and types of phylogenetic variation.
-Of course, there are further biological complexities we have neglected, such as multivariate responses; non-Brownian evolutionary processes such as the Ornstein-Uhlenbeck model \citep{butler2004phylogenetic}); and variable-rate models, which allow evolutionary rates to vary across the phylogeny.
+Of course, we have neglected further biological complexities, such as multivariate responses; non-Brownian evolutionary processes such as the Ornstein-Uhlenbeck model \citep{butler2004phylogenetic}); and variable-rate models, which allow evolutionary rates to vary across the phylogeny.
 While it cannot easily incorporate these complexities, the approach here does offer an efficient way to analyze a wide range of evolutionary scenarios.
 The general principle of encoding phylogenetic structure in the random effects model matrix can be implemented with any platform that supports continuous latent variables.
 Our implementation allows users to explore new ideas by fitting phylogenetic mixed models with complex random effects to large data sets.
@@ -561,7 +562,7 @@ Our implementation allows users to explore new ideas by fitting phylogenetic mix
 \section*{Achnowledgements}
 
 We would like to thank Jonathan Dushoff for thoughtful comments.
-This study was funded by NSERC Discovery Grant.
+This study was funded by an NSERC Discovery Grant.
 
 \section*{Authors’ contributions}
 

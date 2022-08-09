@@ -53,9 +53,9 @@ ssdat <- (ssdat_raw
                            )
            , Platform = factor(trans_platform(platform), levels=trans_platform(sub_pkgs))
            , sdtype = factor(sdtype, levels=c("phylo_int","phylo_cor","phylo_X","resid")
-                           , labels=c(expression(paste("Phylogenetic random intercept ", Sigma[phy[int]]))
+                           , labels=c(expression(paste("Phylogenetic random intercept ", sigma[phy[int]]))
                                     , expression(paste("Phylogenetic random intercept-slope correlation ", rho[phy[int-slope]]))
-                                    , expression(paste("Phylogenetic random slope ", Sigma[phy[slope]]))
+                                    , expression(paste("Phylogenetic random slope ", sigma[phy[slope]]))
                                     , expression(paste("Residual ", sigma[epsilon])))
                              )
              )
@@ -271,13 +271,13 @@ lev_vec <- c("phylo_int","phylo_cor","phylo_X"
            , "species_int", "species_cor", "species_X"
            , "phylo_interaction", "site_int", "resid")
 
-lab_vec <- c(expression(atop("Phylogenetic random intercept ",Sigma[phy[int]]))
+lab_vec <- c(expression(atop("Phylogenetic random intercept ",sigma[phy[int]]))
            , expression(atop("Phylo random intercept-slope corr",rho[phy[int-slope]]))
-           , expression(atop("Phylogenetic random slope ",Sigma[phy[slope]]))
+           , expression(atop("Phylogenetic random slope ",sigma[phy[slope]]))
            , expression(atop("Species random intercept ",sigma[sp[int]]))
            , expression(atop("Species random intercept-slope corr",rho[sp[int-slope]]))
            , expression(atop("Species random slope ",sigma[sp[slope]]))
-           , expression(atop("Phylo random species-group interact",Sigma[phy[sp:group]]))
+           , expression(atop("Phylo random species-group interact",sigma[phy[sp:group]]))
            , expression(atop("Random group ",sigma[group]))
            , expression(atop("Residual ",sigma[epsilon])))
 

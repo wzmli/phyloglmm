@@ -1,13 +1,16 @@
 ## new
 
+- (BMB) tweak alignment
 - (ML) where does phylotree.png come from? I would like to tweak it to be a little bit 'skinnier' top to bottom (and be reproducible).  Could re-make it myself but ...
 - (ML) check notation in full multi-group model and explanation
-- finish cleaning up notation?
-
+- (BMB/ML) finish cleaning up notation?
+- (BMB) add scaling lines to Fig 6?
+- define $\rho$ (correlation) in model definitions (shows up first in figures)
+- consider `scale=free` for Figure 5?
+- Figure 5: is lowercase sigma OK in strip labels? Are these meant to be sigma or sigma^2?
 
 ## misc
-
-- write cover letter
+- write cover letter 
 - finish responses
 - read over full ms
 
