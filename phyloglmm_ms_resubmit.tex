@@ -125,7 +125,7 @@
 Michael Li\textsuperscript{1*} and Benjamin M. Bolker\textsuperscript{1,2,3}
 \\
 \vspace{2pt}
-* Corresponding author: Michael Li; lim88@mcmaster.ca
+* Corresponding author: Michael Li; lim88@mcmaster.ca. Current address: Public Health Risk Science Division, Public Health Agency of Canada 
 \end{center}
 \vspace{5pt}
 \textbf{1} Department of Biology, McMaster University, Hamilton, Ontario, Canada
@@ -145,15 +145,15 @@ Michael Li\textsuperscript{1*} and Benjamin M. Bolker\textsuperscript{1,2,3}
 Phylogenetic regressions (PR), a subset of phylogenetic comparative methods, account for evolutionary relatedness when analyzing relationships among morphological, physiological, or ecological characteristics of species.
 Given a known phylogeny, PRs model the relationships among species traits while incorporating relatedness; they can be used to control statistically for phylogeny, to quantify phylogenetic signal in traits, or both. 
 
-In contrast to standard statistical models, where all of the predictor variables (such as species traits and environmental covariates) are directly observable, PRs incorporate phylogenetic relationships to account for the unobserved process of trait evolution \citep{felsenstein1985phylogenies, butler2004phylogenetic, hansen2012interpreting}. 
-While a wide range of tools is available for PR, most existing procedures are either insufficiently flexible or too computationally demanding to analyze large data sets (e.g. random-slopes phylogenetic regressions with hundreds of species).
+In contrast to standard statistical models, where all observations are assumed to be independent, PRs incorporate phylogenetic relationships to account for correlations between observations driven by the unobserved process of trait evolution \citep{felsenstein1985phylogenies, butler2004phylogenetic, hansen2012interpreting}. 
+While a wide range of tools is available for PR, most existing procedures are either inflexible or too computationally demanding to analyze large data sets (e.g. random-slopes phylogenetic regressions with hundreds of species).
 When faced with these constraints, researchers often simplify their analyses, at the risk of neglecting important processes.
 
 \subsection*{Challenges in modeling phylogenetic processes}
 
 In classic PRs, phylogenetic correlation in the residuals from a regression between two species-level traits arises because the residual variation in the response trait evolves along the branches of the phylogeny according to a Brownian-motion (BM) evolutionary model \citep{felsenstein1985phylogenies}. 
 If the residuals are normally distributed and observed without additional error or within-species variation, Felsenstein's method of phylogenetically independent contrasts  \citep[PICS:][]{felsenstein1985phylogenies} is sufficient to account for the phylogenetic correlation.
-More recent approaches --- including phylogenetic generalized linear mixed models (PGLMM) \citep{ives2011generalized, housworth2004phylogenetic}, Pagel's $\lambda$ \citep{pagel1999inferring}, and Blomberg's $K$ \citep{blomberg2003testing} --- extend PICs by considering different (non-Gaussian) response distributions and by accounting for evolutionary models other than BM.
+More recent approaches --- including phylogenetic generalized linear mixed models  \citep[PGLMM:][]{ives2011generalized, housworth2004phylogenetic}, Pagel's $\lambda$ \citep{pagel1999inferring}, and Blomberg's $K$ \citep{blomberg2003testing} --- extend PICs by considering different (non-Gaussian) response distributions and by accounting for evolutionary models other than BM.
 These methods partition residual variation into two components: (1) independent residual variation (tip variation, which is confounded with observation error) and (2) phylogenetic signal (evolutionary process error) \citep{hansen2012interpreting, housworth2004phylogenetic}.
 If each species' traits are measured multiple times, we can distinguish a third level of variation; in this case, phylogenetic variation and tip variation are both part of the evolutionary process error while the observation error can be independently identified from within-species variation \citep{kostikova2016bridging, devillemereuil2012bayesian}.
 

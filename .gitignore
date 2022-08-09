@@ -38,3 +38,6 @@ pkg/release/
 
 .#*
 \#*
+
+figure/*.pdf
+
