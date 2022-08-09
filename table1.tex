@@ -1,0 +1,33 @@
+\begin{table}[]
+\begin{tabular}{|l|l|l|l|}
+\hline
+\textbf{Model} & \textbf{Method} & \textbf{Data} & \textbf{Platform} \\
+\hline
+\multirow{2}{*}{
+  \begin{tabular}[c]{@{}l@{}}
+    Generalized Linear \\ Model (GLM)
+\end{tabular}} &
+Correlated residual &
+\begin{tabular}[c]{@{}l@{}} Single observation \\ per species \end{tabular} &
+\begin{tabular}[c]{@{}l@{}}\pkg{nlme}:gls, \\ \pkg{ape}:pic \end{tabular} \\
+\cline{2-4} &
+\begin{tabular}[c]{@{}l@{}}Residual \\ + phylogenetic intercept\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}Single observation \\ per species \end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}Pagel's $\lambda$\\ Blomberg's $K$ \\ via \pkg{nlme}:gls\\ \pkg{phylolm}\end{tabular} \\
+  \hline 
+  \multirow{2}{*}{
+    \begin{tabular}[c]{@{}l@{}}Generalized Linear \\ Mixed Model (GLMM)\end{tabular}} &
+  
+  \multirow{2}{*}{Random effect}
+  & \begin{tabular}[c]{@{}l@{}}Single observation \\per species, \\ Balanced design\end{tabular} &
+      \pkg{pez}                                                     \\ \cline{3-4} 
+      &  & Unrestricted   &
+      \begin{tabular}[c]{@{}l@{}}  \pkg{\plmefour}, \\ \pkg{\pgTMB}, \\ \pkg{phyr} \end{tabular}
+      \\
+      \hline
+         \multirow{2}{*}{Bayesian GLMM}
+         & \multirow{2}{*}{Random effect}
+         & Balanced design                                                              & \pkg{MCMCglmm}                                                                                       \\ \cline{3-4} 
+                                                                                                   &                                                                       & Unrestricted                                                                 & \pkg{brms}                                                                                           \\ \hline
+\end{tabular}
+\end{table}
