@@ -2,8 +2,6 @@
 
 * tweak plots, go over all
 
-* MLi: todo: multiple group for lme4 residual looks off. Double check! 
-
 
 ##  ASK MIKE
 

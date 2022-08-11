@@ -392,7 +392,7 @@ glmmTMBms_results <- function(tt){
     print(i)
     glmmTMB_obj <- readRDS(paste(glmmTMB_path,tt[i],sep=""))
     covobj <- VarCorr(glmmTMB_obj[[1]])[["cond"]]
-    glmmTMBms_df[i,"resid"] <- attr(covobj,"sc")
+    glmmTMBms_df[i,"resid"] <- attr(covobj,"sc")^2
     glmmTMBms_df[i, "phylo_X"] <- covobj[["sp"]]["X","X"]
     glmmTMBms_df[i, "phylo_int"] <- covobj[["sp"]]["(Intercept)","(Intercept)"]
     glmmTMBms_df[i, "phylo_cor"] <- covobj[["sp"]]["(Intercept)","X"]

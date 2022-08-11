@@ -384,7 +384,6 @@ The full multi-group model is as follows:
 \end{equation}
 where $\textrm{I}_{\textrm{group}}$ is a indicator matrix for groups and $\otimes$ is the Kronecker product.
 
-\bmb{ML: please check notation; in particular, is $\sigma^2_{\mathrm{phy}}$ correct for the sp-group variance??}
 Compared to the single--group model, the multi-group simulation model has five additional random effect parameters: predictor-level ($\sigma^2_{\mathrm{sp_{slope}}}$) and intercept-level ($\sigma^2_{\mathrm{sp_{int}}}$) among-species variances;  their covariance ($\sigma_{\mathrm{sp_{int-slope}}}$);  among-group variation in the intercept ($\sigma^2_{\mathrm{group}}$); and variation among species-group combinations in the intercept ($\sigma^2_{\mathrm{phy}}$).
 Because each species has multiple observations we can distinguish variation among species from residual variation, and thus we can include predictor-level and intercept-level random effects of species.
 Variance in the intercept of species--group interactions ($\sigma^2_{\mathrm{phy}}$) describes whether the species within a group have more similar responses on average than expected by chance, equivalent to phylogenetic attraction \citep{helmus2007separating}. 
@@ -428,7 +427,7 @@ We only evaluated the goodness of fit for model fits that passed the convergence
 For Bayesian fits, we evaluate realizations with Gelman-Rubin statistic $<1.1$. Based on recent concerns about Gelman-Rubin thresholds \citep{vats2021revisiting}, we additionally restricted results to fits with  effective sample size $>1000$ for the fixed effect parameters  \citep[$\beta_{0}$ and $\beta_{1}$: ][]{vehtari2021rank}. 
 For each replicate, we sample two chains starting with 10000 iterations. 
 We first evaluate our estimates by looking at the distribution of the estimated values (maximum likelihood estimates for non-Bayesian platforms and posterior medians for Bayesian platforms) to quantify bias and variance (i.e., quality of the point estimate).
-We computed 95\% Wald confidence intervals for frequentist methods \bmb{check: I would think lme4 would only give profile CIs for RE parameters?} and quantile-based intervals for Bayesian methods, then computed coverage --- the proportion of simulations in which the computed confidence intervals include the true values of parameters --- to assess the quality of the confidence intervals.
+We computed 95\% Wald confidence intervals for frequentist methods and quantile-based intervals for Bayesian methods, then computed coverage --- the proportion of simulations in which the computed confidence intervals include the true values of parameters --- to assess the quality of the confidence intervals.
 We also compare computational speed between different platforms.
 
 \section*{Results}
