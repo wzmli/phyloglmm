@@ -2,13 +2,13 @@
 
 - (ML) 500-species results appear to be missing in the single-group speed comparison. Can we get them back?
 - (ML) do we have any idea why glmmTMB/lme4 times are now very similar (were we messing something up before, or ??)
-- (BMB) tweak alignment of vector-matrix multiplication?
 - (ML) where does phylotree.png come from? I would like to tweak it to be a little bit 'skinnier' top to bottom (and be reproducible).  Could re-make it myself but ...
-- (ML) check notation in full multi-group model and explanation
-- (BMB/ML) finish cleaning up notation?
 - define $\rho$ (correlation) in model definitions (shows up first in figures)
 - consider `scale=free` for Figure 5?
-- Figure 5: is lowercase sigma OK in strip labels? Are these meant to be sigma or sigma^2? (They were Sigma ...)
+
+- (BMB) tweak alignment of vector-matrix multiplication?
+- (BMB/ML) finish cleaning up notation?
+
 
 ## misc
 - write cover letter 

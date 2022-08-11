@@ -54,7 +54,7 @@ ssdat <- (ssdat_raw
              , Platform = factor(trans_platform(platform), levels=trans_platform(sub_pkgs))
              , sdtype = factor(sdtype, levels=c("phylo_int","phylo_cor","phylo_X","resid")
                            , labels=c(expression(paste("Phylogenetic random intercept ", sigma[phy[int]]^2))
-                                    , expression(paste("Phylogenetic random intercept-slope correlation ", sigma[phy[int-slope]]))
+                                    , expression(paste("Phylogenetic random intercept-slope covariance ", sigma[phy[int-slope]]))
                                     , expression(paste("Phylogenetic random slope ", sigma[phy[slope]]^2))
                                     , expression(paste("Residual ", sigma[epsilon]^2)))
                              )
@@ -81,7 +81,7 @@ gg_ss <- (ggplot(data=ssdat, aes(x=size, y=sd, col=Platform, fill=Platform))
 )
 
 print(gg_ss)
-ggsave(plot = gg_ss,filename = "figure/ssplot_new.pdf", width = 10, height=7)
+ggsave(plot = gg_ss,filename = "figure/ssplot.pdf", width = 10, height=7)
 
 ## scaleFUN <- function(x) sprintf("%.2g", x)
 scaleFUN <- function(x) {
