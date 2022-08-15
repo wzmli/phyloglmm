@@ -28,14 +28,14 @@ if (numsite == "ss") {
   )
 }
 
-if (numsite == "ms"){
+if (numsite %in% c("ms","mms")){
   glmmTMBmod <- phylo_glmmTMB(y_all ~ X
                               + (1 | sp:site)
                               + (1 + X | sp)
                               + (1 + X | obs)
                               + (1 | site)
                             , data=dat
-                            , phylo = phy,
+                            , phylo = phy
                             , phylonm = c("sp", "sp:site")
                             , doFit=TRUE
                             # , dispformula = ~1

@@ -33,7 +33,7 @@ if(numsite == "ss"){
                        )
 }
 
-if(numsite == "ms"){
+if(numsite %in% c("ms","mms")){
   t4 <- proc.time()
   lme4fit <- phylo_lmm(y_all ~ X
 #	 	+ (1 | sp)

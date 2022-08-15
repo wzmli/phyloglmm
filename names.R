@@ -11,10 +11,12 @@ size_vec <- c(small=25, med=50, large = 100,
 nspp <- size_vec[[size]]
 if (is.na(nspp)) stop("unknown size")
 
-nsite <- switch(numsite,
-                ss = 1,
-                ms = 20,
-                stop("unknown numsite", nsite))
+nsite <- switch(numsite
+	, ss = 1
+	, ms = 20
+	, mms = 20
+	, stop("unknown numsite", nsite)
+)
 
 rep = 10
 

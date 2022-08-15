@@ -7,6 +7,13 @@ set.seed(tree_seed)
 
 nrep <- 1 ## only lme4 can do number reps atm
 
+if(exists("numsite")){
+	if(numsite == "mms"){
+		nrep <- 3
+	}
+}
+
+
 # residual variance (set to zero for binary data)
 sd.resid <- 1
 sd.site <- 5

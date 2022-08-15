@@ -16,7 +16,7 @@ set.seed(tree_seed)
 # source("parameters.R")
 # nspp <- 10
 # nsite <- 5
-nrep <- 1
+
 # nspp <- 100
 # nsite <- 50
 phy <- rtree(n = nspp)
