@@ -1,3 +1,5 @@
+For the old version, revert back to Feb 20, 2020 commit message on the master branch!
+
 ## new
 
 - (ML) 500-species results appear to be missing in the single-group speed comparison. Can we get them back?
