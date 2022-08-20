@@ -1,4 +1,17 @@
-For the old version, revert back to Feb 20, 2020 commit message on the master branch!
+MLi: I had trouble figuring reverting back to initial submission, which is not a good sign because of poor organization. There are a few things we need to sort out and need to clean up the repo.
+
+1. Is the problem the fitting machinary or the simulator (this did not occur to me until I backtrack. I have now pushed the old simulation_tree code). 
+	- We need to "nail" down the simulation code. There are now two ways but, there is actually _3_. 
+		- old_simulate_tree.R
+		- simulate_tree.R (current)
+		- set up the parameters and use the lme4 machinary to simulate
+
+I used the first two options to simulate and refit and have _different_ issues with both options. 
+
+2. The fitting machinary.
+	- I am confident the machinary is fine, but it is always good to be sure. Simulate and refit using the same (lme4) machinary should be trivial. Once that is done, we can confirm if the other simulation code is doing _exactly_ what we think/want it to do. 
+
+
 
 ## new
 
