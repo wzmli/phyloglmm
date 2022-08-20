@@ -1,6 +1,26 @@
+## new
+
+- (ML) 500-species results appear to be missing in the single-group speed comparison. Can we get them back?
+	- MLi: will do them thanks!.
+- (ML) do we have any idea why glmmTMB/lme4 times are now very similar (were we messing something up before, or ??)
+	- MLi: This we need chat about this. 
+- (ML) where does phylotree.png come from? I would like to tweak it to be a little bit 'skinnier' top to bottom (and be reproducible).  Could re-make it myself but ...
+	- MLi: did it by hand, let's put it as the agenda item.
+- define $\rho$ (correlation) in model definitions (shows up first in figures)
+- consider `scale=free` for Figure 5?
+
+- (BMB) tweak alignment of vector-matrix multiplication?
+- (BMB/ML) finish cleaning up notation?
+
+
+## misc
+- write cover letter 
+- finish responses
+- read over full ms
+
 ## plots
 
-* tweak plots, go over all
+* should figure 5 be scale="free" instead?
 
 
 ##  ASK MIKE
