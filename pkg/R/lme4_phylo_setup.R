@@ -302,35 +302,72 @@ hack_function <- function(orig_fn,
                           string_target_start,
                           string_target_end = string_target_start,
                           string_target_fixed = TRUE,
+                          string_target_protect = FALSE,
                           string_replace,
+                          action = rep("replace", length(string_target_start)),
                           add_args,
-                          after_arg,
+                          after_arg = NULL,
                           subs_fns = NULL) {
-  f_tmp <- deparse(body(orig_fn))
-  beg_pos <- grep(string_target_start, f_tmp, fixed = string_target_fixed)
-  end_pos <- grep(string_target_end, f_tmp, fixed = string_target_fixed)
-  f_tmp[beg_pos:end_pos] <- string_replace
-  ## allow for private functions/get from namespace
-  if (!is.null(subs_fns)) {
-    for (i in seq_along(subs_fns)) {
-      for (j in seq_along(subs_fns[[i]])) {
-        ## substitute
-        f0 <- subs_fns[[i]][[j]]
-        ## cat(names(subs_fns)[[i]], f0, "\n")
-        ## negative lookbehind: don't match f0 preceded by ":::"
-        f_tmp <- gsub(sprintf("(?<!:::)%s",f0),
-                      sprintf("%s:::%s", names(subs_fns)[[i]], f0), f_tmp,
-                      perl = TRUE)
-      }
+    if (length(string_target_start) == 1) {
+        string_replace <- list(string_replace)
     }
-  }
-  res <- function() {}
-  body(res) <- parse(text = f_tmp)
-  ## adjust arguments
-  ff <- formals(orig_fn)
-  arg_pos <- match(after_arg, names(ff))
-  ## FIXME: warn if after_arg == end ...
-  formals(res) <- c(ff[1:arg_pos], as.pairlist(add_args), ff[(arg_pos+1):length(ff)])
+    f_tmp <- deparse(body(orig_fn))
+    nn <- length(f_tmp)
+    protect_fun <- function(x) {
+        (x
+            |> gsub(pattern = "([\\(\\)])", replacement = "\\\\\\1")
+            ## one or more spaces replaced by regex for zero or more spaces
+            |> gsub(pattern = " +", replacement = " *")
+            |> gsub(pattern = "[", replacement = "\\[", fixed = TRUE)
+            |> gsub(pattern = "]", replacement = "\\]", fixed = TRUE)
+        )
+    }
+    ## protect_fun("a(27) <-    b(27)")
+    protect_fun("a[27] <-    b[27]")
+    if (string_target_protect) {
+        string_target_start <- protect_fun(string_target_start)
+        string_target_end <- protect_fun(string_target_end)
+    }
+    for (i in seq_along(string_target_start)) {
+        beg_pos <- grep(string_target_start[i], f_tmp, fixed = string_target_fixed)
+        end_pos <- grep(string_target_end[i], f_tmp, fixed = string_target_fixed)
+        if (length(beg_pos) == 0 || length(end_pos) == 0) {
+            stop("can't find beg/end\n", string_target_start[i], "\n", string_target_end[i])
+        }
+        if (action[i] == "append") {
+            f_tmp <- append(f_tmp, string_replace[[i]], after = end_pos)
+        } else if (action[i] == "replace") {
+            f_tmp <- append(f_tmp[-(beg_pos:end_pos)], string_replace[[i]], after = beg_pos-1)
+        }
+    }
+    ## allow for private functions/get from namespace
+    if (!is.null(subs_fns)) {
+        for (i in seq_along(subs_fns)) {
+            for (j in seq_along(subs_fns[[i]])) {
+                ## substitute
+                f0 <- subs_fns[[i]][[j]]
+                ## cat(names(subs_fns)[[i]], f0, "\n")
+                ## negative lookbehind: don't match f0 preceded by ":::"
+                f_tmp <- gsub(sprintf("(?<!:::)%s",f0),
+                              sprintf("%s:::%s", names(subs_fns)[[i]], f0), f_tmp,
+                              perl = TRUE)
+            }
+        }
+    } ## if (!is.null(subs_fns))
+    res <- function() {}
+    body(res) <- parse(text = f_tmp)
+    ## adjust arguments
+    ff <- formals(orig_fn)
+    if (!is.null(after_arg)) {
+        arg_pos <- match(after_arg, names(ff))
+    } else {
+        arg_pos <- length(names(ff))
+    }
+    if (arg_pos == length(names(ff))) {
+        formals(res) <- c(ff, as.pairlist(add_args))
+    } else {
+        formals(res) <- c(ff[1:arg_pos], as.pairlist(add_args), ff[(arg_pos+1):length(ff)])
+    }
   environment(res) <- parent.frame()
   return(res)
 }

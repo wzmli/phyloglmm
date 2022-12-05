@@ -84,7 +84,7 @@ test_that("phylo_glmm", {
                              , phylonm = "sp"
                              , family = poisson
                              , phylo = garamszegi_phy
-                             , control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
+                             , control = lme4::lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
                                )
 
   phylo_glmmTMB_fit <- phylo_glmmTMB(phen_pois~cofactor+(1|sp)+(1|obs)

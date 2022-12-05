@@ -22,18 +22,36 @@
 ##' @importFrom methods is new
 ##' @importFrom glmmTMB inForm extractForm dropHead noSpecials addForm splitForm getReStruc glmmTMBControl getGrpVar fitTMB
 #' @export
-phylo_glmmTMB <-  function(formula, data = NULL, family = gaussian(), ziformula = ~0,
-                         dispformula = ~1, weights = NULL, offset = NULL, contrasts = NULL, phylo = NULL, phyloZ = NULL,
-                         phylonm = NULL,
-                         na.action = na.fail, se = TRUE, verbose = FALSE, doFit = TRUE,
-                         control = glmmTMBControl(), REML = FALSE, map = NULL, sparseX = NULL) {
+phylo_glmmTMB <-  function(formula,
+                           data = NULL,
+                           family = gaussian(),
+                           ziformula = ~0,
+                           dispformula = ~1,
+                           weights = NULL,
+                           offset = NULL,
+                           contrasts = NULL,
+                           na.action,
+                           se = TRUE,
+                           verbose = FALSE,
+                           doFit = TRUE,
+                           control = glmmTMBControl(),
+                           REML = FALSE,
+                           start = NULL,
+                           map = NULL,
+                           sparseX = NULL,
+                           ## extra phylo-specific args
+                           phylo = NULL,
+                           phyloZ = NULL,
+                           phylonm = NULL
+                           )
+{
 
-  call <- mf <- mc <- match.call()
+    call <- mf <- mc <- match.call()
 
-  ## include with hack_function
-  phyloZ <- get_phyloZ(phylo, phyloZ, data[[phylonm]])
+    ## hack_function()
+    phyloZ <- get_phyloZ(phylo, phyloZ, data[[phylonm]])
 
-  if (is.character(family)) {
+    if (is.character(family)) {
     if (family == "beta") {
       family <- "beta_family"
       warning(
