@@ -252,14 +252,23 @@ mkTMBStrucphylo <- function(formula, ziformula, dispformula, combForm, mf, fr,
   } else {
     0
   }
-  numThetaFamily <- (family$family == "tweedie")
+  rr0 <- function(n) {
+     if (is.null(n)) numeric(0) else rep(0, n)
+  }
+
+  ## Extra family specific parameters
+  ## FIXME: switch/rewrite to be less ugly?
+  psiLength <- if (family$family %in% c("t", "tweedie"))
+               { 1 } else if (family$family == "ordbeta") { 2 } else { 0 }
+  psi_init <- if (family$family == "ordbeta") c(-1, 1) else rr0(psiLength)  
+
   parameters <- with(data.tmb, list(
     beta = rep(beta_init, ncol(X)),
     betazi = rep(0, ncol(Xzi)), b = rep(beta_init, ncol(Z)),
     bzi = rep(0, ncol(Zzi)), betad = rep(betad_init, ncol(Xd)),
     theta = rep(0, sum(getVal(condReStruc, "blockNumTheta"))),
     thetazi = rep(0, sum(getVal(ziReStruc, "blockNumTheta"))),
-    thetaf = rep(0, numThetaFamily)
+    psi = psi_init
   ))
   randomArg <- c(if (ncol(data.tmb$Z) > 0) "b", if (ncol(data.tmb$Zzi) >
     0) {
