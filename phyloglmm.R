@@ -8,18 +8,18 @@ library(phyloglmm)
 
 t1 <- proc.time()
 
-# phyZ <- phylo.to.Z(phy,stand=FALSE)
-# phyZ2 <- phyZ[order(rownames(phyZ)),]
+phyZ <- phylo.to.Z(phy,stand=FALSE)
+phyZ2 <- phyZ[order(rownames(phyZ)),]
 
 dat <- (dat
-  %>% mutate(sp = factor(sp), obs = sp)
-  # %>% mutate(obs = sp)
+#  %>% mutate(sp = factor(sp), obs = sp)
+   %>% mutate(obs = sp)
   %>% ungroup()
 
 	# %>% arrange(sp)
 )
 
-print(dat %>% select(ints,y_main,y_all))
+# print(dat %>% select(ints,y_main,y_all))
 
 
 if(numsite == "ss"){
@@ -45,6 +45,7 @@ if(numsite %in% c("ms","mms")){
                      , data=dat
                      , phylonm = c("sp", "sp:site")
                      , phylo = phy
+    						, phyloZ = phyZ2 
                      , control=lmerControl(check.nobs.vs.nlev="ignore",check.nobs.vs.nRE="ignore")
                      , REML = FALSE
                        )

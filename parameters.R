@@ -43,8 +43,8 @@ phyrho.B01 <- 0.7
 
 # magnitude of random effects
 
-sd.B0 <- 1
-sd.B1 <- 1
+sd.B0 <- 3
+sd.B1 <- 3
 rho.B01 <- 0.4
 
 if(platform == "brms"){

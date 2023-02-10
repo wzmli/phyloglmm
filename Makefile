@@ -85,8 +85,9 @@ datadir/lme4/lme4.%.rds: names.R parameters.R simulate_tree.R phyloglmm.R
 	$(run-R)
 
 fit.lme4.ss.small.22.Rout: phyloglmm.R simulate_tree.R
-fit.lme4.mms.large.1.Rout: phyloglmm.R simulate_tree.R names.R
-fit.glmmTMB.ms.xlarge.1.Rout: fit_tmb.R simulate_tree.R
+fit.lme4.mms.large.1.Rout: phyloglmm.R old_simulate_tree.R names.R parameters.R
+fit.glmmTMB.mms.large.1.Rout: fit_tmb.R simulate_tree.R
+#fit.lme4.%.Rout: names.R parameters.R old_simulate_tree.R phyloglmm.R
 fit.lme4.%.Rout: names.R parameters.R simulate_tree.R phyloglmm.R
 	$(run-R)
 

@@ -16,6 +16,8 @@ dat <- (dat
 
 print(dat)
 
+quit()
+
 if (numsite == "ss") {
   glmmTMBmod <- phylo_glmmTMB(y_main ~ X
     + (1 + X|sp)
