@@ -68,6 +68,7 @@ glmmTMB_fit <- phylo_glmmTMB(phen~cofactor+(1|sp)
     , phylo = phylo
     , dispformula = ~1
     , REML = FALSE
+    , control = glmmTMB::glmmTMBControl(rank_check = "skip")
   ) 
 print(summary(glmmTMB_fit))
 ```
