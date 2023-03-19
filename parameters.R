@@ -43,18 +43,23 @@ phyrho.B01 <- 0.7
 
 # magnitude of random effects
 
+## ? lots of messing about here
 sd.B0 <- 3
 sd.B1 <- 3
 rho.B01 <- 0.4
 
 if(platform == "brms"){
-sd.B0 <- 0.000001
-sd.B1 <- 0.000001
-rho.B01 <- 0.00001
+    sd.B0 <- 0.000001
+    sd.B1 <- 0.000001
+    rho.B01 <- 0.00001
 }
 
-# compound symmetric parameters 
-sd.interaction  <- 5 ## sp:site 
+sd.B0 <- 0
+sd.B1 <- 0
+rho.B01 <- 0
+
+# compound symmetric parameters
+sd.interaction  <- 5 ## sp:site
 
 # MCMC iterations
 

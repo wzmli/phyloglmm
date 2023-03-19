@@ -72,3 +72,15 @@ see `run_all` ...
 	- MLi: no xlarge for pez because it is way too slow. I don't recall the exact time, it was taking more than 2 or 3 hours for a single fit and I stopped. 
 
 
+## plots
+
+* tweak plots, go over all
+
+## 
+
+* rerun all from scratch?
+* run pez/phyr longer?
+* adjust convergence rules to account for effective sample size
+
+
+

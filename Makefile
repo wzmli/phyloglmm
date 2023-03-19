@@ -128,6 +128,12 @@ fit_cs.lme4.%.Rout: names.R parameters.R simulate_tree.R phyloglmm_setup.Rout fi
 fit.phyr.%.Rout: names.R parameters.R simulate_tree.R fit_phyr.R
 	$(run-R)
 
+fit.phyr.ms.small.1.Rout: fit_phyr.R
+
+fit.pez.ms.small.1.Rout: fit_pez.R
+
+fit.lme4.ss.large.1.Rout: phyloglmm.R names.R
+
 compare.pez.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R compare_pez.R
 	$(run-R)
 
@@ -136,6 +142,8 @@ compare.pez.%.Rout: names.R parameters.R simulate_tree.R new_phylo_setup.R compa
 fit.brms.ss.med.1.Rout: 
 fit.brms.%.Rout: names.R parameters.R simulate_tree.R fit_brms.R
 	$(run-R)
+
+fit.brms.ss.large.1.Rout: fit_brms.R
 
 ### Collect and plot results
 
@@ -164,7 +172,7 @@ fit.MCMCglmm.%.Rout: names.R parameters.R simulate_tree.R MCMCglmmhacked.R fit_M
 	$(run-R)
 
 fit.lme4.ss.large.1.Rout: phyloglmm.R
-fit.MCMCglmm.ss.large.1.Rout: fit_MCMCglmm.R
+fit.MCMCglmm.ss.small.1.Rout: fit_MCMCglmm.R
 
 
 fit_glmmPQL.Rout: parameters.Rout simulate_tree.Rout fit_glmmPQL.R

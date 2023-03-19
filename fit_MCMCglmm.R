@@ -17,11 +17,11 @@ print(dat)
 time1 <- proc.time()
 inv.phylo <- inverseA(phy,nodes="TIPS",scale=FALSE)
 
-prior <- list(G=list(G1=list(V=diag(2),nu=2)
+prior <- list(G=list(G1=list(V=100*diag(2),nu=100)
 #						, G2 = list(V=1,nu=2)
 #						, G3 = list(V=diag(2), nu=2)
                      )
-              , R=list(V=2,nu=2)
+              , R=list(V=1,nu=100)
               )
 
 
