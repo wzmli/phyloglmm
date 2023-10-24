@@ -104,8 +104,9 @@
 \newcommand{\phyvar}{\sigma} %% phylogenetic var: allow sigma/Sigma switch
 \newcommand{\phyv}[1]{\ensuremath{\phyvar^2_{\mathrm{phy}_\mathrm{#1}}}}
 \newcommand{\phys}[1]{\ensuremath{\phyvar_{\mathrm{phy}_\mathrm{#1}}}}
-\newcommand{\bphys}[1]{\ensuremath{{\bf b}_{\mathrm{phy}_{\mathrm{#1}}}}}
-\newcommand{\bsps}[1]{\ensuremath{{\bf b}_{\mathrm{sp}_{\mathrm{#1}}}}}
+\newcommand{\bphys}[1]{\ensuremath{{\mathbf b}_{\mathrm{phy}_{\mathrm{#1}}}}}
+\newcommand{\bsps}[1]{\ensuremath{{\mathbf b}_{\mathrm{sp}_{\mathrm{#1}}}}}
+\newcommand{\bgrp}[1]{{{\mathbf b}_{\mathrm{#1}}}}
 % \pagenumbering{gobble}
 \linenumbers
 
@@ -361,11 +362,12 @@ Predictor-level and intercept-level random effects of species are not applicable
 
 We extend the simulation model by adding multiple groups where each group has one observation per species. 
 The multi-group model is a generalization of multiple-site models used in community ecology to model phylogenetic attraction and repulsion \citep{helmus2007separating}. 
-The full multi-group model is as follows: 
+The full multi-group model is as follows:
+
 \begin{equation}
 \begin{aligned}
 \bY & = \dist(g^{-1}(\bmu), \phi) \\
-\bmu & = (\beta_0 + \bphys{int} + \bsps{int} + {\bf b}_{\mathrm{group}}}) + (\beta_1 + \bphys{slope} + \bsps{slope}) \bm{t} + {\bf b}_{\mathrm{sp:group}}} + \besp \\
+\bmu & = (\beta_0 + \bphys{int} + \bsps{int} + \bgrp{group}) + (\beta_1 + \bphys{slope} + \bsps{slope}) \bm{t} + \bgrp{sp:group} + \besp \\
 (\bphys{int}, \bphys{slope}) & \sim \textrm{MVN} \left( 0, \begin{bmatrix}
 \phyv{int} & \phys{int-slope} \\ 
 \phys{int-slope} & \phyv{slope}
