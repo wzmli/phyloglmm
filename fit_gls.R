@@ -10,8 +10,6 @@ print(dat)
 
 print(phy)
 
-quit()
-
 phy_var <- diag(vcv(phy))
 
 varweights <- varFixed(~phy_var)

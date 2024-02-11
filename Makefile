@@ -10,6 +10,7 @@ current: target
 
 ######################################################################
 
+
 # Content
 
 # ms.tex
@@ -35,6 +36,11 @@ phyloglmm_ms_resubmit.pdf: main.tex phyloglmm_ms.tex plot.Rout
 Sources += $(wildcard *.R)
 
 ######################################################################
+
+## simple install
+lpackage: 
+	R CMD INSTALL pkg
+
 
 ### simulate phylogenetic tree
 
@@ -67,7 +73,7 @@ example.Rout: example.R
 
 ### gls
 
-fit.gls.ss.small.1.Rout: fit_gls.R
+fit.gls.ss.small.1.Rout: fit_gls.R simulate_tree.R
 fit.gls.%.Rout: names.R parameters.R simulate_tree.R fit_gls.R
 	$(run-R)
 
