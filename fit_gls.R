@@ -2,9 +2,9 @@
 library(ape)
 library(dplyr)
 library(nlme, warn.conflicts = FALSE)
+library(shellpipes)
 
-dat <- data.frame(dat)
-# rownames(dat) <- dat$sp
+loadEnvironments()
 
 print(dat)
 
@@ -28,6 +28,7 @@ print(fit_gls)
 print(summary(fit_gls))
 
 gls_list <- list(fit_gls,tt)
+
 saveRDS(gls_list,file=paste("datadir/gls/gls",numsite,size,tree_seed,"rds",sep="."))
 
 #rdnosave()

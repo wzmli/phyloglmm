@@ -143,4 +143,4 @@ dat <- (indexdat[rep(1:nrow(indexdat),each=nrep),]
 	)
 )
 
-rdsSave(dat)
+saveVars(dat,phy)

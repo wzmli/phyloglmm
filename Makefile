@@ -62,18 +62,12 @@ brms_parameters.Rout: brms_parameters.R parameters.rda
 %.simulate_tree.Rout: simulate_tree.R parameters.rda %.names.rda
 	$(pipeR)
 
-%.gls_simulate_tree.Rout: simulate_tree.R gls_parameters.rds %.names.rds
+%.gls_simulate_tree.Rout: simulate_tree.R gls_parameters.rda %.names.rda
 	$(pipeR)
 
-%.brms_simulate_tree.Rout: simulate_tree.R brms_parameters.rds %.names.rds
+%.brms_simulate_tree.Rout: simulate_tree.R brms_parameters.rda %.names.rda
 	$(pipeR)
-
-phylo_re_plot.Rout: phylo_re_plot.R
-	$(run-R)
-
-phytree_var_plot.Rout: phytree_var_plot.R
-	$(run-R)
-
+## Do we need this?
 pez_simulate_tree.Rout: pez_simulate_tree.R
 	$(run-R)
 
@@ -92,9 +86,9 @@ example.Rout: example.R
 
 ### gls
 
-fit.gls.ss.small.1.Rout: fit_gls.R simulate_tree.R
-fit.gls.%.Rout: names.R parameters.R simulate_tree.R fit_gls.R
-	$(run-R)
+## fit.gls.ss.small.1.Rout: fit_gls.R gls_simulate_tree.R
+fit.gls.%.Rout: fit_gls.R %.gls_simulate_tree.rda
+	$(pipeR)
 
 ### phylolm
 
