@@ -5,20 +5,16 @@ library(sparseMVN)
 library(Matrix)
 library(dplyr, warn.conflicts = FALSE)
 ## library(MASS)  ## for mvrnorm() ## don't load so we don't screw up dplyr::select()
+library(shellpipes)
+
+loadEnvironments()
 
 quadform <- function(sd_mat,cormat){
   sd_mat %*% cormat %*% sd_mat
 }
 
-# tree_seed <- 101
 set.seed(tree_seed)
 
-# source("parameters.R")
-# nspp <- 10
-# nsite <- 5
-
-# nspp <- 100
-# nsite <- 50
 phy <- rtree(n = nspp)
 
 Vphy <- vcv(phy)
@@ -146,3 +142,5 @@ dat <- (indexdat[rep(1:nrow(indexdat),each=nrep),]
 		, sp = tipname
 	)
 )
+
+rdsSave(dat)

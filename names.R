@@ -5,12 +5,10 @@ pipeStar()
 targetname <- unlist(strsplit(pipeStar(),"[.]"))
 
 print(targetname)
-quit()
 
-platform <- targetname[2]
-numsite <- targetname[3]
-size <- targetname[4]
-tree_seed <- as.numeric(targetname[5])
+numsite <- targetname[1]
+size <- targetname[2]
+tree_seed <- as.numeric(targetname[3])
 
 size_vec <- c(small=25, med=50, large = 100,
               mlarge = 250, xlarge = 500)
@@ -28,3 +26,14 @@ nsite <- switch(numsite
 rep = 10
 
 datadir <- "datadir/"
+
+nrep <- 1
+
+if(exists("numsite")){
+   if(numsite == "mms"){
+      nrep <- 3
+   }
+}
+
+
+saveEnvironment()

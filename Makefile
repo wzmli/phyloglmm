@@ -49,12 +49,23 @@ lpackage:
 %.names.Rout: names.R 
 	$(pipeR)
 
+parameters.Rout: parameters.R 
+	$(pipeR)
+
+gls_parameters.Rout: gls_parameters.R parameters.rda
+	$(pipeR)
+
+brms_parameters.Rout: brms_parameters.R parameters.rda
+	$(pipeR)
+
+## ss.small.1.simulate_tree.Rout: simulate_tree.R
 %.simulate_tree.Rout: simulate_tree.R parameters.rda %.names.rda
-	$(run-R)
+	$(pipeR)
 
+%.gls_simulate_tree.Rout: simulate_tree.R gls_parameters.rds %.names.rds
+	$(pipeR)
 
-
-gls_parameters.R: parameters.R
+%.brms_simulate_tree.Rout: simulate_tree.R brms_parameters.rds %.names.rds
 	$(pipeR)
 
 phylo_re_plot.Rout: phylo_re_plot.R
