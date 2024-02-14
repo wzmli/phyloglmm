@@ -2,7 +2,9 @@
 library(ape)
 library(dplyr)
 library(phylolm)
+library(shellpipes)
 
+loadEnvironments()
 dat <- data.frame(dat)
 #rownames(dat) <- dat$sp
 
@@ -22,6 +24,5 @@ print(summary(fit_phylolm))
 
 
 phylolm_list <- list(fit_phylolm,tt)
-saveRDS(phylolm_list,file=paste("datadir/phylolm/phylolm",numsite,size,tree_seed,"rds",sep="."))
 
-#rdnosave()
+rdsSave(phylolm_list,target=paste0("datadir/phylolm/",targetname()))

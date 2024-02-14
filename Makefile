@@ -92,9 +92,9 @@ fit.gls.%.Rout: fit_gls.R %.gls_simulate_tree.rda
 
 ### phylolm
 
-fit.phylolm.ss.small.1.Rout: fit_phylolm.R
-fit.phylolm.%.Rout: names.R parameters.R simulate_tree.R fit_phylolm.R
-	$(run-R)
+## fit.phylolm.ss.small.1.Rout: fit_phylolm.R
+fit.phylolm.%.Rout: fit_phylolm.R %.simulate_tree.rda
+	$(pipeR)
 
 ### lme4 can fit single and multiple sites
 

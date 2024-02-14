@@ -6,6 +6,7 @@ library(shellpipes)
 
 loadEnvironments()
 
+
 print(dat)
 
 print(phy)
@@ -29,6 +30,7 @@ print(summary(fit_gls))
 
 gls_list <- list(fit_gls,tt)
 
-saveRDS(gls_list,file=paste("datadir/gls/gls",numsite,size,tree_seed,"rds",sep="."))
+rdsSave(gls_list,target=paste0("datadir/gls/",targetname()))
+# saveRDS(gls_list,file=paste("datadir/gls/"rds",sep="."))
 
 #rdnosave()
