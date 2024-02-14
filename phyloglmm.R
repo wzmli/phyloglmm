@@ -12,8 +12,8 @@ phyZ <- phylo.to.Z(phy,stand=FALSE)
 phyZ2 <- phyZ[order(rownames(phyZ)),]
 
 dat <- (dat
-#  %>% mutate(sp = factor(sp), obs = sp)
-   %>% mutate(obs = sp)
+  %>% mutate(sp = factor(sp), obs = sp)
+#   %>% mutate(obs = sp)
   %>% ungroup()
 
 	# %>% arrange(sp)

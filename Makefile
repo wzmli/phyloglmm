@@ -44,10 +44,18 @@ lpackage:
 
 ### simulate phylogenetic tree
 
-#parameters.Rout:
 
-simulate_tree.Rout: names.R parameters.R simulate_tree.R
+## ss.small.1.names.Rout: names.R
+%.names.Rout: names.R 
+	$(pipeR)
+
+%.simulate_tree.Rout: simulate_tree.R parameters.rda %.names.rda
 	$(run-R)
+
+
+
+gls_parameters.R: parameters.R
+	$(pipeR)
 
 phylo_re_plot.Rout: phylo_re_plot.R
 	$(run-R)
@@ -260,4 +268,4 @@ makestuff/Makefile:
 -include makestuff/visual.mk
 -include makestuff/projdir.mk
 -include makestuff/texdeps.mk
--include makestuff/wrapR.mk
+-include makestuff/pipeR.mk

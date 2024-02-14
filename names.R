@@ -1,4 +1,11 @@
-targetname <- unlist(strsplit(rtargetname,"[.]"))
+library(shellpipes)
+
+pipeStar()
+
+targetname <- unlist(strsplit(pipeStar(),"[.]"))
+
+print(targetname)
+quit()
 
 platform <- targetname[2]
 numsite <- targetname[3]

@@ -1,4 +1,7 @@
 ### parameters for phylogenetic tree simulations
+
+library(shellpipes)
+
 # tree_seed <- 1205
 set.seed(tree_seed)
 
