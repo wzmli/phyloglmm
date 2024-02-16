@@ -44,6 +44,7 @@ lpackage:
 
 ### simulate phylogenetic tree
 
+pipeRimplict += names
 
 ## ss.small.1.names.Rout: names.R
 %.names.Rout: names.R 
@@ -58,25 +59,20 @@ gls_parameters.Rout: gls_parameters.R parameters.rda
 brms_parameters.Rout: brms_parameters.R parameters.rda
 	$(pipeR)
 
+pipeRimplict += simulate_tree
+
 ## ss.small.1.simulate_tree.Rout: simulate_tree.R
 %.simulate_tree.Rout: simulate_tree.R parameters.rda %.names.rda
 	$(pipeR)
 
+pipeRimplict += gls_simulate_tree
 %.gls_simulate_tree.Rout: simulate_tree.R gls_parameters.rda %.names.rda
 	$(pipeR)
 
+
+pipeRimplict += brms_simulate_tree
 %.brms_simulate_tree.Rout: simulate_tree.R brms_parameters.rda %.names.rda
 	$(pipeR)
-## Do we need this?
-pez_simulate_tree.Rout: pez_simulate_tree.R
-	$(run-R)
-
-simulate_poistree.Rout: parameters.R simulate_poistree.R
-	$(run-R)
-
-fit.pois.Rout: simulate_poistree.Rout phyloglmm_pois.R
-	$(run-R)
-
 ######################################################################
 
 example.Rout: example.R
@@ -86,7 +82,11 @@ example.Rout: example.R
 
 ### gls
 
+
+pipeRimplict += fit_gls
+
 ## fit.gls.ss.small.1.Rout: fit_gls.R gls_simulate_tree.R
+## fit.gls.ss.small.2.Rout: fit_gls.R gls_simulate_tree.R
 fit.gls.%.Rout: fit_gls.R %.gls_simulate_tree.rda
 	$(pipeR)
 
@@ -96,8 +96,14 @@ fit.gls.%.Rout: fit_gls.R %.gls_simulate_tree.rda
 fit.phylolm.%.Rout: fit_phylolm.R %.simulate_tree.rda
 	$(pipeR)
 
-### lme4 can fit single and multiple sites
+### lme4
 
+
+## fit.lme4.ss.small.1.Rout: phyloglmm.R
+fit.lme4.%.Rout: phyloglmm.R %.simulate_tree.rda
+	$(pipeR)
+
+### lme4 can fit single and multiple sites
 
 # datadir/lme4/lme4.ss.small.1.Rout: phyloglmm.R parameters.R
 datadir/lme4/lme4.%.rds: names.R parameters.R simulate_tree.R phyloglmm.R

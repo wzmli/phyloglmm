@@ -143,4 +143,4 @@ dat <- (indexdat[rep(1:nrow(indexdat),each=nrep),]
 	)
 )
 
-saveVars(dat,phy)
+saveVars(dat,phy,numsite)
