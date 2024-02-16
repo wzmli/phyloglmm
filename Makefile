@@ -65,6 +65,7 @@ pipeRimplict += simulate_tree
 %.simulate_tree.Rout: simulate_tree.R parameters.rda %.names.rda
 	$(pipeR)
 
+## ss.small.2.gls_simulate_tree.Rout: simulate_tree.R
 pipeRimplict += gls_simulate_tree
 %.gls_simulate_tree.Rout: simulate_tree.R gls_parameters.rda %.names.rda
 	$(pipeR)
