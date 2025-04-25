@@ -10,6 +10,7 @@ phylo_lmm(
   data,
   phylo = NULL,
   phylonm = NULL,
+  phylosp = phylonm[1],
   phyloZ = NULL,
   control,
   REML = FALSE
@@ -20,6 +21,7 @@ phylo_glmm(
   data,
   phylo,
   phylonm = NULL,
+  phylosp = phylonm[1],
   phyloZ = NULL,
   control,
   family
@@ -32,7 +34,9 @@ phylo_glmm(
 
 \item{phylo}{phylogenetic tree in \code{\link{phylo}} format}
 
-\item{phylonm}{name of phylogenetic grouping variable}
+\item{phylonm}{name of phylogenetic grouping variables; if \code{phylosp} is not specified, the first element must match the name of the species variable in \code{data}}
+
+\item{phylosp}{name of species variable in \code{data} (levels should match the tip/species names from the phylogeny)}
 
 \item{phyloZ}{phylogenetic Z-matrix (see \code{\link{phylo.to.Z}}): optional, will be computed
 internally from \code{phylo} if not specified here. (For large phylogenies that are going to

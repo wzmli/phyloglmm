@@ -20,7 +20,8 @@
 ##' @param sparseX a named logical vector containing (possibly) elements named "cond", "zi", "disp" to indicate whether fixed-effect model matrices for particular model components should be generated as sparse matrices, e.g. \code{c(cond=TRUE)}. Default is all \code{FALSE}
 ##' @importFrom stats make.link na.fail update as.formula terms model.weights gaussian model.matrix
 ##' @importFrom methods is new
-##' @importFrom glmmTMB inForm extractForm dropHead noSpecials addForm splitForm getReStruc glmmTMBControl getGrpVar fitTMB
+##' @importFrom reformulas inForm extractForm dropHead noSpecials addForm splitForm RHSForm addForm0 makeOp drop.special reOnly RHSForm<-
+##' @importFrom glmmTMB glmmTMBControl getGrpVar fitTMB getReStruc
 #' @export
 phylo_glmmTMB <-  function(formula, data = NULL, family = gaussian(), ziformula = ~0,
                          dispformula = ~1, weights = NULL, offset = NULL, contrasts = NULL, phylo = NULL, phyloZ = NULL,
@@ -71,7 +72,7 @@ phylo_glmmTMB <-  function(formula, data = NULL, family = gaussian(), ziformula 
   environment(formula) <- parent.frame()
   call$formula <- mc$formula <- formula
   if (!is.null(eval(substitute(offset), data, enclos = environment(formula)))) {
-    formula <- glmmTMB::addForm0(formula, glmmTMB:::makeOp(substitute(offset),
+    formula <- addForm0(formula, makeOp(substitute(offset),
       op = quote(offset)
     ))
   }
@@ -88,7 +89,7 @@ phylo_glmmTMB <-  function(formula, data = NULL, family = gaussian(), ziformula 
   mf[[1]] <- as.name("model.frame")
   if (inForm(ziformula, quote(.))) {
     ziformula <- update(
-      glmmTMB::RHSForm(glmmTMB::drop.special(formula), as.form = TRUE),
+        RHSForm(drop.special(formula), as.form = TRUE),
       ziformula
     )
   }
@@ -202,6 +203,7 @@ mkTMBStrucphylo <- function(formula, ziformula, dispformula, combForm, mf, fr,
   )
   condReStruc <- with(condList, getReStruc(reTrms, ss))
   ziReStruc <- with(ziList, getReStruc(reTrms, ss))
+  dispReStruc <- with(dispList, getReStruc(reTrms, ss))
   grpVar <- with(condList, getGrpVar(reTrms$flist))
   nobs <- nrow(fr)
   if (is.null(weights)) {
@@ -232,10 +234,11 @@ mkTMBStrucphylo <- function(formula, ziformula, dispformula, combForm, mf, fr,
   if (is.null(size)) {
     size <- numeric(0)
   }
+  ## note, will have to add fullCor after ar_memfix branch is merged
   data.tmb <- lme4:::namedList(
     X = condList$X, Z = condList$Z, Xzi = ziList$X,
-    Zzi = ziList$Z, Xd = dispList$X, yobs, respCol, offset = condList$offset,
-    zioffset = ziList$offset, doffset = dispList$offset,
+    Zzi = ziList$Z, Xdisp = dispList$X, Zdisp = dispList$Z, yobs, respCol, offset = condList$offset,
+    zioffset = ziList$offset, dispoffset = dispList$offset,
     weights, size, terms = condReStruc, termszi = ziReStruc,
     family = glmmTMB:::.valid_family[family$family], link = glmmTMB:::.valid_link[family$link],
     ziPredictCode = glmmTMB:::.valid_zipredictcode[ziPredictCode],
@@ -265,9 +268,11 @@ mkTMBStrucphylo <- function(formula, ziformula, dispformula, combForm, mf, fr,
   parameters <- with(data.tmb, list(
     beta = rep(beta_init, ncol(X)),
     betazi = rep(0, ncol(Xzi)), b = rep(beta_init, ncol(Z)),
-    bzi = rep(0, ncol(Zzi)), betad = rep(betad_init, ncol(Xd)),
+    bzi = rep(0, ncol(Zzi)), betadisp = rep(betad_init, ncol(Xdisp)),
+    bdisp = rep(0, ncol(Zdisp)),
     theta = rep(0, sum(getVal(condReStruc, "blockNumTheta"))),
     thetazi = rep(0, sum(getVal(ziReStruc, "blockNumTheta"))),
+    thetadisp = rep(0, sum(getVal(dispReStruc, "blockNumTheta"))),
     psi = psi_init
   ))
   randomArg <- c(if (ncol(data.tmb$Z) > 0) "b", if (ncol(data.tmb$Zzi) >
@@ -321,10 +326,10 @@ mkTMBStrucphylo <- function(formula, ziformula, dispformula, combForm, mf, fr,
 getXReTrmsphylo <- function(formula, mf, fr, ranOK = TRUE, type = "", contrasts, phyloZ = phyloZ,
                             phylonm = phylonm) {
   fixedform <- formula
-  glmmTMB::RHSForm(fixedform) <- nobars(glmmTMB::RHSForm(fixedform))
+  RHSForm(fixedform) <- nobars(RHSForm(fixedform))
   nobs <- nrow(fr)
-  if (identical(glmmTMB::RHSForm(fixedform), ~0) || identical(
-    glmmTMB::RHSForm(fixedform),
+  if (identical(RHSForm(fixedform), ~0) || identical(
+    RHSForm(fixedform),
     ~ -1
   )) {
     X <- NULL
@@ -332,7 +337,7 @@ getXReTrmsphylo <- function(formula, mf, fr, ranOK = TRUE, type = "", contrasts,
   else {
     mf$formula <- fixedform
     terms_fixed <- terms(eval(mf, envir = environment(fixedform)))
-    X <- model.matrix(glmmTMB::drop.special(fixedform), fr, contrasts)
+    X <- model.matrix(drop.special(fixedform), fr, contrasts)
     offset <- rep(0, nobs)
     terms <- list(fixed = terms(terms_fixed))
     if (inForm(fixedform, quote(offset))) {
@@ -355,9 +360,9 @@ getXReTrmsphylo <- function(formula, mf, fr, ranOK = TRUE, type = "", contrasts,
     if (!ranOK) {
       stop("no random effects allowed in ", type, " term")
     }
-    glmmTMB::RHSForm(ranform) <- subbars(glmmTMB::RHSForm(glmmTMB::reOnly(formula)))
+    RHSForm(ranform) <- subbars(RHSForm(reOnly(formula)))
     mf$formula <- ranform
-    reTrms <- mkReTrms(lme4::findbars(glmmTMB::RHSForm(formula)), fr, phylonm, phyloZ)
+    reTrms <- mkReTrms(findbars(RHSForm(formula)), fr, phylonm, phyloZ)
     ss <- splitForm(formula)
     ss <- unlist(ss$reTrmClasses)
     Z <- t(reTrms$Zt)

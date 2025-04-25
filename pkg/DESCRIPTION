@@ -11,7 +11,7 @@ Authors@R:
 	   comment=c(ORCID="0000-0002-2127-0443")))
 Description: Sets up the necessary pieces to fit phylogenetic GLMM(s) in lme4 or glmmTMB.
 Depends: R (>= 4.0.0)
-Imports: glmmTMB (> 1.1.2.2), lme4, Matrix, stats, methods, ape
+Imports: glmmTMB (> 1.1.2.2), lme4, Matrix, stats, methods, ape, reformulas
 Suggests: 
     MASS,
     coda,
@@ -26,4 +26,4 @@ LazyData: true
 VignetteBuilder: rmarkdown
 Roxygen: list(markdown = TRUE)
 Config/testthat/edition: 3
-RoxygenNote: 7.1.2
+RoxygenNote: 7.3.2.9000

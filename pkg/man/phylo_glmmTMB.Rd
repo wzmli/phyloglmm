@@ -16,6 +16,7 @@ phylo_glmmTMB(
   phylo = NULL,
   phyloZ = NULL,
   phylonm = NULL,
+  phylosp = phylonm[1],
   na.action = na.fail,
   se = TRUE,
   verbose = FALSE,
@@ -51,7 +52,9 @@ be used in multiple models it may make sense to compute the Z matrix first and p
 the modeling functions to avoid recomputing it each time.)
 to compute \code{phyloZ} fi}
 
-\item{phylonm}{name of phylogenetic grouping variable}
+\item{phylonm}{name of phylogenetic grouping variables; if \code{phylosp} is not specified, the first element must match the name of the species variable in \code{data}}
+
+\item{phylosp}{name of species variable in \code{data} (levels should match the tip/species names from the phylogeny)}
 
 \item{na.action}{how to handle missing values, see \code{\link{na.action}} and \code{\link{model.frame}}. From \code{\link{lm}}: \dQuote{The default is set by the \code{\link{na.action}} setting of \code{\link{options}}, and is \code{\link{na.fail}} if that is unset. The \sQuote{factory-fresh} default is \code{\link{na.omit}}.}}
 
